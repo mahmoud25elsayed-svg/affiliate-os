@@ -26,9 +26,9 @@
 ```text
 المطلوب:
 1. سيناريوهات k6: تصفح المتجر، checkout، إنشاء طلب أفلييت (50 طلب/ثانية)، 20 موظف كول سنتر متزامن، Webhooks الشحن.
-2. 200 مستأجر تجريبي على staging.
-3. حدد الاختناقات (Telescope/slow query log)، أضف فهارس، كاش، تقسيم الطوابير (finance، notifications، courier، default) بأولويات.
-4. هدف: p95 < 500ms للصفحات العامة، لا deadlocks غير معالجة، لا طوابير عالقة.
+2. 200 مستأجر تجريبي على staging (Hostinger): انتبه لحدود الموارد في الاستضافة المشتركة، ولا تُجرِ اختبار حمل ثقيل على الإنتاج.
+3. حدد الاختناقات (Telescope/slow query log)، أضف فهارس مركبة تبدأ بـ tenant_id، كاش صفحات، وأولويات طوابير (finance، notifications، courier، default) داخل `queue:cron`.
+4. هدف: p95 < 500ms للصفحات العامة، لا deadlocks غير معالجة، لا Job ينتظر أكثر من دقيقتين. إن لم يتحقق على الاستضافة المشتركة ⇒ أوصِ بالانتقال إلى VPS بالأرقام.
 
 معايير القبول: تقرير قبل/بعد في docs/perf/.
 
@@ -40,15 +40,18 @@
 ## P36 — البنية والنشر والنسخ الاحتياطي
 
 ```text
-المطلوب:
-1. اقترح بنية الإنتاج (VPS واحد ثم توسع) بتكلفة تقريبية، ووثّق في docs/15-infrastructure.md. انتظر موافقتي قبل إنشاء أي مورد مدفوع.
-2. Docker للإنتاج، reverse proxy مع SSL آلي للدومينات المخصصة، مستخدم غير root، جدار ناري.
-3. GitHub Actions: نشر staging عند الدمج في main، ونشر production عند tag، مع migrations للمركزي ثم tenants:migrate، ووضع صيانة قصير، وتراجع (rollback).
-4. نسخ احتياطي يومي للقاعدة المركزية وكل مستأجر والملفات خارج الخادم، مع **اختبار استعادة آلي شهري**.
-5. مراقبة: Uptime، Horizon، القرص، الذاكرة، فشل ledger:reconcile، فشل provisioning ⇒ تنبيهات.
-6. الأسرار في متغيرات البيئة على الخادم فقط، وتوثيق تدويرها.
+اقرأ: docs/16-hostinger-and-review-decisions.md.
 
-معايير القبول: نشر كامل لـ staging من الصفر بأمر/workflow واحد، واستعادة نسخة احتياطية لمستأجر واحد موثقة.
+المطلوب (الإنتاج على Hostinger Business — استضافة مشتركة):
+1. تحقق من hPanel أو Hostinger API من: نسخة PHP 8.3 وامتداداتها، SSH، Composer، عدد قواعد البيانات، الـ cron، دعم النطاق الفرعي wildcard وشهادة SSL له، حدود الموارد (inodes، CPU، الذاكرة). وثّق في docs/15-infrastructure.md. **لا تنشئ أو تشتري أي مورد بدون موافقتي.**
+2. موقعان على Hostinger: staging و production، كلٌّ بقاعدة MySQL وملف .env على الخادم فقط (خارج public_html). جذر الويب يشير إلى public/.
+3. النشر: GitHub Actions يبني الأصول (npm run build) و vendor (composer install --no-dev --optimize-autoloader)، ثم ينشر عبر SSH/rsync إلى مجلد إصدار جديد، ويبدّل رابط symlink (نشر بلا توقف)، ثم `migrate --force` و `optimize`. تراجع بإعادة الـ symlink. staging عند الدمج في main، و production عند tag.
+4. cron على Hostinger: `schedule:run` كل دقيقة، و `queue:cron` كل دقيقة (من P02).
+5. نسخ احتياطي: الاعتماد على نسخ Hostinger اليومية **بالإضافة إلى** mysqldump يومي مشفّر ونسخ storage/ إلى تخزين خارجي، مع **اختبار استعادة شهري** على staging.
+6. مراقبة: Uptime خارجي، صفحة /health (DB، الطابور: أقدم Job، آخر schedule:run، مساحة القرص)، تنبيه على فشل ledger:reconcile و provisioning وتأخر الطابور.
+7. خطة الانتقال إلى Hostinger VPS (متى، وكيف بتغيير .env إلى Redis + Supervisor) مكتوبة وجاهزة.
+
+معايير القبول: نشر كامل لـ staging من GitHub Actions، وتراجع مجرّب، واستعادة نسخة احتياطية موثقة.
 
 الخاتمة: فرع ops/infra، PR.
 ```

@@ -78,7 +78,7 @@
 1. accounts، journal_entries (idempotency_key UNIQUE)، ledger_lines (amount_minor موقّع). منع UPDATE/DELETE على القيود والسطور (trigger أو صلاحيات DB + اختبار).
 2. Ledger::post(EntryData): مجموع السطور = 0، قفل الحسابات بترتيب id تصاعدي، تحديث balance_minor في نفس المعاملة، إعادة القيد الموجود عند تكرار المفتاح بلا أثر، إعادة محاولة محدودة عند deadlock.
 3. AccountResolver للحسابات: aff:{id}:pending/available/locked، platform:cod_receivable، store:revenue، customer:{id}:wallet، loyalty، وغيرها حسب الحاجة.
-4. Listeners للأحداث: OrderDelivered ⇒ قيد التسليم (عمولة الأفلييت إلى pending). ReturnWindowClosed (Job كل ساعة بحسب الإعداد) ⇒ settled + pending→available. OrderReturned ⇒ عكس قبل أو بعد التسوية، مع السماح بالرصيد السالب (دين).
+4. Listeners للأحداث: OrderDelivered ⇒ قيد التسليم (عمولة الأفلييت إلى pending). Job كل ساعة ينقل pending→available بحسب إعداد التاجر `release_mode` (docs/16 §3): `return_window` أو `courier_remittance` (بعد تسوية الشحن في P25، أو تأكيد يدوي من التاجر قبلها) أو `later_of_both` (الافتراضي)، ثم settled. OrderReturned ⇒ عكس قبل أو بعد التسوية، مع السماح بالرصيد السالب (دين).
 5. الدين: available سالب يحجب السحب ويظهر "مستحق عليك".
 6. اربط محفظة العميل ونقاط الولاء (P13/P14) بالدفتر.
 7. واجهات: محفظة الأفلييت (4 أرصدة + كشف حساب من السطور + CSV)، تقارير التاجر المالية.

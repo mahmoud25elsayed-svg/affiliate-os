@@ -30,6 +30,7 @@
 | [07-implementation-plan.md](docs/07-implementation-plan.md) | جداول المهام المرقّمة ومعايير القبول (الترتيب الزمني فيها استُبدل بالبرومبتات) |
 | [08-saas-direction.md](docs/08-saas-direction.md) | التحول إلى SaaS متعدد التجار، المهام TEN/SAAS |
 | [09-clean-room-and-licensing.md](docs/09-clean-room-and-licensing.md) | القرار النهائي للأساس التقني وقواعد Clean-room ورسالة دعم 6amTech |
+| [16-hostinger-and-review-decisions.md](docs/16-hostinger-and-review-decisions.md) | الاستضافة على Hostinger، قاعدة بيانات واحدة بـ tenant_id، تقييم المراجعة الخارجية، نطاق الـ MVP |
 | [prompts/](prompts/README.md) | **البرومبتات P01–P40** |
 
 > **تحديث الاتجاه:** المنتج صار متجرًا + أفلييت يُباع كخدمة SaaS لعدة تجار، مبني بطريقة Clean-room على Laravel + Lunar + stancl/tenancy بدون أي كود من 6Valley. راجع [08](docs/08-saas-direction.md) و[09](docs/09-clean-room-and-licensing.md).

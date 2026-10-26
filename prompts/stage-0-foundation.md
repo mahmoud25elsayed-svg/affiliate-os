@@ -8,12 +8,15 @@
 أنت مهندس برمجيات أول. المستودع الحالي يحتوي وثائق فقط (README و docs/ و prompts/). اقرأ أولًا:
 docs/02-architecture.md و docs/08-saas-direction.md و docs/09-clean-room-and-licensing.md.
 
-الهدف: إثبات أن Lunar (MIT) + Filament + stancl/tenancy (قاعدة بيانات لكل مستأجر) تعمل معًا على Laravel 12، قبل الالتزام بها.
+اقرأ أيضًا docs/16-hostinger-and-review-decisions.md (الإنتاج على استضافة Hostinger المشتركة).
+
+الهدف: إثبات أن Lunar (MIT) + Filament + stancl/tenancy بوضع **قاعدة البيانات الواحدة مع tenant_id** تعمل معًا على Laravel 12، وتعمل على استضافة مشتركة (بلا Redis ولا Docker ولا عمليات دائمة)، قبل الالتزام بها.
 
 المطلوب (داخل مجلد spike/ منفصل، لن يُدمج في الكود النهائي):
 1. تحقق بنفسك من أحدث الإصدارات المستقرة والمتوافقة: Laravel، Lunar، Filament، stancl/tenancy، ومن ملف LICENSE لكل منها. اكتب ما وجدته مع روابط.
-2. أنشئ مشروع Laravel تجريبيًا، ثبّت الحزم الأربع، واجعل جداول Lunar تُنشأ داخل قاعدة كل مستأجر (لا في القاعدة المركزية).
-3. أمر artisan ينشئ مستأجرًا (قاعدة + migrations + seed + مستخدم مالك) وقِس الزمن.
+2. أنشئ مشروع Laravel تجريبيًا، ثبّت الحزم الأربع بوضع single-database tenancy. أضف tenant_id لجداول Lunar بـ migration من عندنا، واستبدل نماذج Lunar بنماذج ترثها وتضيف Global Scope للمستأجر (تحقق من آلية ModelManifest في وثائق Lunar الحالية).
+3. أمر artisan ينشئ مستأجرًا (سجل tenant + seed بياناته الأساسية + مستخدم مالك) وقِس الزمن.
+3ب. شغّل التجربة بإعدادات الاستضافة المشتركة: QUEUE_CONNECTION=database، CACHE_STORE=database، طوابير عبر `queue:work --stop-when-empty` كما لو كانت من cron. تأكد أن Job يحمل سياق المستأجر الصحيح.
 4. أنشئ 3 مستأجرين، وأضف منتجًا لكلٍّ عبر لوحة Lunar، وأثبت باختبار أن مستأجرًا لا يرى منتجات غيره.
 5. وحدة "أفلييت" تجريبية صغيرة (جدول + نموذج + صفحة Filament) داخل المستأجر، دون تعديل أي ملف من Lunar في vendor.
 6. جرب الامتداد: حقل سعر جملة للمتغير في جدول خاص بنا، وحالة طلب مخصصة عبر config، وPipeline مخصص في حساب السلة — كلها بدون تعديل vendor.
@@ -21,7 +24,7 @@ docs/02-architecture.md و docs/08-saas-direction.md و docs/09-clean-room-and-l
 القيود: لا تنسخ أي شيء من 6Valley. لا تثبّت إضافات مدفوعة. لا تقارن بـ Bagisto (مستبعد بقرار المالك).
 
 معايير الفشل (أي واحد منها ⇒ نوصي بالبناء من الصفر):
-- تسرب بيانات بين المستأجرين لا يُحل بإعداد.
+- تسرب بيانات بين المستأجرين لا يُحل بإعداد، أو نموذج من نماذج Lunar لا يمكن تغطيته بالـ Global Scope.
 - الحاجة لتعديل ملفات داخل vendor/lunarphp أو أكثر من override هش.
 - إصدار Lunar المتاح غير مستقر لـ Laravel 12 أو بلا صيانة نشطة.
 
@@ -45,16 +48,16 @@ docs/02-architecture.md و docs/08-saas-direction.md و docs/09-clean-room-and-l
 
 المطلوب:
 1. مشروع Laravel بالإصدار المعتمد في جذر المستودع (احذف spike/ بعد التأكد أن ADR مدموج).
-2. Docker Compose: php-fpm (PHP 8.3 + الامتدادات اللازمة)، nginx، mysql:8، redis، mailpit. أمر واحد للتشغيل، وملف Makefile أو composer scripts للأوامر الشائعة.
+2. Docker Compose **للتطوير المحلي فقط**: php-fpm (PHP 8.3)، nginx، mysql:8، mailpit. بلا Redis افتراضيًا. الإنتاج على استضافة Hostinger المشتركة (docs/16): QUEUE_CONNECTION=database، CACHE_STORE=database، SESSION_DRIVER=database. الكود لا يعتمد على Redis أو Docker، ويعمل على VPS لاحقًا بتغيير .env فقط. composer scripts للأوامر الشائعة.
 3. الجودة: Pint، Larastan level 8، Pest + Arch plugin، ESLint + TypeScript strict للواجهة.
-4. CI على GitHub Actions: lint، static analysis، tests على MySQL 8 حقيقي و Redis، build للواجهة. Cache للـ composer و npm.
+4. CI على GitHub Actions: lint، static analysis، tests على MySQL 8 حقيقي، build للواجهة. Cache للـ composer و npm.
 5. هيكل app/Domain/{Identity,Catalog,Inventory,Orders,CallCenter,Fulfillment,Finance,Growth,Support,Notifications,Tenancy,Billing} و app/Support.
 6. اختبارات Arch:
    - لا استخدام لنوع float أو دالة floatval داخل app/Domain/Finance و app/Domain/Orders.
    - وحدة لا تستورد Models من وحدة أخرى (المسموح: Actions و Events و Contracts).
    - لا كتابة مباشرة لعمود status في الطلبات خارج app/Domain/Orders/StateMachine (يُضاف فعليًا في P11، جهّز الاختبار معلّقًا).
 7. Filament و Inertia + React + TypeScript + Tailwind مع دعم RTL و i18n (ar افتراضي، en).
-8. Horizon و Scheduler و Sentry (معطل محليًا) وسجلات JSON.
+8. Scheduler (يُشغّل من cron كل دقيقة)، وأمر `queue:cron` يشغّل `queue:work --stop-when-empty --max-time=50` مع قفل يمنع تشغيلين متزامنين. Sentry (معطل محليًا) وسجلات JSON. لا Horizon (يتطلب Redis وعمليات دائمة).
 9. ملف CLAUDE.md مختصر (≤ 60 سطرًا) يحتوي القواعد الثابتة:
    - Clean-room: ممنوع أي كود أو أصول من 6Valley.
    - المال: أعداد صحيحة بالقروش عبر App\Support\Money فقط.
@@ -105,23 +108,25 @@ docs/02-architecture.md و docs/08-saas-direction.md و docs/09-clean-room-and-l
 ```text
 اقرأ: CLAUDE.md، docs/10-adr-base-platform.md، docs/08-saas-direction.md §6 (TEN-*).
 
-الهدف: منصة متعددة المستأجرين بقاعدة بيانات لكل تاجر، معزولة بالكامل.
+اقرأ أيضًا: docs/16-hostinger-and-review-decisions.md و docs/10-adr-base-platform.md (طريقة العزل التي نجحت في P01).
+
+الهدف: منصة متعددة المستأجرين **بقاعدة بيانات واحدة وعزل بـ tenant_id**، تعمل على استضافة Hostinger المشتركة.
 
 المطلوب:
-1. stancl/tenancy بالإصدار المعتمد. القاعدة المركزية: tenants، domains، users المركزيين (مدراء المنصة)، plans، subscriptions، الإعدادات العامة، المحافظات.
-2. migrations مفصولة: database/migrations (مركزية) و database/migrations/tenant.
-3. تحديد المستأجر بالنطاق الفرعي ({store}.platform.test) والدومين المخصص لاحقًا (P28).
-4. عزل: الكاش (prefix)، الملفات (disk لكل مستأجر)، الطوابير (Job يحمل tenant_id ويُهيّئ السياق)، الجلسات، الـ Scheduler (أمر يعمل لكل مستأجر)، السجلات (tenant_id في السياق)، Sentry tag.
-5. ProvisionTenant Job: إنشاء القاعدة، migrations، seeders (إعدادات، أدوار، بيانات Lunar الأساسية: عملة EGP، لغة ar/en، مجموعة عملاء افتراضية، قناة)، مستخدم مالك. Idempotent وقابل لإعادة التشغيل بعد فشل جزئي.
-6. tenants:migrate لكل المستأجرين مع تقرير فشل لكل مستأجر واستمرار الباقي.
-7. حذف آمن (soft) وأرشفة لمستأجر، ونسخ احتياطي واستعادة لمستأجر واحد (أمر artisan).
+1. stancl/tenancy بالإصدار المعتمد بوضع single-database. جداول المنصة (tenants، domains، مدراء المنصة، plans، subscriptions، المحافظات) بلا tenant_id. **كل** جدول آخر فيه tenant_id بفهرس، ومفاتيح UNIQUE مركبة تبدأ بـ tenant_id (مثل UNIQUE(tenant_id, sku)).
+2. Trait BelongsToTenant: Global Scope + ملء tenant_id تلقائيًا عند الإنشاء + رفض الحفظ بلا مستأجر. يُطبق على نماذجنا ونماذج Lunar المستبدلة.
+3. تحديد المستأجر بالنطاق الفرعي ({store}.platform.test). الدومين المخصص لاحقًا (P28).
+4. عزل: الكاش (prefix بالمستأجر)، الملفات (مجلد لكل مستأجر)، الطوابير (Job يحمل tenant_id ويُهيّئ السياق)، الجلسات، الـ Scheduler (أمر يمر على المستأجرين)، السجلات و Sentry (tenant_id في السياق).
+5. ProvisionTenant Job: سجل tenant، seeders (إعدادات، أدوار، بيانات Lunar الأساسية: عملة EGP، لغة ar/en، مجموعة عملاء افتراضية، قناة)، مستخدم مالك. Idempotent وقابل لإعادة التشغيل بعد فشل جزئي.
+6. أرشفة وحذف آمن لمستأجر، وتصدير بيانات مستأجر واحد (JSON/SQL مفلتر بـ tenant_id) واستيرادها.
+7. اختبار Arch: كل Model خارج قائمة جداول المنصة يستخدم BelongsToTenant.
 
-القيود: لا عمود tenant_id في جداول المستأجر (القاعدة نفسها هي العزل). أي Model مركزي يستخدم اتصالًا مركزيًا صريحًا.
+القيود: لا استعلام خام (DB::table / raw SQL) على جداول المستأجر بدون شرط tenant_id صريح — أضف قاعدة PHPStan أو اختبار يكشفها.
 
 معايير القبول (اختبارات):
-- مستأجران؛ بيانات أحدهما غير مرئية للآخر عبر HTTP والطوابير والكاش والملفات.
-- ProvisionTenant < 60 ثانية محليًا، وإعادة تشغيله بعد فشل مصطنع تكتمل بلا تكرار.
-- tenants:migrate يكمل على 20 مستأجرًا ويبلغ عن واحد فاشل مصطنع.
+- مستأجران؛ بيانات أحدهما غير مرئية للآخر عبر HTTP والطوابير والكاش والملفات، لكل نموذج (اختبار يمر على كل النماذج آليًا).
+- ProvisionTenant < 10 ثوانٍ، وإعادة تشغيله بعد فشل مصطنع تكتمل بلا تكرار.
+- تصدير مستأجر ثم استيراده في قاعدة نظيفة يعطي نفس البيانات.
 
 الخاتمة: فرع feat/TEN-core، PR.
 ```
