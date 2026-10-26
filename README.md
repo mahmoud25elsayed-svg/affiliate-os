@@ -27,6 +27,7 @@
 | [04-roadmap.md](docs/04-roadmap.md) | المراحل، معايير الخروج، الفريق، المؤشرات |
 | [05-aiSSS-audit.md](docs/05-aiSSS-audit.md) | ما نعيد استخدامه من مشروع aiSSS وما نصلحه وما نتركه |
 | [06-risks-and-validation.md](docs/06-risks-and-validation.md) | الفرضيات التي تحتاج تحققًا، المخاطر القانونية والتشغيلية |
+| [07-implementation-plan.md](docs/07-implementation-plan.md) | **خطة التنفيذ الكاملة**: ~120 مهمة مرقّمة، اعتماديات، ترتيب أسبوعي، اختبارات قبول |
 
 ## قرارات مفتوحة (تحتاج قرار صاحب المشروع)
 
