@@ -27,9 +27,16 @@
 | [04-roadmap.md](docs/04-roadmap.md) | المراحل، معايير الخروج، الفريق، المؤشرات |
 | [05-aiSSS-audit.md](docs/05-aiSSS-audit.md) | ما نعيد استخدامه من مشروع aiSSS وما نصلحه وما نتركه |
 | [06-risks-and-validation.md](docs/06-risks-and-validation.md) | الفرضيات التي تحتاج تحققًا، المخاطر القانونية والتشغيلية |
-| [07-implementation-plan.md](docs/07-implementation-plan.md) | **خطة التنفيذ الكاملة**: ~120 مهمة مرقّمة، اعتماديات، ترتيب أسبوعي، اختبارات قبول |
+| [07-implementation-plan.md](docs/07-implementation-plan.md) | جداول المهام المرقّمة ومعايير القبول (الترتيب الزمني فيها استُبدل بالبرومبتات) |
+| [08-saas-direction.md](docs/08-saas-direction.md) | التحول إلى SaaS متعدد التجار، المهام TEN/SAAS |
+| [09-clean-room-and-licensing.md](docs/09-clean-room-and-licensing.md) | القرار النهائي للأساس التقني وقواعد Clean-room ورسالة دعم 6amTech |
+| [prompts/](prompts/README.md) | **البرومبتات P01–P40** |
 
-> **تحديث الاتجاه:** المنتج صار متجرًا + أفلييت يُباع كخدمة SaaS لعدة تجار. راجع [08-saas-direction.md](docs/08-saas-direction.md) الذي يعدّل الوثائق 01–07.
+> **تحديث الاتجاه:** المنتج صار متجرًا + أفلييت يُباع كخدمة SaaS لعدة تجار، مبني بطريقة Clean-room على Laravel + Lunar + stancl/tenancy بدون أي كود من 6Valley. راجع [08](docs/08-saas-direction.md) و[09](docs/09-clean-room-and-licensing.md).
+
+## ▶️ ابدأ من هنا: البرومبتات
+
+**خطة التنفيذ الرسمية هي [prompts/](prompts/README.md):** 40 برومبتًا لـ Claude Code مرتبة من الصفر حتى الإطلاق، في 6 مراحل، لكل برومبت معايير قبول. الوثائق 01–09 مرجع تفصيلي تستند إليه البرومبتات.
 
 ## قرارات مفتوحة (تحتاج قرار صاحب المشروع)
 
