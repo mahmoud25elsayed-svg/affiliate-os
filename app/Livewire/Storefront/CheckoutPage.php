@@ -8,6 +8,7 @@ use App\Domain\Checkout\DTOs\CheckoutPayload;
 use App\Domain\Checkout\DTOs\ShippingQuote;
 use App\Domain\Checkout\Services\CouponService;
 use App\Domain\Checkout\Services\OrderCreationService;
+use App\Domain\Checkout\Services\PaymentManager;
 use App\Domain\Checkout\Services\ShippingCalculatorService;
 use App\Domain\Checkout\Services\StorefrontCartService;
 use App\Models\Coupon;
@@ -48,17 +49,23 @@ class CheckoutPage extends Component
     public string $idempotency_token = '';
 
     /**
-     * @var array<string, string>
+     * @return array<string, mixed>
      */
-    protected $rules = [
-        'customer_name' => 'required|string|min:3|max:100',
-        'customer_phone' => 'required|string',
-        'governorate_id' => 'required|integer|exists:governorates,id',
-        'city' => 'required|string|min:2|max:100',
-        'address' => 'required|string|min:5|max:255',
-        'notes' => 'nullable|string|max:500',
-        'payment_method' => 'required|string|in:cod',
-    ];
+    protected function rules(): array
+    {
+        $gateways = array_keys(app(PaymentManager::class)->getActiveGatewaysForTenant());
+        $gatewaysList = ! empty($gateways) ? implode(',', $gateways) : 'cod';
+
+        return [
+            'customer_name' => 'required|string|min:3|max:100',
+            'customer_phone' => 'required|string',
+            'governorate_id' => 'required|integer|exists:governorates,id',
+            'city' => 'required|string|min:2|max:100',
+            'address' => 'required|string|min:5|max:255',
+            'notes' => 'nullable|string|max:500',
+            'payment_method' => 'required|string|in:'.$gatewaysList,
+        ];
+    }
 
     /**
      * @var array<string, string>
@@ -179,6 +186,16 @@ class CheckoutPage extends Component
         // Clear cart session
         $cartService->clear();
 
+        /** @var mixed $rawMeta */
+        $rawMeta = $order->meta;
+        /** @var array<string, mixed> $meta */
+        $meta = is_array($rawMeta) ? $rawMeta : (is_object($rawMeta) && method_exists($rawMeta, 'toArray') ? $rawMeta->toArray() : []);
+        $redirectUrl = $meta['payment_redirect_url'] ?? null;
+
+        if (is_string($redirectUrl) && $redirectUrl !== '') {
+            return redirect()->to($redirectUrl);
+        }
+
         return redirect()->route('storefront.checkout.success', ['reference' => $order->reference]);
     }
 
@@ -216,6 +233,8 @@ class CheckoutPage extends Component
         $discountedSubtotal = max(0, $subtotalMinor - $this->discount_minor);
         $totalMinor = $discountedSubtotal + $shippingQuote->rate_minor + $codFeeMinor;
 
+        $activeGateways = app(PaymentManager::class)->getActiveGatewaysForTenant();
+
         return view('livewire.storefront.checkout-page', [
             'items' => $items,
             'count' => $count,
@@ -227,6 +246,7 @@ class CheckoutPage extends Component
             'totalDecimal' => number_format($totalMinor / 100, 2),
             'governorates' => $governorates,
             'settings' => $settings,
+            'activeGateways' => $activeGateways,
         ])->layout('layouts.storefront', [
             'title' => 'إتمام الطلب',
         ]);
