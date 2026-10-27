@@ -1,5 +1,9 @@
 <?php
 
+use App\Models\Plan;
+use App\Models\Subscription;
+use App\Models\SubscriptionEvent;
+use App\Models\SubscriptionInvoice;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Support\Tenancy\Concerns\BelongsToTenant;
@@ -16,6 +20,10 @@ test('all tenant models use BelongsToTenant trait', function () {
     $platformModels = [
         Tenant::class,
         User::class,
+        Plan::class,
+        Subscription::class,
+        SubscriptionEvent::class,
+        SubscriptionInvoice::class,
     ];
 
     $modelFiles = glob(app_path('Models/*.php')) ?: [];

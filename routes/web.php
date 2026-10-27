@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\TwoFactorController;
+use App\Http\Controllers\Billing\InvoiceDownloadController;
 use App\Http\Controllers\MerchantOnboardingController;
 use App\Support\Auth\ImpersonationService;
 use Illuminate\Support\Facades\Route;
@@ -26,4 +27,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/platform/2fa/confirm', [TwoFactorController::class, 'confirmSetup'])->name('platform.2fa.confirm');
     Route::get('/platform/2fa/challenge', [TwoFactorController::class, 'showChallenge'])->name('platform.2fa.challenge');
     Route::post('/platform/2fa/verify', [TwoFactorController::class, 'verifyChallenge'])->name('platform.2fa.verify');
+
+    // Invoice PDF Download
+    Route::get('/billing/invoices/{invoice}/download', InvoiceDownloadController::class)->name('billing.invoices.download');
 });
