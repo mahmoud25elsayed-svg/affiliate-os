@@ -9,6 +9,7 @@ use App\Models\Coupon;
 use App\Support\Idempotency\IdempotencyService;
 use App\Support\Phone\EgyptianPhone;
 use App\Support\Settings\ShippingSettings;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
@@ -186,8 +187,11 @@ class OrderCreationService
             $channelId = $channel instanceof Channel ? $channel->id : 1;
 
             // 9. Create Lunar Order
+            $storefrontCustomerId = $payload->customer_id ?? (Auth::guard('customer')->check() ? (int) Auth::guard('customer')->id() : null);
+
             /** @var Order $order */
             $order = Order::create([
+                'storefront_customer_id' => $storefrontCustomerId,
                 'channel_id' => $channelId,
                 'status' => 'pending_confirmation',
                 'reference' => $publicRef,

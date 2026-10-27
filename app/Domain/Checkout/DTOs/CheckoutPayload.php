@@ -20,5 +20,6 @@ readonly class CheckoutPayload
         public ?string $coupon_code = null,
         public array $items = [],
         public ?string $idempotency_token = null,
+        public ?int $customer_id = null,
     ) {}
 }

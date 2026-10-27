@@ -74,6 +74,10 @@
 
                 <!-- Livewire Variant Picker and Add to Cart -->
                 <livewire:storefront.product-variant-picker :product="$product" />
+
+                <div class="pt-2">
+                    <livewire:storefront.wishlist-button :product-id="$product->id" />
+                </div>
             </div>
 
             <!-- Trust Badges -->
@@ -108,6 +112,9 @@
             @endif
         </div>
     </div>
+
+    <!-- Product Reviews & Ratings (P10) -->
+    <livewire:storefront.product-reviews :product-id="$product->id" />
 
     <!-- Related Products -->
     @if($relatedProducts->isNotEmpty())
