@@ -6,6 +6,7 @@ use App\Providers\Filament\StorePanelProvider;
 use App\Providers\HorizonServiceProvider;
 use App\Providers\InventoryServiceProvider;
 use App\Providers\LunarTenancyServiceProvider;
+use App\Providers\NotificationServiceProvider;
 use App\Providers\PromotionServiceProvider;
 use App\Providers\TenancyServiceProvider;
 
@@ -18,4 +19,5 @@ return [
     TenancyServiceProvider::class,
     InventoryServiceProvider::class,
     PromotionServiceProvider::class,
+    NotificationServiceProvider::class,
 ];
