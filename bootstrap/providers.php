@@ -4,6 +4,7 @@ use App\Providers\AppServiceProvider;
 use App\Providers\Filament\PlatformPanelProvider;
 use App\Providers\Filament\StorePanelProvider;
 use App\Providers\HorizonServiceProvider;
+use App\Providers\InventoryServiceProvider;
 use App\Providers\LunarTenancyServiceProvider;
 use App\Providers\TenancyServiceProvider;
 
@@ -14,4 +15,5 @@ return [
     HorizonServiceProvider::class,
     LunarTenancyServiceProvider::class,
     TenancyServiceProvider::class,
+    InventoryServiceProvider::class,
 ];
