@@ -6,8 +6,14 @@ use App\Http\Controllers\MerchantOnboardingController;
 use App\Support\Auth\ImpersonationService;
 use Illuminate\Support\Facades\Route;
 
-// Public Landing & Merchant Onboarding
-Route::get('/', [MerchantOnboardingController::class, 'showLanding'])->name('landing');
+// Public Landing & Merchant Onboarding (Scoped to Central Domains)
+$centralDomains = (array) config('tenancy.central_domains', ['localhost', '127.0.0.1']);
+foreach ($centralDomains as $index => $centralDomain) {
+    $route = Route::domain($centralDomain)->get('/', [MerchantOnboardingController::class, 'showLanding']);
+    if ($index === 0) {
+        $route->name('landing');
+    }
+}
 Route::get('/register/merchant', [MerchantOnboardingController::class, 'showRegister'])->name('onboarding.register');
 Route::get('/onboarding/check-subdomain', [MerchantOnboardingController::class, 'checkSubdomain'])->name('onboarding.check-subdomain');
 Route::post('/onboarding/send-otp', [MerchantOnboardingController::class, 'sendOtp'])->name('onboarding.send-otp');

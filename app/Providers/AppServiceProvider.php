@@ -2,12 +2,15 @@
 
 namespace App\Providers;
 
+use App\Domain\Storefront\Services\StorefrontCacheService;
 use App\Models\WholesalePrice;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Lunar\Admin\Support\Facades\LunarPanel;
+use Lunar\Models\Collection;
+use Lunar\Models\Product;
 use Lunar\Models\ProductVariant;
 
 class AppServiceProvider extends ServiceProvider
@@ -40,5 +43,11 @@ class AppServiceProvider extends ServiceProvider
         ProductVariant::resolveRelationUsing('wholesalePrice', function (ProductVariant $variant) {
             return $variant->hasOne(WholesalePrice::class, 'product_variant_id');
         });
+
+        // Storefront cache invalidation hooks
+        Product::saved(fn () => StorefrontCacheService::flush());
+        Product::deleted(fn () => StorefrontCacheService::flush());
+        Collection::saved(fn () => StorefrontCacheService::flush());
+        Collection::deleted(fn () => StorefrontCacheService::flush());
     }
 }
