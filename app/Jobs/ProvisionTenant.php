@@ -7,6 +7,7 @@ namespace App\Jobs;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Support\Settings\GeneralSettings;
+use App\Support\Tenancy\Permissions\TenantPermissionMatrix;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -24,7 +25,7 @@ class ProvisionTenant implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
-     * @param  array{name?: string, email?: string, password?: string}  $ownerData
+     * @param  array{name?: string, email?: string, password?: string, phone?: string}  $ownerData
      */
     public function __construct(
         public string $tenantId,
@@ -45,6 +46,10 @@ class ProvisionTenant implements ShouldQueue
             ]
         );
 
+        if ($tenant->status === 'provisioning') {
+            $tenant->update(['status' => 'active']);
+        }
+
         // 2. Attach domain (Idempotent)
         $tenant->domains()->firstOrCreate(
             ['domain' => $this->domain]
@@ -52,6 +57,9 @@ class ProvisionTenant implements ShouldQueue
 
         // 3. Initialize tenant and run seeders
         $tenant->run(function () use ($tenant) {
+            // Seed RBAC matrix for this tenant
+            TenantPermissionMatrix::seedForTenant((string) $tenant->id);
+
             // Default Currency: EGP
             Currency::firstOrCreate(
                 ['code' => 'EGP'],
@@ -113,16 +121,21 @@ class ProvisionTenant implements ShouldQueue
             $settings->platform_name = $this->name;
             $settings->save();
 
-            // Create Owner User if provided
+            // Create or update Owner User
             if (! empty($this->ownerData['email'])) {
-                User::firstOrCreate(
+                /** @var User $ownerUser */
+                $ownerUser = User::firstOrCreate(
                     ['email' => $this->ownerData['email']],
                     [
                         'name' => $this->ownerData['name'] ?? 'Merchant Owner',
                         'password' => Hash::make($this->ownerData['password'] ?? 'secret123'),
+                        'phone' => $this->ownerData['phone'] ?? null,
+                        'phone_verified_at' => now(),
                         'tenant_id' => $tenant->id,
                     ]
                 );
+
+                TenantPermissionMatrix::assignRole($ownerUser, TenantPermissionMatrix::ROLE_OWNER, (string) $tenant->id);
             }
         });
 

@@ -1,0 +1,244 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Controllers;
+
+use App\Jobs\ProvisionTenant;
+use App\Models\Tenant;
+use App\Models\User;
+use App\Notifications\MerchantWelcomeNotification;
+use App\Support\Auth\OtpService;
+use App\Support\Phone\EgyptianPhone;
+use App\Support\Tenancy\ReservedSubdomains;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
+
+class MerchantOnboardingController extends Controller
+{
+    public function __construct(
+        protected OtpService $otpService
+    ) {}
+
+    public function showLanding(): View
+    {
+        return view('landing');
+    }
+
+    public function showRegister(): View
+    {
+        return view('onboarding.register');
+    }
+
+    /**
+     * Check if a subdomain is available.
+     */
+    public function checkSubdomain(Request $request): JsonResponse
+    {
+        $subdomain = Str::lower(trim((string) $request->input('subdomain')));
+
+        if (strlen($subdomain) < 3 || strlen($subdomain) > 30 || ! preg_match('/^[a-z0-9-]+$/', $subdomain)) {
+            return response()->json([
+                'available' => false,
+                'message' => 'يجب أن يتكون اسم النطاق من 3 إلى 30 حرفاً أو رقماً باللغة الإنجليزية.',
+            ]);
+        }
+
+        if (ReservedSubdomains::isReserved($subdomain)) {
+            return response()->json([
+                'available' => false,
+                'message' => 'هذا الاسم محجوز لنظام المنصة، يرجى اختيار اسم آخر.',
+            ]);
+        }
+
+        if (Tenant::where('id', $subdomain)->exists()) {
+            return response()->json([
+                'available' => false,
+                'message' => 'هذا النطاق مستخدم بالفعل، يرجى اختيار اسم آخر.',
+            ]);
+        }
+
+        return response()->json([
+            'available' => true,
+            'message' => 'النطاق متاح للتسجيل!',
+        ]);
+    }
+
+    /**
+     * Send OTP to phone number.
+     */
+    public function sendOtp(Request $request): JsonResponse
+    {
+        $phone = (string) $request->input('phone');
+
+        $result = $this->otpService->sendOtp($phone);
+
+        return response()->json($result, $result['success'] ? 200 : 422);
+    }
+
+    /**
+     * Handle Merchant registration.
+     */
+    public function register(Request $request): JsonResponse|RedirectResponse
+    {
+        // Rate limiting: 5 registrations per hour per IP
+        $ip = $request->ip() ?? '127.0.0.1';
+        $rateKey = 'merchant_reg:'.$ip;
+
+        if (RateLimiter::tooManyAttempts($rateKey, 5)) {
+            $seconds = RateLimiter::availableIn($rateKey);
+
+            throw ValidationException::withMessages([
+                'email' => ["تم تجاوز الحد المسموح للتسجيل. يرجى المحاولة بعد {$seconds} ثانية."],
+            ]);
+        }
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'store_name' => ['required', 'string', 'max:255'],
+            'subdomain' => ['required', 'string', 'alpha_dash', 'min:3', 'max:30'],
+            'phone' => ['required', 'string'],
+            'otp' => ['required', 'string'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'string', 'min:8'],
+        ]);
+
+        $subdomain = Str::lower(trim($validated['subdomain']));
+
+        // Check reserved words
+        if (ReservedSubdomains::isReserved($subdomain)) {
+            throw ValidationException::withMessages([
+                'subdomain' => ['هذا النطاق محجوز لنظام المنصة وغير متاح للاستخدام.'],
+            ]);
+        }
+
+        // Check tenant uniqueness
+        if (Tenant::where('id', $subdomain)->exists()) {
+            throw ValidationException::withMessages([
+                'subdomain' => ['هذا النطاق مستخدم بالفعل من قبل تاجر آخر.'],
+            ]);
+        }
+
+        // Validate Egyptian Phone
+        $parsedPhone = EgyptianPhone::tryParse($validated['phone']);
+        if (! $parsedPhone) {
+            throw ValidationException::withMessages([
+                'phone' => ['رقم الهاتف المصري غير صحيح (يجب أن يبدأ بـ 010 أو 011 أو 012 أو 015).'],
+            ]);
+        }
+        $normalizedPhone = $parsedPhone->e164;
+
+        // Verify OTP
+        if (! $this->otpService->verifyOtp($normalizedPhone, $validated['otp'])) {
+            throw ValidationException::withMessages([
+                'otp' => ['رمز التحقق غير صحيح أو منتهي الصلاحية.'],
+            ]);
+        }
+
+        RateLimiter::hit($rateKey, 3600);
+
+        // 1. Create Tenant in provisioning state
+        /** @var Tenant $tenant */
+        $tenant = Tenant::create([
+            'id' => $subdomain,
+            'name' => $validated['store_name'],
+            'status' => 'provisioning',
+        ]);
+
+        // 2. Create Owner User
+        /** @var User $owner */
+        $owner = User::create([
+            'tenant_id' => $tenant->id,
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'phone' => $normalizedPhone,
+            'phone_verified_at' => now(),
+            'is_platform_admin' => false,
+        ]);
+
+        // 3. Dispatch ProvisionTenant job
+        if (app()->environment('testing')) {
+            (new ProvisionTenant(
+                tenantId: (string) $tenant->id,
+                name: (string) $tenant->name,
+                domain: "{$tenant->id}.localhost",
+                ownerData: [
+                    'name' => $owner->name,
+                    'email' => $owner->email,
+                    'password' => $validated['password'],
+                    'phone' => $normalizedPhone,
+                ]
+            ))->handle();
+        } else {
+            ProvisionTenant::dispatch(
+                tenantId: (string) $tenant->id,
+                name: (string) $tenant->name,
+                domain: "{$tenant->id}.localhost",
+                ownerData: [
+                    'name' => $owner->name,
+                    'email' => $owner->email,
+                    'password' => $validated['password'],
+                    'phone' => $normalizedPhone,
+                ]
+            );
+        }
+
+        // 4. Send Welcome Notification
+        $owner->notify(new MerchantWelcomeNotification($tenant));
+
+        // 5. Authenticate merchant owner
+        Auth::login($owner);
+
+        $statusUrl = route('onboarding.provisioning', ['tenant' => $tenant->id]);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'redirect' => $statusUrl,
+                'tenant_id' => $tenant->id,
+            ]);
+        }
+
+        return redirect($statusUrl);
+    }
+
+    /**
+     * Show provisioning status page / API.
+     */
+    public function provisioningStatus(Request $request, string $tenantId): View|JsonResponse|RedirectResponse
+    {
+        /** @var Tenant|null $tenant */
+        $tenant = Tenant::find($tenantId);
+
+        if (! $tenant) {
+            abort(404, 'المتجر غير موجود.');
+        }
+
+        $storeUrl = url("/store/{$tenant->id}");
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'status' => $tenant->status,
+                'ready' => $tenant->isActive(),
+                'store_url' => $storeUrl,
+            ]);
+        }
+
+        if ($tenant->isActive()) {
+            return redirect($storeUrl);
+        }
+
+        return view('onboarding.provisioning', [
+            'tenant' => $tenant,
+            'storeUrl' => $storeUrl,
+        ]);
+    }
+}

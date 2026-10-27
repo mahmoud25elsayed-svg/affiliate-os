@@ -4,5 +4,22 @@
     "Admin Panel": "لوحة التحكم",
     "Storefront": "المتجر",
     "Login": "تسجيل الدخول",
-    "Register": "إنشاء حساب"
+    "Register": "إنشاء حساب",
+    "Platform Dashboard": "لوحة المنصة المركزية",
+    "Store Dashboard": "لوحة تحكم المتجر",
+    "Store Settings": "إعدادات المتجر",
+    "Staff & Roles": "الموظفون والأدوار",
+    "Owner": "مالك المتجر",
+    "Manager": "مدير المتجر",
+    "Catalog": "مسؤول الكتالوج",
+    "Orders": "مسؤول الطلبات",
+    "Finance": "مسؤول المالية",
+    "Support": "خدمة العملاء",
+    "Call Agent": "كول سنتر",
+    "Impersonate": "دخول كتاجر",
+    "Stop Impersonating": "إنهاء الدخول كتاجر",
+    "Active": "نشط",
+    "Suspended": "موقوف",
+    "Provisioning": "قيد التجهيز",
+    "Archived": "مؤرشف"
 }
