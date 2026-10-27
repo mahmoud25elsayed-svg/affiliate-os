@@ -20,7 +20,7 @@ class TenantCacheBootstrapper implements TenancyBootstrapper
     {
         $this->resetFacadeCache();
 
-        $this->originalCache = $this->originalCache ?? $this->app['cache'];
+        $this->originalCache = $this->originalCache ?? $this->app->make('cache');
 
         $this->app->extend('cache', function ($service) use ($tenant) {
             $baseManager = $service instanceof PrefixTenantCacheManager ? $this->originalCache : $service;

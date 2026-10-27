@@ -12,7 +12,15 @@ class GeneralSettings extends Settings
 
     public string $default_locale = 'ar';
 
+    public ?string $logo_url = null;
+
+    public string $primary_color = '#6366f1';
+
+    public string $secondary_color = '#a855f7';
+
     public string $support_phone = '+201000000000';
+
+    public ?string $support_whatsapp = null;
 
     public string $support_email = 'support@affiliateos.test';
 

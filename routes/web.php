@@ -1,11 +1,29 @@
 <?php
 
+use App\Http\Controllers\Auth\TwoFactorController;
+use App\Http\Controllers\MerchantOnboardingController;
+use App\Support\Auth\ImpersonationService;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'appName' => config('app.name', 'AffiliateOS'),
-        'version' => '1.0.0-beta',
-    ]);
+// Public Landing & Merchant Onboarding
+Route::get('/', [MerchantOnboardingController::class, 'showLanding'])->name('landing');
+Route::get('/register/merchant', [MerchantOnboardingController::class, 'showRegister'])->name('onboarding.register');
+Route::get('/onboarding/check-subdomain', [MerchantOnboardingController::class, 'checkSubdomain'])->name('onboarding.check-subdomain');
+Route::post('/onboarding/send-otp', [MerchantOnboardingController::class, 'sendOtp'])->name('onboarding.send-otp');
+Route::post('/register/merchant', [MerchantOnboardingController::class, 'register'])->name('onboarding.register.submit');
+Route::get('/onboarding/status/{tenant}', [MerchantOnboardingController::class, 'provisioningStatus'])->name('onboarding.provisioning');
+
+// Stop Impersonation
+Route::post('/impersonation/stop', function (ImpersonationService $impersonationService) {
+    $impersonationService->stopImpersonating();
+
+    return redirect('/platform');
+})->name('impersonation.stop');
+
+// Platform Admin 2FA
+Route::middleware(['auth'])->group(function () {
+    Route::get('/platform/2fa/setup', [TwoFactorController::class, 'showSetup'])->name('platform.2fa.setup');
+    Route::post('/platform/2fa/confirm', [TwoFactorController::class, 'confirmSetup'])->name('platform.2fa.confirm');
+    Route::get('/platform/2fa/challenge', [TwoFactorController::class, 'showChallenge'])->name('platform.2fa.challenge');
+    Route::post('/platform/2fa/verify', [TwoFactorController::class, 'verifyChallenge'])->name('platform.2fa.verify');
 });

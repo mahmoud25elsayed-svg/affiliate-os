@@ -1,8 +1,25 @@
 {
     "Welcome to AffiliateOS": "Welcome to AffiliateOS",
-    "SaaS Ecommerce & Affiliate Platform": "SaaS Ecommerce & Affiliate Platform",
+    "SaaS Ecommerce & Affiliate Platform": "Multi-tenant SaaS Ecommerce & Affiliate Platform",
     "Admin Panel": "Admin Panel",
     "Storefront": "Storefront",
     "Login": "Login",
-    "Register": "Register"
+    "Register": "Register",
+    "Platform Dashboard": "Platform Dashboard",
+    "Store Dashboard": "Store Dashboard",
+    "Store Settings": "Store Settings",
+    "Staff & Roles": "Staff & Roles",
+    "Owner": "Owner",
+    "Manager": "Manager",
+    "Catalog": "Catalog",
+    "Orders": "Orders",
+    "Finance": "Finance",
+    "Support": "Support",
+    "Call Agent": "Call Agent",
+    "Impersonate": "Impersonate",
+    "Stop Impersonating": "Stop Impersonating",
+    "Active": "Active",
+    "Suspended": "Suspended",
+    "Provisioning": "Provisioning",
+    "Archived": "Archived"
 }
