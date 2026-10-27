@@ -26,8 +26,17 @@ class RequireIdempotencyKey
         $path = $request->path();
         $method = $request->method();
 
+        $tenantId = function_exists('tenancy') && tenancy()->initialized ? (string) tenant('id') : null;
+
+        $query = IdempotencyKey::where('key', $key);
+        if ($tenantId !== null) {
+            $query->where('tenant_id', $tenantId);
+        } else {
+            $query->whereNull('tenant_id');
+        }
+
         /** @var IdempotencyKey|null $existing */
-        $existing = IdempotencyKey::where('key', $key)->first();
+        $existing = $query->first();
 
         if ($existing !== null) {
             if ($existing->expires_at === null || $existing->expires_at->isFuture()) {
@@ -44,6 +53,7 @@ class RequireIdempotencyKey
         $response = $next($request);
 
         IdempotencyKey::create([
+            'tenant_id' => $tenantId,
             'key' => $key,
             'request_method' => $method,
             'request_path' => $path,
