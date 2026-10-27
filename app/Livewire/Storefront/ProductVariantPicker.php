@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire\Storefront;
 
 use App\Domain\Checkout\Services\StorefrontCartService;
+use App\Domain\Promotions\Services\PromotionPricingService;
 use App\Models\WholesalePrice;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
@@ -78,10 +79,15 @@ class ProductVariantPicker extends Component
         /** @var WholesalePrice|null $pricing */
         $pricing = $selectedVariant ? $selectedVariant->getRelationValue('wholesalePrice') : null;
 
+        $promotional = $selectedVariant
+            ? app(PromotionPricingService::class)->getEffectiveVariantPrice($selectedVariant)
+            : null;
+
         return view('livewire.storefront.product-variant-picker', [
             'selectedVariant' => $selectedVariant,
             'price' => $price,
             'pricing' => $pricing,
+            'promotional' => $promotional,
         ]);
     }
 }

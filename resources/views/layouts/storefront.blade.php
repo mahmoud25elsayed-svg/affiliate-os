@@ -173,6 +173,33 @@
     <!-- Footer -->
     <footer class="bg-gray-900 text-gray-400 mt-16 border-t border-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <!-- Newsletter Subscription Banner (P14) -->
+            <div class="mb-12 pb-12 border-b border-gray-800">
+                <div class="bg-gradient-to-r from-gray-800/80 to-slate-800/80 rounded-2xl p-6 sm:p-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 border border-gray-700/60 shadow-lg">
+                    <div class="space-y-1">
+                        <span class="text-xs font-bold text-brand-600 bg-brand-50/10 px-2.5 py-0.5 rounded-full inline-block mb-1">📬 النشرة البريدية والعروض الحصرية</span>
+                        <h3 class="text-xl sm:text-2xl font-black text-white">اشترك ليصلك جديد التخفيضات وكوبونات الخصم</h3>
+                        <p class="text-xs sm:text-sm text-gray-400">انضم لأكثر من آلاف العملاء واستمتع بخصومات فورية وعروض الفلاش سيل أسبوعياً.</p>
+                    </div>
+                    <div class="w-full lg:max-w-md">
+                        @if(session('newsletter_message'))
+                            <div class="p-3 mb-3 text-xs rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-2">
+                                <span>✅</span>
+                                <span>{{ session('newsletter_message') }}</span>
+                            </div>
+                        @endif
+                        <form action="{{ route('storefront.newsletter.subscribe') }}" method="POST" class="flex flex-col sm:flex-row gap-2">
+                            @csrf
+                            <input type="email" name="email" required placeholder="أدخل بريدك الإلكتروني"
+                                class="flex-1 bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600 transition-colors">
+                            <button type="submit" class="px-6 py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm rounded-xl transition-all shadow hover:shadow-brand-600/30 whitespace-nowrap">
+                                اشتراك مجاني
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <!-- Store Info -->
                 <div class="space-y-4">
