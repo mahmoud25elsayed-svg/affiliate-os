@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Lunar\Models\Language;
 
 class DatabaseSeeder extends Seeder
 {
@@ -19,5 +20,10 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
+
+        Language::firstOrCreate(['code' => 'ar'], ['name' => 'Arabic', 'default' => true]);
+        Language::firstOrCreate(['code' => 'en'], ['name' => 'English', 'default' => false]);
+
+        $this->call(EgyptGovernoratesSeeder::class);
     }
 }

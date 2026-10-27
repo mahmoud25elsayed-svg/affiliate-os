@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Support\Tenancy\Bootstrappers\LoggingTenancyBootstrapper;
+use App\Support\Tenancy\Bootstrappers\TenantCacheBootstrapper;
 use Stancl\Tenancy\Bootstrappers\CacheTenancyBootstrapper;
 use Stancl\Tenancy\Bootstrappers\DatabaseTenancyBootstrapper;
 use Stancl\Tenancy\Bootstrappers\FilesystemTenancyBootstrapper;
@@ -36,11 +38,10 @@ return [
      * To configure their behavior, see the config keys below.
      */
     'bootstrappers' => [
-        DatabaseTenancyBootstrapper::class,
-        CacheTenancyBootstrapper::class,
+        TenantCacheBootstrapper::class,
         FilesystemTenancyBootstrapper::class,
         QueueTenancyBootstrapper::class,
-        // Stancl\Tenancy\Bootstrappers\RedisTenancyBootstrapper::class, // Note: phpredis is needed
+        LoggingTenancyBootstrapper::class,
     ],
 
     /**

@@ -23,6 +23,7 @@ use Illuminate\Support\Carbon;
 class IdempotencyKey extends Model
 {
     protected $fillable = [
+        'tenant_id',
         'key',
         'request_method',
         'request_path',

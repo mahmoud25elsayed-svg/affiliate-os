@@ -12,7 +12,8 @@ return new class extends Migration
     {
         Schema::create('idempotency_keys', function (Blueprint $table) {
             $table->id();
-            $table->string('key', 128)->unique();
+            $table->string('tenant_id')->nullable()->index();
+            $table->string('key', 128);
             $table->string('request_method', 10);
             $table->string('request_path', 255);
             $table->string('request_hash', 64);
@@ -21,6 +22,8 @@ return new class extends Migration
             $table->longText('response_body')->nullable();
             $table->timestamp('expires_at')->nullable()->index();
             $table->timestamps();
+
+            $table->unique(['tenant_id', 'key']);
         });
     }
 

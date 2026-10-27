@@ -20,8 +20,17 @@ class IdempotencyService
     public static function run(string $key, Closure $callback, int $ttlSeconds = 86400): mixed
     {
         return DB::transaction(function () use ($key, $callback, $ttlSeconds) {
+            $tenantId = function_exists('tenancy') && tenancy()->initialized ? (string) tenant('id') : null;
+
+            $query = IdempotencyKey::where('key', $key);
+            if ($tenantId !== null) {
+                $query->where('tenant_id', $tenantId);
+            } else {
+                $query->whereNull('tenant_id');
+            }
+
             /** @var IdempotencyKey|null $existing */
-            $existing = IdempotencyKey::where('key', $key)->lockForUpdate()->first();
+            $existing = $query->lockForUpdate()->first();
 
             if ($existing !== null) {
                 if ($existing->expires_at === null || $existing->expires_at->isFuture()) {
@@ -34,6 +43,7 @@ class IdempotencyService
             $result = $callback();
 
             IdempotencyKey::create([
+                'tenant_id' => $tenantId,
                 'key' => $key,
                 'request_method' => 'SERVICE',
                 'request_path' => 'service::run',

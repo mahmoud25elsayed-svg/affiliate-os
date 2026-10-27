@@ -12,12 +12,13 @@ return new class extends Migration
     {
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
+            $table->string('tenant_id')->nullable()->index();
             $table->string('group', 64)->index();
             $table->string('name', 64);
             $table->json('payload');
             $table->timestamps();
 
-            $table->unique(['group', 'name']);
+            $table->unique(['tenant_id', 'group', 'name']);
         });
     }
 

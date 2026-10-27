@@ -21,12 +21,21 @@ abstract class Settings
     public static function load(): static
     {
         $group = static::group();
-        $cacheKey = "settings.{$group}";
+        $tenantId = function_exists('tenancy') && tenancy()->initialized ? (string) tenant('id') : null;
+        $cacheKey = $tenantId ? "tenant_{$tenantId}.settings.{$group}" : "settings.{$group}";
 
         /** @var static $instance */
-        $instance = Cache::rememberForever($cacheKey, function () use ($group) {
+        $instance = Cache::rememberForever($cacheKey, function () use ($group, $tenantId) {
             $settings = new static;
-            $records = DB::table('settings')->where('group', $group)->get();
+            $query = DB::table('settings')->where('group', $group);
+
+            if ($tenantId !== null) {
+                $query->where('tenant_id', $tenantId);
+            } else {
+                $query->whereNull('tenant_id');
+            }
+
+            $records = $query->get();
 
             foreach ($records as $record) {
                 if (property_exists($settings, $record->name)) {
@@ -43,6 +52,9 @@ abstract class Settings
     public function save(): void
     {
         $group = static::group();
+        $tenantId = function_exists('tenancy') && tenancy()->initialized ? (string) tenant('id') : null;
+        $cacheKey = $tenantId ? "tenant_{$tenantId}.settings.{$group}" : "settings.{$group}";
+
         $ref = new ReflectionClass($this);
         $properties = $ref->getProperties(ReflectionProperty::IS_PUBLIC);
 
@@ -51,7 +63,7 @@ abstract class Settings
             $value = $prop->getValue($this);
 
             DB::table('settings')->updateOrInsert(
-                ['group' => $group, 'name' => $name],
+                ['tenant_id' => $tenantId, 'group' => $group, 'name' => $name],
                 [
                     'payload' => json_encode($value),
                     'updated_at' => now(),
@@ -60,6 +72,6 @@ abstract class Settings
             );
         }
 
-        Cache::forget("settings.{$group}");
+        Cache::forget($cacheKey);
     }
 }

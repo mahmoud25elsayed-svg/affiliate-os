@@ -26,8 +26,8 @@ class TenantIsolationTest extends TestCase
         $tenant1->run(function () {
             ProductVariant::query()->delete();
             Product::query()->delete();
-            $productType = ProductType::first();
-            $taxClass = TaxClass::first();
+            $productType = ProductType::first() ?? ProductType::create(['name' => 'Default']);
+            $taxClass = TaxClass::first() ?? TaxClass::create(['name' => 'Default']);
 
             $p1 = Product::create([
                 'product_type_id' => $productType->id,
@@ -48,8 +48,8 @@ class TenantIsolationTest extends TestCase
         $tenant2->run(function () {
             ProductVariant::query()->delete();
             Product::query()->delete();
-            $productType = ProductType::first();
-            $taxClass = TaxClass::first();
+            $productType = ProductType::first() ?? ProductType::create(['name' => 'Default']);
+            $taxClass = TaxClass::first() ?? TaxClass::create(['name' => 'Default']);
 
             $p2 = Product::create([
                 'product_type_id' => $productType->id,
@@ -70,8 +70,8 @@ class TenantIsolationTest extends TestCase
         $tenant3->run(function () {
             ProductVariant::query()->delete();
             Product::query()->delete();
-            $productType = ProductType::first();
-            $taxClass = TaxClass::first();
+            $productType = ProductType::first() ?? ProductType::create(['name' => 'Default']);
+            $taxClass = TaxClass::first() ?? TaxClass::create(['name' => 'Default']);
 
             $p3 = Product::create([
                 'product_type_id' => $productType->id,
