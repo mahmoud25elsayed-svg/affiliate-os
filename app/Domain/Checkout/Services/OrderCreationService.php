@@ -9,6 +9,7 @@ use App\Domain\Orders\DTOs\OrderActor;
 use App\Domain\Orders\Enums\OrderStatus;
 use App\Domain\Orders\Events\OrderSubmitted;
 use App\Domain\Orders\Services\OrderTransitionService;
+use App\Domain\Promotions\Services\PromotionPricingService;
 use App\Models\Coupon;
 use App\Models\OrderEvent;
 use App\Support\Enums\ReasonCode;
@@ -25,7 +26,6 @@ use Lunar\Models\Channel;
 use Lunar\Models\Order;
 use Lunar\Models\OrderAddress;
 use Lunar\Models\OrderLine;
-use Lunar\Models\Price;
 use Lunar\Models\Product;
 use Lunar\Models\ProductVariant;
 
@@ -91,9 +91,8 @@ class OrderCreationService
                     ]);
                 }
 
-                /** @var Price|null $price */
-                $price = $variant->prices->first();
-                $unitPriceMinor = $price instanceof Price ? $price->price->value : 0;
+                $pricing = app(PromotionPricingService::class)->getEffectiveVariantPrice($variant);
+                $unitPriceMinor = $pricing['price_minor'];
                 $lineSubtotalMinor = $unitPriceMinor * $quantity;
                 $subtotalMinor += $lineSubtotalMinor;
 
@@ -277,6 +276,9 @@ class OrderCreationService
                     $discountMinor
                 );
             }
+
+            // 12.1 Record promotions allocations
+            app(PromotionPricingService::class)->recordOrderPromotions($order);
 
             // 13. Process payment through gateway
             $gateway = $this->paymentManager->get($payload->payment_method);

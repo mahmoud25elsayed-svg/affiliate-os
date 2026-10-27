@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Checkout\Services;
 
+use App\Domain\Promotions\Services\PromotionPricingService;
 use Illuminate\Support\Facades\Session;
-use Lunar\Models\Price;
 use Lunar\Models\Product;
 use Lunar\Models\ProductVariant;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -126,9 +126,8 @@ class StorefrontCartService
             $name = $product instanceof Product ? ($product->translateAttribute('name') ?? 'منتج') : 'منتج';
             $sku = $variant->sku ?? 'SKU-'.$variant->id;
 
-            /** @var Price|null $price */
-            $price = $variant->prices->first();
-            $unitPriceMinor = $price instanceof Price ? $price->price->value : 0;
+            $pricing = app(PromotionPricingService::class)->getEffectiveVariantPrice($variant);
+            $unitPriceMinor = $pricing['price_minor'];
             $subtotalMinor = $unitPriceMinor * $quantity;
 
             /** @var Media|null $thumbnail */
@@ -144,6 +143,9 @@ class StorefrontCartService
                 'unit_price_minor' => $unitPriceMinor,
                 'subtotal_minor' => $subtotalMinor,
                 'image_url' => $imageUrl,
+                'original_price_minor' => $pricing['original_price_minor'],
+                'is_promotional' => $pricing['is_promotional'],
+                'promotion_type' => $pricing['promotion_type'],
             ];
         }
 

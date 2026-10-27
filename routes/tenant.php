@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Domain\Checkout\Services\StorefrontCartService;
+use App\Domain\Promotions\Services\AbandonedCartService;
+use App\Domain\Promotions\Services\NewsletterService;
 use App\Http\Controllers\Store\OrderDocumentController;
 use App\Http\Controllers\Storefront\CategoryController;
 use App\Http\Controllers\Storefront\CheckoutSuccessController;
@@ -22,6 +25,7 @@ use App\Livewire\Storefront\CustomerOrdersPage;
 use App\Livewire\Storefront\CustomerProfilePage;
 use App\Livewire\Storefront\CustomerRegisterPage;
 use App\Livewire\Storefront\CustomerWishlistPage;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
@@ -44,6 +48,37 @@ Route::middleware([
     Route::get('/cart', CartPage::class)->name('storefront.cart');
     Route::get('/checkout', CheckoutPage::class)->name('storefront.checkout');
     Route::get('/checkout/success/{reference}', CheckoutSuccessController::class)->name('storefront.checkout.success');
+    Route::get('/cart/recover/{token}', function (string $token, AbandonedCartService $cartService, StorefrontCartService $storefrontCart) {
+        $recovered = $cartService->recoverByToken($token);
+        if ($recovered && is_array($recovered->cart_data) && ! empty($recovered->cart_data['raw_cart'])) {
+            /** @var array<int, int> $rawCart */
+            $rawCart = $recovered->cart_data['raw_cart'];
+            foreach ($rawCart as $variantId => $qty) {
+                $storefrontCart->updateQuantity((int) $variantId, (int) $qty);
+            }
+            session()->flash('success', 'تم استرجاع سلة مشترياتك بنجاح! يمكنك الآن إتمام طلبك.');
+
+            return redirect()->route('storefront.checkout');
+        }
+
+        return redirect()->route('storefront.cart');
+    })->name('storefront.cart.recover');
+
+    // Newsletter Subscription (P14)
+    Route::post('/newsletter/subscribe', function (Request $request, NewsletterService $newsletterService) {
+        $data = $request->validate([
+            'email' => 'required|email|max:255',
+            'name' => 'nullable|string|max:100',
+        ]);
+
+        $result = $newsletterService->subscribe($data['email'], $data['name'] ?? null);
+
+        if ($request->wantsJson()) {
+            return response()->json($result);
+        }
+
+        return back()->with('newsletter_message', $result['message']);
+    })->name('storefront.newsletter.subscribe');
 
     // Customer Authentication & Accounts (P10)
     Route::get('/login', CustomerLoginPage::class)->name('storefront.login');

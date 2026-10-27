@@ -55,6 +55,212 @@
     </section>
     @endif
 
+    <!-- Daily Deal Banner (P14) -->
+    @if(isset($activeDailyDeal) && $activeDailyDeal && $activeDailyDeal->product)
+    @php
+        $dealProduct = $activeDailyDeal->product;
+        $dealVariant = $dealProduct->variants->first();
+        $dealStdPrice = $dealVariant?->prices->first()?->price?->value ?? 0;
+        $dealDiscounted = $activeDailyDeal->calculateDiscountedPrice($dealStdPrice);
+    @endphp
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-500 via-rose-500 to-red-600 p-6 sm:p-10 text-white shadow-xl">
+            <div class="relative z-10 grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                <div class="md:col-span-8 space-y-4">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-black tracking-wide uppercase">
+                        <span>⭐ {{ $activeDailyDeal->badge_text ?? 'صفقة اليوم الحصرية' }}</span>
+                    </div>
+                    <h2 class="text-2xl sm:text-4xl font-black leading-tight">
+                        {{ $activeDailyDeal->banner_title ?? $dealProduct->translateAttribute('name') }}
+                    </h2>
+                    <p class="text-sm sm:text-base text-white/90 line-clamp-2">
+                        {{ $dealProduct->translateAttribute('description') ?? 'عرض خاص متاح لليوم فقط بخصم استثنائي، سارع بالحجز قبل نفاد الكمية!' }}
+                    </p>
+                    <div class="flex flex-wrap items-baseline gap-3 pt-2">
+                        <span class="text-3xl sm:text-4xl font-black text-yellow-300">
+                            {{ \App\Support\Money::fromMinor($dealDiscounted)->format('ar') }}
+                        </span>
+                        @if($dealStdPrice > $dealDiscounted)
+                            <span class="text-lg text-white/70 line-through">
+                                {{ \App\Support\Money::fromMinor($dealStdPrice)->format('ar') }}
+                            </span>
+                            <span class="px-2.5 py-1 bg-yellow-400 text-gray-900 rounded-lg text-xs font-black">
+                                خصم {{ $activeDailyDeal->discount_type === 'percentage' ? $activeDailyDeal->discount_value.'%' : \App\Support\Money::fromMinor($activeDailyDeal->discount_value)->format('ar') }}
+                            </span>
+                        @endif
+                    </div>
+                    <div class="pt-2">
+                        <a href="{{ url('/products/'.$dealProduct->id) }}" class="inline-flex items-center gap-2 px-8 py-3.5 bg-white text-rose-600 hover:bg-gray-100 font-extrabold rounded-2xl shadow-lg transition-transform hover:scale-105">
+                            <span>اغتنم الفرصة واشترِ الآن</span>
+                            <span>&larr;</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="md:col-span-4 flex justify-center">
+                    @php
+                        $dealImg = $dealProduct->media->first()?->getUrl();
+                    @endphp
+                    @if($dealImg)
+                        <img src="{{ $dealImg }}" alt="{{ $dealProduct->translateAttribute('name') }}" class="w-64 h-64 sm:w-72 sm:h-72 object-cover rounded-2xl shadow-2xl border-4 border-white/30 transform hover:rotate-1 transition-transform">
+                    @else
+                        <div class="w-64 h-64 rounded-2xl bg-white/10 backdrop-blur border border-white/20 flex items-center justify-center text-7xl">
+                            🎁
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </section>
+    @endif
+
+    <!-- Flash Sale Section (P14) -->
+    @if(isset($activeFlashSale) && $activeFlashSale && $activeFlashSale->items->isNotEmpty())
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" x-data="flashSaleCountdown('{{ $activeFlashSale->ends_at->toISOString() }}')">
+        <div class="bg-gradient-to-br from-gray-900 via-slate-900 to-zinc-900 rounded-3xl p-6 sm:p-8 border border-red-500/30 shadow-2xl relative overflow-hidden">
+            <!-- Header with Countdown -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-gray-800">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-red-600/20 border border-red-500/40 flex items-center justify-center text-2xl animate-pulse">
+                        ⚡
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h2 class="text-xl sm:text-2xl font-black text-white">{{ $activeFlashSale->name }}</h2>
+                            <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-red-600 text-white">فلاش سيل</span>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-1">تخفيضات نارية سريعة تنتهي قريباً مع كميات محدودة جداً</p>
+                    </div>
+                </div>
+
+                <!-- Digital Timer -->
+                <div class="flex items-center gap-2 text-center select-none" dir="ltr">
+                    <div class="bg-gray-800/90 border border-gray-700 rounded-xl px-3 py-2 min-w-[54px]">
+                        <span class="block text-lg sm:text-xl font-black text-red-500 font-mono" x-text="days">00</span>
+                        <span class="block text-[9px] uppercase tracking-wider text-gray-400 font-semibold">أيام</span>
+                    </div>
+                    <span class="text-red-500 font-bold text-lg">:</span>
+                    <div class="bg-gray-800/90 border border-gray-700 rounded-xl px-3 py-2 min-w-[54px]">
+                        <span class="block text-lg sm:text-xl font-black text-red-500 font-mono" x-text="hours">00</span>
+                        <span class="block text-[9px] uppercase tracking-wider text-gray-400 font-semibold">ساعات</span>
+                    </div>
+                    <span class="text-red-500 font-bold text-lg">:</span>
+                    <div class="bg-gray-800/90 border border-gray-700 rounded-xl px-3 py-2 min-w-[54px]">
+                        <span class="block text-lg sm:text-xl font-black text-red-500 font-mono" x-text="minutes">00</span>
+                        <span class="block text-[9px] uppercase tracking-wider text-gray-400 font-semibold">دقائق</span>
+                    </div>
+                    <span class="text-red-500 font-bold text-lg">:</span>
+                    <div class="bg-gray-800/90 border border-gray-700 rounded-xl px-3 py-2 min-w-[54px]">
+                        <span class="block text-lg sm:text-xl font-black text-red-500 font-mono" x-text="seconds">00</span>
+                        <span class="block text-[9px] uppercase tracking-wider text-gray-400 font-semibold">ثواني</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Items Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 pt-6">
+                @foreach($activeFlashSale->items as $item)
+                    @php
+                        $variant = $item->variant;
+                        $prod = $variant?->product;
+                        $stdPrice = $variant?->prices->first()?->price?->value ?? 0;
+                        $flashPrice = $item->flash_price_minor;
+                        $percentClaimed = $item->allocated_quantity > 0 ? min(100, (int) round(($item->sold_quantity / $item->allocated_quantity) * 100)) : 100;
+                        $remaining = max(0, $item->allocated_quantity - $item->sold_quantity);
+                        $img = $prod?->media->first()?->getUrl();
+                    @endphp
+                    @if($prod)
+                    <div class="bg-gray-800/60 border border-gray-700/60 rounded-2xl p-4 flex flex-col justify-between hover:border-red-500/50 transition-all group">
+                        <div>
+                            <div class="relative aspect-square rounded-xl overflow-hidden bg-gray-900 mb-3">
+                                @if($img)
+                                    <img src="{{ $img }}" alt="{{ $prod->translateAttribute('name') }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
+                                @else
+                                    <div class="w-full h-full flex items-center justify-center text-4xl text-gray-600">⚡</div>
+                                @endif
+                                <span class="absolute top-2 right-2 px-2 py-0.5 bg-red-600 text-white font-black text-[10px] rounded-md shadow">
+                                    خصم مباشر
+                                </span>
+                            </div>
+
+                            <a href="{{ url('/products/'.$prod->id) }}" class="block">
+                                <h3 class="text-sm font-bold text-gray-100 group-hover:text-red-400 transition-colors line-clamp-2">
+                                    {{ $prod->translateAttribute('name') }}
+                                </h3>
+                            </a>
+
+                            <div class="flex items-baseline gap-2 mt-2">
+                                <span class="text-base font-black text-red-400">
+                                    {{ \App\Support\Money::fromMinor($flashPrice)->format('ar') }}
+                                </span>
+                                @if($stdPrice > $flashPrice)
+                                    <span class="text-xs text-gray-500 line-through">
+                                        {{ \App\Support\Money::fromMinor($stdPrice)->format('ar') }}
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
+                        <!-- Progress Bar & Stock Notice -->
+                        <div class="mt-4 pt-3 border-t border-gray-700/60">
+                            <div class="flex justify-between items-center text-[11px] mb-1.5">
+                                <span class="text-gray-400">تم حجز: {{ $percentClaimed }}%</span>
+                                <span class="text-red-400 font-semibold">متبقي {{ $remaining }}</span>
+                            </div>
+                            <div class="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
+                                <div class="bg-gradient-to-r from-red-500 to-amber-500 h-2 rounded-full transition-all duration-500" style="width: {{ $percentClaimed }}%"></div>
+                            </div>
+                            <div class="mt-3">
+                                <a href="{{ url('/products/'.$prod->id) }}" class="block w-full text-center py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl text-xs transition-colors shadow">
+                                    اطلب الآن
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+                @endforeach
+            </div>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('flashSaleCountdown', (endsAtIso) => ({
+                endsAt: new Date(endsAtIso).getTime(),
+                days: '00',
+                hours: '00',
+                minutes: '00',
+                seconds: '00',
+                timer: null,
+                init() {
+                    this.update();
+                    this.timer = setInterval(() => this.update(), 1000);
+                },
+                update() {
+                    const now = new Date().getTime();
+                    const diff = this.endsAt - now;
+                    if (diff <= 0) {
+                        this.days = '00';
+                        this.hours = '00';
+                        this.minutes = '00';
+                        this.seconds = '00';
+                        if (this.timer) clearInterval(this.timer);
+                        return;
+                    }
+                    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+                    this.days = String(d).padStart(2, '0');
+                    this.hours = String(h).padStart(2, '0');
+                    this.minutes = String(m).padStart(2, '0');
+                    this.seconds = String(s).padStart(2, '0');
+                }
+            }));
+        });
+    </script>
+    @endif
+
     <!-- 2. Featured Categories Section -->
     @if($theme->show_featured_categories && $categories->isNotEmpty())
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">

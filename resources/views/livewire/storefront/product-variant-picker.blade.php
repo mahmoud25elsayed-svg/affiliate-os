@@ -1,20 +1,62 @@
 <div class="space-y-6 pt-4 border-t border-gray-100">
 
+    <!-- Promotional Notice (P14) -->
+    @if(isset($promotional) && $promotional && $promotional['is_promotional'])
+        @if($promotional['promotion_type'] === 'flash_sale' && $promotional['flash_sale_item'])
+            @php
+                $fItem = $promotional['flash_sale_item'];
+                $rem = max(0, $fItem->allocated_quantity - $fItem->sold_quantity);
+            @endphp
+            <div class="p-4 rounded-2xl bg-red-50 border border-red-200 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <span class="text-2xl animate-pulse">⚡</span>
+                    <div>
+                        <h4 class="text-xs font-black text-red-600 uppercase">عرض الفلاش سيل مفعّل!</h4>
+                        <p class="text-[11px] text-red-700">سعر خاص ومحدود، متبقي {{ $rem }} قطعة فقط بالسعر المخفض.</p>
+                    </div>
+                </div>
+                <span class="px-2.5 py-1 bg-red-600 text-white rounded-lg text-xs font-black">
+                    وفّر {{ \App\Support\Money::fromMinor($promotional['original_price_minor'] - $promotional['price_minor'])->format('ar') }}
+                </span>
+            </div>
+        @elseif($promotional['promotion_type'] === 'daily_deal')
+            <div class="p-3.5 rounded-2xl bg-amber-50 border border-amber-200 flex items-center gap-3">
+                <span class="text-2xl">⭐</span>
+                <div>
+                    <h4 class="text-xs font-black text-amber-700 uppercase">صفقة اليوم الخاصة!</h4>
+                    <p class="text-[11px] text-amber-800">ينتهي العرض بنهاية اليوم أو حتى نفاد الكمية.</p>
+                </div>
+            </div>
+        @endif
+    @endif
+
     <!-- Price Section -->
     <div class="flex items-baseline gap-3">
-        <span class="text-3xl font-black text-brand-600">
-            {{ $price ? $price->price->formatted() : '0.00 ج.م' }}
-        </span>
-        @if($pricing && $pricing->compare_at_price_minor && $price && $pricing->compare_at_price_minor > $price->price->value)
-            @php
-                $compareMoney = \App\Support\Money::fromMinor($pricing->compare_at_price_minor);
-            @endphp
+        @if(isset($promotional) && $promotional && $promotional['is_promotional'])
+            <span class="text-3xl font-black text-red-600">
+                {{ \App\Support\Money::fromMinor($promotional['price_minor'])->format('ar') }}
+            </span>
             <span class="text-sm text-gray-400 line-through">
-                {{ $compareMoney->format('ar') }}
+                {{ \App\Support\Money::fromMinor($promotional['original_price_minor'])->format('ar') }}
             </span>
             <span class="px-2 py-0.5 rounded-full bg-red-100 text-red-700 text-xs font-bold">
-                وفر {{ \App\Support\Money::fromMinor($pricing->compare_at_price_minor - $price->price->value)->format('ar') }}
+                تخفيض حصري
             </span>
+        @else
+            <span class="text-3xl font-black text-brand-600">
+                {{ $price ? $price->price->formatted() : '0.00 ج.م' }}
+            </span>
+            @if($pricing && $pricing->compare_at_price_minor && $price && $pricing->compare_at_price_minor > $price->price->value)
+                @php
+                    $compareMoney = \App\Support\Money::fromMinor($pricing->compare_at_price_minor);
+                @endphp
+                <span class="text-sm text-gray-400 line-through">
+                    {{ $compareMoney->format('ar') }}
+                </span>
+                <span class="px-2 py-0.5 rounded-full bg-red-100 text-red-700 text-xs font-bold">
+                    وفر {{ \App\Support\Money::fromMinor($pricing->compare_at_price_minor - $price->price->value)->format('ar') }}
+                </span>
+            @endif
         @endif
     </div>
 

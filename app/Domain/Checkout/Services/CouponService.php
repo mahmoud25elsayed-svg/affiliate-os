@@ -19,8 +19,10 @@ class CouponService
         int $subtotalMinor,
         array $itemIds = [],
         array $categoryIds = [],
-        ?string $customerPhoneE164 = null
+        ?string $customerPhoneE164 = null,
+        ?int $eligibleSubtotalMinor = null
     ): CouponResult {
+        $applicableSubtotal = $eligibleSubtotalMinor ?? $subtotalMinor;
         $normalizedCode = trim(strtoupper($code));
 
         if ($normalizedCode === '') {
@@ -78,18 +80,22 @@ class CouponService
         }
 
         // Calculate discount
+        if ($applicableSubtotal <= 0 && $coupon->type !== Coupon::TYPE_FREE_SHIPPING) {
+            return CouponResult::failure('هذا الكوبون لا يسري على المنتجات المشمولة بعروض التخفيض الفوري (الفلاش سيل)');
+        }
+
         if ($coupon->type === Coupon::TYPE_PERCENTAGE) {
-            $calculated = (int) round(($subtotalMinor * $coupon->value_minor) / 100);
+            $calculated = (int) round(($applicableSubtotal * $coupon->value_minor) / 100);
             if ($coupon->max_discount_minor !== null && $calculated > $coupon->max_discount_minor) {
                 $calculated = $coupon->max_discount_minor;
             }
-            $discount = min($calculated, $subtotalMinor);
+            $discount = min($calculated, $applicableSubtotal);
 
             return CouponResult::success($coupon, $discount, false);
         }
 
         if ($coupon->type === Coupon::TYPE_FIXED) {
-            $discount = min($coupon->value_minor, $subtotalMinor);
+            $discount = min($coupon->value_minor, $applicableSubtotal);
 
             return CouponResult::success($coupon, $discount, false);
         }
