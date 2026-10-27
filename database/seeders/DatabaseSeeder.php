@@ -25,5 +25,6 @@ class DatabaseSeeder extends Seeder
         Language::firstOrCreate(['code' => 'en'], ['name' => 'English', 'default' => false]);
 
         $this->call(EgyptGovernoratesSeeder::class);
+        $this->call(PlanSeeder::class);
     }
 }

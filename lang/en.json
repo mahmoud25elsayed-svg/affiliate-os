@@ -21,5 +21,14 @@
     "Active": "Active",
     "Suspended": "Suspended",
     "Provisioning": "Provisioning",
-    "Archived": "Archived"
+    "Archived": "Archived",
+    "Plan & Usage": "Plan & Usage",
+    "Plans": "Plans",
+    "Invoices": "Invoices",
+    "Trial": "Trial",
+    "Past Due": "Past Due",
+    "Cancelled": "Cancelled",
+    "Renew / Upgrade Plan": "Renew / Upgrade Plan",
+    "Monthly": "Monthly",
+    "Yearly": "Yearly"
 }

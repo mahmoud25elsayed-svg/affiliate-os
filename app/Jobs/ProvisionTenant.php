@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Jobs;
 
+use App\Models\Plan;
+use App\Models\Subscription;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Support\Settings\GeneralSettings;
@@ -54,6 +56,33 @@ class ProvisionTenant implements ShouldQueue
         $tenant->domains()->firstOrCreate(
             ['domain' => $this->domain]
         );
+
+        // 3. Create initial trial subscription (central platform)
+        if (! $tenant->subscriptions()->exists()) {
+            /** @var Plan|null $starterPlan */
+            $starterPlan = Plan::where('slug', 'starter')->first();
+            if ($starterPlan) {
+                /** @var Subscription $subscription */
+                $subscription = $tenant->subscriptions()->create([
+                    'plan_id' => $starterPlan->id,
+                    'status' => Subscription::STATUS_TRIAL,
+                    'billing_cycle' => Subscription::CYCLE_MONTHLY,
+                    'trial_ends_at' => now()->addDays($starterPlan->trial_days),
+                    'current_period_starts_at' => now(),
+                    'current_period_ends_at' => now()->addDays($starterPlan->trial_days),
+                ]);
+
+                $subscription->events()->create([
+                    'tenant_id' => $tenant->id,
+                    'event' => 'trial_started',
+                    'metadata' => [
+                        'plan' => $starterPlan->slug,
+                        'trial_days' => $starterPlan->trial_days,
+                    ],
+                    'created_at' => now(),
+                ]);
+            }
+        }
 
         // 3. Initialize tenant and run seeders
         $tenant->run(function () use ($tenant) {

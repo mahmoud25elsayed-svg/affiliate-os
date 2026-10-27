@@ -39,6 +39,22 @@ class Tenant extends BaseTenant
         return $this->hasOne(User::class, 'tenant_id')->oldestOfMany();
     }
 
+    /**
+     * @return HasMany<Subscription, $this>
+     */
+    public function subscriptions(): HasMany
+    {
+        return $this->hasMany(Subscription::class, 'tenant_id');
+    }
+
+    /**
+     * @return HasOne<Subscription, $this>
+     */
+    public function subscription(): HasOne
+    {
+        return $this->hasOne(Subscription::class, 'tenant_id')->latestOfMany();
+    }
+
     public function isActive(): bool
     {
         return $this->status === 'active';
