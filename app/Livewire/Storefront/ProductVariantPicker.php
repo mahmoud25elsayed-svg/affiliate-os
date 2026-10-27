@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire\Storefront;
 
+use App\Domain\Checkout\Services\StorefrontCartService;
 use App\Models\WholesalePrice;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
@@ -41,6 +42,13 @@ class ProductVariantPicker extends Component
 
     public function addToCart(): void
     {
+        if ($this->selectedVariantId !== null) {
+            app(StorefrontCartService::class)->addItem(
+                $this->selectedVariantId,
+                $this->quantity
+            );
+        }
+
         $this->dispatch('cart-updated', [
             'product_id' => $this->product->id,
             'variant_id' => $this->selectedVariantId,
