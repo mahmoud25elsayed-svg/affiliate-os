@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Store\OrderDocumentController;
 use App\Http\Controllers\Storefront\CategoryController;
 use App\Http\Controllers\Storefront\CheckoutSuccessController;
 use App\Http\Controllers\Storefront\HomeController;
@@ -71,6 +72,10 @@ Route::middleware([
     // SEO Routes
     Route::get('/sitemap.xml', SitemapController::class)->name('storefront.sitemap');
     Route::get('/robots.txt', RobotsController::class)->name('storefront.robots');
+
+    // Order Documents (Printable Invoices & Waybills - P11)
+    Route::get('/orders/{reference}/invoice', [OrderDocumentController::class, 'invoice'])->name('store.orders.invoice');
+    Route::get('/orders/{reference}/waybill', [OrderDocumentController::class, 'waybill'])->name('store.orders.waybill');
 
     // Health check endpoint from P06
     Route::get('/storefront', function () {

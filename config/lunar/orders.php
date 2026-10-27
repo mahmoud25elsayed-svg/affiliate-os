@@ -68,35 +68,156 @@ return [
 
     'statuses' => [
 
+        'submitted' => [
+            'label' => 'Submitted',
+            'color' => '#6b7280',
+            'mailers' => [],
+            'notifications' => [],
+            'favourite' => true,
+        ],
+
+        'rejected_quality' => [
+            'label' => 'Quality Rejected',
+            'color' => '#ef4444',
+            'mailers' => [],
+            'notifications' => [],
+            'favourite' => false,
+        ],
+
+        'pending_confirmation' => [
+            'label' => 'Pending Confirmation',
+            'color' => '#f59e0b',
+            'mailers' => [],
+            'notifications' => [],
+            'favourite' => true,
+        ],
+
+        'confirmed' => [
+            'label' => 'Confirmed',
+            'color' => '#3b82f6',
+            'mailers' => [],
+            'notifications' => [],
+            'favourite' => true,
+        ],
+
+        'unreachable' => [
+            'label' => 'Unreachable',
+            'color' => '#f97316',
+            'mailers' => [],
+            'notifications' => [],
+            'favourite' => false,
+        ],
+
+        'cancelled_by_customer' => [
+            'label' => 'Cancelled by Customer',
+            'color' => '#dc2626',
+            'mailers' => [],
+            'notifications' => [],
+            'favourite' => false,
+        ],
+
+        'cancelled_no_answer' => [
+            'label' => 'Cancelled (No Answer)',
+            'color' => '#b91c1c',
+            'mailers' => [],
+            'notifications' => [],
+            'favourite' => false,
+        ],
+
+        'reserved' => [
+            'label' => 'Stock Reserved',
+            'color' => '#06b6d4',
+            'mailers' => [],
+            'notifications' => [],
+            'favourite' => true,
+        ],
+
+        'out_of_stock' => [
+            'label' => 'Out of Stock',
+            'color' => '#e11d48',
+            'mailers' => [],
+            'notifications' => [],
+            'favourite' => false,
+        ],
+
+        'packed' => [
+            'label' => 'Packed',
+            'color' => '#8b5cf6',
+            'mailers' => [],
+            'notifications' => [],
+            'favourite' => true,
+        ],
+
+        'shipped' => [
+            'label' => 'Shipped',
+            'color' => '#6366f1',
+            'mailers' => [],
+            'notifications' => [],
+            'favourite' => true,
+        ],
+
+        'out_for_delivery' => [
+            'label' => 'Out for Delivery',
+            'color' => '#4f46e5',
+            'mailers' => [],
+            'notifications' => [],
+            'favourite' => true,
+        ],
+
+        'delivered' => [
+            'label' => 'Delivered',
+            'color' => '#10b981',
+            'mailers' => [],
+            'notifications' => [],
+            'favourite' => true,
+        ],
+
+        'delivery_failed' => [
+            'label' => 'Delivery Failed',
+            'color' => '#f43f5e',
+            'mailers' => [],
+            'notifications' => [],
+            'favourite' => false,
+        ],
+
+        'returning' => [
+            'label' => 'Returning',
+            'color' => '#ea580c',
+            'mailers' => [],
+            'notifications' => [],
+            'favourite' => false,
+        ],
+
+        'return_requested' => [
+            'label' => 'Return Requested',
+            'color' => '#d97706',
+            'mailers' => [],
+            'notifications' => [],
+            'favourite' => false,
+        ],
+
+        'returned' => [
+            'label' => 'Returned',
+            'color' => '#64748b',
+            'mailers' => [],
+            'notifications' => [],
+            'favourite' => false,
+        ],
+
+        'settled' => [
+            'label' => 'Settled',
+            'color' => '#059669',
+            'mailers' => [],
+            'notifications' => [],
+            'favourite' => true,
+        ],
+
         'awaiting-payment' => [
             'label' => 'Awaiting Payment',
             'color' => '#848a8c',
             'mailers' => [],
             'notifications' => [],
-            'favourite' => true,
-        ],
-
-        'payment-offline' => [
-            'label' => 'Payment Offline',
-            'color' => '#0A81D7',
-            'mailers' => [],
-            'notifications' => [],
-            'favourite' => true,
-        ],
-
-        'payment-received' => [
-            'label' => 'Payment Received',
-            'color' => '#6a67ce',
-            'mailers' => [],
-            'notifications' => [],
-            'favourite' => true,
-        ],
-
-        'dispatched' => [
-            'label' => 'Dispatched',
-            'mailers' => [],
-            'notifications' => [],
-            'favourite' => true,
+            'favourite' => false,
         ],
 
         'cod-confirmed' => [
@@ -104,7 +225,7 @@ return [
             'color' => '#10B981',
             'mailers' => [],
             'notifications' => [],
-            'favourite' => true,
+            'favourite' => false,
         ],
 
     ],

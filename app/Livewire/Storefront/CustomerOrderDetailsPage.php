@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire\Storefront;
 
 use App\Models\Customer;
+use App\Models\OrderEvent;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
@@ -55,8 +56,15 @@ class CustomerOrderDetailsPage extends Component
 
     public function render(): View
     {
+        $order = $this->getOrderProperty();
+        $events = OrderEvent::query()
+            ->where('order_id', $order->id)
+            ->orderBy('created_at', 'asc')
+            ->get();
+
         return view('livewire.storefront.customer-order-details-page', [
-            'order' => $this->getOrderProperty(),
+            'order' => $order,
+            'events' => $events,
             'pageTitle' => 'تفاصيل الطلب '.$this->reference,
         ]);
     }

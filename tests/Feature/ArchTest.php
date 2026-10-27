@@ -39,3 +39,37 @@ test('all tenant models use BelongsToTenant trait', function () {
         expect($traits)->toHaveKey(BelongsToTenant::class);
     }
 });
+
+test('no direct order status mutation outside OrderTransitionService', function () {
+    $dirs = [
+        app_path('Http'),
+        app_path('Livewire'),
+        app_path('Filament'),
+        app_path('Domain'),
+    ];
+
+    foreach ($dirs as $dir) {
+        if (! is_dir($dir)) {
+            continue;
+        }
+
+        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir));
+        foreach ($iterator as $file) {
+            /** @var SplFileInfo $file */
+            if (! $file->isFile() || $file->getExtension() !== 'php') {
+                continue;
+            }
+
+            // Exclude OrderTransitionService itself
+            if (str_contains($file->getPathname(), 'OrderTransitionService.php')) {
+                continue;
+            }
+
+            $content = (string) file_get_contents($file->getPathname());
+
+            // Reject direct status assignments or updates on order variables
+            expect($content)->not->toMatch('/\$order->status\s*=\s*/');
+            expect($content)->not->toMatch('/\$order->update\(\[\s*[\'"]status[\'"]\s*=>/');
+        }
+    }
+});

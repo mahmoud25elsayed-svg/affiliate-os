@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Domain\Orders\Exceptions\IllegalOrderStateMutationException;
+use App\Domain\Orders\Services\OrderTransitionService;
 use App\Domain\Storefront\Services\StorefrontCacheService;
 use App\Models\WholesalePrice;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -10,6 +12,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Lunar\Admin\Support\Facades\LunarPanel;
 use Lunar\Models\Collection;
+use Lunar\Models\Order;
 use Lunar\Models\Product;
 use Lunar\Models\ProductVariant;
 
@@ -49,5 +52,12 @@ class AppServiceProvider extends ServiceProvider
         Product::deleted(fn () => StorefrontCacheService::flush());
         Collection::saved(fn () => StorefrontCacheService::flush());
         Collection::deleted(fn () => StorefrontCacheService::flush());
+
+        // Golden rule: direct order status updates outside OrderTransitionService are strictly prohibited
+        Order::updating(function (Order $order): void {
+            if ($order->isDirty('status') && ! OrderTransitionService::$isTransitioning) {
+                throw new IllegalOrderStateMutationException;
+            }
+        });
     }
 }
