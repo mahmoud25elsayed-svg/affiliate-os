@@ -65,6 +65,11 @@ class OrderTransitions
                 'allowed_actors' => ['system', 'staff'],
                 'allowed_roles' => ['owner', 'manager', 'orders', 'catalog'],
             ],
+            OrderStatus::OUT_OF_STOCK->value => [
+                'requires_reason' => true,
+                'allowed_actors' => ['system', 'staff'],
+                'allowed_roles' => ['owner', 'manager', 'orders', 'catalog'],
+            ],
             OrderStatus::CANCELLED_BY_CUSTOMER->value => [
                 'requires_reason' => true,
                 'allowed_actors' => ['system', 'staff', 'customer', 'affiliate'],
