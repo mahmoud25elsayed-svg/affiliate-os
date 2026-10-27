@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Domain\Customer\Contracts\CustomerWalletServiceInterface;
+use App\Domain\Customer\Services\CustomerWalletService;
 use App\Domain\Orders\Exceptions\IllegalOrderStateMutationException;
 use App\Domain\Orders\Services\OrderTransitionService;
 use App\Domain\Storefront\Services\StorefrontCacheService;
@@ -24,6 +26,11 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         LunarPanel::register();
+
+        $this->app->singleton(
+            CustomerWalletServiceInterface::class,
+            CustomerWalletService::class
+        );
     }
 
     /**

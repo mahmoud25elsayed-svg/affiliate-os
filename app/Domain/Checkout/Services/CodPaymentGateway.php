@@ -17,7 +17,7 @@ class CodPaymentGateway implements PaymentGatewayInterface
 
     public function getNameAr(): string
     {
-        return 'الدفع عند الاستلام (COD)';
+        return 'الدفع نقدًا عند الاستلام (COD)';
     }
 
     /**

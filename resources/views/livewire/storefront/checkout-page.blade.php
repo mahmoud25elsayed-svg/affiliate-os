@@ -103,19 +103,32 @@
                         </div>
                     </div>
 
-                    <!-- COD Option -->
-                    <label class="relative flex items-center gap-4 p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50/20 cursor-pointer">
-                        <input type="radio" wire:model.live="payment_method" value="cod" class="w-5 h-5 text-emerald-600 focus:ring-emerald-500">
-                        <div class="flex-1">
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm font-bold text-slate-900">الدفع نقدًا عند الاستلام (COD)</span>
-                                @if($settings->allow_cod && $settings->cod_fee_minor > 0)
-                                    <span class="text-xs font-semibold text-slate-500">+ {{ $codFeeDecimal }} ج.م رسم دفع</span>
-                                @endif
-                            </div>
-                            <p class="text-xs text-slate-500 mt-0.5">ادفع نقدًا لمندوب التوصيل بعد استلام ومعاينة طلبك بأمان.</p>
-                        </div>
-                    </label>
+                    <div class="space-y-3">
+                        @foreach($activeGateways as $gatewayKey => $gatewayName)
+                            <label class="relative flex items-center gap-4 p-4 rounded-xl border-2 transition cursor-pointer {{ $payment_method === $gatewayKey ? 'border-emerald-500 bg-emerald-50/20 shadow-sm' : 'border-slate-100 hover:border-slate-200' }}">
+                                <input type="radio" wire:model.live="payment_method" value="{{ $gatewayKey }}" class="w-5 h-5 text-emerald-600 focus:ring-emerald-500">
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm font-bold text-slate-900">{{ $gatewayName }}</span>
+                                        @if($gatewayKey === 'cod' && $settings->allow_cod && $settings->cod_fee_minor > 0)
+                                            <span class="text-xs font-semibold text-slate-500">+ {{ $codFeeDecimal }} ج.م رسم دفع</span>
+                                        @elseif($gatewayKey === 'paymob')
+                                            <span class="text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">كروت ومحافظ وإنستاباي</span>
+                                        @endif
+                                    </div>
+                                    <p class="text-xs text-slate-500 mt-0.5">
+                                        @if($gatewayKey === 'cod')
+                                            ادفع نقدًا لمندوب التوصيل بعد استلام ومعاينة طلبك بأمان.
+                                        @elseif($gatewayKey === 'paymob')
+                                            دفع فوري آمن ومباشر عبر الفيزا والماستركارد أو المحافظ الإلكترونية.
+                                        @else
+                                            دفع إلكتروني فوري ومباشر.
+                                        @endif
+                                    </p>
+                                </div>
+                            </label>
+                        @endforeach
+                    </div>
                 </div>
             </div>
 

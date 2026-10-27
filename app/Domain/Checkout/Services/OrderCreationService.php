@@ -280,7 +280,18 @@ class OrderCreationService
 
             // 13. Process payment through gateway
             $gateway = $this->paymentManager->get($payload->payment_method);
-            $gateway->process($order);
+            $paymentResult = $gateway->process($order);
+
+            if ($paymentResult->isRedirect && $paymentResult->redirectUrl !== null) {
+                /** @var mixed $rawMeta */
+                $rawMeta = $order->meta;
+                /** @var array<string, mixed> $currentMeta */
+                $currentMeta = is_array($rawMeta) ? $rawMeta : (is_object($rawMeta) && method_exists($rawMeta, 'toArray') ? $rawMeta->toArray() : []);
+                $currentMeta['payment_redirect_url'] = $paymentResult->redirectUrl;
+                $currentMeta['payment_transaction_ref'] = $paymentResult->transactionRef;
+                $order->meta = $currentMeta;
+                $order->save();
+            }
 
             $tenantId = tenant('id');
             $tenantIdString = is_string($tenantId) ? $tenantId : (string) ($order->getAttribute('tenant_id') ?? 'default');
