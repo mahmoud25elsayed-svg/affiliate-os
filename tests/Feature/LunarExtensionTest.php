@@ -6,11 +6,15 @@ use App\Models\Affiliate;
 use App\Models\Tenant;
 use App\Models\WholesalePrice;
 use Lunar\Base\ValueObjects\Cart\TaxBreakdown;
+use Lunar\FieldTypes\Text;
 use Lunar\Models\Cart;
 use Lunar\Models\Channel;
 use Lunar\Models\Currency;
 use Lunar\Models\Order;
+use Lunar\Models\Product;
+use Lunar\Models\ProductType;
 use Lunar\Models\ProductVariant;
+use Lunar\Models\TaxClass;
 use Tests\TestCase;
 
 class LunarExtensionTest extends TestCase
@@ -18,6 +22,9 @@ class LunarExtensionTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->ensureTenantExists('tenant1');
+        $this->ensureTenantExists('tenant2');
 
         // Register dynamic relation on Lunar ProductVariant without touching vendor
         ProductVariant::resolveRelationUsing('wholesalePrice', function ($variant) {
@@ -31,6 +38,22 @@ class LunarExtensionTest extends TestCase
 
         $tenant->run(function () {
             $variant = ProductVariant::first();
+            if (! $variant) {
+                $productType = ProductType::first() ?? ProductType::create(['name' => 'Default']);
+                $taxClass = TaxClass::first() ?? TaxClass::create(['name' => 'Default']);
+                $product = Product::create([
+                    'product_type_id' => $productType->id,
+                    'status' => 'published',
+                    'attribute_data' => [
+                        'name' => new Text('Test Product'),
+                    ],
+                ]);
+                $variant = ProductVariant::create([
+                    'product_id' => $product->id,
+                    'sku' => 'SKU-TEST-WHOLESALE',
+                    'tax_class_id' => $taxClass->id,
+                ]);
+            }
             $this->assertNotNull($variant);
 
             // Create custom wholesale price

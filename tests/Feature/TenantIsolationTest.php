@@ -14,9 +14,9 @@ class TenantIsolationTest extends TestCase
 {
     public function test_tenants_have_complete_data_isolation_for_lunar_products(): void
     {
-        $tenant1 = Tenant::find('tenant1');
-        $tenant2 = Tenant::find('tenant2');
-        $tenant3 = Tenant::find('tenant3');
+        $tenant1 = $this->ensureTenantExists('tenant1');
+        $tenant2 = $this->ensureTenantExists('tenant2');
+        $tenant3 = $this->ensureTenantExists('tenant3');
 
         $this->assertNotNull($tenant1);
         $this->assertNotNull($tenant2);
