@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\CustomerReputation;
 use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\SubscriptionEvent;
@@ -24,6 +25,7 @@ test('all tenant models use BelongsToTenant trait', function () {
         Subscription::class,
         SubscriptionEvent::class,
         SubscriptionInvoice::class,
+        CustomerReputation::class,
     ];
 
     $modelFiles = glob(app_path('Models/*.php')) ?: [];
