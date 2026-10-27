@@ -66,15 +66,46 @@
 
             <!-- Shipping & Details -->
             <div class="space-y-6">
-                <!-- Status Badge -->
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                    <h2 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">حالة الطلب</h2>
+                <!-- Status Badge & Simplified Timeline -->
+                @php
+                    $statusEnum = \App\Domain\Orders\Enums\OrderStatus::tryFrom($order->status);
+                @endphp
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-4">
+                    <h2 class="text-xs font-bold uppercase tracking-wider text-gray-400">متابعة مسار الطلب</h2>
+
                     <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
+                        <span class="text-xs text-emerald-600 block mb-0.5">الحالة الحالية:</span>
                         <span class="text-sm font-bold text-emerald-800">
-                            {{ $order->status }}
+                            {{ $statusEnum?->customerLabel() ?? $order->status }}
                         </span>
                     </div>
-                    <p class="text-xs text-gray-500 mt-2">طريقة الدفع: {{ $order->payment_method === 'cod' ? 'الدفع عند الاستلام' : 'بطاقة إلكترونية' }}</p>
+
+                    <!-- Customer Timeline -->
+                    <div class="pt-3 border-t border-gray-100">
+                        <h3 class="text-xs font-bold text-gray-700 mb-3">سجل التحديثات:</h3>
+                        @if ($events->isEmpty())
+                            <p class="text-xs text-gray-400">جاري معالجة وتحديث مسار الطلب...</p>
+                        @else
+                            <ol class="relative border-r border-gray-200 space-y-4 mr-2">
+                                @foreach ($events as $event)
+                                    @php
+                                        $eventStatusEnum = \App\Domain\Orders\Enums\OrderStatus::tryFrom($event->to_status);
+                                    @endphp
+                                    <li class="mr-3">
+                                        <div class="absolute w-2.5 h-2.5 bg-emerald-500 rounded-full mt-1 -mr-1.5 border border-white"></div>
+                                        <p class="text-xs font-semibold text-gray-800">
+                                            {{ $eventStatusEnum?->customerLabel() ?? $event->to_status }}
+                                        </p>
+                                        <span class="text-[10px] text-gray-400 block mt-0.5">
+                                            {{ $event->created_at->translatedFormat('d M Y - h:i A') }}
+                                        </span>
+                                    </li>
+                                @endforeach
+                            </ol>
+                        @endif
+                    </div>
+
+                    <p class="text-xs text-gray-500 pt-2 border-t border-gray-100">طريقة الدفع: {{ $order->payment_method === 'cod' ? 'الدفع عند الاستلام' : 'بطاقة إلكترونية' }}</p>
                 </div>
 
                 <!-- Shipping Address -->

@@ -5,12 +5,19 @@ declare(strict_types=1);
 namespace App\Domain\Checkout\Services;
 
 use App\Domain\Checkout\DTOs\CheckoutPayload;
+use App\Domain\Orders\DTOs\OrderActor;
+use App\Domain\Orders\Enums\OrderStatus;
+use App\Domain\Orders\Events\OrderSubmitted;
+use App\Domain\Orders\Services\OrderTransitionService;
 use App\Models\Coupon;
+use App\Models\OrderEvent;
+use App\Support\Enums\ReasonCode;
 use App\Support\Idempotency\IdempotencyService;
 use App\Support\Phone\EgyptianPhone;
 use App\Support\Settings\ShippingSettings;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Lunar\Base\ValueObjects\Cart\TaxBreakdown;
@@ -28,7 +35,8 @@ class OrderCreationService
         protected ShippingCalculatorService $shippingCalculator,
         protected CouponService $couponService,
         protected SpamProtectionService $spamProtection,
-        protected PaymentManager $paymentManager
+        protected PaymentManager $paymentManager,
+        protected OrderTransitionService $orderTransitionService
     ) {}
 
     public function create(CheckoutPayload $payload): Order
@@ -193,7 +201,7 @@ class OrderCreationService
             $order = Order::create([
                 'storefront_customer_id' => $storefrontCustomerId,
                 'channel_id' => $channelId,
-                'status' => 'pending_confirmation',
+                'status' => OrderStatus::SUBMITTED->value,
                 'reference' => $publicRef,
                 'customer_reference' => $publicRef,
                 'sub_total' => $subtotalMinor,
@@ -274,9 +282,52 @@ class OrderCreationService
             $gateway = $this->paymentManager->get($payload->payment_method);
             $gateway->process($order);
 
+            $tenantId = tenant('id');
+            $tenantIdString = is_string($tenantId) ? $tenantId : (string) ($order->getAttribute('tenant_id') ?? 'default');
+
+            // 14. Initial submission audit event
+            $submittedEvent = OrderEvent::create([
+                'tenant_id' => $tenantIdString,
+                'order_id' => $order->id,
+                'from_status' => null,
+                'to_status' => OrderStatus::SUBMITTED->value,
+                'reason_code' => null,
+                'actor_type' => 'customer',
+                'actor_id' => $storefrontCustomerId !== null ? (string) $storefrontCustomerId : null,
+                'actor_name' => $payload->customer_name,
+                'note' => 'تم استلام الطلب من المتجر الإلكتروني',
+                'meta' => [
+                    'ip' => request()->ip(),
+                    'quality_result' => $spamResult->status,
+                ],
+                'created_at' => now(),
+            ]);
+
+            Event::dispatch(new OrderSubmitted($order, $submittedEvent, null, OrderActor::customer($storefrontCustomerId, $payload->customer_name)));
+
+            // 15. Transition based on Quality Gate check
+            if ($spamResult->status === 'reject') {
+                $this->orderTransitionService->transition(
+                    $order,
+                    OrderStatus::REJECTED_QUALITY,
+                    ReasonCode::SUSPECTED_FRAUD,
+                    OrderActor::system(),
+                    ['flags' => $spamResult->flags],
+                    $spamResult->reasonAr
+                );
+            } else {
+                $this->orderTransitionService->transition(
+                    $order,
+                    OrderStatus::PENDING_CONFIRMATION,
+                    null,
+                    OrderActor::system(),
+                    ['flags' => $spamResult->flags]
+                );
+            }
+
             Log::info("Order placed: {$order->reference} | Phone: {$phone->e164} | Total: {$totalMinor} piasters | Quality: {$spamResult->status}");
 
-            return $order;
+            return $order->fresh() ?? $order;
         });
     }
 }
