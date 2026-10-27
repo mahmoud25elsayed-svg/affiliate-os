@@ -11,6 +11,14 @@ class Tenant extends BaseTenant
 {
     use HasDomains;
 
+    public const STATUS_ACTIVE = 'active';
+
+    public const STATUS_SUSPENDED = 'suspended';
+
+    public const STATUS_PROVISIONING = 'provisioning';
+
+    public const STATUS_ARCHIVED = 'archived';
+
     /**
      * @return list<string>
      */
