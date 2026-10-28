@@ -126,4 +126,3 @@ class AffiliateKycService
         return false;
     }
 }
-

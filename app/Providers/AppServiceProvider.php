@@ -7,6 +7,7 @@ use App\Domain\Customer\Services\CustomerWalletService;
 use App\Domain\Orders\Exceptions\IllegalOrderStateMutationException;
 use App\Domain\Orders\Services\OrderTransitionService;
 use App\Domain\Storefront\Services\StorefrontCacheService;
+use App\Models\Affiliate;
 use App\Models\WholesalePrice;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -52,6 +53,10 @@ class AppServiceProvider extends ServiceProvider
 
         ProductVariant::resolveRelationUsing('wholesalePrice', function (ProductVariant $variant) {
             return $variant->hasOne(WholesalePrice::class, 'product_variant_id');
+        });
+
+        Order::resolveRelationUsing('affiliate', function (Order $order) {
+            return $order->belongsTo(Affiliate::class, 'affiliate_id');
         });
 
         // Storefront cache invalidation hooks

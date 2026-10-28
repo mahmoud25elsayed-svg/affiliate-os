@@ -26,6 +26,11 @@ class OrderTransitions
                 'allowed_actors' => ['system', 'staff'],
                 'allowed_roles' => ['owner', 'manager', 'orders', 'call_center'],
             ],
+            OrderStatus::CANCELLED_BY_CUSTOMER->value => [
+                'requires_reason' => true,
+                'allowed_actors' => ['system', 'staff', 'customer', 'affiliate'],
+                'allowed_roles' => ['owner', 'manager', 'orders', 'support', 'call_center'],
+            ],
         ],
 
         OrderStatus::PENDING_CONFIRMATION->value => [
