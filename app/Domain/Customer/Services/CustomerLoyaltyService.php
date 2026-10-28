@@ -100,7 +100,9 @@ class CustomerLoyaltyService
      */
     public function awardPointsForOrder(Order $order): ?CustomerLoyaltyTransaction
     {
-        $customerId = $order->customer_id;
+        /** @var int|null $storefrontCustomerId */
+        $storefrontCustomerId = $order->getAttribute('storefront_customer_id');
+        $customerId = $order->customer_id ?? $storefrontCustomerId;
         if (! $customerId) {
             return null;
         }
@@ -137,29 +139,25 @@ class CustomerLoyaltyService
             );
 
             // Post financial ledger entry
-            /** @var LunarCustomer|null $lunarCustomer */
-            $lunarCustomer = LunarCustomer::find($customerId);
-            if ($lunarCustomer instanceof LunarCustomer) {
-                $discountMinor = $this->calculateDiscountFromPoints($points);
-                if ($discountMinor > 0) {
-                    $loyaltyAccount = $this->accountResolver->getCustomerLoyaltyAccount($lunarCustomer);
-                    $expenseAccount = $this->accountResolver->getStoreLoyaltyExpenseAccount();
+            $discountMinor = $this->calculateDiscountFromPoints($points);
+            if ($discountMinor > 0) {
+                $loyaltyAccount = $this->accountResolver->getCustomerLoyaltyAccount($customerId);
+                $expenseAccount = $this->accountResolver->getStoreLoyaltyExpenseAccount();
 
-                    $entryData = new EntryData(
-                        type: 'loyalty_points_earned',
-                        idempotencyKey: "loyalty_points_order_{$order->id}",
-                        description: "استحقاق نقاط ولاء العميل للطلب #{$order->reference} ({$points} نقطة)",
-                        lines: [
-                            new LedgerLineData(account: $loyaltyAccount, amountMinor: $discountMinor),
-                            new LedgerLineData(account: $expenseAccount, amountMinor: -$discountMinor),
-                        ],
-                        refType: Order::class,
-                        refId: (int) $order->id,
-                        createdBy: null
-                    );
+                $entryData = new EntryData(
+                    type: 'loyalty_points_earned',
+                    idempotencyKey: "loyalty_points_order_{$order->id}",
+                    description: "استحقاق نقاط ولاء العميل للطلب #{$order->reference} ({$points} نقطة)",
+                    lines: [
+                        new LedgerLineData(account: $loyaltyAccount, amountMinor: $discountMinor),
+                        new LedgerLineData(account: $expenseAccount, amountMinor: -$discountMinor),
+                    ],
+                    refType: Order::class,
+                    refId: (int) $order->id,
+                    createdBy: null
+                );
 
-                    $this->ledger->post($entryData);
-                }
+                $this->ledger->post($entryData);
             }
 
             return $transaction;

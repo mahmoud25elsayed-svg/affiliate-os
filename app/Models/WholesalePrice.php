@@ -16,9 +16,12 @@ use Lunar\Models\ProductVariant;
  * @property int $id
  * @property string $tenant_id
  * @property int $product_variant_id
+ * @property int|null $supplier_id
  * @property int|null $wholesale_price_minor
  * @property int|null $min_price_minor
  * @property int|null $max_price_minor
+ * @property int|null $min_commission_minor
+ * @property int|null $max_commission_minor
  * @property int|null $compare_at_price_minor
  * @property bool $is_digital
  * @property string|null $digital_file_path
@@ -27,6 +30,7 @@ use Lunar\Models\ProductVariant;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read ProductVariant $variant
+ * @property-read Supplier|null $supplier
  */
 class WholesalePrice extends Model
 {
@@ -43,9 +47,12 @@ class WholesalePrice extends Model
     protected $fillable = [
         'tenant_id',
         'product_variant_id',
+        'supplier_id',
         'wholesale_price_minor',
         'min_price_minor',
         'max_price_minor',
+        'min_commission_minor',
+        'max_commission_minor',
         'compare_at_price_minor',
         'is_digital',
         'digital_file_path',
@@ -58,9 +65,12 @@ class WholesalePrice extends Model
      */
     protected $casts = [
         'product_variant_id' => 'integer',
+        'supplier_id' => 'integer',
         'wholesale_price_minor' => 'integer',
         'min_price_minor' => 'integer',
         'max_price_minor' => 'integer',
+        'min_commission_minor' => 'integer',
+        'max_commission_minor' => 'integer',
         'compare_at_price_minor' => 'integer',
         'is_digital' => 'boolean',
     ];
@@ -104,6 +114,14 @@ class WholesalePrice extends Model
     public function variant(): BelongsTo
     {
         return $this->belongsTo(ProductVariant::class, 'product_variant_id');
+    }
+
+    /**
+     * @return BelongsTo<Supplier, $this>
+     */
+    public function supplier(): BelongsTo
+    {
+        return $this->belongsTo(Supplier::class, 'supplier_id');
     }
 
     public function wholesalePriceMoney(): Money

@@ -29,8 +29,10 @@ use App\Http\Controllers\Store\StoreAffiliateSettingsController;
 use App\Http\Controllers\Store\StoreCallCenterController;
 use App\Http\Controllers\Store\StoreCodRemittanceController;
 use App\Http\Controllers\Store\StoreCustomerWalletController;
+use App\Http\Controllers\Store\StoreKpiDashboardController;
 use App\Http\Controllers\Store\StorePayoutManagementController;
 use App\Http\Controllers\Store\StoreShipmentController;
+use App\Http\Controllers\Store\StoreSupplierController;
 use App\Http\Controllers\Storefront\AffiliateReferralController;
 use App\Http\Controllers\Storefront\CategoryController;
 use App\Http\Controllers\Storefront\CheckoutSuccessController;
@@ -191,6 +193,17 @@ Route::middleware([
             Route::get('/{wallet}', [StoreCustomerWalletController::class, 'show'])->name('store.wallets.show');
             Route::post('/{wallet}/adjust-wallet', [StoreCustomerWalletController::class, 'adjustWallet'])->name('store.wallets.adjust-wallet');
             Route::post('/{wallet}/adjust-loyalty', [StoreCustomerWalletController::class, 'adjustLoyalty'])->name('store.wallets.adjust-loyalty');
+        });
+
+        // Operational KPI Dashboard (P27)
+        Route::get('/kpis', [StoreKpiDashboardController::class, 'index'])->name('store.kpis.index');
+
+        // Suppliers & Batches Gateway (P27)
+        Route::prefix('suppliers')->group(function () {
+            Route::get('/', [StoreSupplierController::class, 'index'])->name('store.suppliers.index');
+            Route::post('/', [StoreSupplierController::class, 'store'])->name('store.suppliers.store');
+            Route::get('/{supplier}', [StoreSupplierController::class, 'show'])->name('store.suppliers.show');
+            Route::post('/{supplier}/batches', [StoreSupplierController::class, 'storeBatch'])->name('store.suppliers.batches.store');
         });
     });
 

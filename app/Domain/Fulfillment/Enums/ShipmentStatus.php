@@ -60,4 +60,3 @@ enum ShipmentStatus: string
         };
     }
 }
-

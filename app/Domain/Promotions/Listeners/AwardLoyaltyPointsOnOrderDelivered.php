@@ -19,7 +19,7 @@ class AwardLoyaltyPointsOnOrderDelivered
         try {
             $this->loyaltyService->awardPointsForOrder($event->order);
         } catch (\Throwable $e) {
-            Log::error("Failed to award loyalty points for delivered order [{$event->order->id}]: " . $e->getMessage());
+            Log::error("Failed to award loyalty points for delivered order [{$event->order->id}]: ".$e->getMessage());
         }
     }
 }

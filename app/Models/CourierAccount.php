@@ -71,4 +71,3 @@ class CourierAccount extends Model
         return $this->hasMany(Shipment::class, 'courier_account_id');
     }
 }
-

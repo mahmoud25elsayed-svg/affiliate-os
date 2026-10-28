@@ -67,4 +67,3 @@ class CourierRule extends Model
         return $this->belongsTo(Governorate::class, 'governorate_id');
     }
 }
-

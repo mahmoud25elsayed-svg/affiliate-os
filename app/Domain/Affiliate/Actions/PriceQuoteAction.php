@@ -49,14 +49,23 @@ class PriceQuoteAction
         // 1. Combine Product Bounds with Merchant Affiliate Program Settings
         $programSettings = AffiliateProgramSettings::load();
 
+        $minComm = (int) ($wholesalePrice->min_commission_minor ?? $programSettings->min_commission_minor);
+        $maxComm = (int) ($wholesalePrice->max_commission_minor ?? $programSettings->max_commission_minor);
+
+        $allowedMinPerUnit = $minComm > 0 ? (int) ceil($minComm / $quantity) : $programSettings->min_selling_markup_minor;
+        $allowedMaxPerUnit = $maxComm > 0 ? (int) floor($maxComm / $quantity) : $programSettings->max_selling_markup_minor;
+
+        $effectiveMinMarkup = max($programSettings->min_selling_markup_minor, $allowedMinPerUnit);
+        $effectiveMaxMarkup = min($programSettings->max_selling_markup_minor, $allowedMaxPerUnit);
+
         $effectiveMinUnitMinor = max(
             $variantMinPriceMinor,
-            $wholesaleUnitMinor + $programSettings->min_selling_markup_minor
+            $wholesaleUnitMinor + $effectiveMinMarkup
         );
 
         $effectiveMaxUnitMinor = min(
             $variantMaxPriceMinor,
-            $wholesaleUnitMinor + $programSettings->max_selling_markup_minor
+            $wholesaleUnitMinor + $effectiveMaxMarkup
         );
 
         if ($effectiveMaxUnitMinor < $effectiveMinUnitMinor) {

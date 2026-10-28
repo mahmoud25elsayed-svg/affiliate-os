@@ -6,6 +6,8 @@ namespace App\Domain\Finance\Services;
 
 use App\Models\Account;
 use App\Models\Affiliate;
+use App\Models\Customer as AppCustomer;
+use App\Models\Supplier;
 use InvalidArgumentException;
 use Lunar\Models\Customer;
 
@@ -38,6 +40,12 @@ class AccountResolver
     public const KIND_SHIPPING_EXPENSE = 'shipping_expense';
 
     public const KIND_DISCREPANCY = 'discrepancy';
+
+    public const KIND_SUPPLIER_PAYABLE = 'supplier_payable';
+
+    public const KIND_INVENTORY = 'inventory';
+
+    public const KIND_COGS = 'cogs';
 
     /**
      * Resolve or create an affiliate account.
@@ -275,9 +283,11 @@ class AccountResolver
         return $account;
     }
 
-    public function getCustomerWalletAccount(Customer $customer): Account
+    public function getCustomerWalletAccount(Customer|AppCustomer|int $customer): Account
     {
-        $code = "customer:{$customer->id}:wallet";
+        $customerId = is_int($customer) ? $customer : (int) $customer->id;
+        $ownerType = $customer instanceof Customer ? Customer::class : AppCustomer::class;
+        $code = "customer:{$customerId}:wallet";
         $tenantId = tenant('id') ? (string) tenant('id') : 'central';
 
         /** @var Account $account */
@@ -287,10 +297,10 @@ class AccountResolver
                 'code' => $code,
             ],
             [
-                'owner_type' => Customer::class,
-                'owner_id' => $customer->id,
+                'owner_type' => $ownerType,
+                'owner_id' => $customerId,
                 'kind' => self::KIND_WALLET,
-                'name' => "محفظة رصيد العميل #{$customer->id}",
+                'name' => "محفظة رصيد العميل #{$customerId}",
                 'currency' => 'EGP',
                 'balance_minor' => 0,
             ]
@@ -299,9 +309,11 @@ class AccountResolver
         return $account;
     }
 
-    public function getCustomerLoyaltyAccount(Customer $customer): Account
+    public function getCustomerLoyaltyAccount(Customer|AppCustomer|int $customer): Account
     {
-        $code = "customer:{$customer->id}:loyalty";
+        $customerId = is_int($customer) ? $customer : (int) $customer->id;
+        $ownerType = $customer instanceof Customer ? Customer::class : AppCustomer::class;
+        $code = "customer:{$customerId}:loyalty";
         $tenantId = tenant('id') ? (string) tenant('id') : 'central';
 
         /** @var Account $account */
@@ -311,10 +323,10 @@ class AccountResolver
                 'code' => $code,
             ],
             [
-                'owner_type' => Customer::class,
-                'owner_id' => $customer->id,
+                'owner_type' => $ownerType,
+                'owner_id' => $customerId,
                 'kind' => self::KIND_LOYALTY,
-                'name' => "نقاط ولاء العميل #{$customer->id}",
+                'name' => "نقاط ولاء العميل #{$customerId}",
                 'currency' => 'EGP',
                 'balance_minor' => 0,
             ]
@@ -359,6 +371,74 @@ class AccountResolver
             [
                 'kind' => self::KIND_WALLET,
                 'name' => 'التزامات أرصدة ومحافظ العملاء',
+                'currency' => 'EGP',
+                'balance_minor' => 0,
+            ]
+        );
+
+        return $account;
+    }
+
+    public function getSupplierPayableAccount(Supplier $supplier): Account
+    {
+        $code = "supplier:{$supplier->id}:payable";
+        $tenantId = tenant('id') ? (string) tenant('id') : 'central';
+
+        /** @var Account $account */
+        $account = Account::firstOrCreate(
+            [
+                'tenant_id' => $tenantId,
+                'code' => $code,
+            ],
+            [
+                'owner_type' => Supplier::class,
+                'owner_id' => $supplier->id,
+                'kind' => self::KIND_SUPPLIER_PAYABLE,
+                'name' => "مستحقات المورد: {$supplier->name}",
+                'currency' => 'EGP',
+                'balance_minor' => 0,
+            ]
+        );
+
+        return $account;
+    }
+
+    public function getStoreInventoryAccount(): Account
+    {
+        $code = 'store:inventory';
+        $tenantId = tenant('id') ? (string) tenant('id') : 'central';
+
+        /** @var Account $account */
+        $account = Account::firstOrCreate(
+            [
+                'tenant_id' => $tenantId,
+                'code' => $code,
+            ],
+            [
+                'kind' => self::KIND_INVENTORY,
+                'name' => 'حساب مخزون البضاعة للمتجر',
+                'currency' => 'EGP',
+                'balance_minor' => 0,
+            ]
+        );
+
+        return $account;
+    }
+
+    public function getStoreCogsAccount(): Account
+    {
+        $code = 'store:cogs';
+        $tenantId = tenant('id') ? (string) tenant('id') : 'central';
+
+        /** @var Account $account */
+        $account = Account::firstOrCreate(
+            [
+                'tenant_id' => $tenantId,
+                'code' => $code,
+            ],
+            [
+                'kind' => self::KIND_COGS,
+                'name' => 'تكلفة البضاعة المباعة (COGS)',
                 'currency' => 'EGP',
                 'balance_minor' => 0,
             ]

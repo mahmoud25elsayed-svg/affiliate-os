@@ -30,4 +30,3 @@ interface CourierDriverInterface
      */
     public function getWaybillPdf(string $trackingNumber): string;
 }
-
