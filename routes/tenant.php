@@ -22,6 +22,7 @@ use App\Http\Controllers\Affiliate\App\AppLinksController;
 use App\Http\Controllers\Affiliate\App\AppOrderController;
 use App\Http\Controllers\Affiliate\App\AppProfileController;
 use App\Http\Controllers\Affiliate\App\AppWalletController;
+use App\Http\Controllers\Api\OpenApiDocsController;
 use App\Http\Controllers\Store\AffiliateKycDocumentController;
 use App\Http\Controllers\Store\CourierWebhookController;
 use App\Http\Controllers\Store\OrderDocumentController;
@@ -38,6 +39,7 @@ use App\Http\Controllers\Store\StoreThemeController;
 use App\Http\Controllers\Storefront\AffiliateReferralController;
 use App\Http\Controllers\Storefront\CategoryController;
 use App\Http\Controllers\Storefront\CheckoutSuccessController;
+use App\Http\Controllers\Storefront\EmbedOrderController;
 use App\Http\Controllers\Storefront\HomeController;
 use App\Http\Controllers\Storefront\PageController;
 use App\Http\Controllers\Storefront\ProductController;
@@ -138,6 +140,16 @@ Route::middleware([
     Route::get('/privacy', [PageController::class, 'privacy'])->name('storefront.pages.privacy');
     Route::get('/shipping', [PageController::class, 'shipping'])->name('storefront.pages.shipping');
     Route::get('/pages/{slug}', [PageController::class, 'show'])->name('storefront.pages.show');
+
+    // Developer API Documentation (P29)
+    Route::get('/docs/api', [OpenApiDocsController::class, 'ui'])->name('docs.api');
+
+    // Embeddable Order Form for Landing Pages (P29)
+    Route::prefix('embed/order')->group(function () {
+        Route::post('/quote', [EmbedOrderController::class, 'quote'])->name('storefront.embed.quote');
+        Route::get('/{product}', [EmbedOrderController::class, 'show'])->name('storefront.embed.show');
+        Route::post('/{product}', [EmbedOrderController::class, 'store'])->name('storefront.embed.store');
+    });
 
     // SEO Routes
     Route::get('/sitemap.xml', SitemapController::class)->name('storefront.sitemap');

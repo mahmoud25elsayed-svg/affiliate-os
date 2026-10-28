@@ -14,11 +14,18 @@ class RequireIdempotencyKey
     /**
      * @param  Closure(Request): Response  $next
      */
-    public function handle(Request $request, Closure $next, int $ttlSeconds = 86400): Response
+    public function handle(Request $request, Closure $next, string $mode = 'optional', int $ttlSeconds = 86400): Response
     {
-        $key = $request->header('Idempotency-Key');
+        $key = $request->header('Idempotency-Key') ?? $request->header('X-Idempotency-Key');
 
         if (! is_string($key) || trim($key) === '') {
+            if ($mode === 'strict' || in_array($request->method(), ['POST', 'PUT', 'PATCH', 'DELETE'], true) && $mode === 'required') {
+                return response()->json([
+                    'error' => 'Bad Request',
+                    'message' => 'The Idempotency-Key header is required for this operation.',
+                ], 400);
+            }
+
             return $next($request);
         }
 
