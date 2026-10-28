@@ -80,6 +80,21 @@ class AffiliateProgramSettings extends Settings
      */
     public int $payout_freeze_hours_on_change = 24;
 
+    /**
+     * Attribution cookie validity window in days.
+     */
+    public int $attribution_window_days = 30;
+
+    /**
+     * Attribution model: 'last_click' or 'first_click'.
+     */
+    public string $attribution_model = 'last_click';
+
+    /**
+     * Disallow affiliate from earning commission on self-referrals (matching phone/email/IP).
+     */
+    public bool $prevent_self_referral = true;
+
     public static function group(): string
     {
         return 'affiliate_program';
@@ -145,5 +160,20 @@ class AffiliateProgramSettings extends Settings
     public function getPayoutFreezeHours(): int
     {
         return $this->payout_freeze_hours_on_change;
+    }
+
+    public function getAttributionWindowDays(): int
+    {
+        return $this->attribution_window_days;
+    }
+
+    public function getAttributionModel(): string
+    {
+        return $this->attribution_model;
+    }
+
+    public function shouldPreventSelfReferral(): bool
+    {
+        return $this->prevent_self_referral;
     }
 }

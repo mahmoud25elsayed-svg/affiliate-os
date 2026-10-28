@@ -53,6 +53,12 @@ class ManageAffiliateProgramSettings extends Page
 
     public int $payout_freeze_hours_on_change = 24;
 
+    public int $attribution_window_days = 30;
+
+    public string $attribution_model = 'last_click';
+
+    public bool $prevent_self_referral = true;
+
     public function mount(): void
     {
         $settings = AffiliateProgramSettings::load();
@@ -71,6 +77,9 @@ class ManageAffiliateProgramSettings extends Page
         $this->default_daily_order_limit = $settings->default_daily_order_limit;
         $this->release_mode = $settings->release_mode;
         $this->payout_freeze_hours_on_change = $settings->payout_freeze_hours_on_change;
+        $this->attribution_window_days = $settings->attribution_window_days;
+        $this->attribution_model = $settings->attribution_model;
+        $this->prevent_self_referral = $settings->prevent_self_referral;
     }
 
     public function save(): void
@@ -88,6 +97,9 @@ class ManageAffiliateProgramSettings extends Page
             'default_daily_order_limit' => ['required', 'integer', 'min:1', 'max:1000'],
             'release_mode' => ['required', 'in:return_window,courier_remittance,later_of_both'],
             'payout_freeze_hours_on_change' => ['required', 'integer', 'min:0', 'max:168'],
+            'attribution_window_days' => ['required', 'integer', 'min:1', 'max:365'],
+            'attribution_model' => ['required', 'in:last_click,first_click'],
+            'prevent_self_referral' => ['boolean'],
         ]);
 
         $settings = AffiliateProgramSettings::load();
@@ -106,6 +118,9 @@ class ManageAffiliateProgramSettings extends Page
         $settings->default_daily_order_limit = (int) $this->default_daily_order_limit;
         $settings->release_mode = $this->release_mode;
         $settings->payout_freeze_hours_on_change = (int) $this->payout_freeze_hours_on_change;
+        $settings->attribution_window_days = (int) $this->attribution_window_days;
+        $settings->attribution_model = $this->attribution_model;
+        $settings->prevent_self_referral = (bool) $this->prevent_self_referral;
 
         $settings->save();
 
