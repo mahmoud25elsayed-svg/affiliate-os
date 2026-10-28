@@ -63,6 +63,12 @@
         .bg-accent { background-color: var(--accent); }
     </style>
 
+    @if(!empty($theme->custom_css))
+    <style>
+        {!! $theme->custom_css !!}
+    </style>
+    @endif
+
     <!-- Tailwind CSS (via CDN for standalone storefront runtime) -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio"></script>
     <script>
@@ -153,13 +159,22 @@
                 </div>
             </div>
 
-            <!-- Categories Links Bar -->
+            <!-- Navigation Links Bar -->
             <div class="hidden sm:flex items-center gap-6 py-2.5 text-sm font-medium border-t border-gray-100 overflow-x-auto scrollbar-none">
-                <a href="{{ url('/') }}" class="hover:text-brand-600 transition-colors whitespace-nowrap {{ request()->is('/') ? 'text-brand-600 font-bold' : 'text-gray-700' }}">الرئيسية</a>
-                <a href="{{ url('/products') }}" class="hover:text-brand-600 transition-colors whitespace-nowrap text-gray-700">كافة المنتجات</a>
-                <a href="{{ url('/about') }}" class="hover:text-brand-600 transition-colors whitespace-nowrap text-gray-600">عن المتجر</a>
-                <a href="{{ url('/shipping') }}" class="hover:text-brand-600 transition-colors whitespace-nowrap text-gray-600">الشحن والتوصيل</a>
-                <a href="{{ url('/terms') }}" class="hover:text-brand-600 transition-colors whitespace-nowrap text-gray-600">الشروط والأحكام</a>
+                @if(!empty($theme->navigation_links) && is_array($theme->navigation_links))
+                    @foreach($theme->navigation_links as $nav)
+                        <a href="{{ url($nav['url'] ?? '/') }}" target="{{ $nav['target'] ?? '_self' }}"
+                           class="hover:text-brand-600 transition-colors whitespace-nowrap {{ request()->is(ltrim($nav['url'] ?? '', '/')) ? 'text-brand-600 font-bold' : 'text-gray-700' }}">
+                            {{ $nav['label'] ?? '' }}
+                        </a>
+                    @endforeach
+                @else
+                    <a href="{{ url('/') }}" class="hover:text-brand-600 transition-colors whitespace-nowrap {{ request()->is('/') ? 'text-brand-600 font-bold' : 'text-gray-700' }}">الرئيسية</a>
+                    <a href="{{ url('/products') }}" class="hover:text-brand-600 transition-colors whitespace-nowrap text-gray-700">كافة المنتجات</a>
+                    <a href="{{ url('/about') }}" class="hover:text-brand-600 transition-colors whitespace-nowrap text-gray-600">عن المتجر</a>
+                    <a href="{{ url('/shipping') }}" class="hover:text-brand-600 transition-colors whitespace-nowrap text-gray-600">الشحن والتوصيل</a>
+                    <a href="{{ url('/terms') }}" class="hover:text-brand-600 transition-colors whitespace-nowrap text-gray-600">الشروط والأحكام</a>
+                @endif
             </div>
         </div>
     </nav>
@@ -242,9 +257,18 @@
                 </div>
             </div>
 
+            @php
+                $hasWhiteLabelFeature = \App\Support\Billing\Features::enabled('white_label');
+                $isWhiteLabel = $hasWhiteLabelFeature && ($theme->white_label_enabled ?? false);
+            @endphp
             <div class="border-t border-gray-800 mt-10 pt-6 text-center text-xs text-gray-500 flex flex-col sm:flex-row justify-between items-center gap-4">
                 <p>© {{ date('Y') }} {{ $general->platform_name ?? 'متجرنا' }}. جميع الحقوق محفوظة.</p>
-                <p class="text-gray-600">مشغل بواسطة منصة التجارة والتسويق بالعمولة AffiliateOS</p>
+                @if(! $isWhiteLabel)
+                    <p class="text-gray-600">
+                        مشغل بواسطة منصة التجارة والتسويق بالعمولة 
+                        <a href="https://affiliate-os.com" target="_blank" rel="noopener" class="hover:text-gray-400 transition underline underline-offset-2">AffiliateOS</a>
+                    </p>
+                @endif
             </div>
         </div>
     </footer>

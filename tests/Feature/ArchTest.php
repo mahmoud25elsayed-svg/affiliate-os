@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\CustomerReputation;
+use App\Models\Domain;
 use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\SubscriptionEvent;
@@ -20,6 +21,7 @@ arch('finance and orders domains do not use floatval')
 test('all tenant models use BelongsToTenant trait', function () {
     $platformModels = [
         Tenant::class,
+        Domain::class,
         User::class,
         Plan::class,
         Subscription::class,
