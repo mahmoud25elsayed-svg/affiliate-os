@@ -39,6 +39,11 @@ use Lunar\Models\Order;
  * @property string|null $payout_method
  * @property array<string, mixed>|null $payout_details
  * @property Carbon|null $payouts_frozen_until
+ * @property int|null $affiliate_level_id
+ * @property int $quality_score
+ * @property int $daily_order_limit
+ * @property int $total_delivered_orders
+ * @property int $delivery_rate_basis_points
  * @property string|null $remember_token
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -46,6 +51,9 @@ use Lunar\Models\Order;
  * @property-read Collection<int, Affiliate> $referrals
  * @property-read User|null $reviewer
  * @property-read Collection<int, KycAuditLog> $kycAuditLogs
+ * @property-read AffiliateLevel|null $level
+ * @property-read Collection<int, AffiliateQualityLog> $qualityLogs
+ * @property-read Collection<int, AffiliateReferralReward> $referralRewardsEarned
  */
 class Affiliate extends Authenticatable
 {
@@ -100,6 +108,11 @@ class Affiliate extends Authenticatable
         'payout_method',
         'payout_details',
         'payouts_frozen_until',
+        'affiliate_level_id',
+        'quality_score',
+        'daily_order_limit',
+        'total_delivered_orders',
+        'delivery_rate_basis_points',
     ];
 
     /**
@@ -125,6 +138,10 @@ class Affiliate extends Authenticatable
             'kyc_reviewed_at' => 'datetime',
             'payouts_frozen_until' => 'datetime',
             'payout_details' => 'encrypted:array',
+            'quality_score' => 'integer',
+            'daily_order_limit' => 'integer',
+            'total_delivered_orders' => 'integer',
+            'delivery_rate_basis_points' => 'integer',
         ];
     }
 
@@ -190,6 +207,52 @@ class Affiliate extends Authenticatable
     public function payoutRequests(): HasMany
     {
         return $this->hasMany(PayoutRequest::class, 'affiliate_id');
+    }
+
+    /**
+     * @return BelongsTo<AffiliateLevel, $this>
+     */
+    public function level(): BelongsTo
+    {
+        return $this->belongsTo(AffiliateLevel::class, 'affiliate_level_id');
+    }
+
+    /**
+     * @return HasMany<AffiliateQualityLog, $this>
+     */
+    public function qualityLogs(): HasMany
+    {
+        return $this->hasMany(AffiliateQualityLog::class);
+    }
+
+    /**
+     * @return HasMany<AffiliateReferralReward, $this>
+     */
+    public function referralRewardsEarned(): HasMany
+    {
+        return $this->hasMany(AffiliateReferralReward::class, 'referrer_id');
+    }
+
+    public function getTierBonusMinor(): int
+    {
+        return (int) ($this->level?->bonus_per_order_minor ?? 0);
+    }
+
+    public function getCommissionBonusPercent(): int
+    {
+        return (int) ($this->level?->commission_bonus_percent ?? 0);
+    }
+
+    public function getQualityScoreRating(): string
+    {
+        $score = $this->quality_score;
+
+        return match (true) {
+            $score >= 85 => 'ممتاز',
+            $score >= 70 => 'جيد جداً',
+            $score >= 50 => 'جيد',
+            default => 'يحتاج تحسين',
+        };
     }
 
     public function isActive(): bool

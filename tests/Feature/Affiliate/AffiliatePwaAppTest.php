@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Affiliate;
 
-use App\Domain\Affiliate\Settings\AffiliateProgramSettings;
+use App\Domain\Finance\DTOs\EntryData;
+use App\Domain\Finance\DTOs\LedgerLineData;
 use App\Domain\Finance\Services\AccountResolver;
 use App\Domain\Finance\Services\Ledger;
-use App\Domain\Orders\Enums\OrderStatus;
 use App\Models\Affiliate;
 use App\Models\Order;
 use App\Models\Tenant;
@@ -18,10 +18,8 @@ use App\Support\Location\Governorate;
 use Database\Seeders\EgyptGovernoratesSeeder;
 use Database\Seeders\PlanSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
+use Lunar\FieldTypes\Text;
 use Lunar\Models\Currency;
 use Lunar\Models\Price;
 use Lunar\Models\Product;
@@ -90,8 +88,8 @@ class AffiliatePwaAppTest extends TestCase
                 'product_type_id' => $productType->id,
                 'status' => 'published',
                 'attribute_data' => [
-                    'name' => new \Lunar\FieldTypes\Text('منتج بي دبليو إيه التجريبي'),
-                    'description' => new \Lunar\FieldTypes\Text('وصف تجريبي ممتاز'),
+                    'name' => new Text('منتج بي دبليو إيه التجريبي'),
+                    'description' => new Text('وصف تجريبي ممتاز'),
                 ],
             ]);
 
@@ -283,13 +281,13 @@ class AffiliatePwaAppTest extends TestCase
             $availableAccount = $resolver->getAffiliateAvailableAccount($this->affiliate);
             $revenueAccount = $resolver->getStoreRevenueAccount();
 
-            $ledger->post(new \App\Domain\Finance\DTOs\EntryData(
+            $ledger->post(new EntryData(
                 type: 'initial_deposit',
                 idempotencyKey: 'test_deposit_'.uniqid(),
                 description: 'رصيد تمويلي للاختبار',
                 lines: [
-                    new \App\Domain\Finance\DTOs\LedgerLineData($revenueAccount, -25000),
-                    new \App\Domain\Finance\DTOs\LedgerLineData($availableAccount, 25000),
+                    new LedgerLineData($revenueAccount, -25000),
+                    new LedgerLineData($availableAccount, 25000),
                 ]
             ));
         });

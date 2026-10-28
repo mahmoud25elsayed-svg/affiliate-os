@@ -9,6 +9,7 @@ import {
     Link2,
     BarChart3,
     User,
+    Award,
     Copy,
     Check,
     AlertTriangle,
@@ -95,6 +96,14 @@ export default function AppLayout({ title, children }: Props) {
                                         <div className="px-3 py-1.5 border-b border-slate-800 text-xs text-slate-400">
                                             {affiliate?.name || 'المسوق'}
                                         </div>
+                                        <Link
+                                            href="/partners/app/levels"
+                                            onClick={() => setMenuOpen(false)}
+                                            className="flex items-center gap-2 px-3 py-2 text-slate-300 hover:bg-slate-800"
+                                        >
+                                            <Award className="w-4 h-4 text-amber-400" />
+                                            <span>المستويات والمكافآت</span>
+                                        </Link>
                                         <Link
                                             href="/partners/app/links"
                                             onClick={() => setMenuOpen(false)}

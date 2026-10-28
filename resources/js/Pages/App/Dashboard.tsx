@@ -17,6 +17,7 @@ import {
     Link2,
     PlusCircle,
     Bell,
+    Award,
 } from 'lucide-react';
 import { AffiliateUser, WalletBalances, OrderListItem } from '../../types/affiliate';
 
@@ -75,6 +76,26 @@ export default function Dashboard({
                         <span>طلب سريع</span>
                     </Link>
                 </div>
+
+                {/* Level & Quality Quick Banner */}
+                <Link
+                    href="/partners/app/levels"
+                    className="p-3 rounded-2xl bg-gradient-to-r from-slate-900 to-indigo-950 border border-indigo-900/50 flex items-center justify-between text-xs hover:border-indigo-600/50 transition-all shadow-sm"
+                >
+                    <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+                            <Award className="w-4 h-4" />
+                        </div>
+                        <div>
+                            <span className="font-bold text-white block">مستواي والمكافآت</span>
+                            <span className="text-[11px] text-slate-400">عرض درجة الجودة، بونص الرتب ودعوة الشركاء</span>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-1 text-indigo-400 font-semibold text-[11px]">
+                        <span>تفاصيل</span>
+                        <ChevronLeft className="w-3.5 h-3.5" />
+                    </div>
+                </Link>
 
                 {/* Debt Alert if negative balance exists */}
                 {balances.has_debt && (

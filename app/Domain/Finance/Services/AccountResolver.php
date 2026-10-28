@@ -23,6 +23,8 @@ class AccountResolver
 
     public const KIND_COMMISSION_EXPENSE = 'commission_expense';
 
+    public const KIND_BONUS_EXPENSE = 'bonus_expense';
+
     public const KIND_COD_RECEIVABLE = 'cod_receivable';
 
     public const KIND_WALLET = 'wallet';
@@ -127,6 +129,28 @@ class AccountResolver
             [
                 'kind' => self::KIND_COMMISSION_EXPENSE,
                 'name' => 'مصروفات عمولات وأرباح المسوقين',
+                'currency' => 'EGP',
+                'balance_minor' => 0,
+            ]
+        );
+
+        return $account;
+    }
+
+    public function getStoreBonusExpenseAccount(): Account
+    {
+        $code = 'store:bonus_expense';
+        $tenantId = tenant('id') ? (string) tenant('id') : 'central';
+
+        /** @var Account $account */
+        $account = Account::firstOrCreate(
+            [
+                'tenant_id' => $tenantId,
+                'code' => $code,
+            ],
+            [
+                'kind' => self::KIND_BONUS_EXPENSE,
+                'name' => 'مصروفات مكافآت وبونص المسوقين والإحالات',
                 'currency' => 'EGP',
                 'balance_minor' => 0,
             ]
