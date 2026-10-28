@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Domain\Finance\Services\AccountResolver;
 use App\Support\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -215,7 +216,40 @@ class Affiliate extends Authenticatable
 
     public function canWithdraw(): bool
     {
-        return $this->isActive() && $this->hasApprovedKyc() && ! $this->isPayoutFrozen();
+        return $this->isActive()
+            && $this->hasApprovedKyc()
+            && ! $this->isPayoutFrozen()
+            && ! $this->hasDebt();
+    }
+
+    public function getPendingBalance(): int
+    {
+        return (int) app(AccountResolver::class)->getAffiliatePendingAccount($this)->balance_minor;
+    }
+
+    public function getAvailableBalance(): int
+    {
+        return (int) app(AccountResolver::class)->getAffiliateAvailableAccount($this)->balance_minor;
+    }
+
+    public function getLockedBalance(): int
+    {
+        return (int) app(AccountResolver::class)->getAffiliateLockedAccount($this)->balance_minor;
+    }
+
+    public function getWithdrawnBalance(): int
+    {
+        return (int) app(AccountResolver::class)->getAffiliateWithdrawnAccount($this)->balance_minor;
+    }
+
+    public function hasDebt(): bool
+    {
+        return $this->getAvailableBalance() < 0;
+    }
+
+    public function getDebtMinor(): int
+    {
+        return $this->hasDebt() ? abs($this->getAvailableBalance()) : 0;
     }
 
     public function freezePayouts(int $hours = 24): void

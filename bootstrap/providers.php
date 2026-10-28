@@ -4,6 +4,7 @@ use App\Providers\AffiliateServiceProvider;
 use App\Providers\AppServiceProvider;
 use App\Providers\Filament\PlatformPanelProvider;
 use App\Providers\Filament\StorePanelProvider;
+use App\Providers\FinanceServiceProvider;
 use App\Providers\HorizonServiceProvider;
 use App\Providers\InventoryServiceProvider;
 use App\Providers\LunarTenancyServiceProvider;
@@ -22,4 +23,5 @@ return [
     PromotionServiceProvider::class,
     NotificationServiceProvider::class,
     AffiliateServiceProvider::class,
+    FinanceServiceProvider::class,
 ];

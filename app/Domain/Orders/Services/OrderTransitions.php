@@ -160,6 +160,14 @@ class OrderTransitions
             ],
         ],
 
+        OrderStatus::SETTLED->value => [
+            OrderStatus::RETURN_REQUESTED->value => [
+                'requires_reason' => true,
+                'allowed_actors' => ['system', 'staff', 'customer'],
+                'allowed_roles' => ['owner', 'manager', 'orders', 'support'],
+            ],
+        ],
+
         OrderStatus::RETURN_REQUESTED->value => [
             OrderStatus::RETURNING->value => [
                 'requires_reason' => false,

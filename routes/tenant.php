@@ -12,6 +12,7 @@ use App\Http\Controllers\Affiliate\AffiliateKycController;
 use App\Http\Controllers\Affiliate\AffiliateOrderController;
 use App\Http\Controllers\Affiliate\AffiliatePayoutController;
 use App\Http\Controllers\Affiliate\AffiliateTrackingLinkController;
+use App\Http\Controllers\Affiliate\AffiliateWalletController;
 use App\Http\Controllers\Store\AffiliateKycDocumentController;
 use App\Http\Controllers\Store\OrderDocumentController;
 use App\Http\Controllers\Storefront\AffiliateReferralController;
@@ -145,6 +146,10 @@ Route::middleware([
             Route::get('/payout-settings', [AffiliatePayoutController::class, 'show'])->name('affiliate.payout-settings.show');
             Route::post('/payout-settings/request-otp', [AffiliatePayoutController::class, 'requestOtp'])->name('affiliate.payout-settings.request-otp');
             Route::post('/payout-settings', [AffiliatePayoutController::class, 'update'])->name('affiliate.payout-settings.update');
+
+            // Affiliate Wallet & Statement (P19)
+            Route::get('/wallet', [AffiliateWalletController::class, 'index'])->name('affiliate.wallet.index');
+            Route::get('/wallet/export', [AffiliateWalletController::class, 'exportCsv'])->name('affiliate.wallet.export');
 
             // Affiliate Tracking Links (P18)
             Route::get('/links', [AffiliateTrackingLinkController::class, 'index'])->name('affiliate.links.index');
