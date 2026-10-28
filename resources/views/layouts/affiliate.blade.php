@@ -37,6 +37,7 @@
                         <a href="{{ route('affiliate.links.index') }}" class="text-slate-700 hover:text-indigo-600 px-2 py-2 rounded-lg">روابط التتبع</a>
                         <a href="{{ route('affiliate.orders.index') }}" class="text-slate-700 hover:text-indigo-600 px-2 py-2 rounded-lg">طلباتي</a>
                         <a href="{{ route('affiliate.orders.create') }}" class="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 px-3 py-1.5 rounded-lg font-bold">طلب جديد +</a>
+                        <a href="{{ route('affiliate.wallet.index') }}" class="text-slate-700 hover:text-indigo-600 px-2 py-2 rounded-lg">المحفظة</a>
                         <a href="{{ route('affiliate.kyc.show') }}" class="text-slate-700 hover:text-indigo-600 px-2 py-2 rounded-lg">KYC</a>
                         <a href="{{ route('affiliate.payout-settings.show') }}" class="text-slate-700 hover:text-indigo-600 px-2 py-2 rounded-lg">السحب</a>
                     </nav>
