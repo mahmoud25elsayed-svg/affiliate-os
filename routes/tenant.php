@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Domain\Checkout\Services\StorefrontCartService;
 use App\Domain\Promotions\Services\AbandonedCartService;
 use App\Domain\Promotions\Services\NewsletterService;
+use App\Http\Controllers\Affiliate\AffiliateAiToolsController;
 use App\Http\Controllers\Affiliate\AffiliateAuthController;
 use App\Http\Controllers\Affiliate\AffiliateCatalogController;
 use App\Http\Controllers\Affiliate\AffiliateDashboardController;
@@ -28,6 +29,7 @@ use App\Http\Controllers\Store\AffiliateKycDocumentController;
 use App\Http\Controllers\Store\CourierWebhookController;
 use App\Http\Controllers\Store\OrderDocumentController;
 use App\Http\Controllers\Store\StoreAffiliateSettingsController;
+use App\Http\Controllers\Store\StoreAiToolsController;
 use App\Http\Controllers\Store\StoreCallCenterController;
 use App\Http\Controllers\Store\StoreCodRemittanceController;
 use App\Http\Controllers\Store\StoreCustomerWalletController;
@@ -247,6 +249,14 @@ Route::middleware([
             Route::post('/', [StorePixelTrackingController::class, 'update'])->name('store.pixels.update');
             Route::post('/test', [StorePixelTrackingController::class, 'test'])->name('store.pixels.test');
         });
+
+        // AI Tools & Assistant (P31)
+        Route::prefix('ai')->group(function () {
+            Route::get('/', [StoreAiToolsController::class, 'index'])->name('store.ai.index');
+            Route::post('/generate-product-copy', [StoreAiToolsController::class, 'generateProductCopy'])->name('store.ai.product-copy');
+            Route::post('/suggest-tags', [StoreAiToolsController::class, 'suggestTags'])->name('store.ai.suggest-tags');
+            Route::post('/translate', [StoreAiToolsController::class, 'translate'])->name('store.ai.translate');
+        });
     });
 
     // Courier Webhook endpoint for tracking callbacks (P24)
@@ -273,6 +283,14 @@ Route::middleware([
             // Affiliate Ad Tracking Pixels (P30)
             Route::get('/pixels', [AffiliatePixelController::class, 'show'])->name('affiliate.pixels.show');
             Route::post('/pixels', [AffiliatePixelController::class, 'update'])->name('affiliate.pixels.update');
+
+            // Affiliate AI Copywriter (P31)
+            Route::prefix('ai')->group(function () {
+                Route::get('/', [AffiliateAiToolsController::class, 'index'])->name('affiliate.ai.index');
+                Route::post('/generate-ad-copy', [AffiliateAiToolsController::class, 'generateAdCopy'])->name('affiliate.ai.ad-copy');
+                Route::post('/suggest-angles', [AffiliateAiToolsController::class, 'suggestAngles'])->name('affiliate.ai.suggest-angles');
+                Route::post('/check-policy', [AffiliateAiToolsController::class, 'checkPolicy'])->name('affiliate.ai.check-policy');
+            });
 
             // Affiliate Wallet & Statement (P19)
             Route::get('/wallet', [AffiliateWalletController::class, 'index'])->name('affiliate.wallet.index');
