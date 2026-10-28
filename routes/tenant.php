@@ -11,10 +11,13 @@ use App\Http\Controllers\Affiliate\AffiliateDashboardController;
 use App\Http\Controllers\Affiliate\AffiliateKycController;
 use App\Http\Controllers\Affiliate\AffiliateOrderController;
 use App\Http\Controllers\Affiliate\AffiliatePayoutController;
+use App\Http\Controllers\Affiliate\AffiliatePayoutRequestController;
 use App\Http\Controllers\Affiliate\AffiliateTrackingLinkController;
 use App\Http\Controllers\Affiliate\AffiliateWalletController;
 use App\Http\Controllers\Store\AffiliateKycDocumentController;
 use App\Http\Controllers\Store\OrderDocumentController;
+use App\Http\Controllers\Store\StoreAffiliateSettingsController;
+use App\Http\Controllers\Store\StorePayoutManagementController;
 use App\Http\Controllers\Storefront\AffiliateReferralController;
 use App\Http\Controllers\Storefront\CategoryController;
 use App\Http\Controllers\Storefront\CheckoutSuccessController;
@@ -129,6 +132,20 @@ Route::middleware([
         ->middleware('auth')
         ->name('store.affiliates.kyc-document');
 
+    // Store Admin Payouts & Affiliate Settings (P20)
+    Route::middleware('auth')->prefix('store')->group(function () {
+        Route::get('/affiliates/settings', [StoreAffiliateSettingsController::class, 'show'])->name('store.affiliates.settings.show');
+        Route::post('/affiliates/settings', [StoreAffiliateSettingsController::class, 'update'])->name('store.affiliates.settings.update');
+
+        Route::get('/payouts', [StorePayoutManagementController::class, 'index'])->name('store.payouts.index');
+        Route::post('/payouts/{payoutRequest}/approve', [StorePayoutManagementController::class, 'approve'])->name('store.payouts.approve');
+        Route::post('/payouts/{payoutRequest}/execute', [StorePayoutManagementController::class, 'execute'])->name('store.payouts.execute');
+        Route::post('/payouts/{payoutRequest}/reject', [StorePayoutManagementController::class, 'reject'])->name('store.payouts.reject');
+        Route::post('/payouts/batches', [StorePayoutManagementController::class, 'createBatch'])->name('store.payouts.batches.create');
+        Route::get('/payouts/batches/{batch}/export', [StorePayoutManagementController::class, 'exportBatch'])->name('store.payouts.batches.export');
+        Route::post('/payouts/batches/{batch}/process', [StorePayoutManagementController::class, 'processBatch'])->name('store.payouts.batches.process');
+    });
+
     // Affiliate Portal Routes (P16)
     Route::prefix('partners')->group(function () {
         Route::get('/join', [AffiliateAuthController::class, 'showJoin'])->name('affiliate.join');
@@ -150,6 +167,11 @@ Route::middleware([
             // Affiliate Wallet & Statement (P19)
             Route::get('/wallet', [AffiliateWalletController::class, 'index'])->name('affiliate.wallet.index');
             Route::get('/wallet/export', [AffiliateWalletController::class, 'exportCsv'])->name('affiliate.wallet.export');
+
+            // Affiliate Payout Requests (P20)
+            Route::get('/payouts', [AffiliatePayoutRequestController::class, 'index'])->name('affiliate.payouts.index');
+            Route::post('/payouts', [AffiliatePayoutRequestController::class, 'store'])->name('affiliate.payouts.store');
+            Route::post('/payouts/{id}/cancel', [AffiliatePayoutRequestController::class, 'cancel'])->name('affiliate.payouts.cancel');
 
             // Affiliate Tracking Links (P18)
             Route::get('/links', [AffiliateTrackingLinkController::class, 'index'])->name('affiliate.links.index');

@@ -29,6 +29,8 @@ class AccountResolver
 
     public const KIND_LOYALTY = 'loyalty';
 
+    public const KIND_PAYOUT_CLEARING = 'payout_clearing';
+
     /**
      * Resolve or create an affiliate account.
      */
@@ -147,6 +149,28 @@ class AccountResolver
             [
                 'kind' => self::KIND_COD_RECEIVABLE,
                 'name' => 'متحصلات COD معلقة لدى شركات الشحن',
+                'currency' => 'EGP',
+                'balance_minor' => 0,
+            ]
+        );
+
+        return $account;
+    }
+
+    public function getStorePayoutClearingAccount(): Account
+    {
+        $code = 'store:payout_clearing';
+        $tenantId = tenant('id') ? (string) tenant('id') : 'central';
+
+        /** @var Account $account */
+        $account = Account::firstOrCreate(
+            [
+                'tenant_id' => $tenantId,
+                'code' => $code,
+            ],
+            [
+                'kind' => self::KIND_PAYOUT_CLEARING,
+                'name' => 'حساب وسيط لتسوية سحوبات المسوقين',
                 'currency' => 'EGP',
                 'balance_minor' => 0,
             ]
