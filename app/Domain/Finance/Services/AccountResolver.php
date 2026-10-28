@@ -33,6 +33,12 @@ class AccountResolver
 
     public const KIND_PAYOUT_CLEARING = 'payout_clearing';
 
+    public const KIND_BANK = 'bank';
+
+    public const KIND_SHIPPING_EXPENSE = 'shipping_expense';
+
+    public const KIND_DISCREPANCY = 'discrepancy';
+
     /**
      * Resolve or create an affiliate account.
      */
@@ -195,6 +201,72 @@ class AccountResolver
             [
                 'kind' => self::KIND_PAYOUT_CLEARING,
                 'name' => 'حساب وسيط لتسوية سحوبات المسوقين',
+                'currency' => 'EGP',
+                'balance_minor' => 0,
+            ]
+        );
+
+        return $account;
+    }
+
+    public function getStoreBankAccount(): Account
+    {
+        $code = 'store:bank';
+        $tenantId = tenant('id') ? (string) tenant('id') : 'central';
+
+        /** @var Account $account */
+        $account = Account::firstOrCreate(
+            [
+                'tenant_id' => $tenantId,
+                'code' => $code,
+            ],
+            [
+                'kind' => self::KIND_BANK,
+                'name' => 'حساب البنك والتحصيلات للمتجر',
+                'currency' => 'EGP',
+                'balance_minor' => 0,
+            ]
+        );
+
+        return $account;
+    }
+
+    public function getStoreShippingExpenseAccount(): Account
+    {
+        $code = 'store:shipping_expense';
+        $tenantId = tenant('id') ? (string) tenant('id') : 'central';
+
+        /** @var Account $account */
+        $account = Account::firstOrCreate(
+            [
+                'tenant_id' => $tenantId,
+                'code' => $code,
+            ],
+            [
+                'kind' => self::KIND_SHIPPING_EXPENSE,
+                'name' => 'مصروفات شحن وتوصيل الطلبات',
+                'currency' => 'EGP',
+                'balance_minor' => 0,
+            ]
+        );
+
+        return $account;
+    }
+
+    public function getStoreDiscrepancyExpenseAccount(): Account
+    {
+        $code = 'store:cod_discrepancy';
+        $tenantId = tenant('id') ? (string) tenant('id') : 'central';
+
+        /** @var Account $account */
+        $account = Account::firstOrCreate(
+            [
+                'tenant_id' => $tenantId,
+                'code' => $code,
+            ],
+            [
+                'kind' => self::KIND_DISCREPANCY,
+                'name' => 'فروقات تحصيلات ومصاريف الشحن',
                 'currency' => 'EGP',
                 'balance_minor' => 0,
             ]

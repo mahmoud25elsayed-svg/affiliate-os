@@ -27,6 +27,7 @@ use App\Http\Controllers\Store\CourierWebhookController;
 use App\Http\Controllers\Store\OrderDocumentController;
 use App\Http\Controllers\Store\StoreAffiliateSettingsController;
 use App\Http\Controllers\Store\StoreCallCenterController;
+use App\Http\Controllers\Store\StoreCodRemittanceController;
 use App\Http\Controllers\Store\StorePayoutManagementController;
 use App\Http\Controllers\Store\StoreShipmentController;
 use App\Http\Controllers\Storefront\AffiliateReferralController;
@@ -172,6 +173,15 @@ Route::middleware([
             Route::post('/orders/{order}/dispatch', [StoreShipmentController::class, 'dispatch'])->name('store.shipments.dispatch');
             Route::get('/{shipment}', [StoreShipmentController::class, 'show'])->name('store.shipments.show');
             Route::get('/{shipment}/waybill', [StoreShipmentController::class, 'waybill'])->name('store.shipments.waybill');
+        });
+
+        // COD Remittance & Reconciliation (P25)
+        Route::prefix('cod-remittances')->middleware('feature:cod_reconciliation')->group(function () {
+            Route::get('/', [StoreCodRemittanceController::class, 'index'])->name('store.cod.index');
+            Route::get('/create', [StoreCodRemittanceController::class, 'create'])->name('store.cod.create');
+            Route::post('/', [StoreCodRemittanceController::class, 'store'])->name('store.cod.store');
+            Route::get('/{remittance}', [StoreCodRemittanceController::class, 'show'])->name('store.cod.show');
+            Route::post('/{remittance}/settle', [StoreCodRemittanceController::class, 'settle'])->name('store.cod.settle');
         });
     });
 
