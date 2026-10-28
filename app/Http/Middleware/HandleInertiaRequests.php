@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -36,6 +37,7 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $locale = app()->getLocale();
+        $tenant = function_exists('tenancy') && tenancy()->initialized ? tenancy()->tenant : null;
 
         return [
             ...parent::share($request),
@@ -43,6 +45,15 @@ class HandleInertiaRequests extends Middleware
             'direction' => in_array($locale, ['ar', 'fa', 'ur', 'he']) ? 'rtl' : 'ltr',
             'auth' => [
                 'user' => $request->user(),
+                'affiliate' => Auth::guard('affiliate')->user(),
+            ],
+            'tenant' => $tenant ? [
+                'id' => (string) $tenant->getKey(),
+                'name' => (string) ($tenant->getAttribute('name') ?? 'متجرنا'),
+            ] : null,
+            'flash' => [
+                'success' => fn () => $request->session()->get('success'),
+                'error' => fn () => $request->session()->get('error'),
             ],
         ];
     }

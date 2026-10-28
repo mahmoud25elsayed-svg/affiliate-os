@@ -14,6 +14,13 @@ use App\Http\Controllers\Affiliate\AffiliatePayoutController;
 use App\Http\Controllers\Affiliate\AffiliatePayoutRequestController;
 use App\Http\Controllers\Affiliate\AffiliateTrackingLinkController;
 use App\Http\Controllers\Affiliate\AffiliateWalletController;
+use App\Http\Controllers\Affiliate\App\AppAnalyticsController;
+use App\Http\Controllers\Affiliate\App\AppCatalogController;
+use App\Http\Controllers\Affiliate\App\AppDashboardController;
+use App\Http\Controllers\Affiliate\App\AppLinksController;
+use App\Http\Controllers\Affiliate\App\AppOrderController;
+use App\Http\Controllers\Affiliate\App\AppProfileController;
+use App\Http\Controllers\Affiliate\App\AppWalletController;
 use App\Http\Controllers\Store\AffiliateKycDocumentController;
 use App\Http\Controllers\Store\OrderDocumentController;
 use App\Http\Controllers\Store\StoreAffiliateSettingsController;
@@ -189,6 +196,43 @@ Route::middleware([
             Route::post('/orders/import-csv', [AffiliateOrderController::class, 'importCsv'])->name('affiliate.orders.import-csv.submit');
             Route::get('/orders/{reference}', [AffiliateOrderController::class, 'show'])->name('affiliate.orders.show');
             Route::post('/orders/{reference}/cancel', [AffiliateOrderController::class, 'cancel'])->name('affiliate.orders.cancel');
+
+            // Affiliate PWA App (P21 - Inertia + React + TypeScript)
+            Route::prefix('app')->group(function () {
+                Route::get('/', AppDashboardController::class)->name('affiliate.app.dashboard');
+
+                // Catalog
+                Route::get('/catalog', [AppCatalogController::class, 'index'])->name('affiliate.app.catalog.index');
+                Route::get('/catalog/{product}', [AppCatalogController::class, 'show'])->name('affiliate.app.catalog.show');
+
+                // Orders
+                Route::get('/orders', [AppOrderController::class, 'index'])->name('affiliate.app.orders.index');
+                Route::get('/orders/create', [AppOrderController::class, 'create'])->name('affiliate.app.orders.create');
+                Route::post('/orders/quote', [AppOrderController::class, 'quote'])->name('affiliate.app.orders.quote');
+                Route::post('/orders', [AppOrderController::class, 'store'])->name('affiliate.app.orders.store');
+                Route::get('/orders/{reference}', [AppOrderController::class, 'show'])->name('affiliate.app.orders.show');
+                Route::post('/orders/{reference}/cancel', [AppOrderController::class, 'cancel'])->name('affiliate.app.orders.cancel');
+
+                // Wallet & Payout
+                Route::get('/wallet', [AppWalletController::class, 'index'])->name('affiliate.app.wallet.index');
+                Route::get('/wallet/main', [AppWalletController::class, 'index'])->name('affiliate.app.wallet');
+                Route::post('/wallet/payout', [AppWalletController::class, 'requestPayout'])->name('affiliate.app.wallet.payout');
+
+                // Tracking Links
+                Route::get('/links', [AppLinksController::class, 'index'])->name('affiliate.app.links.index');
+                Route::post('/links', [AppLinksController::class, 'store'])->name('affiliate.app.links.store');
+                Route::delete('/links/{id}', [AppLinksController::class, 'destroy'])->name('affiliate.app.links.destroy');
+
+                // Analytics
+                Route::get('/analytics', [AppAnalyticsController::class, 'index'])->name('affiliate.app.analytics.index');
+
+                // Profile & KYC & Payout Settings
+                Route::get('/profile', [AppProfileController::class, 'index'])->name('affiliate.app.profile.index');
+                Route::post('/profile', [AppProfileController::class, 'update'])->name('affiliate.app.profile.update');
+                Route::post('/profile/kyc', [AppProfileController::class, 'submitKyc'])->name('affiliate.app.profile.kyc');
+                Route::post('/profile/payout-otp', [AppProfileController::class, 'requestPayoutOtp'])->name('affiliate.app.profile.payout-otp');
+                Route::post('/profile/payout-settings', [AppProfileController::class, 'updatePayoutSettings'])->name('affiliate.app.profile.payout-settings');
+            });
         });
     });
 
