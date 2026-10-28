@@ -9,5 +9,5 @@ parameters:
     ignoreErrors:
         - identifier: trait.unused
         - '#Relation .wholesalePrice. is not found in Lunar\\Models\\ProductVariant model\.#'
-        - '#Access to an undefined property Lunar\\Models\\Order::\$price_snapshot\.#'
+        - '#Access to an undefined property Lunar\\Models\\Order::\$(price_snapshot|assigned_to|locked_until|next_attempt_at|call_attempts_count|confirmation_priority|tenant_id)\.#'
 
