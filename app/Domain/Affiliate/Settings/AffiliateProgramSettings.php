@@ -100,6 +100,31 @@ class AffiliateProgramSettings extends Settings
      */
     public bool $prevent_self_referral = true;
 
+    /**
+     * Enable affiliate-to-affiliate referral bonuses.
+     */
+    public bool $referral_reward_enabled = true;
+
+    /**
+     * Number of delivered orders required by referred affiliate to unlock referral reward.
+     */
+    public int $referral_reward_threshold_orders = 5;
+
+    /**
+     * Referral bonus amount in minor units (10000 = 100.00 EGP).
+     */
+    public int $referral_reward_amount_minor = 10000;
+
+    /**
+     * Low quality score threshold below which daily order limit is throttled.
+     */
+    public int $quality_score_low_threshold = 40;
+
+    /**
+     * Critical quality score threshold below which daily orders are suspended.
+     */
+    public int $quality_score_critical_threshold = 20;
+
     public static function group(): string
     {
         return 'affiliate_program';
@@ -185,5 +210,30 @@ class AffiliateProgramSettings extends Settings
     public function shouldPreventSelfReferral(): bool
     {
         return $this->prevent_self_referral;
+    }
+
+    public function isReferralRewardEnabled(): bool
+    {
+        return $this->referral_reward_enabled;
+    }
+
+    public function getReferralRewardThreshold(): int
+    {
+        return $this->referral_reward_threshold_orders;
+    }
+
+    public function getReferralRewardAmountMinor(): int
+    {
+        return $this->referral_reward_amount_minor;
+    }
+
+    public function getQualityScoreLowThreshold(): int
+    {
+        return $this->quality_score_low_threshold;
+    }
+
+    public function getQualityScoreCriticalThreshold(): int
+    {
+        return $this->quality_score_critical_threshold;
     }
 }

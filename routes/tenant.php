@@ -17,6 +17,7 @@ use App\Http\Controllers\Affiliate\AffiliateWalletController;
 use App\Http\Controllers\Affiliate\App\AppAnalyticsController;
 use App\Http\Controllers\Affiliate\App\AppCatalogController;
 use App\Http\Controllers\Affiliate\App\AppDashboardController;
+use App\Http\Controllers\Affiliate\App\AppLevelsController;
 use App\Http\Controllers\Affiliate\App\AppLinksController;
 use App\Http\Controllers\Affiliate\App\AppOrderController;
 use App\Http\Controllers\Affiliate\App\AppProfileController;
@@ -225,6 +226,9 @@ Route::middleware([
 
                 // Analytics
                 Route::get('/analytics', [AppAnalyticsController::class, 'index'])->name('affiliate.app.analytics.index');
+
+                // Levels, Quality & Referrals (P22)
+                Route::get('/levels', [AppLevelsController::class, 'index'])->name('affiliate.app.levels.index');
 
                 // Profile & KYC & Payout Settings
                 Route::get('/profile', [AppProfileController::class, 'index'])->name('affiliate.app.profile.index');
