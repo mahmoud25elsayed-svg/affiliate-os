@@ -25,6 +25,7 @@ use App\Http\Controllers\Affiliate\App\AppWalletController;
 use App\Http\Controllers\Store\AffiliateKycDocumentController;
 use App\Http\Controllers\Store\OrderDocumentController;
 use App\Http\Controllers\Store\StoreAffiliateSettingsController;
+use App\Http\Controllers\Store\StoreCallCenterController;
 use App\Http\Controllers\Store\StorePayoutManagementController;
 use App\Http\Controllers\Storefront\AffiliateReferralController;
 use App\Http\Controllers\Storefront\CategoryController;
@@ -152,6 +153,16 @@ Route::middleware([
         Route::post('/payouts/batches', [StorePayoutManagementController::class, 'createBatch'])->name('store.payouts.batches.create');
         Route::get('/payouts/batches/{batch}/export', [StorePayoutManagementController::class, 'exportBatch'])->name('store.payouts.batches.export');
         Route::post('/payouts/batches/{batch}/process', [StorePayoutManagementController::class, 'processBatch'])->name('store.payouts.batches.process');
+
+        // Call Center & Confirmation Queue (P23)
+        Route::prefix('call-center')->middleware('feature:call_center')->group(function () {
+            Route::get('/', [StoreCallCenterController::class, 'index'])->name('store.call-center.index');
+            Route::post('/claim', [StoreCallCenterController::class, 'claim'])->name('store.call-center.claim');
+            Route::post('/orders/{order}/release', [StoreCallCenterController::class, 'release'])->name('store.call-center.release');
+            Route::post('/orders/{order}/attempt', [StoreCallCenterController::class, 'attempt'])->name('store.call-center.attempt');
+            Route::post('/orders/{order}/modify', [StoreCallCenterController::class, 'modify'])->name('store.call-center.modify');
+            Route::get('/performance', [StoreCallCenterController::class, 'performance'])->name('store.call-center.performance');
+        });
     });
 
     // Affiliate Portal Routes (P16)

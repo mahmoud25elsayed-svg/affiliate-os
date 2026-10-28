@@ -235,12 +235,12 @@ class Affiliate extends Authenticatable
 
     public function getTierBonusMinor(): int
     {
-        return (int) ($this->level?->bonus_per_order_minor ?? 0);
+        return $this->level instanceof AffiliateLevel ? (int) $this->level->bonus_per_order_minor : 0;
     }
 
     public function getCommissionBonusPercent(): int
     {
-        return (int) ($this->level?->commission_bonus_percent ?? 0);
+        return $this->level instanceof AffiliateLevel ? (int) $this->level->commission_bonus_percent : 0;
     }
 
     public function getQualityScoreRating(): string
