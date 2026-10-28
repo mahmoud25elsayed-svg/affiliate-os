@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Support\Billing;
 
+use App\Models\AiUsageLog;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Support\Billing\Exceptions\LimitExceededException;
@@ -43,6 +44,7 @@ class Limits
             'affiliates' => self::countAffiliates($tenant),
             'staff' => self::countStaff($tenant),
             'storage_mb' => self::calculateStorageMb($tenant),
+            'ai_requests_monthly' => self::countMonthlyAiRequests($tenant),
             default => 0,
         };
     }
@@ -118,5 +120,13 @@ class Limits
     {
         // Simple tracked storage estimation
         return 10;
+    }
+
+    private static function countMonthlyAiRequests(Tenant $tenant): int
+    {
+        return AiUsageLog::where('tenant_id', $tenant->id)
+            ->where('status', AiUsageLog::STATUS_SUCCESS)
+            ->where('created_at', '>=', now()->startOfMonth())
+            ->count();
     }
 }

@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Domain\AI\Contracts\AIProvider;
+use App\Domain\AI\Providers\ClaudeAiProvider;
+use App\Domain\AI\Providers\FakeAiProvider;
 use App\Domain\Customer\Contracts\CustomerWalletServiceInterface;
 use App\Domain\Customer\Services\CustomerWalletService;
 use App\Domain\Orders\Events\OrderDelivered;
@@ -49,6 +52,17 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(
             HostingerClientInterface::class,
             HostingerDomainService::class
+        );
+
+        $this->app->singleton(
+            AIProvider::class,
+            function () {
+                if (app()->environment('testing')) {
+                    return new FakeAiProvider;
+                }
+
+                return new ClaudeAiProvider;
+            }
         );
     }
 
