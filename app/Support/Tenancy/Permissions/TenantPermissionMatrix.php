@@ -53,6 +53,10 @@ class TenantPermissionMatrix
 
     public const PERM_CALL_CENTER_CONFIRM = 'store.call_center.confirm';
 
+    public const PERM_KYC_VIEW = 'kyc.view';
+
+    public const PERM_AFFILIATES_MANAGE = 'store.affiliates.manage';
+
     /**
      * @return list<string>
      */
@@ -90,6 +94,8 @@ class TenantPermissionMatrix
             self::PERM_SUPPORT_MANAGE,
             self::PERM_CALL_CENTER_VIEW,
             self::PERM_CALL_CENTER_CONFIRM,
+            self::PERM_KYC_VIEW,
+            self::PERM_AFFILIATES_MANAGE,
         ];
     }
 
@@ -115,6 +121,8 @@ class TenantPermissionMatrix
                 self::PERM_SUPPORT_MANAGE,
                 self::PERM_CALL_CENTER_VIEW,
                 self::PERM_CALL_CENTER_CONFIRM,
+                self::PERM_KYC_VIEW,
+                self::PERM_AFFILIATES_MANAGE,
             ],
 
             self::ROLE_CATALOG => [
