@@ -51,12 +51,30 @@
     </div>
 
     <!-- Notify Parent Iframe / Landing Page via postMessage for Pixel conversions -->
+    @include('storefront.partials.pixels')
+
+    @if(!empty($eventId))
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof window.trackAdEvent === 'function') {
+                window.trackAdEvent('Purchase', {
+                    content_type: 'product',
+                    currency: '{{ $order->currency_code ?: "EGP" }}',
+                    value: {{ round(((int) ($order->getRawOriginal('total') ?? 0)) / 100, 2) }},
+                    order_id: '{{ $order->reference }}'
+                }, '{{ $eventId }}');
+            }
+        });
+    </script>
+    @endif
+
     <script>
         if (window.parent && window.parent !== window) {
             window.parent.postMessage({
                 event: 'affiliate_os_order_created',
                 order_reference: '{{ $order->reference }}',
-                total_minor: {{ (int) ($order->total->value ?? $order->total) }}
+                event_id: '{{ $eventId ?? "" }}',
+                total_minor: {{ (int) ($order->getRawOriginal('total') ?? 0) }}
             }, '*');
         }
     </script>

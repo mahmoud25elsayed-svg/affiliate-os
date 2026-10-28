@@ -38,6 +38,8 @@ use Lunar\Models\Order;
  * @property int|null $kyc_reviewed_by
  * @property string|null $payout_method
  * @property array<string, mixed>|null $payout_details
+ * @property string|null $meta_pixel_id
+ * @property string|null $tiktok_pixel_id
  * @property Carbon|null $payouts_frozen_until
  * @property int|null $affiliate_level_id
  * @property int $quality_score
@@ -107,6 +109,8 @@ class Affiliate extends Authenticatable
         'kyc_reviewed_by',
         'payout_method',
         'payout_details',
+        'meta_pixel_id',
+        'tiktok_pixel_id',
         'payouts_frozen_until',
         'affiliate_level_id',
         'quality_score',
