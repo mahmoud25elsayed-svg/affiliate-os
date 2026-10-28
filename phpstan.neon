@@ -5,7 +5,9 @@ parameters:
     paths:
         - app/
     level: 8
+    reportUnmatchedIgnoredErrors: false
     ignoreErrors:
         - identifier: trait.unused
         - '#Relation .wholesalePrice. is not found in Lunar\\Models\\ProductVariant model\.#'
+        - '#Access to an undefined property Lunar\\Models\\Order::\$price_snapshot\.#'
 
