@@ -86,6 +86,7 @@ class CustomerWallet extends Model
             $wallet->save();
 
             return CustomerWalletTransaction::create([
+                'tenant_id' => $wallet->tenant_id,
                 'wallet_id' => $wallet->id,
                 'amount_minor' => $amountMinor,
                 'type' => $type,
@@ -120,6 +121,7 @@ class CustomerWallet extends Model
             $wallet->save();
 
             return CustomerWalletTransaction::create([
+                'tenant_id' => $wallet->tenant_id,
                 'wallet_id' => $wallet->id,
                 'amount_minor' => -$amountMinor,
                 'type' => $type,

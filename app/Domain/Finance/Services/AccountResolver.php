@@ -322,4 +322,48 @@ class AccountResolver
 
         return $account;
     }
+
+    public function getStoreLoyaltyExpenseAccount(): Account
+    {
+        $code = 'store:loyalty_expense';
+        $tenantId = tenant('id') ? (string) tenant('id') : 'central';
+
+        /** @var Account $account */
+        $account = Account::firstOrCreate(
+            [
+                'tenant_id' => $tenantId,
+                'code' => $code,
+            ],
+            [
+                'kind' => self::KIND_LOYALTY,
+                'name' => 'مصروفات نقاط ومكافآت ولاء العملاء',
+                'currency' => 'EGP',
+                'balance_minor' => 0,
+            ]
+        );
+
+        return $account;
+    }
+
+    public function getStoreCustomerWalletLiabilityAccount(): Account
+    {
+        $code = 'store:customer_wallet_liability';
+        $tenantId = tenant('id') ? (string) tenant('id') : 'central';
+
+        /** @var Account $account */
+        $account = Account::firstOrCreate(
+            [
+                'tenant_id' => $tenantId,
+                'code' => $code,
+            ],
+            [
+                'kind' => self::KIND_WALLET,
+                'name' => 'التزامات أرصدة ومحافظ العملاء',
+                'currency' => 'EGP',
+                'balance_minor' => 0,
+            ]
+        );
+
+        return $account;
+    }
 }
