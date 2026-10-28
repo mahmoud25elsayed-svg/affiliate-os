@@ -507,6 +507,18 @@ class AffiliateIdentityAndKycTest extends TestCase
             $settings->payout_freeze_hours_on_change = 48;
             $this->assertSame(48, $settings->getPayoutFreezeHours());
 
+            // 13. attribution_window_days
+            $settings->attribution_window_days = 45;
+            $this->assertSame(45, $settings->getAttributionWindowDays());
+
+            // 14. attribution_model
+            $settings->attribution_model = 'first_click';
+            $this->assertSame('first_click', $settings->getAttributionModel());
+
+            // 15. prevent_self_referral
+            $settings->prevent_self_referral = true;
+            $this->assertTrue($settings->shouldPreventSelfReferral());
+
             // Save and reload to ensure full persistence round-trip
             $settings->save();
 
@@ -515,6 +527,9 @@ class AffiliateIdentityAndKycTest extends TestCase
             $this->assertSame(75, $reloaded->default_daily_order_limit);
             $this->assertSame(21, $reloaded->return_window_days);
             $this->assertSame(['Monday', 'Thursday'], $reloaded->payout_days);
+            $this->assertSame(45, $reloaded->attribution_window_days);
+            $this->assertSame('first_click', $reloaded->attribution_model);
+            $this->assertTrue($reloaded->prevent_self_referral);
         });
     }
 }

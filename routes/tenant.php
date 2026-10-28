@@ -11,8 +11,10 @@ use App\Http\Controllers\Affiliate\AffiliateDashboardController;
 use App\Http\Controllers\Affiliate\AffiliateKycController;
 use App\Http\Controllers\Affiliate\AffiliateOrderController;
 use App\Http\Controllers\Affiliate\AffiliatePayoutController;
+use App\Http\Controllers\Affiliate\AffiliateTrackingLinkController;
 use App\Http\Controllers\Store\AffiliateKycDocumentController;
 use App\Http\Controllers\Store\OrderDocumentController;
+use App\Http\Controllers\Storefront\AffiliateReferralController;
 use App\Http\Controllers\Storefront\CategoryController;
 use App\Http\Controllers\Storefront\CheckoutSuccessController;
 use App\Http\Controllers\Storefront\HomeController;
@@ -47,6 +49,7 @@ Route::middleware([
 ])->group(function () {
     // Storefront Public Routes
     Route::get('/', HomeController::class)->name('storefront.home');
+    Route::get('/ref/{code}', AffiliateReferralController::class)->name('storefront.ref');
     Route::get('/products', [CategoryController::class, 'index'])->name('storefront.products.index');
     Route::get('/categories/{id}', [CategoryController::class, 'show'])->name('storefront.categories.show');
     Route::get('/products/{id}', [ProductController::class, 'show'])->name('storefront.products.show');
@@ -142,6 +145,12 @@ Route::middleware([
             Route::get('/payout-settings', [AffiliatePayoutController::class, 'show'])->name('affiliate.payout-settings.show');
             Route::post('/payout-settings/request-otp', [AffiliatePayoutController::class, 'requestOtp'])->name('affiliate.payout-settings.request-otp');
             Route::post('/payout-settings', [AffiliatePayoutController::class, 'update'])->name('affiliate.payout-settings.update');
+
+            // Affiliate Tracking Links (P18)
+            Route::get('/links', [AffiliateTrackingLinkController::class, 'index'])->name('affiliate.links.index');
+            Route::get('/links/create', [AffiliateTrackingLinkController::class, 'create'])->name('affiliate.links.create');
+            Route::post('/links', [AffiliateTrackingLinkController::class, 'store'])->name('affiliate.links.store');
+            Route::delete('/links/{id}', [AffiliateTrackingLinkController::class, 'destroy'])->name('affiliate.links.destroy');
 
             // Affiliate Catalog & Direct Orders (P17)
             Route::get('/catalog', [AffiliateCatalogController::class, 'index'])->name('affiliate.catalog.index');

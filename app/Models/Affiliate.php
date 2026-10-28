@@ -167,6 +167,22 @@ class Affiliate extends Authenticatable
         return $this->hasMany(Order::class, 'affiliate_id');
     }
 
+    /**
+     * @return HasMany<TrackingLink, $this>
+     */
+    public function trackingLinks(): HasMany
+    {
+        return $this->hasMany(TrackingLink::class, 'affiliate_id');
+    }
+
+    /**
+     * @return HasMany<AffiliateClick, $this>
+     */
+    public function clicks(): HasMany
+    {
+        return $this->hasMany(AffiliateClick::class, 'affiliate_id');
+    }
+
     public function isActive(): bool
     {
         return $this->status === self::STATUS_ACTIVE;

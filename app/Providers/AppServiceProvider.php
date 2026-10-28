@@ -8,6 +8,7 @@ use App\Domain\Orders\Exceptions\IllegalOrderStateMutationException;
 use App\Domain\Orders\Services\OrderTransitionService;
 use App\Domain\Storefront\Services\StorefrontCacheService;
 use App\Models\Affiliate;
+use App\Models\TrackingLink;
 use App\Models\WholesalePrice;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -57,6 +58,10 @@ class AppServiceProvider extends ServiceProvider
 
         Order::resolveRelationUsing('affiliate', function (Order $order) {
             return $order->belongsTo(Affiliate::class, 'affiliate_id');
+        });
+
+        Order::resolveRelationUsing('trackingLink', function (Order $order) {
+            return $order->belongsTo(TrackingLink::class, 'tracking_link_id');
         });
 
         // Storefront cache invalidation hooks

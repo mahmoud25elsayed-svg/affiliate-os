@@ -21,5 +21,6 @@ readonly class CheckoutPayload
         public array $items = [],
         public ?string $idempotency_token = null,
         public ?int $customer_id = null,
+        public ?string $affiliate_ref_token = null,
     ) {}
 }

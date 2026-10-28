@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Checkout\Services;
 
+use App\Domain\Affiliate\Services\AffiliateTrackingService;
 use App\Domain\Checkout\DTOs\CheckoutPayload;
 use App\Domain\Orders\DTOs\OrderActor;
 use App\Domain\Orders\Enums\OrderStatus;
@@ -11,6 +12,7 @@ use App\Domain\Orders\Events\OrderSubmitted;
 use App\Domain\Orders\Services\OrderTransitionService;
 use App\Domain\Promotions\Services\PromotionPricingService;
 use App\Models\Coupon;
+use App\Models\Customer;
 use App\Models\OrderEvent;
 use App\Support\Enums\ReasonCode;
 use App\Support\Idempotency\IdempotencyService;
@@ -193,6 +195,42 @@ class OrderCreationService
             $channel = Channel::first();
             $channelId = $channel instanceof Channel ? $channel->id : 1;
 
+            // 8.1 Affiliate Attribution via Tracking Link Cookie / Token
+            $affiliateTracking = app(AffiliateTrackingService::class);
+            $rawToken = $payload->affiliate_ref_token ?? request()->cookie(AffiliateTrackingService::COOKIE_NAME);
+            $tokenStr = is_string($rawToken) ? $rawToken : null;
+            $attributedLink = $affiliateTracking->resolveAttributedLink($tokenStr);
+
+            $attributedAffiliateId = null;
+            $attributedLinkId = null;
+            $affiliateCommissionMinor = 0;
+            $selfReferralBlocked = false;
+
+            if ($attributedLink !== null && $attributedLink->affiliate !== null) {
+                /** @var Customer|null $customerUser */
+                $customerUser = Auth::guard('customer')->user();
+                $customerEmail = $customerUser?->email;
+
+                if ($affiliateTracking->isSelfReferral($attributedLink->affiliate, $phone->e164, $customerEmail)) {
+                    $selfReferralBlocked = true;
+                } else {
+                    $attributedAffiliateId = $attributedLink->affiliate_id;
+                    $attributedLinkId = $attributedLink->id;
+
+                    $firstVariant = $lineItemsData[0]['variant'];
+                    $affiliateCommissionMinor = $affiliateTracking->calculateCommission(
+                        link: $attributedLink,
+                        subtotalMinor: $subtotalMinor,
+                        variant: $firstVariant
+                    );
+
+                    $attributedLink->increment('orders_count');
+                }
+            }
+
+            $priceSnapshot['affiliate_profit_minor'] = $affiliateCommissionMinor;
+            $priceSnapshot['attribution_type'] = $attributedLinkId !== null ? 'tracking_link' : null;
+
             // 9. Create Lunar Order
             $storefrontCustomerId = $payload->customer_id ?? (Auth::guard('customer')->check() ? (int) Auth::guard('customer')->id() : null);
 
@@ -214,6 +252,8 @@ class OrderCreationService
                 'compare_currency_code' => 'EGP',
                 'exchange_rate' => 1.0,
                 'placed_at' => now(),
+                'affiliate_id' => $attributedAffiliateId,
+                'tracking_link_id' => $attributedLinkId,
                 'customer_phone_e164' => $phone->e164,
                 'customer_phone_hash' => $phone->hash(),
                 'governorate_id' => $payload->governorate_id,
@@ -226,6 +266,8 @@ class OrderCreationService
                 'meta' => [
                     'city' => $payload->city,
                     'address' => $payload->address,
+                    'affiliate_commission_minor' => $affiliateCommissionMinor,
+                    'self_referral_blocked' => $selfReferralBlocked,
                     'spam_check' => [
                         'status' => $spamResult->status,
                         'is_duplicate' => $spamResult->isDuplicate,

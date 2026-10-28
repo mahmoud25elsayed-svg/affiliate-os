@@ -34,6 +34,7 @@
                     <nav class="hidden md:flex items-center space-x-2 space-x-reverse text-sm font-semibold">
                         <a href="{{ route('affiliate.dashboard') }}" class="text-slate-700 hover:text-indigo-600 px-2 py-2 rounded-lg">الرئيسية</a>
                         <a href="{{ route('affiliate.catalog.index') }}" class="text-slate-700 hover:text-indigo-600 px-2 py-2 rounded-lg">الكتالوج</a>
+                        <a href="{{ route('affiliate.links.index') }}" class="text-slate-700 hover:text-indigo-600 px-2 py-2 rounded-lg">روابط التتبع</a>
                         <a href="{{ route('affiliate.orders.index') }}" class="text-slate-700 hover:text-indigo-600 px-2 py-2 rounded-lg">طلباتي</a>
                         <a href="{{ route('affiliate.orders.create') }}" class="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 px-3 py-1.5 rounded-lg font-bold">طلب جديد +</a>
                         <a href="{{ route('affiliate.kyc.show') }}" class="text-slate-700 hover:text-indigo-600 px-2 py-2 rounded-lg">KYC</a>
