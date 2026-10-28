@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Carbon;
+use Lunar\Models\Order;
 
 /**
  * @property int $id
@@ -156,6 +157,14 @@ class Affiliate extends Authenticatable
     public function kycAuditLogs(): HasMany
     {
         return $this->hasMany(KycAuditLog::class);
+    }
+
+    /**
+     * @return HasMany<Order, $this>
+     */
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class, 'affiliate_id');
     }
 
     public function isActive(): bool

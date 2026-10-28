@@ -31,10 +31,13 @@
             <div class="flex items-center space-x-4 space-x-reverse">
                 @if(Auth::guard('affiliate')->check())
                     @php $aff = Auth::guard('affiliate')->user(); @endphp
-                    <nav class="hidden md:flex items-center space-x-4 space-x-reverse text-sm font-semibold">
-                        <a href="{{ route('affiliate.dashboard') }}" class="text-slate-700 hover:text-indigo-600 px-3 py-2 rounded-lg">الرئيسية</a>
-                        <a href="{{ route('affiliate.kyc.show') }}" class="text-slate-700 hover:text-indigo-600 px-3 py-2 rounded-lg">توثيق الهوية (KYC)</a>
-                        <a href="{{ route('affiliate.payout-settings.show') }}" class="text-slate-700 hover:text-indigo-600 px-3 py-2 rounded-lg">بيانات الدفع والسحب</a>
+                    <nav class="hidden md:flex items-center space-x-2 space-x-reverse text-sm font-semibold">
+                        <a href="{{ route('affiliate.dashboard') }}" class="text-slate-700 hover:text-indigo-600 px-2 py-2 rounded-lg">الرئيسية</a>
+                        <a href="{{ route('affiliate.catalog.index') }}" class="text-slate-700 hover:text-indigo-600 px-2 py-2 rounded-lg">الكتالوج</a>
+                        <a href="{{ route('affiliate.orders.index') }}" class="text-slate-700 hover:text-indigo-600 px-2 py-2 rounded-lg">طلباتي</a>
+                        <a href="{{ route('affiliate.orders.create') }}" class="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 px-3 py-1.5 rounded-lg font-bold">طلب جديد +</a>
+                        <a href="{{ route('affiliate.kyc.show') }}" class="text-slate-700 hover:text-indigo-600 px-2 py-2 rounded-lg">KYC</a>
+                        <a href="{{ route('affiliate.payout-settings.show') }}" class="text-slate-700 hover:text-indigo-600 px-2 py-2 rounded-lg">السحب</a>
                     </nav>
 
                     <div class="flex items-center space-x-3 space-x-reverse border-r border-slate-200 pr-4">

@@ -6,8 +6,10 @@ use App\Domain\Checkout\Services\StorefrontCartService;
 use App\Domain\Promotions\Services\AbandonedCartService;
 use App\Domain\Promotions\Services\NewsletterService;
 use App\Http\Controllers\Affiliate\AffiliateAuthController;
+use App\Http\Controllers\Affiliate\AffiliateCatalogController;
 use App\Http\Controllers\Affiliate\AffiliateDashboardController;
 use App\Http\Controllers\Affiliate\AffiliateKycController;
+use App\Http\Controllers\Affiliate\AffiliateOrderController;
 use App\Http\Controllers\Affiliate\AffiliatePayoutController;
 use App\Http\Controllers\Store\AffiliateKycDocumentController;
 use App\Http\Controllers\Store\OrderDocumentController;
@@ -140,6 +142,17 @@ Route::middleware([
             Route::get('/payout-settings', [AffiliatePayoutController::class, 'show'])->name('affiliate.payout-settings.show');
             Route::post('/payout-settings/request-otp', [AffiliatePayoutController::class, 'requestOtp'])->name('affiliate.payout-settings.request-otp');
             Route::post('/payout-settings', [AffiliatePayoutController::class, 'update'])->name('affiliate.payout-settings.update');
+
+            // Affiliate Catalog & Direct Orders (P17)
+            Route::get('/catalog', [AffiliateCatalogController::class, 'index'])->name('affiliate.catalog.index');
+            Route::get('/orders', [AffiliateOrderController::class, 'index'])->name('affiliate.orders.index');
+            Route::get('/orders/create', [AffiliateOrderController::class, 'create'])->name('affiliate.orders.create');
+            Route::post('/orders/quote', [AffiliateOrderController::class, 'quote'])->name('affiliate.orders.quote');
+            Route::post('/orders', [AffiliateOrderController::class, 'store'])->name('affiliate.orders.store');
+            Route::get('/orders/import-csv', [AffiliateOrderController::class, 'showImportCsv'])->name('affiliate.orders.import-csv.show');
+            Route::post('/orders/import-csv', [AffiliateOrderController::class, 'importCsv'])->name('affiliate.orders.import-csv.submit');
+            Route::get('/orders/{reference}', [AffiliateOrderController::class, 'show'])->name('affiliate.orders.show');
+            Route::post('/orders/{reference}/cancel', [AffiliateOrderController::class, 'cancel'])->name('affiliate.orders.cancel');
         });
     });
 

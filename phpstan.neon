@@ -7,4 +7,5 @@ parameters:
     level: 8
     ignoreErrors:
         - identifier: trait.unused
+        - '#Relation .wholesalePrice. is not found in Lunar\\Models\\ProductVariant model\.#'
 

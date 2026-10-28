@@ -115,4 +115,3 @@ class ManageAffiliateProgramSettings extends Page
             ->send();
     }
 }
-
