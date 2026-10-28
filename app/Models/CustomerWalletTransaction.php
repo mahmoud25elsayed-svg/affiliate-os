@@ -31,6 +31,8 @@ class CustomerWalletTransaction extends Model
 
     public const TYPE_REFUND = 'refund';
 
+    public const TYPE_REWARD = 'reward';
+
     public const TYPE_PURCHASE = 'purchase';
 
     public const TYPE_WITHDRAWAL = 'withdrawal';

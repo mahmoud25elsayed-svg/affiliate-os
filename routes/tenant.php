@@ -28,6 +28,7 @@ use App\Http\Controllers\Store\OrderDocumentController;
 use App\Http\Controllers\Store\StoreAffiliateSettingsController;
 use App\Http\Controllers\Store\StoreCallCenterController;
 use App\Http\Controllers\Store\StoreCodRemittanceController;
+use App\Http\Controllers\Store\StoreCustomerWalletController;
 use App\Http\Controllers\Store\StorePayoutManagementController;
 use App\Http\Controllers\Store\StoreShipmentController;
 use App\Http\Controllers\Storefront\AffiliateReferralController;
@@ -182,6 +183,14 @@ Route::middleware([
             Route::post('/', [StoreCodRemittanceController::class, 'store'])->name('store.cod.store');
             Route::get('/{remittance}', [StoreCodRemittanceController::class, 'show'])->name('store.cod.show');
             Route::post('/{remittance}/settle', [StoreCodRemittanceController::class, 'settle'])->name('store.cod.settle');
+        });
+
+        // Customer Wallets & Loyalty Points (P26)
+        Route::prefix('wallets')->middleware('feature:loyalty')->group(function () {
+            Route::get('/', [StoreCustomerWalletController::class, 'index'])->name('store.wallets.index');
+            Route::get('/{wallet}', [StoreCustomerWalletController::class, 'show'])->name('store.wallets.show');
+            Route::post('/{wallet}/adjust-wallet', [StoreCustomerWalletController::class, 'adjustWallet'])->name('store.wallets.adjust-wallet');
+            Route::post('/{wallet}/adjust-loyalty', [StoreCustomerWalletController::class, 'adjustLoyalty'])->name('store.wallets.adjust-loyalty');
         });
     });
 
