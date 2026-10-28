@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Support\Billing;
 
+use App\Models\Subscription;
 use App\Models\Tenant;
 use App\Support\Billing\Exceptions\FeatureNotAvailableException;
 
@@ -22,7 +23,8 @@ class Features
             return false;
         }
 
-        $subscription = $tenant->subscription;
+        /** @var Subscription|null $subscription */
+        $subscription = $tenant->subscription()->first();
 
         if (! $subscription || ! $subscription->isUsable()) {
             return false;

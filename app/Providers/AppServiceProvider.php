@@ -7,6 +7,10 @@ use App\Domain\Customer\Services\CustomerWalletService;
 use App\Domain\Orders\Exceptions\IllegalOrderStateMutationException;
 use App\Domain\Orders\Services\OrderTransitionService;
 use App\Domain\Storefront\Services\StorefrontCacheService;
+use App\Domain\Tenancy\Contracts\DnsResolverInterface;
+use App\Domain\Tenancy\Contracts\HostingerClientInterface;
+use App\Domain\Tenancy\Services\HostingerDomainService;
+use App\Domain\Tenancy\Services\SystemDnsResolver;
 use App\Models\Affiliate;
 use App\Models\TrackingLink;
 use App\Models\WholesalePrice;
@@ -32,6 +36,16 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(
             CustomerWalletServiceInterface::class,
             CustomerWalletService::class
+        );
+
+        $this->app->singleton(
+            DnsResolverInterface::class,
+            SystemDnsResolver::class
+        );
+
+        $this->app->singleton(
+            HostingerClientInterface::class,
+            HostingerDomainService::class
         );
     }
 

@@ -29,10 +29,12 @@ use App\Http\Controllers\Store\StoreAffiliateSettingsController;
 use App\Http\Controllers\Store\StoreCallCenterController;
 use App\Http\Controllers\Store\StoreCodRemittanceController;
 use App\Http\Controllers\Store\StoreCustomerWalletController;
+use App\Http\Controllers\Store\StoreDomainController;
 use App\Http\Controllers\Store\StoreKpiDashboardController;
 use App\Http\Controllers\Store\StorePayoutManagementController;
 use App\Http\Controllers\Store\StoreShipmentController;
 use App\Http\Controllers\Store\StoreSupplierController;
+use App\Http\Controllers\Store\StoreThemeController;
 use App\Http\Controllers\Storefront\AffiliateReferralController;
 use App\Http\Controllers\Storefront\CategoryController;
 use App\Http\Controllers\Storefront\CheckoutSuccessController;
@@ -45,6 +47,7 @@ use App\Http\Controllers\Storefront\SitemapController;
 use App\Http\Middleware\EnsureAffiliateAuthenticated;
 use App\Http\Middleware\EnsureCustomerAuthenticated;
 use App\Http\Middleware\EnsureStorefrontActive;
+use App\Http\Middleware\RedirectSubdomainToCustomDomain;
 use App\Livewire\Storefront\CartPage;
 use App\Livewire\Storefront\CheckoutPage;
 use App\Livewire\Storefront\CustomerAddressesPage;
@@ -65,6 +68,7 @@ Route::middleware([
     InitializeTenancyByDomain::class,
     PreventAccessFromCentralDomains::class,
     EnsureStorefrontActive::class,
+    RedirectSubdomainToCustomDomain::class,
 ])->group(function () {
     // Storefront Public Routes
     Route::get('/', HomeController::class)->name('storefront.home');
@@ -133,6 +137,7 @@ Route::middleware([
     Route::get('/terms', [PageController::class, 'terms'])->name('storefront.pages.terms');
     Route::get('/privacy', [PageController::class, 'privacy'])->name('storefront.pages.privacy');
     Route::get('/shipping', [PageController::class, 'shipping'])->name('storefront.pages.shipping');
+    Route::get('/pages/{slug}', [PageController::class, 'show'])->name('storefront.pages.show');
 
     // SEO Routes
     Route::get('/sitemap.xml', SitemapController::class)->name('storefront.sitemap');
@@ -204,6 +209,22 @@ Route::middleware([
             Route::post('/', [StoreSupplierController::class, 'store'])->name('store.suppliers.store');
             Route::get('/{supplier}', [StoreSupplierController::class, 'show'])->name('store.suppliers.show');
             Route::post('/{supplier}/batches', [StoreSupplierController::class, 'storeBatch'])->name('store.suppliers.batches.store');
+        });
+
+        // Custom Domains Management (P28)
+        Route::prefix('domains')->group(function () {
+            Route::get('/', [StoreDomainController::class, 'index'])->name('store.domains.index');
+            Route::post('/', [StoreDomainController::class, 'store'])->name('store.domains.store');
+            Route::post('/toggle-redirect', [StoreDomainController::class, 'toggleRedirect'])->name('store.domains.toggle-redirect');
+            Route::post('/{domain}/verify', [StoreDomainController::class, 'verify'])->name('store.domains.verify');
+            Route::post('/{domain}/primary', [StoreDomainController::class, 'setPrimary'])->name('store.domains.set-primary');
+            Route::delete('/{domain}', [StoreDomainController::class, 'destroy'])->name('store.domains.destroy');
+        });
+
+        // Theme Customizer (P28)
+        Route::prefix('theme')->group(function () {
+            Route::get('/', [StoreThemeController::class, 'edit'])->name('store.theme.edit');
+            Route::post('/', [StoreThemeController::class, 'update'])->name('store.theme.update');
         });
     });
 

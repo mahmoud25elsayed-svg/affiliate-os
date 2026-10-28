@@ -68,7 +68,12 @@ class HomeController extends Controller
 
         $orgSchema = $seoService->organizationSchema();
 
-        return view('storefront.home', [
+        $viewName = "storefront.themes.{$theme->theme_id}.home";
+        if (! view()->exists($viewName)) {
+            $viewName = 'storefront.home';
+        }
+
+        return view($viewName, [
             'theme' => $theme,
             'general' => $general,
             'categories' => $data['categories'],

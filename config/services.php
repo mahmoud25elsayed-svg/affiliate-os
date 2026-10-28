@@ -35,4 +35,11 @@ return [
         ],
     ],
 
+    'hostinger' => [
+        'api_token' => env('HOSTINGER_API_TOKEN', ''),
+        'base_url' => env('HOSTINGER_BASE_URL', 'https://api.hostinger.com/v1'),
+        'parent_domain' => env('HOSTINGER_PARENT_DOMAIN', 'affiliate-os.com'),
+        'username' => env('HOSTINGER_USERNAME', 'u123456789'),
+    ],
+
 ];

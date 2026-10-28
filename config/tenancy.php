@@ -19,7 +19,10 @@ return [
     'tenant_model' => App\Models\Tenant::class,
     'id_generator' => UUIDGenerator::class,
 
-    'domain_model' => Domain::class,
+    'domain_model' => App\Models\Domain::class,
+
+    'cname_target' => env('TENANCY_CNAME_TARGET', 'cname.affiliate-os.com'),
+    'server_ip' => env('TENANCY_SERVER_IP', '127.0.0.1'),
 
     /**
      * The list of domains hosting your central app.

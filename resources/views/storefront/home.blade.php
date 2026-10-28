@@ -261,6 +261,33 @@
     </script>
     @endif
 
+    <!-- Features & Trust Badges Section -->
+    @if($theme->show_features_badges && !empty($theme->features_badges))
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 bg-white p-6 sm:p-8 rounded-3xl border border-gray-100 shadow-sm">
+            @foreach($theme->features_badges as $badge)
+            <div class="flex items-start gap-4">
+                <div class="w-12 h-12 rounded-2xl bg-brand-50 flex items-center justify-center text-brand-600 flex-shrink-0 text-xl font-bold">
+                    @if($badge['icon'] === 'truck')
+                        🚚
+                    @elseif($badge['icon'] === 'shield')
+                        🛡️
+                    @elseif($badge['icon'] === 'refresh')
+                        🔄
+                    @else
+                        🎧
+                    @endif
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold text-gray-900">{{ $badge['title'] }}</h4>
+                    <p class="text-xs text-gray-500 mt-1 leading-relaxed">{{ $badge['subtitle'] }}</p>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </section>
+    @endif
+
     <!-- 2. Featured Categories Section -->
     @if($theme->show_featured_categories && $categories->isNotEmpty())
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
