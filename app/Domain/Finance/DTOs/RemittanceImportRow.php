@@ -38,4 +38,3 @@ readonly class RemittanceImportRow
         );
     }
 }
-

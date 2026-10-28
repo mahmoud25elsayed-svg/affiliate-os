@@ -115,4 +115,3 @@ class CodRemittance extends Model
         return $this->belongsTo(User::class, 'settled_by');
     }
 }
-

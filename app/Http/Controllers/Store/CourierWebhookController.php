@@ -7,7 +7,6 @@ namespace App\Http\Controllers\Store;
 use App\Domain\Fulfillment\Enums\ShipmentStatus;
 use App\Domain\Fulfillment\Services\ShipmentTrackingSyncService;
 use App\Http\Controllers\Controller;
-use App\Models\CourierAccount;
 use App\Models\Shipment;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

@@ -125,4 +125,3 @@ class StoreShipmentController extends Controller
         return redirect()->back()->with('error', 'بوليصة الشحن غير متوفرة لهذا الحساب.');
     }
 }
-

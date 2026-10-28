@@ -19,4 +19,3 @@ readonly class TrackingResult
         public array $events = []
     ) {}
 }
-

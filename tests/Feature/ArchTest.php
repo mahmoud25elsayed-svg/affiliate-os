@@ -68,7 +68,7 @@ test('no direct order status mutation outside OrderTransitionService', function 
             $content = (string) file_get_contents($file->getPathname());
 
             // Reject direct status assignments or updates on order variables
-            expect($content)->not->toMatch('/\$order->status\s*=\s*/');
+            expect($content)->not->toMatch('/\$order->status\s*=[^=]/');
             expect($content)->not->toMatch('/\$order->update\(\[\s*[\'"]status[\'"]\s*=>/');
         }
     }

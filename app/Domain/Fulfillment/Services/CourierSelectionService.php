@@ -7,6 +7,7 @@ namespace App\Domain\Fulfillment\Services;
 use App\Models\CourierAccount;
 use App\Models\CourierRule;
 use App\Support\Location\Governorate;
+use Lunar\DataTypes\Price;
 use Lunar\Models\Order;
 use Lunar\Models\OrderAddress;
 
@@ -23,7 +24,7 @@ class CourierSelectionService
         $governorateId = $this->resolveGovernorateId($order);
         /** @var mixed $rawTotal */
         $rawTotal = $order->total;
-        $orderTotalMinor = (int) ($rawTotal instanceof \Lunar\DataTypes\Price ? $rawTotal->value : $rawTotal);
+        $orderTotalMinor = (int) ($rawTotal instanceof Price ? $rawTotal->value : $rawTotal);
 
         // 2. Query matching active rules sorted by priority DESC
         if ($governorateId !== null) {

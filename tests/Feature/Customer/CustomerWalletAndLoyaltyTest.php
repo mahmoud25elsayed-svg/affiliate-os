@@ -17,6 +17,7 @@ use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\Tenant;
 use App\Models\User;
+use App\Models\Warehouse;
 use App\Support\Billing\Exceptions\FeatureNotAvailableException;
 use Database\Seeders\PlanSeeder;
 use DomainException;
@@ -113,7 +114,7 @@ class CustomerWalletAndLoyaltyTest extends TestCase
             'url' => 'http://wallet-test-store.localhost',
         ]);
 
-        \App\Models\Warehouse::firstOrCreate([
+        Warehouse::firstOrCreate([
             'tenant_id' => $this->tenant->id,
             'code' => 'MAIN',
         ], [

@@ -10,11 +10,11 @@ use App\Domain\Orders\DTOs\OrderActor;
 use App\Domain\Orders\Enums\OrderStatus;
 use App\Domain\Orders\Services\OrderTransitionService;
 use App\Models\CourierAccount;
-use App\Models\OrderEvent;
 use App\Models\Shipment;
 use App\Models\User;
 use DomainException;
 use Illuminate\Support\Carbon;
+use Lunar\DataTypes\Price;
 use Lunar\Models\Order;
 use Lunar\Models\OrderAddress;
 
@@ -47,7 +47,7 @@ class ShipmentDispatchService
         $deliveryAddress = 'عنوان التسليم';
 
         if ($shippingAddress instanceof OrderAddress) {
-            $fullName = trim((string) ($shippingAddress->first_name ?? '') . ' ' . (string) ($shippingAddress->last_name ?? ''));
+            $fullName = trim((string) ($shippingAddress->first_name ?? '').' '.(string) ($shippingAddress->last_name ?? ''));
             if ($fullName !== '') {
                 $recipientName = $fullName;
             }
@@ -64,7 +64,7 @@ class ShipmentDispatchService
 
         /** @var mixed $rawTotal */
         $rawTotal = $order->total;
-        $codAmountMinor = (int) ($rawTotal instanceof \Lunar\DataTypes\Price ? $rawTotal->value : $rawTotal);
+        $codAmountMinor = (int) ($rawTotal instanceof Price ? $rawTotal->value : $rawTotal);
 
         $itemsCount = max(1, (int) $order->lines()->sum('quantity'));
 

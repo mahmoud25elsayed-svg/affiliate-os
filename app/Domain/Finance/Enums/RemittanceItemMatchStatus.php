@@ -28,4 +28,3 @@ enum RemittanceItemMatchStatus: string
         return $this !== self::MATCHED;
     }
 }
-

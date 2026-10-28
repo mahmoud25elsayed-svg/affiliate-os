@@ -22,4 +22,3 @@ readonly class ShipmentCreationData
         public ?string $notes = null
     ) {}
 }
-

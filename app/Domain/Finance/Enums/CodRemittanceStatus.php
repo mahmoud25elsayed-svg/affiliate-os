@@ -39,4 +39,3 @@ enum CodRemittanceStatus: string
         return $this === self::SETTLED;
     }
 }
-

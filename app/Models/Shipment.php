@@ -120,4 +120,3 @@ class Shipment extends Model
         $this->save();
     }
 }
-
