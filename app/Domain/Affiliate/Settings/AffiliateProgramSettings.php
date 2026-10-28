@@ -49,6 +49,11 @@ class AffiliateProgramSettings extends Settings
     public int $min_payout_minor = 10000;
 
     /**
+     * Payout amount threshold in minor units above which Maker-Checker dual authorization is mandatory (50000 = 500.00 EGP).
+     */
+    public int $maker_checker_threshold_minor = 50000;
+
+    /**
      * Designated days of the week when payout requests are processed.
      *
      * @var list<string>
@@ -130,6 +135,11 @@ class AffiliateProgramSettings extends Settings
     public function canRequestPayout(int $balanceMinor): bool
     {
         return $balanceMinor >= $this->min_payout_minor;
+    }
+
+    public function requiresMakerChecker(int $amountMinor): bool
+    {
+        return $amountMinor >= $this->maker_checker_threshold_minor;
     }
 
     public function shouldAutoApprove(): bool

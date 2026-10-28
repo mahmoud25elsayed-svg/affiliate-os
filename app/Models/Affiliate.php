@@ -184,6 +184,14 @@ class Affiliate extends Authenticatable
         return $this->hasMany(AffiliateClick::class, 'affiliate_id');
     }
 
+    /**
+     * @return HasMany<PayoutRequest, $this>
+     */
+    public function payoutRequests(): HasMany
+    {
+        return $this->hasMany(PayoutRequest::class, 'affiliate_id');
+    }
+
     public function isActive(): bool
     {
         return $this->status === self::STATUS_ACTIVE;
