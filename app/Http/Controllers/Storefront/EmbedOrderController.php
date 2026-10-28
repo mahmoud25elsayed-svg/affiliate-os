@@ -7,8 +7,10 @@ namespace App\Http\Controllers\Storefront;
 use App\Domain\Affiliate\Actions\PriceQuoteAction;
 use App\Domain\Affiliate\Actions\SubmitAffiliateOrderAction;
 use App\Domain\Affiliate\Settings\AffiliateProgramSettings;
+use App\Domain\Tracking\Services\AdTrackingManager;
 use App\Domain\Webhooks\Services\WebhookDispatcher;
 use App\Http\Controllers\Controller;
+use App\Models\AdConversionEvent;
 use App\Models\Affiliate;
 use App\Models\WholesalePrice;
 use App\Support\Location\Governorate;
@@ -26,7 +28,8 @@ class EmbedOrderController extends Controller
     public function __construct(
         protected PriceQuoteAction $priceQuoteAction,
         protected SubmitAffiliateOrderAction $submitAction,
-        protected WebhookDispatcher $webhookDispatcher
+        protected WebhookDispatcher $webhookDispatcher,
+        protected AdTrackingManager $trackingManager
     ) {}
 
     public function show(Request $request, Product $product): View
@@ -170,16 +173,32 @@ class EmbedOrderController extends Controller
                 'created_at' => now()->toIso8601String(),
             ]);
 
+            // Dispatch server-side Conversions API (Meta CAPI & TikTok Events API)
+            $eventId = $this->trackingManager->resolveOrderEventId($order, AdConversionEvent::EVENT_PURCHASE);
+            $this->trackingManager->trackOrderPurchase(
+                order: $order,
+                eventId: $eventId,
+                clientContext: [
+                    'ip' => $request->ip(),
+                    'user_agent' => $request->userAgent(),
+                    'fbp' => $request->cookie('_fbp'),
+                    'fbc' => $request->cookie('_fbc'),
+                    'ttclid' => $request->cookie('ttclid'),
+                ]
+            );
+
             if ($request->wantsJson()) {
                 return response()->json([
                     'success' => true,
                     'reference' => $order->reference,
+                    'event_id' => $eventId,
                     'message' => 'تم استلام طلبك بنجاح!',
                 ], 201);
             }
 
             return view('storefront.embed.success', [
                 'order' => $order,
+                'eventId' => $eventId,
             ]);
         } catch (DomainException $e) {
             if ($request->wantsJson()) {

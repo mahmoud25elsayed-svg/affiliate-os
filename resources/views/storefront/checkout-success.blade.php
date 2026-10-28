@@ -88,4 +88,19 @@
         </div>
     </div>
 </div>
+
+@if(!empty($eventId))
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof window.trackAdEvent === 'function') {
+                window.trackAdEvent('Purchase', {
+                    content_type: 'product',
+                    currency: '{{ $order->currency_code ?: "EGP" }}',
+                    value: {{ round(((int) ($order->getRawOriginal('total') ?? 0)) / 100, 2) }},
+                    order_id: '{{ $order->reference }}'
+                }, '{{ $eventId }}');
+            }
+        });
+    </script>
+@endif
 @endsection

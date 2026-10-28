@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Domain\Customer\Contracts\CustomerWalletServiceInterface;
 use App\Domain\Customer\Services\CustomerWalletService;
+use App\Domain\Orders\Events\OrderDelivered;
 use App\Domain\Orders\Exceptions\IllegalOrderStateMutationException;
 use App\Domain\Orders\Services\OrderTransitionService;
 use App\Domain\Storefront\Services\StorefrontCacheService;
@@ -11,11 +12,13 @@ use App\Domain\Tenancy\Contracts\DnsResolverInterface;
 use App\Domain\Tenancy\Contracts\HostingerClientInterface;
 use App\Domain\Tenancy\Services\HostingerDomainService;
 use App\Domain\Tenancy\Services\SystemDnsResolver;
+use App\Domain\Tracking\Listeners\TrackOrderDeliveredConversionListener;
 use App\Models\Affiliate;
 use App\Models\TrackingLink;
 use App\Models\WholesalePrice;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Lunar\Admin\Support\Facades\LunarPanel;
@@ -77,6 +80,11 @@ class AppServiceProvider extends ServiceProvider
         Order::resolveRelationUsing('trackingLink', function (Order $order) {
             return $order->belongsTo(TrackingLink::class, 'tracking_link_id');
         });
+
+        Event::listen(
+            OrderDelivered::class,
+            TrackOrderDeliveredConversionListener::class
+        );
 
         // Storefront cache invalidation hooks
         Product::saved(fn () => StorefrontCacheService::flush());

@@ -12,6 +12,7 @@ use App\Http\Controllers\Affiliate\AffiliateKycController;
 use App\Http\Controllers\Affiliate\AffiliateOrderController;
 use App\Http\Controllers\Affiliate\AffiliatePayoutController;
 use App\Http\Controllers\Affiliate\AffiliatePayoutRequestController;
+use App\Http\Controllers\Affiliate\AffiliatePixelController;
 use App\Http\Controllers\Affiliate\AffiliateTrackingLinkController;
 use App\Http\Controllers\Affiliate\AffiliateWalletController;
 use App\Http\Controllers\Affiliate\App\AppAnalyticsController;
@@ -33,6 +34,7 @@ use App\Http\Controllers\Store\StoreCustomerWalletController;
 use App\Http\Controllers\Store\StoreDomainController;
 use App\Http\Controllers\Store\StoreKpiDashboardController;
 use App\Http\Controllers\Store\StorePayoutManagementController;
+use App\Http\Controllers\Store\StorePixelTrackingController;
 use App\Http\Controllers\Store\StoreShipmentController;
 use App\Http\Controllers\Store\StoreSupplierController;
 use App\Http\Controllers\Store\StoreThemeController;
@@ -238,6 +240,13 @@ Route::middleware([
             Route::get('/', [StoreThemeController::class, 'edit'])->name('store.theme.edit');
             Route::post('/', [StoreThemeController::class, 'update'])->name('store.theme.update');
         });
+
+        // Ad Tracking & Conversions API (P30)
+        Route::prefix('pixels')->group(function () {
+            Route::get('/', [StorePixelTrackingController::class, 'index'])->name('store.pixels.index');
+            Route::post('/', [StorePixelTrackingController::class, 'update'])->name('store.pixels.update');
+            Route::post('/test', [StorePixelTrackingController::class, 'test'])->name('store.pixels.test');
+        });
     });
 
     // Courier Webhook endpoint for tracking callbacks (P24)
@@ -260,6 +269,10 @@ Route::middleware([
             Route::get('/payout-settings', [AffiliatePayoutController::class, 'show'])->name('affiliate.payout-settings.show');
             Route::post('/payout-settings/request-otp', [AffiliatePayoutController::class, 'requestOtp'])->name('affiliate.payout-settings.request-otp');
             Route::post('/payout-settings', [AffiliatePayoutController::class, 'update'])->name('affiliate.payout-settings.update');
+
+            // Affiliate Ad Tracking Pixels (P30)
+            Route::get('/pixels', [AffiliatePixelController::class, 'show'])->name('affiliate.pixels.show');
+            Route::post('/pixels', [AffiliatePixelController::class, 'update'])->name('affiliate.pixels.update');
 
             // Affiliate Wallet & Statement (P19)
             Route::get('/wallet', [AffiliateWalletController::class, 'index'])->name('affiliate.wallet.index');

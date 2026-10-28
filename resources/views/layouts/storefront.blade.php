@@ -89,6 +89,7 @@
     </script>
 
     @yield('schema')
+    @include('storefront.partials.pixels')
     @livewireStyles
 </head>
 <body class="bg-gray-50 text-gray-900 antialiased min-h-screen flex flex-col selection:bg-brand-600 selection:text-white">
