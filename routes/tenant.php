@@ -23,10 +23,12 @@ use App\Http\Controllers\Affiliate\App\AppOrderController;
 use App\Http\Controllers\Affiliate\App\AppProfileController;
 use App\Http\Controllers\Affiliate\App\AppWalletController;
 use App\Http\Controllers\Store\AffiliateKycDocumentController;
+use App\Http\Controllers\Store\CourierWebhookController;
 use App\Http\Controllers\Store\OrderDocumentController;
 use App\Http\Controllers\Store\StoreAffiliateSettingsController;
 use App\Http\Controllers\Store\StoreCallCenterController;
 use App\Http\Controllers\Store\StorePayoutManagementController;
+use App\Http\Controllers\Store\StoreShipmentController;
 use App\Http\Controllers\Storefront\AffiliateReferralController;
 use App\Http\Controllers\Storefront\CategoryController;
 use App\Http\Controllers\Storefront\CheckoutSuccessController;
@@ -163,7 +165,18 @@ Route::middleware([
             Route::post('/orders/{order}/modify', [StoreCallCenterController::class, 'modify'])->name('store.call-center.modify');
             Route::get('/performance', [StoreCallCenterController::class, 'performance'])->name('store.call-center.performance');
         });
+
+        // Shipments & Courier Fulfillment (P24)
+        Route::prefix('shipments')->middleware('feature:courier')->group(function () {
+            Route::get('/', [StoreShipmentController::class, 'index'])->name('store.shipments.index');
+            Route::post('/orders/{order}/dispatch', [StoreShipmentController::class, 'dispatch'])->name('store.shipments.dispatch');
+            Route::get('/{shipment}', [StoreShipmentController::class, 'show'])->name('store.shipments.show');
+            Route::get('/{shipment}/waybill', [StoreShipmentController::class, 'waybill'])->name('store.shipments.waybill');
+        });
     });
+
+    // Courier Webhook endpoint for tracking callbacks (P24)
+    Route::post('/webhooks/courier/{driver}', [CourierWebhookController::class, 'handle'])->name('store.courier.webhook');
 
     // Affiliate Portal Routes (P16)
     Route::prefix('partners')->group(function () {
