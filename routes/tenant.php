@@ -5,6 +5,11 @@ declare(strict_types=1);
 use App\Domain\Checkout\Services\StorefrontCartService;
 use App\Domain\Promotions\Services\AbandonedCartService;
 use App\Domain\Promotions\Services\NewsletterService;
+use App\Http\Controllers\Affiliate\AffiliateAuthController;
+use App\Http\Controllers\Affiliate\AffiliateDashboardController;
+use App\Http\Controllers\Affiliate\AffiliateKycController;
+use App\Http\Controllers\Affiliate\AffiliatePayoutController;
+use App\Http\Controllers\Store\AffiliateKycDocumentController;
 use App\Http\Controllers\Store\OrderDocumentController;
 use App\Http\Controllers\Storefront\CategoryController;
 use App\Http\Controllers\Storefront\CheckoutSuccessController;
@@ -14,6 +19,7 @@ use App\Http\Controllers\Storefront\ProductController;
 use App\Http\Controllers\Storefront\RobotsController;
 use App\Http\Controllers\Storefront\SearchController;
 use App\Http\Controllers\Storefront\SitemapController;
+use App\Http\Middleware\EnsureAffiliateAuthenticated;
 use App\Http\Middleware\EnsureCustomerAuthenticated;
 use App\Http\Middleware\EnsureStorefrontActive;
 use App\Livewire\Storefront\CartPage;
@@ -111,6 +117,31 @@ Route::middleware([
     // Order Documents (Printable Invoices & Waybills - P11)
     Route::get('/orders/{reference}/invoice', [OrderDocumentController::class, 'invoice'])->name('store.orders.invoice');
     Route::get('/orders/{reference}/waybill', [OrderDocumentController::class, 'waybill'])->name('store.orders.waybill');
+
+    // KYC Document Secure View (P16)
+    Route::get('/store/affiliates/{affiliate}/kyc/{side}', [AffiliateKycDocumentController::class, 'show'])
+        ->middleware('auth')
+        ->name('store.affiliates.kyc-document');
+
+    // Affiliate Portal Routes (P16)
+    Route::prefix('partners')->group(function () {
+        Route::get('/join', [AffiliateAuthController::class, 'showJoin'])->name('affiliate.join');
+        Route::post('/register', [AffiliateAuthController::class, 'register'])->name('affiliate.register');
+        Route::get('/login', [AffiliateAuthController::class, 'showLogin'])->name('affiliate.login');
+        Route::post('/login', [AffiliateAuthController::class, 'login'])->name('affiliate.login.submit');
+        Route::get('/verify-otp', [AffiliateAuthController::class, 'showVerifyOtp'])->name('affiliate.verify-otp.show');
+        Route::post('/verify-otp', [AffiliateAuthController::class, 'verifyOtp'])->name('affiliate.verify-otp.submit');
+
+        Route::middleware(EnsureAffiliateAuthenticated::class)->group(function () {
+            Route::post('/logout', [AffiliateAuthController::class, 'logout'])->name('affiliate.logout');
+            Route::get('/dashboard', [AffiliateDashboardController::class, 'index'])->name('affiliate.dashboard');
+            Route::get('/kyc', [AffiliateKycController::class, 'show'])->name('affiliate.kyc.show');
+            Route::post('/kyc', [AffiliateKycController::class, 'submit'])->name('affiliate.kyc.submit');
+            Route::get('/payout-settings', [AffiliatePayoutController::class, 'show'])->name('affiliate.payout-settings.show');
+            Route::post('/payout-settings/request-otp', [AffiliatePayoutController::class, 'requestOtp'])->name('affiliate.payout-settings.request-otp');
+            Route::post('/payout-settings', [AffiliatePayoutController::class, 'update'])->name('affiliate.payout-settings.update');
+        });
+    });
 
     // Health check endpoint from P06
     Route::get('/storefront', function () {

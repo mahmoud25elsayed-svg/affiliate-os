@@ -1,5 +1,6 @@
 <?php
 
+use App\Providers\AffiliateServiceProvider;
 use App\Providers\AppServiceProvider;
 use App\Providers\Filament\PlatformPanelProvider;
 use App\Providers\Filament\StorePanelProvider;
@@ -20,4 +21,5 @@ return [
     InventoryServiceProvider::class,
     PromotionServiceProvider::class,
     NotificationServiceProvider::class,
+    AffiliateServiceProvider::class,
 ];

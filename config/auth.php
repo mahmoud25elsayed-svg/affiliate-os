@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Affiliate;
 use App\Models\Customer;
 use App\Models\User;
 
@@ -47,6 +48,10 @@ return [
             'driver' => 'session',
             'provider' => 'customers',
         ],
+        'affiliate' => [
+            'driver' => 'session',
+            'provider' => 'affiliates',
+        ],
     ],
 
     /*
@@ -74,6 +79,10 @@ return [
         'customers' => [
             'driver' => 'eloquent',
             'model' => Customer::class,
+        ],
+        'affiliates' => [
+            'driver' => 'eloquent',
+            'model' => Affiliate::class,
         ],
     ],
 
