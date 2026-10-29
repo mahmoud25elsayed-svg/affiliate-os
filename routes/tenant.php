@@ -82,16 +82,19 @@ Route::middleware([
     RedirectSubdomainToCustomDomain::class,
 ])->group(function () {
     // Storefront Public Routes
-    Route::get('/', HomeController::class)->name('storefront.home');
     Route::get('/ref/{code}', AffiliateReferralController::class)->name('storefront.ref');
-    Route::get('/products', [CategoryController::class, 'index'])->name('storefront.products.index');
-    Route::get('/categories/{id}', [CategoryController::class, 'show'])->name('storefront.categories.show');
-    Route::get('/products/{id}', [ProductController::class, 'show'])->name('storefront.products.show');
-    Route::get('/search', SearchController::class)->name('storefront.search');
 
-    // Public Help Center & FAQ (P32)
-    Route::get('/help', [StoreHelpCenterController::class, 'index'])->name('storefront.help.index');
-    Route::get('/help/{slug}', [StoreHelpCenterController::class, 'show'])->name('storefront.help.show');
+    Route::middleware(['storefront.cache'])->group(function () {
+        Route::get('/', HomeController::class)->name('storefront.home');
+        Route::get('/products', [CategoryController::class, 'index'])->name('storefront.products.index');
+        Route::get('/categories/{id}', [CategoryController::class, 'show'])->name('storefront.categories.show');
+        Route::get('/products/{id}', [ProductController::class, 'show'])->name('storefront.products.show');
+        Route::get('/search', SearchController::class)->name('storefront.search');
+
+        // Public Help Center & FAQ (P32)
+        Route::get('/help', [StoreHelpCenterController::class, 'index'])->name('storefront.help.index');
+        Route::get('/help/{slug}', [StoreHelpCenterController::class, 'show'])->name('storefront.help.show');
+    });
 
     // Cart & Checkout Routes (P09)
     Route::get('/cart', CartPage::class)->name('storefront.cart');

@@ -12,5 +12,6 @@ Artisan::command('inspire', function () {
 Schedule::command('horizon:snapshot')->everyFiveMinutes();
 Schedule::command('affiliate:calculate-daily-quality-scores')->dailyAt('00:05');
 Schedule::command('reports:aggregate-daily')->dailyAt('01:00');
+Schedule::command('queue:cron --stop-when-empty')->everyMinute()->withoutOverlapping();
 Schedule::job(new ReleaseExpiredOrderLocksJob)->everyFiveMinutes();
 Schedule::job(new ProcessExhaustedCallAttemptsJob)->hourly();
