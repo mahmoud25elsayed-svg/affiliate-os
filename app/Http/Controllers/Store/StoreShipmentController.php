@@ -77,10 +77,18 @@ class StoreShipmentController extends Controller
     {
         /** @var User $user */
         $user = $request->user();
+        $tenantId = $user->tenant_id ?? (function_exists('tenancy') && tenancy()->initialized ? tenant('id') : null);
+
+        if ($tenantId !== null && (string) $order->tenant_id !== (string) $tenantId) {
+            abort(403, 'غير مصرح لك بإدارة هذا الطلب');
+        }
 
         $courierAccountId = $request->input('courier_account_id');
         /** @var CourierAccount|null $courierAccount */
         $courierAccount = $courierAccountId ? CourierAccount::find($courierAccountId) : null;
+        if ($courierAccount && $tenantId !== null && (string) $courierAccount->tenant_id !== (string) $tenantId) {
+            abort(403, 'غير مصرح لك باستخدام حساب شركة الشحن هذا');
+        }
 
         $shipment = $dispatchService->dispatchOrder($order, $courierAccount, $user);
 
@@ -88,8 +96,15 @@ class StoreShipmentController extends Controller
             ->with('success', "تم تسليم الطلب #{$order->id} لشركة الشحن بنجاح برقم تتبع {$shipment->tracking_number}.");
     }
 
-    public function show(Shipment $shipment, CourierManager $manager, ShipmentTrackingSyncService $syncService): View
+    public function show(Request $request, Shipment $shipment, CourierManager $manager, ShipmentTrackingSyncService $syncService): View
     {
+        /** @var User|null $user */
+        $user = $request->user();
+        $tenantId = $user instanceof User ? $user->tenant_id : (function_exists('tenancy') && tenancy()->initialized ? tenant('id') : null);
+        if ($tenantId !== null && (string) $shipment->tenant_id !== (string) $tenantId) {
+            abort(403, 'غير مصرح لك بعرض هذه الشحنة');
+        }
+
         // Query live tracking from courier driver
         if ($shipment->courierAccount) {
             $driver = $manager->driver($shipment->courierAccount);
@@ -106,8 +121,15 @@ class StoreShipmentController extends Controller
         ]);
     }
 
-    public function waybill(Shipment $shipment, CourierManager $manager): Response|RedirectResponse
+    public function waybill(Request $request, Shipment $shipment, CourierManager $manager): Response|RedirectResponse
     {
+        /** @var User|null $user */
+        $user = $request->user();
+        $tenantId = $user instanceof User ? $user->tenant_id : (function_exists('tenancy') && tenancy()->initialized ? tenant('id') : null);
+        if ($tenantId !== null && (string) $shipment->tenant_id !== (string) $tenantId) {
+            abort(403, 'غير مصرح لك بعرض بوليصة هذه الشحنة');
+        }
+
         if ($shipment->waybill_url) {
             return redirect()->away($shipment->waybill_url);
         }

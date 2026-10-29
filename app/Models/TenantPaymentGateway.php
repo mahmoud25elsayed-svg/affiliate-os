@@ -34,6 +34,13 @@ class TenantPaymentGateway extends Model
     ];
 
     /**
+     * @var list<string>
+     */
+    protected $hidden = [
+        'credentials',
+    ];
+
+    /**
      * @return array<string, string>
      */
     protected function casts(): array

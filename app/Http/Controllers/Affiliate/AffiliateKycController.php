@@ -40,14 +40,16 @@ class AffiliateKycController extends Controller
 
         $validated = $request->validate([
             'national_id_number' => ['required', 'string', 'min:10', 'max:20'],
-            'id_card_front' => ['required', 'file', 'image', 'max:5120'], // 5MB max
-            'id_card_back' => ['required', 'file', 'image', 'max:5120'],
+            'id_card_front' => ['required', 'file', 'mimes:jpeg,png,jpg,webp,pdf', 'max:5120'], // 5MB max, strict whitelist (no SVG/HTML)
+            'id_card_back' => ['required', 'file', 'mimes:jpeg,png,jpg,webp,pdf', 'max:5120'],
         ], [
             'national_id_number.required' => 'الرقم القومي مطلوب',
             'id_card_front.required' => 'صورة وجه البطاقة مطلوبة',
-            'id_card_front.image' => 'يجب أن يكون الملف صورة (JPEG, PNG)',
+            'id_card_front.mimes' => 'يجب أن يكون الملف صورة أو مستند صالح (JPEG, PNG, WEBP, PDF)',
+            'id_card_front.max' => 'الحد الأقصى لحجم الملف هو 5 ميجابايت',
             'id_card_back.required' => 'صورة ظهر البطاقة مطلوبة',
-            'id_card_back.image' => 'يجب أن يكون الملف صورة (JPEG, PNG)',
+            'id_card_back.mimes' => 'يجب أن يكون الملف صورة أو مستند صالح (JPEG, PNG, WEBP, PDF)',
+            'id_card_back.max' => 'الحد الأقصى لحجم الملف هو 5 ميجابايت',
         ]);
 
         /** @var UploadedFile $front */

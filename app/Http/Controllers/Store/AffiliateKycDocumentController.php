@@ -26,6 +26,14 @@ class AffiliateKycDocumentController extends Controller
             abort(401, 'يجب تسجيل الدخول أولاً');
         }
 
+        if (function_exists('tenancy') && tenancy()->initialized) {
+            if ((string) $affiliate->tenant_id !== (string) tenant('id')) {
+                abort(403, 'غير مصرح لك بعرض مستندات تابعة لمتجر آخر');
+            }
+        } elseif ($user->tenant_id !== null && (string) $affiliate->tenant_id !== (string) $user->tenant_id) {
+            abort(403, 'غير مصرح لك بعرض مستندات تابعة لمتجر آخر');
+        }
+
         if (! in_array($side, ['front', 'back'], true)) {
             abort(404, 'جهة مستند الهوية غير صالحة');
         }

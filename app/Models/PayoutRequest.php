@@ -50,6 +50,13 @@ class PayoutRequest extends Model
     protected $guarded = ['id'];
 
     /**
+     * @var list<string>
+     */
+    protected $hidden = [
+        'payout_details',
+    ];
+
+    /**
      * @return array<string, string>
      */
     protected function casts(): array
@@ -58,7 +65,7 @@ class PayoutRequest extends Model
             'amount_minor' => 'integer',
             'fee_minor' => 'integer',
             'net_amount_minor' => 'integer',
-            'payout_details' => 'array',
+            'payout_details' => 'encrypted:array',
             'approved_at' => 'datetime',
             'paid_at' => 'datetime',
             'rejected_at' => 'datetime',

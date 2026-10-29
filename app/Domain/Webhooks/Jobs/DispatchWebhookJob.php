@@ -6,6 +6,8 @@ namespace App\Domain\Webhooks\Jobs;
 
 use App\Models\WebhookDelivery;
 use App\Models\WebhookSubscription;
+use App\Support\Security\Exceptions\SsrfBlockedException;
+use App\Support\Security\SsrfProtection;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -50,6 +52,20 @@ class DispatchWebhookJob implements ShouldQueue
         $signature = 'sha256='.hash_hmac('sha256', $payloadJson, $subscription->secret);
 
         $delivery->attempt = $this->attempts();
+
+        try {
+            SsrfProtection::assertSafeUrl($subscription->url);
+        } catch (SsrfBlockedException $e) {
+            $delivery->status = WebhookDelivery::STATUS_FAILED;
+            $delivery->response_status = 400;
+            $delivery->response_body = 'Blocked by SSRF protection: '.$e->getMessage();
+            $delivery->save();
+
+            $subscription->recordFailure();
+            Log::warning("Webhook delivery [{$delivery->id}] blocked by SSRF protection for url [{$subscription->url}]");
+
+            return;
+        }
 
         try {
             $response = Http::timeout(10)

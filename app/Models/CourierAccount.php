@@ -44,11 +44,23 @@ class CourierAccount extends Model
     ];
 
     /**
+     * @var list<string>
+     */
+    protected $hidden = [
+        'api_key',
+        'api_secret',
+        'webhook_secret',
+    ];
+
+    /**
      * @return array<string, string>
      */
     protected function casts(): array
     {
         return [
+            'api_key' => 'encrypted',
+            'api_secret' => 'encrypted',
+            'webhook_secret' => 'encrypted',
             'is_active' => 'boolean',
             'is_default' => 'boolean',
             'settings' => 'array',
