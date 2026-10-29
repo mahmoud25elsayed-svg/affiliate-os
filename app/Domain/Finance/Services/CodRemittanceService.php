@@ -68,9 +68,6 @@ class CodRemittanceService
                     continue;
                 }
 
-                $totalCollectedMinor += $row->reportedCodMinor;
-                $totalShippingFeesMinor += $row->shippingFeeMinor;
-
                 /** @var Shipment|null $shipment */
                 $shipment = Shipment::query()
                     ->where('tenant_id', $tenantId)
@@ -84,6 +81,7 @@ class CodRemittanceService
                 $matchStatus = RemittanceItemMatchStatus::MATCHED;
                 $itemNote = $row->notes;
 
+                // AF-02: Non-existent shipments must NOT be added to total collected or net bank payout
                 if (! $shipment instanceof Shipment) {
                     $matchStatus = RemittanceItemMatchStatus::NOT_FOUND;
                     $discrepancyOrdersCount++;
@@ -94,6 +92,9 @@ class CodRemittanceService
                     $discrepancyOrdersCount++;
                     $itemNote = $itemNote ?: 'الطلب تمت تسويته مسبقاً في كشف سابق';
                 } else {
+                    $totalCollectedMinor += $row->reportedCodMinor;
+                    $totalShippingFeesMinor += $row->shippingFeeMinor;
+
                     $expectedCodMinor = $shipment->cod_amount_minor;
                     $expectedFeeMinor = $shipment->shipping_fees_minor;
 

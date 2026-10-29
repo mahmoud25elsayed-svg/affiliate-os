@@ -28,6 +28,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'feature' => EnsureFeatureEnabled::class,
             'storefront.cache' => StorefrontHttpCacheMiddleware::class,
+            'tenant.user' => \App\Http\Middleware\EnsureUserBelongsToTenant::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

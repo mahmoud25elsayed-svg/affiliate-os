@@ -178,11 +178,11 @@ Route::middleware([
 
     // KYC Document Secure View (P16)
     Route::get('/store/affiliates/{affiliate}/kyc/{side}', [AffiliateKycDocumentController::class, 'show'])
-        ->middleware('auth')
+        ->middleware(['auth', 'tenant.user'])
         ->name('store.affiliates.kyc-document');
 
     // Store Admin Payouts & Affiliate Settings (P20)
-    Route::middleware('auth')->prefix('store')->group(function () {
+    Route::middleware(['auth', 'tenant.user'])->prefix('store')->group(function () {
         // Merchant Onboarding & Demo Data (P38)
         Route::get('/onboarding/progress', [MerchantOnboardingWizardController::class, 'progress'])->name('store.onboarding.progress');
         Route::post('/demo-data/seed', [MerchantOnboardingWizardController::class, 'seedDemo'])->name('store.demo-data.seed');

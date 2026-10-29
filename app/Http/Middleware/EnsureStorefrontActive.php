@@ -33,10 +33,20 @@ class EnsureStorefrontActive
             $tenant = $tenant->fresh() ?? $tenant;
         }
 
-        if ($tenant && $tenant->isSuspended()) {
-            return response()->view('storefront.suspended', [
-                'tenantName' => $tenant->name,
-            ], 503);
+        if ($tenant) {
+            if ($tenant->isSuspended()) {
+                return response()->view('storefront.suspended', [
+                    'tenantName' => $tenant->name,
+                ], 503);
+            }
+
+            // BL-06: Storefront must be suspended if subscription is no longer usable (e.g. trial ended)
+            $subscription = $tenant->subscription;
+            if ($subscription && ! $subscription->isUsable()) {
+                return response()->view('storefront.suspended', [
+                    'tenantName' => $tenant->name,
+                ], 503);
+            }
         }
 
         return $next($request);

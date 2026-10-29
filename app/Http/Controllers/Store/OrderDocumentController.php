@@ -25,6 +25,8 @@ class OrderDocumentController extends Controller
             ->where('reference', $reference)
             ->firstOrFail();
 
+        $this->authorizeInvoiceAccess($request, $order);
+
         $settings = GeneralSettings::load();
         $tenant = tenant();
 
@@ -62,6 +64,8 @@ class OrderDocumentController extends Controller
             ->where('reference', $reference)
             ->firstOrFail();
 
+        $this->authorizeWaybillAccess($request, $order);
+
         $settings = GeneralSettings::load();
         $tenant = tenant();
 
@@ -86,5 +90,47 @@ class OrderDocumentController extends Controller
             'tenant' => $tenant,
             'isPdf' => false,
         ]);
+    }
+
+    protected function authorizeWaybillAccess(Request $request, Order $order): void
+    {
+        $user = $request->user();
+        $tenantId = tenant('id') ? (string) tenant('id') : null;
+
+        if (! $user || ($tenantId && $user->tenant_id !== $tenantId && ! $user->is_platform_admin)) {
+            abort(403, 'غير مصرح بعرض بوليصة الشحن بدون تسجيل دخول كموظف للمتجر.');
+        }
+
+        if ($user->is_platform_admin) {
+            return;
+        }
+
+        $allowedRoles = ['owner', 'manager', 'orders', 'call_center', 'support'];
+        if (! $user->hasAnyRole($allowedRoles)) {
+            abort(403, 'ليس لديك صلاحية عرض بوالص الشحن.');
+        }
+    }
+
+    protected function authorizeInvoiceAccess(Request $request, Order $order): void
+    {
+        // 1. Signed route allows customer/courier to view invoice via direct link
+        if ($request->hasValidSignature()) {
+            return;
+        }
+
+        // 2. Staff user of the tenant or platform admin
+        $user = $request->user();
+        $tenantId = tenant('id') ? (string) tenant('id') : null;
+        if ($user && ($user->is_platform_admin || ! $tenantId || $user->tenant_id === $tenantId)) {
+            return;
+        }
+
+        // 3. Authenticated customer who owns the order
+        $customer = $request->user('customer');
+        if ($customer && $order->storefront_customer_id && (int) $customer->id === (int) $order->storefront_customer_id) {
+            return;
+        }
+
+        abort(403, 'غير مصرح بعرض فاتورة هذا الطلب.');
     }
 }

@@ -151,18 +151,25 @@ class ProvisionTenant implements ShouldQueue
             $settings->save();
 
             // Create or update Owner User
-            if (! empty($this->ownerData['email'])) {
-                /** @var User $ownerUser */
-                $ownerUser = User::firstOrCreate(
-                    ['email' => $this->ownerData['email']],
-                    [
+            if (! empty($this->ownerData['email']) || ! empty($this->ownerData['user_id'])) {
+                /** @var User|null $ownerUser */
+                $ownerUser = ! empty($this->ownerData['user_id'])
+                    ? User::find($this->ownerData['user_id'])
+                    : User::firstWhere('email', $this->ownerData['email']);
+
+                if (! $ownerUser) {
+                    $passwordHash = $this->ownerData['password_hash']
+                        ?? Hash::make($this->ownerData['password'] ?? \Illuminate\Support\Str::random(32));
+
+                    $ownerUser = User::create([
+                        'email' => $this->ownerData['email'],
                         'name' => $this->ownerData['name'] ?? 'Merchant Owner',
-                        'password' => Hash::make($this->ownerData['password'] ?? 'secret123'),
+                        'password' => $passwordHash,
                         'phone' => $this->ownerData['phone'] ?? null,
                         'phone_verified_at' => now(),
                         'tenant_id' => $tenant->id,
-                    ]
-                );
+                    ]);
+                }
 
                 TenantPermissionMatrix::assignRole($ownerUser, TenantPermissionMatrix::ROLE_OWNER, (string) $tenant->id);
             }

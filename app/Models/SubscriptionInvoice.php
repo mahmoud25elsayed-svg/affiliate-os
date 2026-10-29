@@ -46,6 +46,8 @@ class SubscriptionInvoice extends Model
     protected $fillable = [
         'invoice_number',
         'subscription_id',
+        'target_plan_id',
+        'target_cycle',
         'tenant_id',
         'amount',
         'currency',
@@ -80,6 +82,11 @@ class SubscriptionInvoice extends Model
     public function subscription(): BelongsTo
     {
         return $this->belongsTo(Subscription::class);
+    }
+
+    public function targetPlan(): BelongsTo
+    {
+        return $this->belongsTo(Plan::class, 'target_plan_id');
     }
 
     /**

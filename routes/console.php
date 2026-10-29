@@ -41,3 +41,8 @@ Schedule::command($backupCmd)->dailyAt('03:00');
 Schedule::command('queue:cron --stop-when-empty')->everyMinute()->withoutOverlapping(10);
 Schedule::job(new ReleaseExpiredOrderLocksJob)->everyFiveMinutes();
 Schedule::job(new ProcessExhaustedCallAttemptsJob)->hourly();
+
+// Subscription life cycle automations (BL-03)
+Schedule::job(new \App\Jobs\Subscriptions\CheckExpiringSubscriptions)->dailyAt('08:00');
+Schedule::job(new \App\Jobs\Subscriptions\ProcessPastDueSubscriptions)->dailyAt('08:30');
+Schedule::job(new \App\Jobs\Subscriptions\SuspendDelinquentSubscriptions)->dailyAt('09:00');

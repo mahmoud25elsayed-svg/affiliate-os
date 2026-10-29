@@ -9,6 +9,8 @@ use App\Domain\Orders\Services\OrderTransitionService;
 use App\Models\Customer;
 use App\Models\OrderEvent;
 use App\Models\Tenant;
+use App\Models\User;
+use App\Support\Tenancy\Permissions\TenantPermissionMatrix;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Lunar\Base\ValueObjects\Cart\TaxBreakdown;
 use Lunar\FieldTypes\Text;
@@ -32,12 +34,25 @@ class OrderDocumentsTest extends TestCase
 
     protected Customer $customer;
 
+    protected User $staff;
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->tenant = $this->ensureTenantExists('docstore', 'doc-store.localhost');
         tenancy()->initialize($this->tenant);
+        TenantPermissionMatrix::seedForTenant($this->tenant->id);
+
+        $this->staff = User::firstOrCreate(
+            ['email' => 'owner@docstore.test'],
+            [
+                'name' => 'Store Owner',
+                'password' => bcrypt('password123'),
+                'tenant_id' => $this->tenant->id,
+            ]
+        );
+        TenantPermissionMatrix::assignRole($this->staff, TenantPermissionMatrix::ROLE_OWNER, $this->tenant->id);
 
         $channel = Channel::first() ?? Channel::create([
             'name' => 'Web',
@@ -152,6 +167,13 @@ class OrderDocumentsTest extends TestCase
     public function test_invoice_renders_arabic_content_and_financials(): void
     {
         $domain = 'doc-store.localhost';
+
+        // Unauthenticated access must be rejected with 403
+        $guestResponse = $this->get("http://{$domain}/orders/{$this->order->reference}/invoice");
+        $guestResponse->assertForbidden();
+
+        // Authenticated staff user can view
+        $this->actingAs($this->staff);
         $response = $this->get("http://{$domain}/orders/{$this->order->reference}/invoice");
 
         $response->assertOk();
@@ -166,6 +188,7 @@ class OrderDocumentsTest extends TestCase
     public function test_invoice_pdf_download(): void
     {
         $domain = 'doc-store.localhost';
+        $this->actingAs($this->staff);
         $response = $this->get("http://{$domain}/orders/{$this->order->reference}/invoice?pdf=1");
 
         $response->assertOk();
@@ -175,6 +198,13 @@ class OrderDocumentsTest extends TestCase
     public function test_shipping_waybill_renders_courier_details_and_cod(): void
     {
         $domain = 'doc-store.localhost';
+
+        // Unauthenticated access must be rejected with 403
+        $guestResponse = $this->get("http://{$domain}/orders/{$this->order->reference}/waybill");
+        $guestResponse->assertForbidden();
+
+        // Authenticated staff user can view
+        $this->actingAs($this->staff);
         $response = $this->get("http://{$domain}/orders/{$this->order->reference}/waybill");
 
         $response->assertOk();
@@ -189,6 +219,7 @@ class OrderDocumentsTest extends TestCase
     public function test_shipping_waybill_pdf_download(): void
     {
         $domain = 'doc-store.localhost';
+        $this->actingAs($this->staff);
         $response = $this->get("http://{$domain}/orders/{$this->order->reference}/waybill?pdf=1");
 
         $response->assertOk();

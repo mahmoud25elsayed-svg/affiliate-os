@@ -72,7 +72,7 @@ class AffiliateReferralRewardService
             return $existing;
         }
 
-        // Post to double-entry ledger
+        // AF-07: Post milestone referral reward to pending balance; settled via CommissionSettlementService upon order settlement
         $referrerPending = $this->accountResolver->getAffiliatePendingAccount($referrer);
         $bonusExpense = $this->accountResolver->getStoreBonusExpenseAccount();
 

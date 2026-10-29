@@ -100,12 +100,13 @@ class Ledger
                 ]);
             }
 
-            // Apply deltas to locked accounts
+            // Apply deltas to locked accounts (AF-18)
             foreach ($accountDeltas as $accountId => $deltaMinor) {
                 $account = $lockedAccounts->get($accountId);
-                if ($account instanceof Account) {
-                    $account->increment('balance_minor', $deltaMinor);
+                if (! $account instanceof Account) {
+                    throw new \RuntimeException("Account ID {$accountId} could not be locked for balance update.");
                 }
+                $account->increment('balance_minor', $deltaMinor);
             }
 
             return $journalEntry->load('lines.account');

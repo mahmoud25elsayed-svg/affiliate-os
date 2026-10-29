@@ -68,6 +68,10 @@ class StorePayoutManagementController extends Controller
         /** @var User $actor */
         $actor = $request->user();
 
+        if ($actor->hasRole('call_center') || $actor->hasRole('orders')) {
+            abort(403, 'غير مصرح لك باعتماد طلبات السحب.');
+        }
+
         try {
             $this->payoutService->approvePayout($payoutRequest, $actor);
 
@@ -82,14 +86,26 @@ class StorePayoutManagementController extends Controller
         /** @var User $actor */
         $actor = $request->user();
 
-        $request->validate([
+        if ($actor->hasRole('call_center') || $actor->hasRole('orders')) {
+            abort(403, 'غير مصرح لك بتنفيذ طلبات السحب.');
+        }
+
+        $rules = [
             'reference_number' => ['required', 'string', 'max:100'],
             'receipt' => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
-        ], [
+        ];
+
+        if ($actor->hasTwoFactorEnabled()) {
+            $rules['two_factor_code'] = ['required', 'string'];
+        }
+
+        $request->validate($rules, [
             'reference_number.required' => 'الرقم المرجعي للتحويل مطلوب',
+            'two_factor_code.required' => 'رمز التحقق بخطوتين مطلوب لتنفيذ عملية الصرف.',
         ]);
 
         $referenceNumber = (string) $request->input('reference_number');
+        $twoFactorCode = $request->filled('two_factor_code') ? (string) $request->input('two_factor_code') : null;
         $receiptPath = null;
         $receiptFile = $request->file('receipt');
         if ($receiptFile) {
@@ -102,7 +118,8 @@ class StorePayoutManagementController extends Controller
                 request: $payoutRequest,
                 actor: $actor,
                 referenceNumber: $referenceNumber,
-                receiptPath: $receiptPath
+                receiptPath: $receiptPath,
+                twoFactorCode: $twoFactorCode
             );
 
             return back()->with('success', "تم تنفيذ تحويل طلب السحب رقم #{$payoutRequest->id} بنجاح وقيد العملية بالدفتر المالي.");

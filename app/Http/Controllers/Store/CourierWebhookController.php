@@ -34,11 +34,20 @@ class CourierWebhookController extends Controller
             return response()->json(['error' => 'لم يتم العثور على شحنة مطابقة لهذا الرقم'], 404);
         }
 
-        // 2. Validate webhook secret / signature if configured on account
+        // 2. Validate webhook secret / signature if configured on account (SEC-08: constant-time HMAC check)
         $account = $shipment->courierAccount;
         if ($account && ! empty($account->webhook_secret)) {
-            $incomingSignature = $request->header('X-Webhook-Signature') ?? $request->header('X-Bosta-Signature');
-            if ($incomingSignature !== $account->webhook_secret) {
+            $incomingSignature = (string) ($request->header('X-Webhook-Signature') ?? $request->header('X-Bosta-Signature') ?? '');
+
+            if (empty($incomingSignature)) {
+                throw new UnauthorizedHttpException('Signature', 'توقيع الـ Webhook مفقود في الترويسات.');
+            }
+
+            $expectedHmac = hash_hmac('sha256', (string) $request->getContent(), (string) $account->webhook_secret);
+            $isValid = hash_equals((string) $account->webhook_secret, $incomingSignature)
+                || hash_equals($expectedHmac, $incomingSignature);
+
+            if (! $isValid) {
                 throw new UnauthorizedHttpException('Signature', 'توقيع الإشعار غير متطابق مع مفتاح الحساب السري.');
             }
         }

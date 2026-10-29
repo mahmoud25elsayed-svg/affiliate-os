@@ -24,6 +24,37 @@ class OrderReturnedLedgerListener
     public function handle(OrderReturned $event): void
     {
         $order = $event->order;
+        $tenantId = tenant('id') ? (string) tenant('id') : 'central';
+
+        // AF-11: Reverse COD receivable and sales revenue if order was returned
+        $codDeliveredEntry = JournalEntry::query()
+            ->where('tenant_id', $tenantId)
+            ->where('idempotency_key', "order_delivered_cod_{$order->id}")
+            ->exists();
+
+        if ($codDeliveredEntry) {
+            $orderTotalMinor = $order->total instanceof \Lunar\DataTypes\Price ? $order->total->value : (int) $order->total;
+            if ($orderTotalMinor > 0) {
+                $codReceivableAccount = $this->accountResolver->getPlatformCodReceivableAccount();
+                $storeRevenueAccount = $this->accountResolver->getStoreRevenueAccount();
+
+                $codReversalEntry = new EntryData(
+                    type: 'order_returned_cod',
+                    idempotencyKey: "order_returned_cod_{$order->id}",
+                    description: "إلغاء مستحقات تحصيل COD وإيراد المبيعات لمرتجع الطلب #{$order->reference}",
+                    lines: [
+                        new LedgerLineData(account: $codReceivableAccount, amountMinor: -$orderTotalMinor),
+                        new LedgerLineData(account: $storeRevenueAccount, amountMinor: $orderTotalMinor),
+                    ],
+                    refType: Order::class,
+                    refId: (int) $order->id,
+                    createdBy: null
+                );
+
+                $this->ledger->post($codReversalEntry);
+            }
+        }
+
         $affiliateId = $order->getAttribute('affiliate_id');
 
         if ($affiliateId === null) {
@@ -93,6 +124,47 @@ class OrderReturnedLedgerListener
                 );
 
                 $this->ledger->post($entryData);
+            }
+        }
+
+        // AF-06: Reverse Tier Level Bonus if one was awarded for this order
+        $bonusEntry = JournalEntry::query()
+            ->where('tenant_id', $tenantId)
+            ->where('idempotency_key', "order_tier_bonus_{$order->id}_{$affiliate->id}")
+            ->first();
+
+        if ($bonusEntry) {
+            $pendingAccount = $this->accountResolver->getAffiliatePendingAccount($affiliate);
+            $availableAccount = $this->accountResolver->getAffiliateAvailableAccount($affiliate);
+            $bonusExpenseAccount = $this->accountResolver->getStoreBonusExpenseAccount();
+
+            $bonusMinor = (int) $bonusEntry->lines()
+                ->where('account_id', $pendingAccount->id)
+                ->sum('amount_minor');
+
+            if ($bonusMinor > 0) {
+                $isBonusSettled = JournalEntry::query()
+                    ->where('tenant_id', $tenantId)
+                    ->where('idempotency_key', "order_tier_bonus_settled_{$order->id}_{$affiliate->id}")
+                    ->exists();
+
+                $targetAccount = $isBonusSettled ? $availableAccount : $pendingAccount;
+                $bonusReversalType = $isBonusSettled ? 'tier_bonus_returned_late' : 'tier_bonus_returned';
+
+                $reversalEntry = new EntryData(
+                    type: $bonusReversalType,
+                    idempotencyKey: "order_tier_bonus_reversal_{$order->id}_{$affiliate->id}",
+                    description: "إلغاء بونص مستوى المسوق لمرتجع الطلب #{$order->reference}",
+                    lines: [
+                        new LedgerLineData(account: $targetAccount, amountMinor: -$bonusMinor),
+                        new LedgerLineData(account: $bonusExpenseAccount, amountMinor: $bonusMinor),
+                    ],
+                    refType: Order::class,
+                    refId: (int) $order->id,
+                    createdBy: null
+                );
+
+                $this->ledger->post($reversalEntry);
             }
         }
     }

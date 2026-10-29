@@ -74,9 +74,20 @@ class StoreCustomerWalletController extends Controller
         CustomerWallet $wallet,
         CustomerWalletServiceInterface $walletService
     ): RedirectResponse {
+        /** @var User|null $user */
+        $user = $request->user();
+        if (! $user || (! $user->is_platform_admin && ! $user->hasAnyRole(['owner', 'manager', 'finance']))) {
+            abort(403, 'تعديل رصيد المحفظة مقتصر على الأدوار المالية والإدارية المعتمدة فقط.');
+        }
+
+        $tenantId = tenant('id') ? (string) tenant('id') : null;
+        if ($tenantId && $wallet->tenant_id !== $tenantId) {
+            abort(404);
+        }
+
         $validated = $request->validate([
             'action' => ['required', 'in:credit,debit'],
-            'amount' => ['required', 'numeric', 'min:0.01'],
+            'amount' => ['required', 'numeric', 'min:0.01', 'max:10000'],
             'notes' => ['required', 'string', 'max:500'],
         ]);
 
@@ -113,9 +124,20 @@ class StoreCustomerWalletController extends Controller
         CustomerWallet $wallet,
         CustomerLoyaltyService $loyaltyService
     ): RedirectResponse {
+        /** @var User|null $user */
+        $user = $request->user();
+        if (! $user || (! $user->is_platform_admin && ! $user->hasAnyRole(['owner', 'manager', 'finance']))) {
+            abort(403, 'تعديل نقاط الولاء مقتصر على الأدوار المالية والإدارية المعتمدة فقط.');
+        }
+
+        $tenantId = tenant('id') ? (string) tenant('id') : null;
+        if ($tenantId && $wallet->tenant_id !== $tenantId) {
+            abort(404);
+        }
+
         $validated = $request->validate([
             'action' => ['required', 'in:award,deduct'],
-            'points' => ['required', 'integer', 'min:1'],
+            'points' => ['required', 'integer', 'min:1', 'max:50000'],
             'notes' => ['required', 'string', 'max:500'],
         ]);
 

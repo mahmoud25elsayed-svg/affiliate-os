@@ -42,12 +42,29 @@ class MerchantOnboardingController extends Controller
      */
     public function checkSubdomain(Request $request): JsonResponse
     {
-        $subdomain = Str::lower(trim((string) $request->input('subdomain')));
-
-        if (strlen($subdomain) < 3 || strlen($subdomain) > 30 || ! preg_match('/^[a-z0-9-]+$/', $subdomain)) {
+        $ip = $request->ip() ?? '127.0.0.1';
+        if (RateLimiter::tooManyAttempts('check_subdomain:'.$ip, 30)) {
             return response()->json([
                 'available' => false,
-                'message' => 'يجب أن يتكون اسم النطاق من 3 إلى 30 حرفاً أو رقماً باللغة الإنجليزية.',
+                'message' => 'تجاوزت الحد المسموح للاستعلام عن النطاقات. يرجى الانتظار دقيقة واحدة.',
+            ], 429);
+        }
+        RateLimiter::hit('check_subdomain:'.$ip, 60);
+
+        $subdomain = Str::lower(trim((string) $request->input('subdomain')));
+
+        // SEC-09: RFC 1123 compliant hostname check (no leading/trailing hyphens, no underscores)
+        if (
+            strlen($subdomain) < 3 ||
+            strlen($subdomain) > 30 ||
+            ! preg_match('/^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/', $subdomain) ||
+            str_contains($subdomain, '_') ||
+            str_starts_with($subdomain, '-') ||
+            str_ends_with($subdomain, '-')
+        ) {
+            return response()->json([
+                'available' => false,
+                'message' => 'يجب أن يتكون اسم النطاق من 3 إلى 30 حرفاً أو رقماً إنجليزياً، وألا يبدأ أو ينتهي بشرطة ولا يحتوي على رموز خاصة أو شرطات سفلية.',
             ]);
         }
 
@@ -78,7 +95,7 @@ class MerchantOnboardingController extends Controller
     {
         $phone = (string) $request->input('phone');
 
-        $result = $this->otpService->sendOtp($phone);
+        $result = $this->otpService->sendOtp($phone, (string) $request->ip());
 
         return response()->json($result, $result['success'] ? 200 : 422);
     }
@@ -103,7 +120,14 @@ class MerchantOnboardingController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'store_name' => ['required', 'string', 'max:255'],
-            'subdomain' => ['required', 'string', 'alpha_dash', 'min:3', 'max:30'],
+            'subdomain' => [
+                'required',
+                'string',
+                'min:3',
+                'max:30',
+                'regex:/^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/',
+                'not_regex:/[_]/',
+            ],
             'phone' => ['required', 'string'],
             'otp' => ['required', 'string'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
@@ -161,36 +185,33 @@ class MerchantOnboardingController extends Controller
             'password' => Hash::make($validated['password']),
             'phone' => $normalizedPhone,
             'phone_verified_at' => now(),
-            'is_platform_admin' => false,
         ]);
 
         // 3. Dispatch ProvisionTenant job
         $rootDomain = (string) config('tenancy.root_domain', 'localhost');
         $tenantDomain = "{$tenant->id}.{$rootDomain}";
 
+        $ownerPayload = [
+            'user_id' => $owner->id,
+            'name' => $owner->name,
+            'email' => $owner->email,
+            'password_hash' => $owner->password,
+            'phone' => $normalizedPhone,
+        ];
+
         if (app()->environment('testing')) {
             (new ProvisionTenant(
                 tenantId: (string) $tenant->id,
                 name: (string) $tenant->name,
                 domain: $tenantDomain,
-                ownerData: [
-                    'name' => $owner->name,
-                    'email' => $owner->email,
-                    'password' => $validated['password'],
-                    'phone' => $normalizedPhone,
-                ]
+                ownerData: $ownerPayload
             ))->handle();
         } else {
             ProvisionTenant::dispatch(
                 tenantId: (string) $tenant->id,
                 name: (string) $tenant->name,
                 domain: $tenantDomain,
-                ownerData: [
-                    'name' => $owner->name,
-                    'email' => $owner->email,
-                    'password' => $validated['password'],
-                    'phone' => $normalizedPhone,
-                ]
+                ownerData: $ownerPayload
             );
         }
 

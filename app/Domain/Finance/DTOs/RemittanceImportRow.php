@@ -20,11 +20,29 @@ readonly class RemittanceImportRow
     public static function fromArray(array $data): self
     {
         $trackingNumber = trim((string) ($data['tracking_number'] ?? $data['trackingNumber'] ?? $data['awb'] ?? $data['waybill'] ?? ''));
-        $rawCod = $data['reported_cod_minor'] ?? $data['cod_amount_minor'] ?? $data['cod'] ?? 0;
-        $codMinor = is_numeric($rawCod) ? (int) (str_contains((string) $rawCod, '.') ? round((float) $rawCod * 100) : (int) $rawCod) : 0;
 
-        $rawFee = $data['shipping_fee_minor'] ?? $data['shipping_fee'] ?? $data['fee'] ?? 0;
-        $feeMinor = is_numeric($rawFee) ? (int) (str_contains((string) $rawFee, '.') ? round((float) $rawFee * 100) : (int) $rawFee) : 0;
+        // AF-03: Deterministic unit resolution between minor units (_minor) and major EGP amounts
+        if (isset($data['reported_cod_minor'])) {
+            $codMinor = (int) $data['reported_cod_minor'];
+        } elseif (isset($data['cod_amount_minor'])) {
+            $codMinor = (int) $data['cod_amount_minor'];
+        } elseif (isset($data['cod']) && is_numeric($data['cod'])) {
+            $codMinor = (int) round(((float) $data['cod']) * 100);
+        } else {
+            $codMinor = 0;
+        }
+
+        if (isset($data['shipping_fee_minor'])) {
+            $feeMinor = (int) $data['shipping_fee_minor'];
+        } elseif (isset($data['shipping_fees_minor'])) {
+            $feeMinor = (int) $data['shipping_fees_minor'];
+        } elseif (isset($data['shipping_fee']) && is_numeric($data['shipping_fee'])) {
+            $feeMinor = (int) round(((float) $data['shipping_fee']) * 100);
+        } elseif (isset($data['fee']) && is_numeric($data['fee'])) {
+            $feeMinor = (int) round(((float) $data['fee']) * 100);
+        } else {
+            $feeMinor = 0;
+        }
 
         $status = (string) ($data['status'] ?? $data['reported_status'] ?? 'delivered');
         $notes = isset($data['notes']) ? (string) $data['notes'] : null;

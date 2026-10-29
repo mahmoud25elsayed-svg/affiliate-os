@@ -75,8 +75,8 @@ class AffiliateTrackingService
             minutes: $ttlMinutes,
             path: '/',
             domain: null,
-            secure: false,
-            httpOnly: false,
+            secure: request()->isSecure() || (bool) config('session.secure', false),
+            httpOnly: true,
             raw: false,
             sameSite: 'lax'
         );
@@ -134,6 +134,11 @@ class AffiliateTrackingService
             return null;
         }
 
+        // AF-15: Ensure suspended / inactive affiliate cannot be attributed new orders
+        if (! $link->affiliate instanceof Affiliate || ! $link->affiliate->isActive()) {
+            return null;
+        }
+
         return $link;
     }
 
@@ -166,12 +171,52 @@ class AffiliateTrackingService
         return false;
     }
 
+    /**
+     * Calculate affiliate commission for order (AF-10)
+     *
+     * @param  array<int, array<string, mixed>>  $lineItems
+     */
     public function calculateCommission(
         TrackingLink $link,
         int $subtotalMinor,
-        ?ProductVariant $variant = null
+        ?ProductVariant $variant = null,
+        int $quantity = 1,
+        array $lineItems = []
     ): int {
         $settings = AffiliateProgramSettings::load();
+
+        if (! empty($lineItems)) {
+            $totalCommissionMinor = 0;
+            $rate = $link->commission_rate_percent ?? (float) $settings->default_commission_rate;
+
+            foreach ($lineItems as $item) {
+                /** @var ProductVariant $itemVariant */
+                $itemVariant = $item['variant'];
+                $itemQty = max(1, (int) ($item['quantity'] ?? 1));
+                $itemSubtotal = (int) ($item['subtotal_minor'] ?? ($item['unit_price_minor'] * $itemQty));
+
+                $isLinked = ($link->product_variant_id !== null && (int) $link->product_variant_id === (int) $itemVariant->id)
+                    || ($link->product_id !== null && $itemVariant->product_id !== null && (int) $link->product_id === (int) $itemVariant->product_id);
+
+                if ($link->custom_selling_price_minor !== null && $isLinked) {
+                    $wholesale = $itemVariant->relationLoaded('wholesalePrice') && $itemVariant->getRelation('wholesalePrice') !== null
+                        ? $itemVariant->getRelation('wholesalePrice')
+                        : WholesalePrice::query()->where('product_variant_id', $itemVariant->id)->first();
+
+                    if ($wholesale instanceof WholesalePrice) {
+                        $wholesaleMinor = (int) $wholesale->wholesale_price_minor;
+                        $unitMarkupMinor = max(0, $link->custom_selling_price_minor - $wholesaleMinor);
+                        $totalCommissionMinor += ($unitMarkupMinor * $itemQty);
+                        continue;
+                    }
+                }
+
+                // Standard rate for non-custom items
+                $totalCommissionMinor += (int) round($itemSubtotal * ($rate / 100.0));
+            }
+
+            return $settings->clampCommission($totalCommissionMinor);
+        }
 
         if ($link->custom_selling_price_minor !== null && $variant !== null) {
             /** @var WholesalePrice|null $wholesale */
@@ -181,7 +226,7 @@ class AffiliateTrackingService
 
             if ($wholesale instanceof WholesalePrice) {
                 $wholesaleMinor = (int) $wholesale->wholesale_price_minor;
-                $markupMinor = max(0, $link->custom_selling_price_minor - $wholesaleMinor);
+                $markupMinor = max(0, $link->custom_selling_price_minor - $wholesaleMinor) * max(1, $quantity);
 
                 return $settings->clampCommission($markupMinor);
             }

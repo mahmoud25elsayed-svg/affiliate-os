@@ -18,10 +18,12 @@ use App\Models\ApiKey;
 use Illuminate\Support\Facades\Route;
 
 // Public OpenAPI specification & Documentation
-Route::get('/v1/openapi.json', [OpenApiDocsController::class, 'schema'])->name('api.v1.openapi.schema');
+Route::get('/v1/openapi.json', [OpenApiDocsController::class, 'schema'])
+    ->middleware('throttle:60,1')
+    ->name('api.v1.openapi.schema');
 
-// Authenticated REST API v1
-Route::prefix('v1')->middleware([AuthenticateApiKey::class])->group(function () {
+// Authenticated REST API v1 (SEC-11: rate-limited to 60 req/min)
+Route::prefix('v1')->middleware(['throttle:60,1', AuthenticateApiKey::class])->group(function () {
 
     // Merchant Endpoints
     Route::prefix('store')->group(function () {

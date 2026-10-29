@@ -18,6 +18,11 @@ class ListStaff extends ListRecords
     {
         return [
             CreateAction::make()
+                ->before(function (): void {
+                    if (tenancy()->initialized) {
+                        \App\Support\Billing\Limits::ensure('staff', tenant());
+                    }
+                })
                 ->mutateFormDataUsing(function (array $data): array {
                     if (tenancy()->initialized) {
                         $data['tenant_id'] = tenant('id');

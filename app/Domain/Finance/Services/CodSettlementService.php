@@ -50,10 +50,10 @@ class CodSettlementService
             $actor = OrderActor::staff($settler, role: 'finance');
             $now = Carbon::now();
 
-            // 1. Process matched items & transition orders
+            // 1. Process matched items & transition orders (AF-13: settle items with fee mismatches as well)
             /** @var CodRemittanceItem $item */
             foreach ($remittance->items()->with('order')->get() as $item) {
-                if ($item->match_status !== RemittanceItemMatchStatus::MATCHED && $item->match_status !== RemittanceItemMatchStatus::AMOUNT_MISMATCH) {
+                if (! in_array($item->match_status, [RemittanceItemMatchStatus::MATCHED, RemittanceItemMatchStatus::AMOUNT_MISMATCH, RemittanceItemMatchStatus::FEE_MISMATCH], true)) {
                     continue;
                 }
 
@@ -96,7 +96,8 @@ class CodSettlementService
 
             $lines = [];
 
-            if ($netPayoutMinor > 0) {
+            if ($netPayoutMinor !== 0) {
+                // AF-14: Positive net payout credits bank account; negative net courier fee debits bank account
                 $lines[] = new LedgerLineData(account: $bankAccount, amountMinor: $netPayoutMinor);
             }
 

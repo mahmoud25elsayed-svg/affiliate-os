@@ -14,14 +14,18 @@ class OtpService
 
     public const MAX_ATTEMPTS_PER_MINUTE = 3;
 
+    public const MAX_ATTEMPTS_PER_DAY = 10;
+
+    public const MAX_ATTEMPTS_PER_IP_HOUR = 15;
+
     public const MAX_VERIFY_ATTEMPTS = 5;
 
     /**
-     * Send OTP to Egyptian phone number.
+     * Send OTP to Egyptian phone number with IP & Daily throttling and SMS delivery.
      *
      * @return array{success: bool, message?: string, code?: string|null}
      */
-    public function sendOtp(string $phone): array
+    public function sendOtp(string $phone, ?string $clientIp = null): array
     {
         $parsed = EgyptianPhone::tryParse($phone);
         if (! $parsed) {
@@ -33,6 +37,31 @@ class OtpService
 
         $normalized = $parsed->e164;
 
+        // 1. IP rate limiting (SEC-07: anti-bombing)
+        if ($clientIp) {
+            $ipKey = 'otp_ip_rate:'.md5($clientIp);
+            $ipAttempts = (int) Cache::get($ipKey, 0);
+            if ($ipAttempts >= self::MAX_ATTEMPTS_PER_IP_HOUR) {
+                return [
+                    'success' => false,
+                    'message' => 'تم تجاوز الحد الأقصى للطلبات من هذا العنوان. الرجاء المحاولة لاحقاً.',
+                ];
+            }
+            Cache::put($ipKey, $ipAttempts + 1, 3600);
+        }
+
+        // 2. Daily per-phone rate limiting
+        $dailyKey = 'otp_daily_rate:'.md5($normalized);
+        $dailyAttempts = (int) Cache::get($dailyKey, 0);
+        if ($dailyAttempts >= self::MAX_ATTEMPTS_PER_DAY) {
+            return [
+                'success' => false,
+                'message' => 'تم تجاوز الحد الأقصى اليومي لرموز التحقق لهذا الرقم.',
+            ];
+        }
+        Cache::put($dailyKey, $dailyAttempts + 1, 86400);
+
+        // 3. Per-minute rate limiting
         $rateKey = 'otp_rate:'.md5($normalized);
         $attempts = (int) Cache::get($rateKey, 0);
         if ($attempts >= self::MAX_ATTEMPTS_PER_MINUTE) {
@@ -43,13 +72,34 @@ class OtpService
         }
         Cache::put($rateKey, $attempts + 1, 60);
 
-        // In test/local environment, if phone is test-phone or app in testing, allow deterministic code
+        // 4. Generate code
         $code = app()->environment('testing')
             ? '123456'
             : (string) random_int(100000, 999999);
 
         $cacheKey = 'otp_code:'.md5($normalized);
         Cache::put($cacheKey, $code, self::EXPIRATION_SECONDS);
+
+        // 5. Send SMS via configured SMS driver (SEC-05)
+        if (! app()->environment('testing')) {
+            try {
+                $driver = app(\App\Domain\Notifications\Drivers\SMS\SmsMisrDriver::class);
+                $message = new \App\Domain\Notifications\DTOs\NotificationMessage(
+                    recipient: $normalized,
+                    content: "رمز التحقق الخاص بك في AffiliateOS هو: {$code}. صالح لمدة 5 دقائق.",
+                    senderId: 'AffiliateOS'
+                );
+                $result = $driver->send($message);
+                if (! $result->isSuccessful()) {
+                    Log::warning('SMS delivery attempted but failed or not configured', [
+                        'phone_hash' => $parsed->hash(config('app.key', 'secret')),
+                        'error' => $result->errorMessage,
+                    ]);
+                }
+            } catch (\Throwable $e) {
+                Log::error('SMS delivery exception: '.$e->getMessage());
+            }
+        }
 
         Log::info('OTP generated for Egyptian phone', [
             'phone_hash' => $parsed->hash(config('app.key', 'secret')),

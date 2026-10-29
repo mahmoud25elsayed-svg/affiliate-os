@@ -44,9 +44,9 @@ class HealthCheckController extends Controller
 
         $httpCode = ($overallStatus === 'unhealthy') ? 503 : 200;
 
-        // Security (O-8 / SC-09): Restrict verbose infrastructure telemetry to authorized requests
-        $token = $request->query('token') ?? $request->header('X-Health-Token');
-        $expectedToken = env('HEALTH_CHECK_TOKEN', 'affiliateos_health_sec_2026');
+        // Security (GEN-02 / SC-09): Restrict verbose infrastructure telemetry to authorized headers only (prevent query string exposure)
+        $token = $request->header('X-Health-Token') ?? $request->bearerToken();
+        $expectedToken = config('services.health.token', env('HEALTH_CHECK_TOKEN', 'affiliateos_health_sec_2026'));
         $isAuthorized = ($token && hash_equals((string) $expectedToken, (string) $token))
             || (auth()->check() && (auth()->user()->is_platform_admin ?? false));
 

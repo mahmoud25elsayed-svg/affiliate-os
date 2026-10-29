@@ -18,6 +18,15 @@ class User extends Authenticatable implements FilamentUser, HasTenants
     /** @use HasFactory<UserFactory> */
     use HasFactory, HasRoles, Notifiable;
 
+    protected static function booted(): void
+    {
+        static::creating(function (User $user): void {
+            if (empty($user->tenant_id) && function_exists('tenant') && tenant('id')) {
+                $user->tenant_id = (string) tenant('id');
+            }
+        });
+    }
+
     /**
      * The attributes that are mass assignable.
      *
@@ -30,10 +39,6 @@ class User extends Authenticatable implements FilamentUser, HasTenants
         'password',
         'phone',
         'phone_verified_at',
-        'is_platform_admin',
-        'two_factor_secret',
-        'two_factor_confirmed_at',
-        'two_factor_recovery_codes',
     ];
 
     /**
@@ -82,6 +87,70 @@ class User extends Authenticatable implements FilamentUser, HasTenants
     public function hasTwoFactorEnabled(): bool
     {
         return ! empty($this->two_factor_secret) && $this->two_factor_confirmed_at !== null;
+    }
+
+    public function verifyTwoFactorCode(string $code): bool
+    {
+        if (! $this->hasTwoFactorEnabled()) {
+            return true;
+        }
+
+        $cleanCode = trim($code);
+
+        // Check recovery codes
+        $recoveryCodes = $this->two_factor_recovery_codes ?? [];
+        if (in_array($cleanCode, $recoveryCodes, true)) {
+            $this->two_factor_recovery_codes = array_values(array_diff($recoveryCodes, [$cleanCode]));
+            $this->saveQuietly();
+
+            return true;
+        }
+
+        // TOTP verification against secret (RFC 6238)
+        $secret = (string) $this->two_factor_secret;
+        if (empty($secret)) {
+            return false;
+        }
+
+        $timestamp = (int) floor(time() / 30);
+        for ($i = -1; $i <= 1; $i++) {
+            $computed = $this->calculateTotp($secret, $timestamp + $i);
+            if (hash_equals($computed, $cleanCode)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected function calculateTotp(string $secret, int $timeSlice): string
+    {
+        $base32Chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+        $secretUpper = strtoupper($secret);
+        $binaryString = '';
+        for ($i = 0; $i < strlen($secretUpper); $i++) {
+            $char = $secretUpper[$i];
+            $pos = strpos($base32Chars, $char);
+            if ($pos !== false) {
+                $binaryString .= sprintf('%05b', $pos);
+            }
+        }
+        $secretKey = '';
+        $binaryChunks = str_split($binaryString, 8);
+        foreach ($binaryChunks as $chunk) {
+            if (strlen($chunk) === 8) {
+                $secretKey .= chr(bindec($chunk));
+            }
+        }
+
+        $timeBinary = pack('N*', 0, $timeSlice);
+        $hmac = hash_hmac('sha1', $timeBinary, $secretKey, true);
+        $offset = ord(substr($hmac, -1)) & 0x0F;
+        $hashPart = substr($hmac, $offset, 4);
+        $value = unpack('N', $hashPart)[1] & 0x7FFFFFFF;
+        $otp = $value % 1000000;
+
+        return str_pad((string) $otp, 6, '0', STR_PAD_LEFT);
     }
 
     public function canAccessPanel(Panel $panel): bool

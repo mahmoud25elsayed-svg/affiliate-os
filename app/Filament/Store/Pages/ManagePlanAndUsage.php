@@ -166,7 +166,7 @@ class ManagePlanAndUsage extends Page
             'payment_method' => ['required', 'string'],
             'payment_reference' => ['required', 'string', 'max:100'],
             'notes' => ['nullable', 'string', 'max:500'],
-            'receipt_file' => ['nullable', 'file', 'max:10240'], // 10MB max
+            'receipt_file' => ['nullable', 'file', 'mimes:jpeg,png,jpg,pdf,webp', 'max:10240'], // BL-07: validate file types
         ]);
 
         if (! $this->subscription) {
@@ -180,7 +180,7 @@ class ManagePlanAndUsage extends Page
 
         $receiptPath = null;
         if ($this->receipt_file) {
-            $receiptPath = $this->receipt_file->store('receipts', 'public');
+            $receiptPath = $this->receipt_file->store('receipts', 'local'); // BL-07: store on secure local disk
         }
 
         $user = auth()->user();

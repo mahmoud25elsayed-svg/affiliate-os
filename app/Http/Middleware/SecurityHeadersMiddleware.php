@@ -47,11 +47,14 @@ class SecurityHeadersMiddleware
             $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
         }
 
-        // 7. Content Security Policy (CSP)
+        // 7. Content Security Policy (CSP - SEC-15)
         $frameAncestors = $isEmbedRoute ? '*' : "'self'";
+        $isFilamentPanel = $request->is('store/admin*') || $request->is('platform*');
+        $scriptSrc = $isFilamentPanel ? "'self' 'unsafe-inline' 'unsafe-eval' https:" : "'self' 'unsafe-inline' https:";
+
         $cspPolicy = implode('; ', [
             "default-src 'self'",
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https:",
+            "script-src {$scriptSrc}",
             "style-src 'self' 'unsafe-inline' https:",
             "img-src 'self' data: https: blob:",
             "font-src 'self' data: https:",

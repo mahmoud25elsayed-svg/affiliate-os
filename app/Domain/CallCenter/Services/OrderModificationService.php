@@ -63,16 +63,21 @@ class OrderModificationService
             throw new DomainException('تعذر تحديد متغير المنتج للطلب.');
         }
 
-        // 2. Resolve quantity and selling price
+        // 2. Resolve quantity and selling price (AF-04: preserve original line unit price, avoid hardcoded 20000 fallback)
         $firstLineQty = $firstLine instanceof OrderLine ? (int) $firstLine->quantity : 1;
         $quantity = isset($data['quantity']) ? (int) $data['quantity'] : (int) ($snapshot['quantity'] ?? $firstLineQty);
         if ($quantity <= 0) {
             throw new DomainException('الكمية يجب أن تكون قطعة واحدة على الأقل.');
         }
 
+        $existingUnitPrice = $firstLine instanceof OrderLine ? (int) ($firstLine->unit_price->value ?? $firstLine->unit_price ?? 0) : 0;
+        $fallbackSellingPrice = $existingUnitPrice > 0
+            ? $existingUnitPrice
+            : (int) ($variant->wholesalePrice?->min_price_minor ?? 20000);
+
         $sellingPriceMinor = isset($data['selling_price_minor'])
             ? (int) $data['selling_price_minor']
-            : (int) ($snapshot['selling_price_minor'] ?? 20000);
+            : (int) ($snapshot['selling_price_minor'] ?? $fallbackSellingPrice);
 
         // 3. Resolve governorate
         $governorateId = isset($data['governorate_id'])

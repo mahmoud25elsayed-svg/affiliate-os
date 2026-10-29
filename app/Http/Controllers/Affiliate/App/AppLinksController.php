@@ -105,7 +105,9 @@ class AppLinksController extends Controller
             }
 
             if (! empty($validated['custom_selling_price'])) {
-                $sellingPriceMinor = (int) round(((float) $validated['custom_selling_price']) * 100);
+                // AF-20: Integer minor math via bcmul, never float casting
+                $cleanPrice = trim((string) $validated['custom_selling_price']);
+                $sellingPriceMinor = (int) bcmul(str_replace(',', '', $cleanPrice), '100', 0);
 
                 /** @var WholesalePrice|null $wholesalePrice */
                 $wholesalePrice = WholesalePrice::query()->where('product_variant_id', $firstVariant?->id)->first();

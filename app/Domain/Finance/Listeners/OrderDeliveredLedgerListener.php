@@ -30,6 +30,29 @@ class OrderDeliveredLedgerListener
     public function handle(OrderDelivered $event): void
     {
         $order = $event->order;
+
+        // AF-11: Record courier COD receivable and store sales revenue upon delivery
+        $orderTotalMinor = $order->total instanceof \Lunar\DataTypes\Price ? $order->total->value : (int) $order->total;
+        if ($orderTotalMinor > 0) {
+            $codReceivableAccount = $this->accountResolver->getPlatformCodReceivableAccount();
+            $storeRevenueAccount = $this->accountResolver->getStoreRevenueAccount();
+
+            $codEntry = new EntryData(
+                type: 'order_delivered_cod',
+                idempotencyKey: "order_delivered_cod_{$order->id}",
+                description: "مستحقات تحصيل COD وإيراد مبيعات للطلب #{$order->reference}",
+                lines: [
+                    new LedgerLineData(account: $codReceivableAccount, amountMinor: $orderTotalMinor),
+                    new LedgerLineData(account: $storeRevenueAccount, amountMinor: -$orderTotalMinor),
+                ],
+                refType: Order::class,
+                refId: (int) $order->id,
+                createdBy: null
+            );
+
+            $this->ledger->post($codEntry);
+        }
+
         $affiliateId = $order->getAttribute('affiliate_id');
 
         if ($affiliateId === null) {
@@ -87,10 +110,10 @@ class OrderDeliveredLedgerListener
             $this->ledger->post($bonusEntry);
         }
 
-        // 3. Update cached stats and recalculate score & level
+        // 3. Update cached stats and recalculate score & level (AF-08: count DELIVERED & SETTLED)
         $totalDelivered = Order::query()
             ->where('affiliate_id', $affiliate->id)
-            ->where('status', OrderStatus::DELIVERED->value)
+            ->whereIn('status', [OrderStatus::DELIVERED->value, OrderStatus::SETTLED->value])
             ->count();
 
         $affiliate->updateQuietly([

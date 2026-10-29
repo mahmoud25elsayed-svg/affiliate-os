@@ -50,22 +50,19 @@ class SubscriptionService
      */
     public function requestManualRenewal(Subscription $subscription, ?Plan $plan = null, ?string $cycle = null, array $data = []): SubscriptionInvoice
     {
-        $plan = $plan ?? $subscription->plan;
-        $cycle = $cycle ?? $subscription->billing_cycle;
+        $targetPlan = $plan ?? $subscription->plan;
+        $targetCycle = $cycle ?? $subscription->billing_cycle;
 
-        if ($plan->id !== $subscription->plan_id || $cycle !== $subscription->billing_cycle) {
-            $subscription->update([
-                'plan_id' => $plan->id,
-                'billing_cycle' => $cycle,
-            ]);
-        }
-
-        $amount = $cycle === Subscription::CYCLE_YEARLY
-            ? $plan->priceYearlyMoney()
-            : $plan->priceMonthlyMoney();
+        // BL-01: DO NOT prematurely update $subscription->plan_id or cycle upon request.
+        // The requested plan change takes effect ONLY after admin approval of payment.
+        $amount = $targetCycle === Subscription::CYCLE_YEARLY
+            ? $targetPlan->priceYearlyMoney()
+            : $targetPlan->priceMonthlyMoney();
 
         $result = $this->manualGateway->initiatePayment($subscription, $amount, array_merge($data, [
             'payment_gateway' => 'manual',
+            'target_plan_id' => $targetPlan->id,
+            'target_cycle' => $targetCycle,
         ]));
 
         /** @var int $invoiceId */
@@ -89,7 +86,11 @@ class SubscriptionService
         /** @var Subscription $subscription */
         $subscription = $invoice->subscription;
         $now = now();
-        $isYearly = $subscription->billing_cycle === Subscription::CYCLE_YEARLY;
+
+        // BL-01: Apply requested target plan and cycle upon approval
+        $targetPlanId = $invoice->target_plan_id ?: $subscription->plan_id;
+        $targetCycle = $invoice->target_cycle ?: $subscription->billing_cycle;
+        $isYearly = $targetCycle === Subscription::CYCLE_YEARLY;
 
         $startsAt = ($subscription->isActive() && $subscription->current_period_ends_at && $subscription->current_period_ends_at->isFuture())
             ? $subscription->current_period_ends_at
@@ -98,6 +99,8 @@ class SubscriptionService
         $endsAt = $isYearly ? $startsAt->copy()->addYear() : $startsAt->copy()->addMonth();
 
         $subscription->update([
+            'plan_id' => $targetPlanId,
+            'billing_cycle' => $targetCycle,
             'status' => Subscription::STATUS_ACTIVE,
             'current_period_starts_at' => $startsAt,
             'current_period_ends_at' => $endsAt,
@@ -167,5 +170,30 @@ class SubscriptionService
             'metadata' => ['reason' => $reason],
             'created_at' => now(),
         ]);
+    }
+
+    /**
+     * Check if tenant usage allows downgrading to a lower plan (BL-09).
+     *
+     * @return array{can: bool, reasons: list<string>}
+     */
+    public function canDowngrade(Subscription $subscription, Plan $targetPlan): array
+    {
+        $tenant = $subscription->tenant;
+        $reasons = [];
+
+        foreach (['products', 'affiliates', 'staff'] as $limitKey) {
+            $currentUsage = \App\Support\Billing\Limits::usage($limitKey, $tenant);
+            $newLimit = $targetPlan->getLimit($limitKey);
+
+            if ($newLimit !== -1 && $currentUsage > $newLimit) {
+                $reasons[] = "الاستهلاك الحالي لـ [{$limitKey}] هو {$currentUsage}، ويتجاوز الحد الأقصى في باقة [{$targetPlan->name}] ({$newLimit}).";
+            }
+        }
+
+        return [
+            'can' => empty($reasons),
+            'reasons' => $reasons,
+        ];
     }
 }

@@ -66,6 +66,30 @@ class OrderCreationService
                 ]);
             }
 
+            // 1.1 Affiliate Attribution Resolution & Self-Referral Check (AF-10)
+            $affiliateTracking = app(AffiliateTrackingService::class);
+            $rawToken = $payload->affiliate_ref_token ?? request()->cookie(AffiliateTrackingService::COOKIE_NAME);
+            $tokenStr = is_string($rawToken) ? $rawToken : null;
+            $attributedLink = $affiliateTracking->resolveAttributedLink($tokenStr);
+
+            /** @var Customer|null $customerUser */
+            $customerUser = Auth::guard('customer')->user();
+            $customerEmail = $customerUser?->email;
+
+            $attributedAffiliateId = null;
+            $attributedLinkId = null;
+            $selfReferralBlocked = false;
+
+            if ($attributedLink !== null && $attributedLink->affiliate !== null) {
+                if ($affiliateTracking->isSelfReferral($attributedLink->affiliate, $phone->e164, $customerEmail)) {
+                    $selfReferralBlocked = true;
+                    $attributedLink = null;
+                } else {
+                    $attributedAffiliateId = $attributedLink->affiliate_id;
+                    $attributedLinkId = $attributedLink->id;
+                }
+            }
+
             // 2. Validate Items
             if (empty($payload->items)) {
                 throw ValidationException::withMessages([
@@ -93,8 +117,21 @@ class OrderCreationService
                     ]);
                 }
 
-                $pricing = app(PromotionPricingService::class)->getEffectiveVariantPrice($variant);
-                $unitPriceMinor = $pricing['price_minor'];
+                $isLinkedCustomPrice = false;
+                if ($attributedLink !== null && $attributedLink->custom_selling_price_minor !== null) {
+                    if ($attributedLink->product_variant_id !== null && (int) $attributedLink->product_variant_id === (int) $variant->id) {
+                        $isLinkedCustomPrice = true;
+                    } elseif ($attributedLink->product_id !== null && $variant->product_id !== null && (int) $attributedLink->product_id === (int) $variant->product_id) {
+                        $isLinkedCustomPrice = true;
+                    }
+                }
+
+                if ($isLinkedCustomPrice) {
+                    $unitPriceMinor = (int) $attributedLink->custom_selling_price_minor;
+                } else {
+                    $pricing = app(PromotionPricingService::class)->getEffectiveVariantPrice($variant);
+                    $unitPriceMinor = $pricing['price_minor'];
+                }
                 $lineSubtotalMinor = $unitPriceMinor * $quantity;
                 $subtotalMinor += $lineSubtotalMinor;
 
@@ -195,43 +232,30 @@ class OrderCreationService
             $channel = Channel::first();
             $channelId = $channel instanceof Channel ? $channel->id : 1;
 
-            // 8.1 Affiliate Attribution via Tracking Link Cookie / Token
-            $affiliateTracking = app(AffiliateTrackingService::class);
-            $rawToken = $payload->affiliate_ref_token ?? request()->cookie(AffiliateTrackingService::COOKIE_NAME);
-            $tokenStr = is_string($rawToken) ? $rawToken : null;
-            $attributedLink = $affiliateTracking->resolveAttributedLink($tokenStr);
-
-            $attributedAffiliateId = null;
-            $attributedLinkId = null;
+            // 8.1 Affiliate Commission Calculation (AF-09, AF-10)
             $affiliateCommissionMinor = 0;
-            $selfReferralBlocked = false;
+            if ($attributedLink !== null && ! $selfReferralBlocked) {
+                $effectiveSubtotal = max(0, $subtotalMinor - $discountMinor); // AF-09: Net subtotal after discount
+                $affiliateCommissionMinor = $affiliateTracking->calculateCommission(
+                    link: $attributedLink,
+                    subtotalMinor: $effectiveSubtotal,
+                    variant: $lineItemsData[0]['variant'] ?? null,
+                    quantity: $lineItemsData[0]['quantity'] ?? 1,
+                    lineItems: $lineItemsData
+                );
 
-            if ($attributedLink !== null && $attributedLink->affiliate !== null) {
-                /** @var Customer|null $customerUser */
-                $customerUser = Auth::guard('customer')->user();
-                $customerEmail = $customerUser?->email;
-
-                if ($affiliateTracking->isSelfReferral($attributedLink->affiliate, $phone->e164, $customerEmail)) {
-                    $selfReferralBlocked = true;
-                } else {
-                    $attributedAffiliateId = $attributedLink->affiliate_id;
-                    $attributedLinkId = $attributedLink->id;
-
-                    $firstVariant = $lineItemsData[0]['variant'];
-                    $affiliateCommissionMinor = $affiliateTracking->calculateCommission(
-                        link: $attributedLink,
-                        subtotalMinor: $subtotalMinor,
-                        variant: $firstVariant
-                    );
-
-                    $attributedLink->increment('orders_count');
-                }
+                $attributedLink->increment('orders_count');
             }
 
             $priceSnapshot['affiliate_profit_minor'] = $affiliateCommissionMinor;
             $priceSnapshot['attribution_type'] = $attributedLinkId !== null ? 'tracking_link' : null;
 
-            // 9. Create Lunar Order
+            // 9. Enforce Plan Limits & Create Lunar Order (BL-04)
+            $tenant = function_exists('tenant') && tenant('id') ? \App\Models\Tenant::find(tenant('id')) : null;
+            if ($tenant) {
+                \App\Support\Billing\Limits::ensure('monthly_orders', $tenant);
+            }
+
             $storefrontCustomerId = $payload->customer_id ?? (Auth::guard('customer')->check() ? (int) Auth::guard('customer')->id() : null);
 
             /** @var Order $order */

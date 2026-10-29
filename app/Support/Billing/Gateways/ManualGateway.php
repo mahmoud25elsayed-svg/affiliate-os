@@ -34,6 +34,8 @@ class ManualGateway implements BillingGateway
         $invoice = SubscriptionInvoice::create([
             'invoice_number' => $invoiceNumber,
             'subscription_id' => $subscription->id,
+            'target_plan_id' => $payload['target_plan_id'] ?? null,
+            'target_cycle' => $payload['target_cycle'] ?? null,
             'tenant_id' => $subscription->tenant_id,
             'amount' => $amount->amount,
             'currency' => $amount->currency,

@@ -123,7 +123,7 @@ class PaymentWebhookController extends Controller
     }
 
     /**
-     * Resolves and initializes tenancy if not already initialized.
+     * Resolves and initializes tenancy securely from the referenced order or transaction (SEC-14).
      *
      * @param  array<string, mixed>  $payload
      */
@@ -133,16 +133,33 @@ class PaymentWebhookController extends Controller
             return;
         }
 
-        $tenantId = $request->query('tenant') ?? $request->header('X-Tenant-Id');
+        $tenantId = null;
 
+        // 1. Resolve tenant deterministically from Order reference (immutable truth)
+        $orderRef = $payload['order_reference'] ?? $payload['obj']['order']['merchant_order_id'] ?? null;
+        if (is_string($orderRef) && $orderRef !== '') {
+            $order = Order::withoutGlobalScopes()->where('reference', $orderRef)->first();
+            if ($order && $order->getAttribute('tenant_id')) {
+                $tenantId = (string) $order->getAttribute('tenant_id');
+            }
+        }
+
+        // 2. Resolve from payment transaction if not found from order reference
         if (! $tenantId) {
-            $orderRef = $payload['order_reference'] ?? $payload['obj']['order']['merchant_order_id'] ?? null;
-            if (is_string($orderRef)) {
-                $order = Order::withoutGlobalScopes()->where('reference', $orderRef)->first();
-                if ($order) {
-                    $tenantId = (string) $order->getAttribute('tenant_id');
+            $txnRef = $payload['transaction_id'] ?? $payload['obj']['id'] ?? null;
+            if ($txnRef) {
+                $txn = PaymentTransaction::withoutGlobalScopes()
+                    ->where('transaction_reference', (string) $txnRef)
+                    ->first();
+                if ($txn && $txn->tenant_id) {
+                    $tenantId = (string) $txn->tenant_id;
                 }
             }
+        }
+
+        // 3. Fallback to header only if internal trusted gateway dispatch
+        if (! $tenantId) {
+            $tenantId = $request->header('X-Tenant-Id');
         }
 
         if (is_string($tenantId) && $tenantId !== '') {

@@ -33,7 +33,7 @@ class QualityScoreCalculator
 
         $deliveredCount = Order::query()
             ->where('affiliate_id', $affiliate->id)
-            ->where('status', OrderStatus::DELIVERED->value)
+            ->whereIn('status', [OrderStatus::DELIVERED->value, OrderStatus::SETTLED->value])
             ->where('created_at', '>=', $startDate)
             ->where('created_at', '<=', $date)
             ->count();

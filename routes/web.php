@@ -62,10 +62,18 @@ foreach ($centralDomains as $index => $centralDomain) {
 }
 
 Route::get('/register/merchant', [MerchantOnboardingController::class, 'showRegister'])->name('onboarding.register');
-Route::get('/onboarding/check-subdomain', [MerchantOnboardingController::class, 'checkSubdomain'])->name('onboarding.check-subdomain');
-Route::post('/onboarding/send-otp', [MerchantOnboardingController::class, 'sendOtp'])->name('onboarding.send-otp');
-Route::post('/register/merchant', [MerchantOnboardingController::class, 'register'])->name('onboarding.register.submit');
-Route::get('/onboarding/status/{tenant}', [MerchantOnboardingController::class, 'provisioningStatus'])->name('onboarding.provisioning');
+Route::get('/onboarding/check-subdomain', [MerchantOnboardingController::class, 'checkSubdomain'])
+    ->middleware('throttle:30,1')
+    ->name('onboarding.check-subdomain');
+Route::post('/onboarding/send-otp', [MerchantOnboardingController::class, 'sendOtp'])
+    ->middleware('throttle:10,1')
+    ->name('onboarding.send-otp');
+Route::post('/register/merchant', [MerchantOnboardingController::class, 'register'])
+    ->middleware('throttle:10,1')
+    ->name('onboarding.register.submit');
+Route::get('/onboarding/status/{tenant}', [MerchantOnboardingController::class, 'provisioningStatus'])
+    ->middleware('throttle:30,1')
+    ->name('onboarding.provisioning');
 
 // Stop Impersonation
 Route::post('/impersonation/stop', function (ImpersonationService $impersonationService) {
