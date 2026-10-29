@@ -24,11 +24,11 @@ class MerchantRegistrationTest extends TestCase
 
     public function test_landing_page_renders_successfully(): void
     {
-        $response = $this->get(route('landing'));
+        $response = $this->get(route('platform.marketing.home'));
 
         $response->assertStatus(200);
         $response->assertSee('AffiliateOS');
-        $response->assertSee('سجل متجرك الآن مجاناً');
+        $response->assertSee('أنشئ متجرك الآن');
     }
 
     public function test_registration_form_renders_successfully(): void
@@ -174,5 +174,94 @@ class MerchantRegistrationTest extends TestCase
             'status' => 'active',
             'ready' => true,
         ]);
+    }
+
+    public function test_registration_accepts_arabic_indic_phone_digits(): void
+    {
+        // ٠١٠١٢٣٤٥٦٧٨ = 01012345678
+        $payload = [
+            'name' => 'أحمد طارق',
+            'store_name' => 'متجر الأهرام',
+            'subdomain' => 'pyramid-store',
+            'phone' => '٠١٠١٢٣٤٥٦٧٨',
+            'otp' => '123456',
+            'email' => 'ahmed@pyramid.test',
+            'password' => 'securePassword2026',
+        ];
+
+        $response = $this->postJson(route('onboarding.register.submit'), $payload);
+        $response->assertStatus(200);
+        $response->assertJson(['success' => true]);
+
+        $user = User::where('email', 'ahmed@pyramid.test')->first();
+        $this->assertNotNull($user);
+        $this->assertEquals('+201012345678', $user->phone);
+    }
+
+    public function test_registration_validates_required_fields_and_lengths(): void
+    {
+        // Empty payload
+        $response = $this->postJson(route('onboarding.register.submit'), []);
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['name', 'store_name', 'subdomain', 'phone', 'otp', 'email', 'password']);
+
+        // Password too short (< 8)
+        $response = $this->postJson(route('onboarding.register.submit'), [
+            'name' => 'Test',
+            'store_name' => 'Store',
+            'subdomain' => 'my-subdomain',
+            'phone' => '01012345678',
+            'otp' => '123456',
+            'email' => 'test@short.test',
+            'password' => 'short',
+        ]);
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['password']);
+    }
+
+    public function test_registration_rejects_duplicate_email(): void
+    {
+        User::create([
+            'name' => 'Existing',
+            'email' => 'existing@test.com',
+            'password' => bcrypt('password'),
+        ]);
+
+        $response = $this->postJson(route('onboarding.register.submit'), [
+            'name' => 'New User',
+            'store_name' => 'Another Store',
+            'subdomain' => 'another-store',
+            'phone' => '01012345678',
+            'otp' => '123456',
+            'email' => 'existing@test.com',
+            'password' => 'password123',
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['email']);
+    }
+
+    public function test_otp_brute_force_protection_invalidates_code_after_5_failed_attempts(): void
+    {
+        $otpService = new \App\Support\Auth\OtpService();
+        $phone = '01122334455';
+
+        // Set real code in cache
+        $normalized = '+201122334455';
+        $cacheKey = 'otp_code:'.md5($normalized);
+        \Illuminate\Support\Facades\Cache::put($cacheKey, '987654', 300);
+
+        // 4 failed attempts with wrong code
+        for ($i = 0; $i < 4; $i++) {
+            $this->assertFalse($otpService->verifyOtp($phone, '000000'));
+        }
+
+        // Code should still be valid on 5th attempt if correct
+        // But 5th wrong attempt triggers lockout
+        $this->assertFalse($otpService->verifyOtp($phone, '000000'));
+
+        // Now code must be purged from cache and even correct code must fail
+        $this->assertFalse($otpService->verifyOtp($phone, '987654'));
+        $this->assertNull(\Illuminate\Support\Facades\Cache::get($cacheKey));
     }
 }

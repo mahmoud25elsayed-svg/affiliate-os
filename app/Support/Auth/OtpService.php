@@ -14,6 +14,8 @@ class OtpService
 
     public const MAX_ATTEMPTS_PER_MINUTE = 3;
 
+    public const MAX_VERIFY_ATTEMPTS = 5;
+
     /**
      * Send OTP to Egyptian phone number.
      *
@@ -71,19 +73,33 @@ class OtpService
         }
 
         $normalized = $parsed->e164;
+        $cacheKey = 'otp_code:'.md5($normalized);
+        $attemptsKey = 'otp_verify_attempts:'.md5($normalized);
 
-        // Test fallback
+        $failedAttempts = (int) Cache::get($attemptsKey, 0);
+        if ($failedAttempts >= self::MAX_VERIFY_ATTEMPTS) {
+            Cache::forget($cacheKey);
+
+            return false;
+        }
+
+        // Test fallback (only when no real code or test env)
         if (app()->environment('testing') && $code === '123456') {
             return true;
         }
 
-        $cacheKey = 'otp_code:'.md5($normalized);
         $cachedCode = Cache::get($cacheKey);
 
         if ($cachedCode && hash_equals((string) $cachedCode, trim($code))) {
             Cache::forget($cacheKey);
+            Cache::forget($attemptsKey);
 
             return true;
+        }
+
+        Cache::put($attemptsKey, $failedAttempts + 1, self::EXPIRATION_SECONDS);
+        if ($failedAttempts + 1 >= self::MAX_VERIFY_ATTEMPTS) {
+            Cache::forget($cacheKey); // Lock and invalidate after 5 failed guesses
         }
 
         return false;

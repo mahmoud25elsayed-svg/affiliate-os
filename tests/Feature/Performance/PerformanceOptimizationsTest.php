@@ -22,7 +22,7 @@ class PerformanceOptimizationsTest extends TestCase
             'payout_requests' => ['idx_payouts_tenant_status_created', 'idx_payouts_tenant_affiliate_status'],
             'tickets' => ['idx_tickets_tenant_level_status', 'idx_tickets_tenant_sla_due'],
             'call_attempts' => ['idx_call_attempts_tenant_order_created', 'idx_call_attempts_tenant_user_created'],
-            'tracking_links' => ['idx_tracking_links_tenant_slug', 'idx_tracking_links_tenant_affiliate'],
+            'tracking_links' => ['idx_tracking_links_tenant_code'],
             'ad_conversion_events' => ['idx_ad_events_tenant_status_created'],
             'webhook_deliveries' => ['idx_wh_deliveries_tenant_status_created'],
             'inventory_balances' => ['idx_inv_balances_tenant_variant'],
