@@ -55,8 +55,7 @@ return new class extends Migration
         // 6. tracking_links
         if (Schema::hasTable('tracking_links')) {
             Schema::table('tracking_links', function (Blueprint $table) {
-                $table->index(['tenant_id', 'slug'], 'idx_tracking_links_tenant_slug');
-                $table->index(['tenant_id', 'affiliate_id'], 'idx_tracking_links_tenant_affiliate');
+                $table->index(['tenant_id', 'code'], 'idx_tracking_links_tenant_code');
             });
         }
 
@@ -131,8 +130,7 @@ return new class extends Migration
 
         if (Schema::hasTable('tracking_links')) {
             Schema::table('tracking_links', function (Blueprint $table) {
-                $table->dropIndex('idx_tracking_links_tenant_slug');
-                $table->dropIndex('idx_tracking_links_tenant_affiliate');
+                $table->dropIndex('idx_tracking_links_tenant_code');
             });
         }
 
