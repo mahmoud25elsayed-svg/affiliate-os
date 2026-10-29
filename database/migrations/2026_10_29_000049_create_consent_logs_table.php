@@ -15,11 +15,11 @@ return new class extends Migration
     {
         Schema::create('consent_logs', function (Blueprint $table) {
             $table->id();
-            $table->string('tenant_id')->nullable()->index();
+            $table->string('tenant_id', 64)->nullable()->index();
             $table->unsignedBigInteger('user_id')->nullable()->index();
-            $table->string('subject_type')->index(); // merchant, affiliate, customer
-            $table->string('subject_identifier')->index(); // phone, email, or user/customer ID
-            $table->string('document_type')->index(); // merchant_terms, dpa, affiliate_terms, privacy_policy, shipping_returns, aup
+            $table->string('subject_type', 32)->index(); // merchant, affiliate, customer
+            $table->string('subject_identifier', 191)->index(); // phone, email, or user/customer ID
+            $table->string('document_type', 64)->index(); // merchant_terms, dpa, affiliate_terms, privacy_policy, shipping_returns, aup
             $table->string('version')->default('1.0');
             $table->string('ip_address', 45)->nullable();
             $table->text('user_agent')->nullable();

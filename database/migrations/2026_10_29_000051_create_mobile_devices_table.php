@@ -15,10 +15,10 @@ return new class extends Migration
     {
         Schema::create('mobile_devices', function (Blueprint $table) {
             $table->id();
-            $table->string('tenant_id');
+            $table->string('tenant_id', 64);
             $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('affiliate_id')->nullable()->constrained('affiliates')->nullOnDelete();
-            $table->string('device_token', 512);
+            $table->string('device_token', 255);
             $table->string('platform', 32); // 'ios', 'android'
             $table->string('app_type', 32); // 'customer', 'affiliate', 'merchant'
             $table->string('device_name')->nullable();
