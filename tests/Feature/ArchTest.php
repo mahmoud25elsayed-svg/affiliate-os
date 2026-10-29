@@ -7,6 +7,7 @@ use App\Models\Subscription;
 use App\Models\SubscriptionEvent;
 use App\Models\SubscriptionInvoice;
 use App\Models\Tenant;
+use App\Models\TenantErrorLog;
 use App\Models\User;
 use App\Support\Tenancy\Concerns\BelongsToTenant;
 
@@ -28,6 +29,7 @@ test('all tenant models use BelongsToTenant trait', function () {
         SubscriptionEvent::class,
         SubscriptionInvoice::class,
         CustomerReputation::class,
+        TenantErrorLog::class,
     ];
 
     $modelFiles = glob(app_path('Models/*.php')) ?: [];

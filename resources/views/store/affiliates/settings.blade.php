@@ -170,6 +170,11 @@
                             <input type="checkbox" name="show_customer_phone_to_affiliate" value="1" {{ $settings->show_customer_phone_to_affiliate ? 'checked' : '' }} class="rounded text-indigo-600 focus:ring-indigo-500">
                             <span class="font-bold text-slate-700">إظهار رقم هاتف العميل للمسوق في تفاصيل الطلب</span>
                         </label>
+                        <label class="flex items-center space-x-2 space-x-reverse text-xs">
+                            <input type="hidden" name="public_trust_metrics_enabled" value="0">
+                            <input type="checkbox" name="public_trust_metrics_enabled" value="1" {{ ($settings->public_trust_metrics_enabled ?? true) ? 'checked' : '' }} class="rounded text-indigo-600 focus:ring-indigo-500">
+                            <span class="font-bold text-slate-700">عرض مؤشرات الشفافية والأداء العلنية (زمن الدفع، نسبة التسليم) في صفحات المسوقين</span>
+                        </label>
                     </div>
                 </div>
             </div>

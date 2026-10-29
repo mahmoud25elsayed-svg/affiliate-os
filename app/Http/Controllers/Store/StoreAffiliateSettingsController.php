@@ -39,10 +39,12 @@ class StoreAffiliateSettingsController extends Controller
             'show_customer_phone_to_affiliate' => ['boolean'],
             'default_daily_order_limit' => ['required', 'integer', 'min:1', 'max:500'],
             'release_mode' => ['required', 'string', 'in:return_window,courier_remittance,later_of_both'],
+            'public_trust_metrics_enabled' => ['boolean'],
         ]);
 
         $validated['auto_approve_registrations'] = (bool) ($validated['auto_approve_registrations'] ?? false);
         $validated['show_customer_phone_to_affiliate'] = (bool) ($validated['show_customer_phone_to_affiliate'] ?? false);
+        $validated['public_trust_metrics_enabled'] = (bool) ($validated['public_trust_metrics_enabled'] ?? false);
 
         $settings = AffiliateProgramSettings::load();
         foreach ($validated as $key => $value) {
