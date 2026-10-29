@@ -5,19 +5,33 @@ use App\Http\Controllers\Billing\InvoiceDownloadController;
 use App\Http\Controllers\HealthCheckController;
 use App\Http\Controllers\MerchantOnboardingController;
 use App\Http\Controllers\Platform\PlatformAnalyticsController;
+use App\Http\Controllers\Platform\PlatformMarketingController;
+use App\Http\Middleware\TrackPlatformVisitorsMiddleware;
 use App\Support\Auth\ImpersonationService;
 use Illuminate\Support\Facades\Route;
 
 // System Health Monitoring Endpoint (P36)
 Route::get('/health', HealthCheckController::class)->name('health.check');
 
-// Public Landing & Merchant Onboarding (Scoped to Central Domains)
+// Public Marketing Website & Merchant Onboarding (Scoped to Central Domains)
 $centralDomains = (array) config('tenancy.central_domains', ['localhost', '127.0.0.1']);
 foreach ($centralDomains as $index => $centralDomain) {
-    $route = Route::domain($centralDomain)->get('/', [MerchantOnboardingController::class, 'showLanding']);
-    if ($index === 0) {
-        $route->name('landing');
-    }
+    Route::domain($centralDomain)->middleware([TrackPlatformVisitorsMiddleware::class])->group(function () use ($index) {
+        $homeRoute = Route::get('/', [PlatformMarketingController::class, 'home']);
+        if ($index === 0) {
+            $homeRoute->name('platform.marketing.home');
+            // Legacy alias
+            Route::get('/home', fn () => redirect()->route('platform.marketing.home'))->name('landing');
+        }
+
+        Route::get('/features', [PlatformMarketingController::class, 'features'])->name('platform.marketing.features');
+        Route::get('/pricing', [PlatformMarketingController::class, 'pricing'])->name('platform.marketing.pricing');
+        Route::get('/faq', [PlatformMarketingController::class, 'faq'])->name('platform.marketing.faq');
+        Route::get('/blog', [PlatformMarketingController::class, 'blog'])->name('platform.marketing.blog');
+        Route::get('/blog/{slug}', [PlatformMarketingController::class, 'blogPost'])->name('platform.marketing.blog.post');
+        Route::get('/contact', [PlatformMarketingController::class, 'contact'])->name('platform.marketing.contact');
+        Route::post('/contact', [PlatformMarketingController::class, 'submitContact'])->name('platform.marketing.contact.submit');
+    });
 }
 Route::get('/register/merchant', [MerchantOnboardingController::class, 'showRegister'])->name('onboarding.register');
 Route::get('/onboarding/check-subdomain', [MerchantOnboardingController::class, 'checkSubdomain'])->name('onboarding.check-subdomain');

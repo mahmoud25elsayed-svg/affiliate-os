@@ -3,6 +3,7 @@
 use App\Models\CustomerReputation;
 use App\Models\Domain;
 use App\Models\Plan;
+use App\Models\PlatformVisit;
 use App\Models\Subscription;
 use App\Models\SubscriptionEvent;
 use App\Models\SubscriptionInvoice;
@@ -30,6 +31,7 @@ test('all tenant models use BelongsToTenant trait', function () {
         SubscriptionInvoice::class,
         CustomerReputation::class,
         TenantErrorLog::class,
+        PlatformVisit::class,
     ];
 
     $modelFiles = glob(app_path('Models/*.php')) ?: [];
