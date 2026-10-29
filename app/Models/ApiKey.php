@@ -45,6 +45,8 @@ class ApiKey extends Model
 
     public const SCOPE_MERCHANT_CUSTOMERS_READ = 'merchant:customers:read';
 
+    public const SCOPE_MERCHANT_CUSTOMERS_WRITE = 'merchant:customers:write';
+
     public const SCOPE_AFFILIATE_CATALOG_READ = 'affiliate:catalog:read';
 
     public const SCOPE_AFFILIATE_ORDERS_CREATE = 'affiliate:orders:create';

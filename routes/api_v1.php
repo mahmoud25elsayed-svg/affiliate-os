@@ -73,6 +73,14 @@ Route::prefix('v1')->middleware([AuthenticateApiKey::class])->group(function () 
         Route::get('/customers', [StoreCustomerApiController::class, 'index'])
             ->middleware(RequireApiKeyScope::class.':'.ApiKey::SCOPE_MERCHANT_CUSTOMERS_READ)
             ->name('api.v1.store.customers.index');
+
+        Route::get('/customers/{id}/export', [StoreCustomerApiController::class, 'export'])
+            ->middleware(RequireApiKeyScope::class.':'.ApiKey::SCOPE_MERCHANT_CUSTOMERS_READ)
+            ->name('api.v1.store.customers.export');
+
+        Route::post('/customers/{id}/anonymize', [StoreCustomerApiController::class, 'anonymize'])
+            ->middleware(RequireApiKeyScope::class.':'.ApiKey::SCOPE_MERCHANT_CUSTOMERS_WRITE)
+            ->name('api.v1.store.customers.anonymize');
     });
 
     // Affiliate Endpoints

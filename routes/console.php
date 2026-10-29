@@ -21,6 +21,7 @@ Schedule::command('affiliate:calculate-daily-quality-scores')->dailyAt('00:05');
 Schedule::command('reports:aggregate-daily')->dailyAt('01:00');
 Schedule::command('ledger:reconcile')->dailyAt('02:00');
 Schedule::command('app:backup-database')->dailyAt('03:00');
+Schedule::command('compliance:prune-expired-data')->dailyAt('04:00');
 Schedule::command('queue:cron --stop-when-empty')->everyMinute()->withoutOverlapping();
 Schedule::job(new ReleaseExpiredOrderLocksJob)->everyFiveMinutes();
 Schedule::job(new ProcessExhaustedCallAttemptsJob)->hourly();
