@@ -160,6 +160,49 @@ class OpenApiDocsController extends Controller
                         'responses' => ['200' => ['description' => 'Available, pending, and total earnings.']],
                     ],
                 ],
+                '/mobile/devices' => [
+                    'post' => [
+                        'summary' => 'Register Mobile Device for Push Notifications',
+                        'tags' => ['Mobile App Integration'],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        'type' => 'object',
+                                        'required' => ['device_token', 'platform', 'app_type'],
+                                        'properties' => [
+                                            'device_token' => ['type' => 'string'],
+                                            'platform' => ['type' => 'string', 'enum' => ['ios', 'android']],
+                                            'app_type' => ['type' => 'string', 'enum' => ['customer', 'affiliate', 'merchant']],
+                                            'device_name' => ['type' => 'string'],
+                                            'app_version' => ['type' => 'string'],
+                                            'locale' => ['type' => 'string', 'default' => 'ar'],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => ['200' => ['description' => 'Device registered successfully.']],
+                    ],
+                ],
+                '/mobile/devices/{token}' => [
+                    'delete' => [
+                        'summary' => 'Unregister Mobile Device Token',
+                        'tags' => ['Mobile App Integration'],
+                        'parameters' => [
+                            ['name' => 'token', 'in' => 'path', 'required' => true, 'schema' => ['type' => 'string']],
+                        ],
+                        'responses' => ['200' => ['description' => 'Device unregistered.']],
+                    ],
+                ],
+                '/mobile/config' => [
+                    'get' => [
+                        'summary' => 'Get Dynamic White-Label Mobile App Configuration',
+                        'tags' => ['Mobile App Integration'],
+                        'responses' => ['200' => ['description' => 'Dynamic store branding, features, and theme tokens.']],
+                    ],
+                ],
             ],
         ];
 

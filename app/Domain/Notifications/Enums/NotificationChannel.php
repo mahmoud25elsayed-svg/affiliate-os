@@ -11,6 +11,7 @@ enum NotificationChannel: string
     case EMAIL = 'email';
     case IN_APP = 'in_app';
     case WEB_PUSH = 'web_push';
+    case MOBILE_PUSH = 'mobile_push';
 
     public function getLabel(): string
     {
@@ -20,6 +21,7 @@ enum NotificationChannel: string
             self::EMAIL => 'البريد الإلكتروني (Email)',
             self::IN_APP => 'إشعار داخل التطبيق (In-App)',
             self::WEB_PUSH => 'إشعار المتصفح (Web Push)',
+            self::MOBILE_PUSH => 'إشعار الجوال الفوري (Mobile Push)',
         };
     }
 }
