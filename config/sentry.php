@@ -4,8 +4,8 @@ return [
     'dsn' => env('SENTRY_LARAVEL_DSN'),
     'release' => env('SENTRY_RELEASE'),
     'environment' => env('APP_ENV', 'production'),
-    'sample_rate' => (float) env('SENTRY_SAMPLE_RATE', 0.0),
-    'traces_sample_rate' => (float) env('SENTRY_TRACES_SAMPLE_RATE', 0.0),
+    'sample_rate' => (float) env('SENTRY_SAMPLE_RATE', 1.0),
+    'traces_sample_rate' => (float) env('SENTRY_TRACES_SAMPLE_RATE', 0.2),
     'send_default_pii' => false,
     'breadcrumbs' => [
         'logs' => true,

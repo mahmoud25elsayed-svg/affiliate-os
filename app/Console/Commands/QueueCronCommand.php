@@ -34,6 +34,19 @@ class QueueCronCommand extends Command
     public function handle(): int
     {
         $queueOrder = (string) $this->option('queue');
+
+        // Fix #15: Dynamically discover and append any active queues in jobs table to prevent stuck jobs
+        if ($queueOrder === 'finance,notifications,courier,default') {
+            try {
+                /** @var array<string> $extraQueues */
+                $extraQueues = \Illuminate\Support\Facades\DB::table('jobs')->distinct()->pluck('queue')->filter()->all();
+                $queues = array_values(array_unique(array_merge(['finance', 'notifications', 'courier', 'default'], $extraQueues)));
+                $queueOrder = implode(',', $queues);
+            } catch (\Throwable) {
+                // Fallback to configured order
+            }
+        }
+
         $maxTime = (int) $this->option('max-time');
         $memory = (int) $this->option('memory');
         $tries = (int) $this->option('tries');

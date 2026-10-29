@@ -1,0 +1,21 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Redirect direct requests for index.php or public/index.php to root (Fix #18)
+    RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /(public/)?index\.php[?\ ] [NC]
+    RewriteRule ^(public/)?index\.php$ / [R=301,L]
+
+    RewriteRule ^$ public/ [L]
+    RewriteRule (.*) public/ [L]
+</IfModule>
+
+# Remove PHP signature headers (Fix #17)
+<IfModule mod_headers.c>
+    Header unset X-Powered-By
+    Header always unset X-Powered-By
+</IfModule>
+
+<Files .env>
+    Order allow,deny
+    Deny from all
+</Files>

@@ -80,19 +80,33 @@ class BackupDatabaseCommand extends Command
         $rawSizeBytes = File::size($sqlFile);
         $this->info('   SQL export completed successfully ('.round($rawSizeBytes / 1024 / 1024, 2).' MB).');
 
-        // 2. Gzip compression
-        $this->info('2. Compressing SQL dump via Gzip...');
-        $sqlContent = File::get($sqlFile);
-        $compressed = gzencode($sqlContent, 9);
-        if ($compressed === false) {
-            $this->error('Failed to compress SQL file.');
-            File::delete($sqlFile);
+        // 2. Gzip compression (streaming to avoid memory exhaustion on large dumps - Fix #20)
+        $this->info('2. Compressing SQL dump via Gzip stream...');
+        $srcHandle = fopen($sqlFile, 'rb');
+        if (! $srcHandle) {
+            $this->error('Failed to open SQL file for compression.');
 
             return self::FAILURE;
         }
-        File::put($gzFile, $compressed);
+
+        $gzHandle = gzopen($gzFile, 'wb9');
+        if (! $gzHandle) {
+            fclose($srcHandle);
+            $this->error('Failed to create Gzip destination file.');
+
+            return self::FAILURE;
+        }
+
+        while (! feof($srcHandle)) {
+            $chunk = fread($srcHandle, 65536);
+            if ($chunk !== false && strlen($chunk) > 0) {
+                gzwrite($gzHandle, $chunk);
+            }
+        }
+
+        fclose($srcHandle);
+        gzclose($gzHandle);
         File::delete($sqlFile); // Remove plain SQL file
-        unset($sqlContent, $compressed);
 
         $finalArchiveFile = $gzFile;
 
@@ -199,12 +213,16 @@ class BackupDatabaseCommand extends Command
         }
 
         $cmd[] = "--user={$username}";
-        if ($password !== '') {
-            $cmd[] = "--password={$password}";
-        }
         $cmd[] = $database;
 
-        $process = new Process($cmd);
+        // Fix #20: Pass password via process environment variable MYSQL_PWD instead of CLI argument
+        // This avoids leaking credentials in process lists (ps aux) and eliminates mysqldump insecure password warnings
+        $processEnv = [];
+        if ($password !== '') {
+            $processEnv['MYSQL_PWD'] = $password;
+        }
+
+        $process = new Process($cmd, env: $processEnv);
         $process->setTimeout(300);
 
         // Run mysqldump and write output to destination

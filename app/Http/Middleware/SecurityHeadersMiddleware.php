@@ -19,6 +19,10 @@ class SecurityHeadersMiddleware
     {
         $response = $next($request);
 
+        // Strip server execution runtime signature (Fix #17)
+        @header_remove('X-Powered-By');
+        $response->headers->remove('X-Powered-By');
+
         $isEmbedRoute = $request->is('embed/*') || str_starts_with((string) $request->route()?->getName(), 'storefront.embed.');
 
         // 1. Anti-Clickjacking: X-Frame-Options

@@ -12,6 +12,8 @@ class ScanAbandonedCartsCommand extends Command
 {
     protected $signature = 'promotions:scan-abandoned-carts {--minutes=30 : Idle minutes threshold to consider cart abandoned}';
 
+    protected $aliases = ['cart:scan-abandoned'];
+
     protected $description = 'Scan idle carts and trigger abandonment reminder events';
 
     public function handle(AbandonedCartService $abandonedCartService): int

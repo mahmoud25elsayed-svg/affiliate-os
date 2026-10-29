@@ -17,10 +17,14 @@ class HealthCheckAndDeploymentTest extends TestCase
     {
         parent::setUp();
 
+        $token = env('HEALTH_CHECK_TOKEN', 'affiliateos_health_sec_2026');
+        $this->withHeader('X-Health-Token', (string) $token);
+
         // Clear health-related caches and temporary queue items
         Cache::forget('system:last_scheduler_run');
         Cache::forget('ledger:last_reconcile_status');
         DB::table('jobs')->delete();
+        DB::table('tenants')->where('status', 'provisioning')->delete();
     }
 
     public function test_health_check_returns_healthy_200_under_normal_conditions(): void
@@ -164,6 +168,14 @@ class HealthCheckAndDeploymentTest extends TestCase
         $expectedHash = hash_file('sha256', $encFile->getPathname());
         $checksumContent = File::get($shaFile->getPathname());
         $this->assertStringContainsString($expectedHash, $checksumContent);
+
+        // Test disaster recovery restoration
+        $restoreExit = Artisan::call('app:restore-database', [
+            'file' => $encFile->getPathname(),
+            '--encryption-key' => 'test-secret-backup-key-32-chars-long!',
+            '--force' => true,
+        ]);
+        $this->assertEquals(0, $restoreExit, 'Disaster recovery restoration must complete successfully.');
 
         // Clean up temporary testing backups
         File::deleteDirectory($backupDir);

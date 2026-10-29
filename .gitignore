@@ -24,3 +24,4 @@ yarn-error.log
 *.sqlite*
 .pest/
 /storage/tenant*
+/.github/workflows/

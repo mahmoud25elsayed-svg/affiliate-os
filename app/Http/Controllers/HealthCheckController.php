@@ -75,6 +75,19 @@ class HealthCheckController extends Controller
     }
 
     /**
+     * Rate-limited critical logger to prevent log flooding during persistent unhealthy states.
+     *
+     * @param  array<string, mixed>  $context
+     */
+    protected function logCriticalThrottled(string $key, string $message, array $context = [], int $ttlSeconds = 300): void
+    {
+        $cacheKey = 'health_crit_logged_'.md5($key);
+        if (Cache::add($cacheKey, true, $ttlSeconds)) {
+            Log::critical($message, $context);
+        }
+    }
+
+    /**
      * @return array{status: string, latency_ms: float, error?: string}
      */
     protected function checkDatabase(): array
@@ -91,7 +104,7 @@ class HealthCheckController extends Controller
                 'latency_ms' => $latency,
             ];
         } catch (Throwable $e) {
-            Log::critical('Health Check: Database connection failure: '.$e->getMessage());
+            $this->logCriticalThrottled('database', 'Health Check: Database connection failure: '.$e->getMessage());
 
             return [
                 'status' => 'unhealthy',
@@ -122,7 +135,7 @@ class HealthCheckController extends Controller
             $status = 'healthy';
             if ($oldestAge > 120) {
                 $status = 'unhealthy';
-                Log::critical("Health Check Alert: Oldest queue job age ({$oldestAge}s) exceeded 120s limit!", [
+                $this->logCriticalThrottled('queue_age', "Health Check Alert: Oldest queue job age ({$oldestAge}s) exceeded 120s limit!", [
                     'pending_jobs' => $pendingCount,
                     'oldest_job_age_seconds' => $oldestAge,
                 ]);
@@ -138,7 +151,7 @@ class HealthCheckController extends Controller
                 'recent_failed_jobs' => $recentFailedCount,
             ];
         } catch (Throwable $e) {
-            Log::critical('Health Check: Queue check failed: '.$e->getMessage());
+            $this->logCriticalThrottled('queue_exception', 'Health Check: Queue check failed: '.$e->getMessage());
 
             return [
                 'status' => 'unhealthy',
@@ -168,14 +181,16 @@ class HealthCheckController extends Controller
 
         try {
             $lastRunCarbon = Carbon::parse($lastRun);
-            $secondsSince = max(0, (int) now()->diffInSeconds($lastRunCarbon));
+            // Fix #4: Use unix timestamp diff to ensure positive duration across Carbon 2 and Carbon 3
+            $secondsSince = max(0, (int) (now()->timestamp - $lastRunCarbon->timestamp));
 
             // Cron runs every minute; if > 180s (3 missed runs), report degraded
             $status = ($secondsSince > 180) ? 'degraded' : 'healthy';
 
             if ($secondsSince > 600) {
                 $status = 'unhealthy';
-                Log::critical("Health Check Alert: Scheduled cron has not run in {$secondsSince} seconds!");
+                // Fix #12: Throttled logging to prevent log flooding during downtime
+                $this->logCriticalThrottled('scheduler_lag', "Health Check Alert: Scheduled cron has not run in {$secondsSince} seconds!");
             }
 
             return [
@@ -209,12 +224,30 @@ class HealthCheckController extends Controller
             ];
         }
 
-        $freePercentage = round(($freeBytes / $totalBytes) * 100, 2);
+        // Fix #21: Measure account/app storage quota rather than host-wide 8.5TB partition
+        $accountQuotaMb = env('ACCOUNT_STORAGE_LIMIT_MB');
+        $effectiveTotal = (int) $totalBytes;
+        $effectiveFree = (int) $freeBytes;
+
+        if ($accountQuotaMb !== null && (int) $accountQuotaMb > 0) {
+            $quotaBytes = (int) $accountQuotaMb * 1024 * 1024;
+            $appUsageBytes = $this->getAppStorageUsageBytes();
+            $effectiveTotal = $quotaBytes;
+            $effectiveFree = min((int) $freeBytes, max(0, $quotaBytes - $appUsageBytes));
+        } elseif ($totalBytes > (500 * 1024 * 1024 * 1024)) {
+            // Server partition > 500GB (e.g. Hostinger 8.5TB node): default account quota 50GB
+            $quotaBytes = 50 * 1024 * 1024 * 1024;
+            $appUsageBytes = $this->getAppStorageUsageBytes();
+            $effectiveTotal = $quotaBytes;
+            $effectiveFree = min((int) $freeBytes, max(0, $quotaBytes - $appUsageBytes));
+        }
+
+        $freePercentage = round(($effectiveFree / max(1, $effectiveTotal)) * 100, 2);
 
         $status = 'healthy';
         if ($freePercentage < 5.0) {
             $status = 'unhealthy';
-            Log::critical("Health Check Alert: Critical disk storage space remaining ({$freePercentage}%)!");
+            $this->logCriticalThrottled('storage_full', "Health Check Alert: Critical disk storage space remaining ({$freePercentage}%)!");
         } elseif ($freePercentage < 15.0) {
             $status = 'degraded';
             Log::warning("Health Check Warning: Low disk storage space remaining ({$freePercentage}%).");
@@ -222,9 +255,38 @@ class HealthCheckController extends Controller
 
         return [
             'status' => $status,
-            'free_bytes' => (int) $freeBytes,
+            'free_bytes' => $effectiveFree,
             'free_percentage' => $freePercentage,
         ];
+    }
+
+    /**
+     * Cached measurement of application storage directory usage in bytes.
+     */
+    protected function getAppStorageUsageBytes(): int
+    {
+        return (int) Cache::remember('health_check_app_storage_bytes', 900, function (): int {
+            $appDir = storage_path('app');
+            if (! is_dir($appDir)) {
+                return 0;
+            }
+
+            $size = 0;
+            try {
+                $iterator = new \RecursiveIteratorIterator(
+                    new \RecursiveDirectoryIterator($appDir, \FilesystemIterator::SKIP_DOTS)
+                );
+                foreach ($iterator as $file) {
+                    if ($file->isFile()) {
+                        $size += $file->getSize();
+                    }
+                }
+            } catch (Throwable) {
+                // Return best-effort size
+            }
+
+            return $size;
+        });
     }
 
     /**
@@ -246,7 +308,7 @@ class HealthCheckController extends Controller
             if (! $isHealthy || $discrepanciesCount > 0) {
                 $ledgerStatus = 'discrepancy_detected';
                 $status = 'unhealthy';
-                Log::critical('Health Check Alert: Ledger discrepancies detected during reconciliation!');
+                $this->logCriticalThrottled('ledger_discrepancy', 'Health Check Alert: Ledger discrepancies detected during reconciliation!');
             } else {
                 $ledgerStatus = 'in_balance';
             }
@@ -262,8 +324,10 @@ class HealthCheckController extends Controller
                 ->count();
 
             if ($unprovisionedCount > 0) {
-                $status = 'degraded';
-                Log::critical("Health Check Alert: {$unprovisionedCount} tenants stuck in provisioning for > 15 minutes!");
+                if ($status !== 'unhealthy') {
+                    $status = 'degraded';
+                }
+                $this->logCriticalThrottled('provisioning_lag', "Health Check Alert: {$unprovisionedCount} tenants stuck in provisioning for > 15 minutes!");
             }
         } catch (Throwable) {
             // Ignore if tenants table not accessible or during partial test setups
