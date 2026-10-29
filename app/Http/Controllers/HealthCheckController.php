@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -16,7 +17,7 @@ class HealthCheckController extends Controller
     /**
      * Check system health across database, queue, scheduler, storage, and platform operations.
      */
-    public function __invoke(): JsonResponse
+    public function __invoke(Request $request): JsonResponse
     {
         $checks = [
             'database' => $this->checkDatabase(),
@@ -43,11 +44,33 @@ class HealthCheckController extends Controller
 
         $httpCode = ($overallStatus === 'unhealthy') ? 503 : 200;
 
+        // Security (O-8 / SC-09): Restrict verbose infrastructure telemetry to authorized requests
+        $token = $request->query('token') ?? $request->header('X-Health-Token');
+        $expectedToken = env('HEALTH_CHECK_TOKEN', 'affiliateos_health_sec_2026');
+        $isAuthorized = ($token && hash_equals((string) $expectedToken, (string) $token))
+            || (auth()->check() && (auth()->user()->is_platform_admin ?? false));
+
+        if ($isAuthorized) {
+            $checksOutput = $checks;
+        } else {
+            // Mask raw internal disk bytes, job IDs, and unprovisioned tenant count
+            $checksOutput = [
+                'database' => ['status' => $checks['database']['status']],
+                'queue' => ['status' => $checks['queue']['status']],
+                'scheduler' => [
+                    'status' => $checks['scheduler']['status'],
+                    'last_run' => $checks['scheduler']['last_run'] ?? null,
+                ],
+                'storage' => ['status' => $checks['storage']['status']],
+                'platform' => ['status' => $checks['platform']['status']],
+            ];
+        }
+
         return response()->json([
             'status' => $overallStatus,
             'timestamp' => now()->toIso8601String(),
             'environment' => config('app.env'),
-            'checks' => $checks,
+            'checks' => $checksOutput,
         ], $httpCode);
     }
 

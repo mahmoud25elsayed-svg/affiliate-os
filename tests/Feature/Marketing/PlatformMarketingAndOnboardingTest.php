@@ -102,6 +102,68 @@ class PlatformMarketingAndOnboardingTest extends TestCase
         $response->assertSee('خصم 20%');
         $response->assertSee('المقارنة الكاملة');
         $response->assertSee('دفتر الأستاذ المحاسبي المزدوج');
+        $response->assertSee('غير محدود');
+    }
+
+    public function test_platform_legal_pages_render_successfully(): void
+    {
+        $pages = ['/terms', '/privacy', '/dpa', '/affiliate-terms'];
+
+        foreach ($pages as $url) {
+            $response = $this->get($url);
+            $response->assertStatus(200);
+            $response->assertSee('AffiliateOS');
+            $response->assertSee('العودة للصفحة الرئيسية');
+        }
+    }
+
+    public function test_platform_sitemap_renders_valid_xml(): void
+    {
+        $response = $this->get('/sitemap.xml');
+
+        $response->assertStatus(200);
+        $response->assertHeader('Content-Type', 'application/xml');
+        $response->assertSee('<urlset', false);
+        $response->assertSee('/features', false);
+        $response->assertSee('/pricing', false);
+        $response->assertSee('/register/merchant', false);
+    }
+
+    public function test_login_shortcut_redirects_to_platform_login(): void
+    {
+        $response = $this->get('/login');
+
+        $response->assertRedirect('/platform/login');
+    }
+
+    public function test_health_endpoint_masks_internal_details_for_public_requests(): void
+    {
+        $publicResponse = $this->get('/health');
+        $publicResponse->assertStatus(200);
+        $publicResponse->assertJsonStructure([
+            'status',
+            'timestamp',
+            'environment',
+            'checks' => [
+                'database' => ['status'],
+                'queue' => ['status'],
+                'scheduler' => ['status', 'last_run'],
+                'storage' => ['status'],
+                'platform' => ['status'],
+            ],
+        ]);
+        // Raw internal disk byte counts and pending jobs must not be leaked publicly
+        $publicData = $publicResponse->json();
+        $this->assertArrayNotHasKey('free_bytes', $publicData['checks']['storage']);
+        $this->assertArrayNotHasKey('pending_jobs', $publicData['checks']['queue']);
+
+        // Authenticated with token reveals detailed diagnostics
+        $token = env('HEALTH_CHECK_TOKEN', 'affiliateos_health_sec_2026');
+        $authResponse = $this->get("/health?token={$token}");
+        $authResponse->assertStatus(200);
+        $authData = $authResponse->json();
+        $this->assertArrayHasKey('free_bytes', $authData['checks']['storage']);
+        $this->assertArrayHasKey('pending_jobs', $authData['checks']['queue']);
     }
 
     public function test_platform_faq_page_renders_with_faq_page_schema(): void

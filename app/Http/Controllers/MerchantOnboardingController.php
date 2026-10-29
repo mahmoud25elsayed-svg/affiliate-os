@@ -165,11 +165,14 @@ class MerchantOnboardingController extends Controller
         ]);
 
         // 3. Dispatch ProvisionTenant job
+        $rootDomain = (string) config('tenancy.root_domain', 'localhost');
+        $tenantDomain = "{$tenant->id}.{$rootDomain}";
+
         if (app()->environment('testing')) {
             (new ProvisionTenant(
                 tenantId: (string) $tenant->id,
                 name: (string) $tenant->name,
-                domain: "{$tenant->id}.localhost",
+                domain: $tenantDomain,
                 ownerData: [
                     'name' => $owner->name,
                     'email' => $owner->email,
@@ -181,7 +184,7 @@ class MerchantOnboardingController extends Controller
             ProvisionTenant::dispatch(
                 tenantId: (string) $tenant->id,
                 name: (string) $tenant->name,
-                domain: "{$tenant->id}.localhost",
+                domain: $tenantDomain,
                 ownerData: [
                     'name' => $owner->name,
                     'email' => $owner->email,

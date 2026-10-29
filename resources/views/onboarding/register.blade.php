@@ -212,7 +212,7 @@
                         <label for="subdomain" class="form-label">رابط المتجر (النطاق الفرعي بالإنجليزية)</label>
                         <div class="subdomain-input-wrap">
                             <input type="text" id="subdomain" name="subdomain" class="form-input subdomain-input" value="{{ old('subdomain') }}" placeholder="el-nokhba" required>
-                            <span class="subdomain-suffix">.localhost</span>
+                            <span class="subdomain-suffix">.{{ config('tenancy.root_domain', 'localhost') }}</span>
                         </div>
                         <span id="subdomainStatus" class="status-badge"></span>
                     </div>

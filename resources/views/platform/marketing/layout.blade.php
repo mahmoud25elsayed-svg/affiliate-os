@@ -6,6 +6,8 @@
     <title>{{ $pageTitle ?? 'AffiliateOS — نظام التجارة والتسويق بالعمولة' }}</title>
     <meta name="description" content="{{ $metaDescription ?? 'منصة التجارة الإلكترونية وإدارة شبكات المسوقين بالعمولة للتجار في مصر.' }}">
     <link rel="canonical" href="{{ url()->current() }}">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%234f46e5'/%3E%3Cpath d='M30 70 L50 25 L70 70 L55 70 L50 55 L45 70 Z' fill='%23ffffff'/%3E%3C/svg%3E">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
@@ -270,10 +272,10 @@
                 <div class="footer-col">
                     <h4>الامتثال والشروط</h4>
                     <ul>
-                        <li><a href="#">شروط الخدمة للتجار</a></li>
-                        <li><a href="#">اتفاقية معالجة البيانات (DPA)</a></li>
-                        <li><a href="#">شروط برنامج الأفلييت</a></li>
-                        <li><a href="#">سياسة الخصوصية</a></li>
+                        <li><a href="{{ route('legal.terms') }}">شروط الخدمة للتجار</a></li>
+                        <li><a href="{{ route('legal.dpa') }}">اتفاقية معالجة البيانات (DPA)</a></li>
+                        <li><a href="{{ route('legal.affiliate-terms') }}">شروط برنامج الأفلييت</a></li>
+                        <li><a href="{{ route('legal.privacy') }}">سياسة الخصوصية</a></li>
                     </ul>
                 </div>
             </div>

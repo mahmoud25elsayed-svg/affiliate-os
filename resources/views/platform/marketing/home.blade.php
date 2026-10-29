@@ -129,9 +129,9 @@
                         </div>
 
                         <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.85rem; margin-bottom: 2rem; color: var(--text-main); font-size: 0.95rem;">
-                            <li>✓ حتى {{ number_format($plan->getLimit('products')) }} منتج</li>
-                            <li>✓ حتى {{ number_format($plan->getLimit('monthly_orders')) }} طلب شهرياً</li>
-                            <li>✓ حتى {{ number_format($plan->getLimit('affiliates')) }} مسوق نشط</li>
+                            <li>✓ {{ $plan->getLimit('products') == -1 ? 'منتجات غير محدودة' : 'حتى ' . number_format($plan->getLimit('products')) . ' منتج' }}</li>
+                            <li>✓ {{ $plan->getLimit('monthly_orders') == -1 ? 'طلبات شهرية غير محدودة' : 'حتى ' . number_format($plan->getLimit('monthly_orders')) . ' طلب شهرياً' }}</li>
+                            <li>✓ {{ $plan->getLimit('affiliates') == -1 ? 'مسوقين غير محدودين' : 'حتى ' . number_format($plan->getLimit('affiliates')) . ' مسوق نشط' }}</li>
                             @if($plan->hasFeature('api'))
                                 <li>✓ واجهات برمجة التطبيقات REST API</li>
                             @endif

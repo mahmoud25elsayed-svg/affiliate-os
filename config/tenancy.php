@@ -23,6 +23,7 @@ return [
 
     'cname_target' => env('TENANCY_CNAME_TARGET', 'cname.affiliate-os.com'),
     'server_ip' => env('TENANCY_SERVER_IP', '127.0.0.1'),
+    'root_domain' => env('TENANCY_ROOT_DOMAIN', env('APP_ENV') === 'production' ? (parse_url((string) env('APP_URL', ''), PHP_URL_HOST) ?: 'mediumseagreen-rat-742689.hostingersite.com') : 'localhost'),
 
     /**
      * The list of domains hosting your central app.
@@ -30,8 +31,9 @@ return [
      * Only relevant if you're using the domain or subdomain identification middleware.
      */
     'central_domains' => array_values(array_filter(array_unique(array_merge(
-        ['127.0.0.1', 'localhost'],
-        explode(',', (string) env('CENTRAL_DOMAINS', ''))
+        array_filter(explode(',', (string) env('CENTRAL_DOMAINS', ''))),
+        [parse_url((string) env('APP_URL', ''), PHP_URL_HOST) ?: 'localhost'],
+        ['localhost', '127.0.0.1']
     )))),
 
     /**

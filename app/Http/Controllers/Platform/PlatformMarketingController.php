@@ -9,7 +9,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Plan;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
@@ -144,6 +146,96 @@ class PlatformMarketingController extends Controller
 
         return redirect()->route('platform.marketing.contact')
             ->with('success', 'شكراً لتواصلك معنا! استلمنا رسالتك وسيتواصل معك أحد مستشاري التجارة بالمنصة خلال 24 ساعة.');
+    }
+
+    /**
+     * View Platform Legal Agreements & Policies (O-7).
+     */
+    public function legal(string $type): View
+    {
+        $map = [
+            'terms' => [
+                'file' => 'merchant-terms.md',
+                'title' => 'شروط وأحكام الخدمة للتجار — AffiliateOS',
+                'desc' => 'شروط وأحكام استخدام منصة AffiliateOS وخدمات التجارة السحابية وإدارة المسوقين.',
+            ],
+            'privacy' => [
+                'file' => 'privacy-policy.md',
+                'title' => 'سياسة الخصوصية وحماية البيانات — AffiliateOS',
+                'desc' => 'سياسة الخصوصية وجمع ومعالجة البيانات وفق القانون المصري رقم 151 لسنة 2020.',
+            ],
+            'dpa' => [
+                'file' => 'data-processing-agreement.md',
+                'title' => 'اتفاقية معالجة البيانات (DPA) — AffiliateOS',
+                'desc' => 'اتفاقية معالجة البيانات الشخصية لرواد الأعمال والمتاجر الشريكة.',
+            ],
+            'affiliate-terms' => [
+                'file' => 'affiliate-terms.md',
+                'title' => 'شروط وأحكام برنامج الأفلييت — AffiliateOS',
+                'desc' => 'القواعد والشروط المنظمة لبرامج التسويق بالعمولة واحتساب نسب العمولات والأرباح.',
+            ],
+        ];
+
+        if (! isset($map[$type])) {
+            abort(404, 'الوثيقة القانونية غير موجودة.');
+        }
+
+        $filePath = base_path('docs/legal/' . $map[$type]['file']);
+        $markdown = file_exists($filePath) ? file_get_contents($filePath) : '# الوثيقة قيد التحديث';
+        $html = Str::markdown($markdown);
+
+        return view('platform.marketing.legal', [
+            'content' => $html,
+            'pageTitle' => $map[$type]['title'],
+            'metaDescription' => $map[$type]['desc'],
+        ]);
+    }
+
+    /**
+     * Dynamic XML Sitemap for SEO (SM-09).
+     */
+    public function sitemap(): Response
+    {
+        $baseUrl = rtrim((string) config('app.url'), '/');
+        $now = now()->toAtomString();
+
+        $urls = [
+            ['loc' => $baseUrl, 'priority' => '1.0', 'changefreq' => 'daily'],
+            ['loc' => "{$baseUrl}/features", 'priority' => '0.9', 'changefreq' => 'weekly'],
+            ['loc' => "{$baseUrl}/pricing", 'priority' => '0.9', 'changefreq' => 'weekly'],
+            ['loc' => "{$baseUrl}/register/merchant", 'priority' => '0.9', 'changefreq' => 'monthly'],
+            ['loc' => "{$baseUrl}/faq", 'priority' => '0.8', 'changefreq' => 'weekly'],
+            ['loc' => "{$baseUrl}/blog", 'priority' => '0.8', 'changefreq' => 'daily'],
+            ['loc' => "{$baseUrl}/contact", 'priority' => '0.7', 'changefreq' => 'monthly'],
+            ['loc' => "{$baseUrl}/terms", 'priority' => '0.5', 'changefreq' => 'monthly'],
+            ['loc' => "{$baseUrl}/privacy", 'priority' => '0.5', 'changefreq' => 'monthly'],
+            ['loc' => "{$baseUrl}/dpa", 'priority' => '0.5', 'changefreq' => 'monthly'],
+            ['loc' => "{$baseUrl}/affiliate-terms", 'priority' => '0.5', 'changefreq' => 'monthly'],
+        ];
+
+        foreach ($this->getBlogArticles() as $article) {
+            $urls[] = [
+                'loc' => "{$baseUrl}/blog/{$article['slug']}",
+                'priority' => '0.7',
+                'changefreq' => 'monthly',
+            ];
+        }
+
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
+
+        foreach ($urls as $u) {
+            $xml .= "  <url>\n";
+            $xml .= "    <loc>{$u['loc']}</loc>\n";
+            $xml .= "    <lastmod>{$now}</lastmod>\n";
+            $xml .= "    <changefreq>{$u['changefreq']}</changefreq>\n";
+            $xml .= "    <priority>{$u['priority']}</priority>\n";
+            $xml .= "  </url>\n";
+        }
+
+        $xml .= '</urlset>';
+
+        return response($xml, 200, ['Content-Type' => 'application/xml']);
     }
 
     /**

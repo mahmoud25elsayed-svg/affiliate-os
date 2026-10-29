@@ -20,19 +20,45 @@ foreach ($centralDomains as $index => $centralDomain) {
         $homeRoute = Route::get('/', [PlatformMarketingController::class, 'home']);
         if ($index === 0) {
             $homeRoute->name('platform.marketing.home');
-            // Legacy alias
             Route::get('/home', fn () => redirect()->route('platform.marketing.home'))->name('landing');
-        }
+            Route::get('/features', [PlatformMarketingController::class, 'features'])->name('platform.marketing.features');
+            Route::get('/pricing', [PlatformMarketingController::class, 'pricing'])->name('platform.marketing.pricing');
+            Route::get('/faq', [PlatformMarketingController::class, 'faq'])->name('platform.marketing.faq');
+            Route::get('/blog', [PlatformMarketingController::class, 'blog'])->name('platform.marketing.blog');
+            Route::get('/blog/{slug}', [PlatformMarketingController::class, 'blogPost'])->name('platform.marketing.blog.post');
+            Route::get('/contact', [PlatformMarketingController::class, 'contact'])->name('platform.marketing.contact');
+            Route::post('/contact', [PlatformMarketingController::class, 'submitContact'])->name('platform.marketing.contact.submit');
 
-        Route::get('/features', [PlatformMarketingController::class, 'features'])->name('platform.marketing.features');
-        Route::get('/pricing', [PlatformMarketingController::class, 'pricing'])->name('platform.marketing.pricing');
-        Route::get('/faq', [PlatformMarketingController::class, 'faq'])->name('platform.marketing.faq');
-        Route::get('/blog', [PlatformMarketingController::class, 'blog'])->name('platform.marketing.blog');
-        Route::get('/blog/{slug}', [PlatformMarketingController::class, 'blogPost'])->name('platform.marketing.blog.post');
-        Route::get('/contact', [PlatformMarketingController::class, 'contact'])->name('platform.marketing.contact');
-        Route::post('/contact', [PlatformMarketingController::class, 'submitContact'])->name('platform.marketing.contact.submit');
+            // Legal Documents (O-7)
+            Route::get('/terms', fn () => app(PlatformMarketingController::class)->legal('terms'))->name('legal.terms');
+            Route::get('/privacy', fn () => app(PlatformMarketingController::class)->legal('privacy'))->name('legal.privacy');
+            Route::get('/dpa', fn () => app(PlatformMarketingController::class)->legal('dpa'))->name('legal.dpa');
+            Route::get('/affiliate-terms', fn () => app(PlatformMarketingController::class)->legal('affiliate-terms'))->name('legal.affiliate-terms');
+
+            // XML Sitemap (SM-09)
+            Route::get('/sitemap.xml', [PlatformMarketingController::class, 'sitemap'])->name('platform.sitemap');
+
+            // Authentication Shortcuts (O-2)
+            Route::get('/login', fn () => redirect('/platform/login'))->name('login');
+        } else {
+            Route::get('/home', fn () => redirect()->route('platform.marketing.home'));
+            Route::get('/features', [PlatformMarketingController::class, 'features']);
+            Route::get('/pricing', [PlatformMarketingController::class, 'pricing']);
+            Route::get('/faq', [PlatformMarketingController::class, 'faq']);
+            Route::get('/blog', [PlatformMarketingController::class, 'blog']);
+            Route::get('/blog/{slug}', [PlatformMarketingController::class, 'blogPost']);
+            Route::get('/contact', [PlatformMarketingController::class, 'contact']);
+            Route::post('/contact', [PlatformMarketingController::class, 'submitContact']);
+            Route::get('/terms', fn () => app(PlatformMarketingController::class)->legal('terms'));
+            Route::get('/privacy', fn () => app(PlatformMarketingController::class)->legal('privacy'));
+            Route::get('/dpa', fn () => app(PlatformMarketingController::class)->legal('dpa'));
+            Route::get('/affiliate-terms', fn () => app(PlatformMarketingController::class)->legal('affiliate-terms'));
+            Route::get('/sitemap.xml', [PlatformMarketingController::class, 'sitemap']);
+            Route::get('/login', fn () => redirect('/platform/login'));
+        }
     });
 }
+
 Route::get('/register/merchant', [MerchantOnboardingController::class, 'showRegister'])->name('onboarding.register');
 Route::get('/onboarding/check-subdomain', [MerchantOnboardingController::class, 'checkSubdomain'])->name('onboarding.check-subdomain');
 Route::post('/onboarding/send-otp', [MerchantOnboardingController::class, 'sendOtp'])->name('onboarding.send-otp');

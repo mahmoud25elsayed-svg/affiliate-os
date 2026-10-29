@@ -13,7 +13,7 @@
         <div style="display: inline-flex; align-items: center; gap: 1rem; background: var(--surface); padding: 0.4rem 0.6rem; border-radius: 50px; border: 1px solid var(--border);">
             <button id="toggleMonthly" class="btn" style="border-radius: 50px; padding: 0.4rem 1.25rem; font-size: 0.9rem; background: var(--primary); color: #fff;" onclick="setBilling('monthly')">الدفع شهرياً</button>
             <button id="toggleYearly" class="btn" style="border-radius: 50px; padding: 0.4rem 1.25rem; font-size: 0.9rem; background: transparent; color: var(--text-muted);" onclick="setBilling('yearly')">
-                الدفع سنوياً <span style="background: rgba(16, 185, 129, 0.2); color: #34d399; font-size: 0.75rem; padding: 0.15rem 0.5rem; border-radius: 20px; margin-right: 0.25rem;">خصم 20%</span>
+                الدفع سنوياً <span style="background: rgba(16, 185, 129, 0.2); color: #34d399; font-size: 0.75rem; padding: 0.15rem 0.5rem; border-radius: 20px; margin-right: 0.25rem;">خصم 20% (شهرين مجاناً)</span>
             </button>
         </div>
     </div>
@@ -48,10 +48,10 @@
                         <div style="border-top: 1px solid var(--border); padding-top: 1.5rem; margin-bottom: 1.75rem;">
                             <p style="font-weight: 700; margin-bottom: 1rem; font-size: 0.95rem; color: #818cf8;">حدود ومواصفات الخطة:</p>
                             <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.95rem; color: var(--text-main);">
-                                <li>📦 حتى <strong>{{ number_format($plan->getLimit('products')) }}</strong> منتج</li>
-                                <li>🛍️ حتى <strong>{{ number_format($plan->getLimit('monthly_orders')) }}</strong> طلب شهرياً</li>
-                                <li>👥 حتى <strong>{{ number_format($plan->getLimit('affiliates')) }}</strong> مسوق معتمد</li>
-                                <li>📞 حتى <strong>{{ number_format($plan->getLimit('staff') ?: 5) }}</strong> موظفي كول سنتر</li>
+                                <li>📦 {{ $plan->getLimit('products') == -1 ? 'منتجات غير محدودة' : 'حتى ' . number_format($plan->getLimit('products')) . ' منتج' }}</li>
+                                <li>🛍️ {{ $plan->getLimit('monthly_orders') == -1 ? 'طلبات شهرية غير محدودة' : 'حتى ' . number_format($plan->getLimit('monthly_orders')) . ' طلب شهرياً' }}</li>
+                                <li>👥 {{ $plan->getLimit('affiliates') == -1 ? 'مسوقين غير محدودين' : 'حتى ' . number_format($plan->getLimit('affiliates')) . ' مسوق معتمد' }}</li>
+                                <li>📞 {{ $plan->getLimit('staff') == -1 ? 'موظفي كول سنتر غير محدود' : 'حتى ' . number_format($plan->getLimit('staff') ?: 5) . ' موظفي كول سنتر' }}</li>
                             </ul>
                         </div>
                     </div>
@@ -88,19 +88,19 @@
                     <tr style="border-bottom: 1px solid var(--border);">
                         <td style="padding: 1rem 1.5rem; color: var(--text-main); font-weight: 600;">عدد المنتجات المتاحة</td>
                         @foreach($plans as $plan)
-                            <td style="padding: 1rem 1.5rem; text-align: center;">{{ number_format($plan->getLimit('products')) }}</td>
+                            <td style="padding: 1rem 1.5rem; text-align: center;">{{ $plan->getLimit('products') == -1 ? 'غير محدود' : number_format($plan->getLimit('products')) }}</td>
                         @endforeach
                     </tr>
                     <tr style="border-bottom: 1px solid var(--border);">
                         <td style="padding: 1rem 1.5rem; color: var(--text-main); font-weight: 600;">سقف الطلبات الشهرية</td>
                         @foreach($plans as $plan)
-                            <td style="padding: 1rem 1.5rem; text-align: center;">{{ number_format($plan->getLimit('monthly_orders')) }}</td>
+                            <td style="padding: 1rem 1.5rem; text-align: center;">{{ $plan->getLimit('monthly_orders') == -1 ? 'غير محدود' : number_format($plan->getLimit('monthly_orders')) }}</td>
                         @endforeach
                     </tr>
                     <tr style="border-bottom: 1px solid var(--border);">
                         <td style="padding: 1rem 1.5rem; color: var(--text-main); font-weight: 600;">عدد المسوقين المسجلين</td>
                         @foreach($plans as $plan)
-                            <td style="padding: 1rem 1.5rem; text-align: center;">{{ number_format($plan->getLimit('affiliates')) }}</td>
+                            <td style="padding: 1rem 1.5rem; text-align: center;">{{ $plan->getLimit('affiliates') == -1 ? 'غير محدود' : number_format($plan->getLimit('affiliates')) }}</td>
                         @endforeach
                     </tr>
                     <tr style="border-bottom: 1px solid var(--border);">
