@@ -35,7 +35,8 @@ foreach ($centralDomains as $index => $centralDomain) {
             Route::get('/dpa', fn () => app(PlatformMarketingController::class)->legal('dpa'))->name('legal.dpa');
             Route::get('/affiliate-terms', fn () => app(PlatformMarketingController::class)->legal('affiliate-terms'))->name('legal.affiliate-terms');
 
-            // XML Sitemap (SM-09)
+            // Favicon & XML Sitemap (SM-09)
+            Route::get('/favicon.ico', fn () => file_exists(public_path('favicon.ico')) ? response()->file(public_path('favicon.ico'), ['Content-Type' => 'image/x-icon']) : response('', 204))->name('platform.favicon');
             Route::get('/sitemap.xml', [PlatformMarketingController::class, 'sitemap'])->name('platform.sitemap');
 
             // Authentication Shortcuts (O-2)
@@ -53,6 +54,7 @@ foreach ($centralDomains as $index => $centralDomain) {
             Route::get('/privacy', fn () => app(PlatformMarketingController::class)->legal('privacy'));
             Route::get('/dpa', fn () => app(PlatformMarketingController::class)->legal('dpa'));
             Route::get('/affiliate-terms', fn () => app(PlatformMarketingController::class)->legal('affiliate-terms'));
+            Route::get('/favicon.ico', fn () => file_exists(public_path('favicon.ico')) ? response()->file(public_path('favicon.ico'), ['Content-Type' => 'image/x-icon']) : response('', 204));
             Route::get('/sitemap.xml', [PlatformMarketingController::class, 'sitemap']);
             Route::get('/login', fn () => redirect('/platform/login'));
         }
