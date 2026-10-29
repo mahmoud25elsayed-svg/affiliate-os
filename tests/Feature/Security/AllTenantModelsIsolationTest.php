@@ -7,6 +7,7 @@ namespace Tests\Feature\Security;
 use App\Models\CustomerReputation;
 use App\Models\Domain;
 use App\Models\Plan;
+use App\Models\PlatformVisit;
 use App\Models\Subscription;
 use App\Models\SubscriptionEvent;
 use App\Models\SubscriptionInvoice;
@@ -37,6 +38,7 @@ class AllTenantModelsIsolationTest extends TestCase
         SubscriptionInvoice::class,
         CustomerReputation::class,
         TenantErrorLog::class,
+        PlatformVisit::class,
     ];
 
     /**
