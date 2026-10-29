@@ -54,6 +54,13 @@ class QueueCronCommand extends Command
             $params['--stop-when-empty'] = true;
         }
 
-        return $this->call('queue:work', $params);
+        $exitCode = $this->call('queue:work', $params);
+
+        // Exit code 12 is Worker::EXIT_TIMEOUT (normal expected shutdown when max-time is reached)
+        if ($exitCode === 12) {
+            return self::SUCCESS;
+        }
+
+        return $exitCode;
     }
 }
