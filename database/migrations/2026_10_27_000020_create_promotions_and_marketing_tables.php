@@ -43,7 +43,7 @@ return new class extends Migration
                 $table->integer('sold_quantity')->default(0); // quantity sold under flash sale
                 $table->timestamps();
 
-                $table->unique(['tenant_id', 'flash_sale_id', 'product_variant_id']);
+                $table->unique(['tenant_id', 'flash_sale_id', 'product_variant_id'], 'flash_items_tenant_sale_variant_unique');
                 $table->foreign('flash_sale_id')->references('id')->on('flash_sales')->cascadeOnDelete();
             });
         }

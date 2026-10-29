@@ -41,7 +41,7 @@ return new class extends Migration
                 $table->integer('low_stock_threshold')->default(5);
                 $table->timestamps();
 
-                $table->unique(['tenant_id', 'warehouse_id', 'product_variant_id']);
+                $table->unique(['tenant_id', 'warehouse_id', 'product_variant_id'], 'inv_balances_tenant_wh_variant_unique');
             });
 
             // Add CHECK constraint on engines that support it via ALTER TABLE
@@ -70,7 +70,7 @@ return new class extends Migration
                 $table->text('notes')->nullable();
                 $table->timestamp('created_at')->useCurrent();
 
-                $table->index(['tenant_id', 'product_variant_id', 'warehouse_id']);
+                $table->index(['tenant_id', 'product_variant_id', 'warehouse_id'], 'inv_movements_tenant_variant_wh_index');
                 $table->unique(['tenant_id', 'reference_key']);
             });
         }
