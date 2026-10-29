@@ -5,8 +5,8 @@
     RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /(public/)?index\.php[?\ ] [NC]
     RewriteRule ^(public/)?index\.php$ / [R=301,L]
 
-    RewriteRule ^$ public/ [L]
-    RewriteRule (.*) public/ [L]
+    RewriteRule ^$ public/index.php [L]
+    RewriteRule ^((?!public/).*)$ public/$1 [L]
 </IfModule>
 
 # Remove PHP signature headers (Fix #17)
