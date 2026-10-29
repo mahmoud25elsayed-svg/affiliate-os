@@ -286,3 +286,4 @@ class RestoreDatabaseCommand extends Command
         throw new \RuntimeException('No decryption key configured! Provide --encryption-key or set BACKUP_ENCRYPTION_KEY / APP_KEY.');
     }
 }
+
