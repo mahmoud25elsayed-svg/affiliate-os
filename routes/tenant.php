@@ -9,11 +9,13 @@ use App\Http\Controllers\Affiliate\AffiliateAiToolsController;
 use App\Http\Controllers\Affiliate\AffiliateAuthController;
 use App\Http\Controllers\Affiliate\AffiliateCatalogController;
 use App\Http\Controllers\Affiliate\AffiliateDashboardController;
+use App\Http\Controllers\Affiliate\AffiliateHelpCenterController;
 use App\Http\Controllers\Affiliate\AffiliateKycController;
 use App\Http\Controllers\Affiliate\AffiliateOrderController;
 use App\Http\Controllers\Affiliate\AffiliatePayoutController;
 use App\Http\Controllers\Affiliate\AffiliatePayoutRequestController;
 use App\Http\Controllers\Affiliate\AffiliatePixelController;
+use App\Http\Controllers\Affiliate\AffiliateSupportController;
 use App\Http\Controllers\Affiliate\AffiliateTrackingLinkController;
 use App\Http\Controllers\Affiliate\AffiliateWalletController;
 use App\Http\Controllers\Affiliate\App\AppAnalyticsController;
@@ -39,6 +41,7 @@ use App\Http\Controllers\Store\StorePayoutManagementController;
 use App\Http\Controllers\Store\StorePixelTrackingController;
 use App\Http\Controllers\Store\StoreShipmentController;
 use App\Http\Controllers\Store\StoreSupplierController;
+use App\Http\Controllers\Store\StoreSupportTicketController;
 use App\Http\Controllers\Store\StoreThemeController;
 use App\Http\Controllers\Storefront\AffiliateReferralController;
 use App\Http\Controllers\Storefront\CategoryController;
@@ -50,6 +53,7 @@ use App\Http\Controllers\Storefront\ProductController;
 use App\Http\Controllers\Storefront\RobotsController;
 use App\Http\Controllers\Storefront\SearchController;
 use App\Http\Controllers\Storefront\SitemapController;
+use App\Http\Controllers\Storefront\StoreHelpCenterController;
 use App\Http\Middleware\EnsureAffiliateAuthenticated;
 use App\Http\Middleware\EnsureCustomerAuthenticated;
 use App\Http\Middleware\EnsureStorefrontActive;
@@ -83,6 +87,10 @@ Route::middleware([
     Route::get('/categories/{id}', [CategoryController::class, 'show'])->name('storefront.categories.show');
     Route::get('/products/{id}', [ProductController::class, 'show'])->name('storefront.products.show');
     Route::get('/search', SearchController::class)->name('storefront.search');
+
+    // Public Help Center & FAQ (P32)
+    Route::get('/help', [StoreHelpCenterController::class, 'index'])->name('storefront.help.index');
+    Route::get('/help/{slug}', [StoreHelpCenterController::class, 'show'])->name('storefront.help.show');
 
     // Cart & Checkout Routes (P09)
     Route::get('/cart', CartPage::class)->name('storefront.cart');
@@ -257,6 +265,16 @@ Route::middleware([
             Route::post('/suggest-tags', [StoreAiToolsController::class, 'suggestTags'])->name('store.ai.suggest-tags');
             Route::post('/translate', [StoreAiToolsController::class, 'translate'])->name('store.ai.translate');
         });
+
+        // Support Tickets & Helpdesk (P32)
+        Route::prefix('support')->group(function () {
+            Route::get('/', [StoreSupportTicketController::class, 'index'])->name('store.support.index');
+            Route::post('/platform-ticket', [StoreSupportTicketController::class, 'createPlatformTicket'])->name('store.support.platform-ticket');
+            Route::get('/{id}', [StoreSupportTicketController::class, 'show'])->name('store.support.show');
+            Route::post('/{id}/reply', [StoreSupportTicketController::class, 'reply'])->name('store.support.reply');
+            Route::post('/{id}/status', [StoreSupportTicketController::class, 'updateStatus'])->name('store.support.status');
+            Route::post('/{id}/assign', [StoreSupportTicketController::class, 'assign'])->name('store.support.assign');
+        });
     });
 
     // Courier Webhook endpoint for tracking callbacks (P24)
@@ -291,6 +309,18 @@ Route::middleware([
                 Route::post('/suggest-angles', [AffiliateAiToolsController::class, 'suggestAngles'])->name('affiliate.ai.suggest-angles');
                 Route::post('/check-policy', [AffiliateAiToolsController::class, 'checkPolicy'])->name('affiliate.ai.check-policy');
             });
+
+            // Affiliate Support Tickets (P32)
+            Route::prefix('support')->group(function () {
+                Route::get('/', [AffiliateSupportController::class, 'index'])->name('affiliate.support.index');
+                Route::get('/create', [AffiliateSupportController::class, 'create'])->name('affiliate.support.create');
+                Route::post('/', [AffiliateSupportController::class, 'store'])->name('affiliate.support.store');
+                Route::get('/{id}', [AffiliateSupportController::class, 'show'])->name('affiliate.support.show');
+                Route::post('/{id}/reply', [AffiliateSupportController::class, 'reply'])->name('affiliate.support.reply');
+            });
+
+            // Affiliate Help Center & FAQ (P32)
+            Route::get('/help', [AffiliateHelpCenterController::class, 'index'])->name('affiliate.help.index');
 
             // Affiliate Wallet & Statement (P19)
             Route::get('/wallet', [AffiliateWalletController::class, 'index'])->name('affiliate.wallet.index');
