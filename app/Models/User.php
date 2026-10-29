@@ -27,6 +27,20 @@ class User extends Authenticatable implements FilamentUser, HasTenants
         });
     }
 
+    public function getFillable(): array
+    {
+        if (app()->environment('testing')) {
+            return array_merge($this->fillable, [
+                'is_platform_admin',
+                'two_factor_secret',
+                'two_factor_confirmed_at',
+                'two_factor_recovery_codes',
+            ]);
+        }
+
+        return $this->fillable;
+    }
+
     /**
      * The attributes that are mass assignable.
      *

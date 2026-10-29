@@ -54,10 +54,10 @@ class TwoFactorController extends Controller
             return back()->withErrors(['code' => 'رمز التحقق غير صحيح. تأكد من إدخال الرمز من تطبيق المصادقة.']);
         }
 
-        $user->update([
+        $user->forceFill([
             'two_factor_secret' => $secret,
             'two_factor_confirmed_at' => now(),
-        ]);
+        ])->save();
 
         session()->forget('two_factor_setup_secret');
         session()->put('two_factor_authenticated', true);

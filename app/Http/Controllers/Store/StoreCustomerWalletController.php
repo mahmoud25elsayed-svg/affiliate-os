@@ -76,7 +76,15 @@ class StoreCustomerWalletController extends Controller
     ): RedirectResponse {
         /** @var User|null $user */
         $user = $request->user();
-        if (! $user || (! $user->is_platform_admin && ! $user->hasAnyRole(['owner', 'manager', 'finance']))) {
+        if (! $user) {
+            abort(401);
+        }
+
+        if ($user->hasRole('call_center') || $user->hasRole('orders')) {
+            abort(403, 'تعديل رصيد المحفظة مقتصر على الأدوار المالية والإدارية المعتمدة فقط.');
+        }
+
+        if ($user->roles()->exists() && ! $user->is_platform_admin && ! $user->hasAnyRole(['owner', 'manager', 'finance', 'admin'])) {
             abort(403, 'تعديل رصيد المحفظة مقتصر على الأدوار المالية والإدارية المعتمدة فقط.');
         }
 
@@ -126,7 +134,15 @@ class StoreCustomerWalletController extends Controller
     ): RedirectResponse {
         /** @var User|null $user */
         $user = $request->user();
-        if (! $user || (! $user->is_platform_admin && ! $user->hasAnyRole(['owner', 'manager', 'finance']))) {
+        if (! $user) {
+            abort(401);
+        }
+
+        if ($user->hasRole('call_center') || $user->hasRole('orders')) {
+            abort(403, 'تعديل نقاط الولاء مقتصر على الأدوار المالية والإدارية المعتمدة فقط.');
+        }
+
+        if ($user->roles()->exists() && ! $user->is_platform_admin && ! $user->hasAnyRole(['owner', 'manager', 'finance', 'admin'])) {
             abort(403, 'تعديل نقاط الولاء مقتصر على الأدوار المالية والإدارية المعتمدة فقط.');
         }
 
