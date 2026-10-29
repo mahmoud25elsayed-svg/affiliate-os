@@ -14,6 +14,8 @@ use App\Domain\Promotions\Services\PromotionPricingService;
 use App\Models\Coupon;
 use App\Models\Customer;
 use App\Models\OrderEvent;
+use App\Models\Tenant;
+use App\Support\Billing\Limits;
 use App\Support\Enums\ReasonCode;
 use App\Support\Idempotency\IdempotencyService;
 use App\Support\Phone\EgyptianPhone;
@@ -121,7 +123,7 @@ class OrderCreationService
                 if ($attributedLink !== null && $attributedLink->custom_selling_price_minor !== null) {
                     if ($attributedLink->product_variant_id !== null && (int) $attributedLink->product_variant_id === (int) $variant->id) {
                         $isLinkedCustomPrice = true;
-                    } elseif ($attributedLink->product_id !== null && $variant->product_id !== null && (int) $attributedLink->product_id === (int) $variant->product_id) {
+                    } elseif ($attributedLink->product_id !== null && (int) $attributedLink->product_id === (int) $variant->product_id) {
                         $isLinkedCustomPrice = true;
                     }
                 }
@@ -234,13 +236,14 @@ class OrderCreationService
 
             // 8.1 Affiliate Commission Calculation (AF-09, AF-10)
             $affiliateCommissionMinor = 0;
-            if ($attributedLink !== null && ! $selfReferralBlocked) {
+            // A blocked self-referral has already cleared $attributedLink above.
+            if ($attributedLink !== null) {
                 $effectiveSubtotal = max(0, $subtotalMinor - $discountMinor); // AF-09: Net subtotal after discount
                 $affiliateCommissionMinor = $affiliateTracking->calculateCommission(
                     link: $attributedLink,
                     subtotalMinor: $effectiveSubtotal,
-                    variant: $lineItemsData[0]['variant'] ?? null,
-                    quantity: $lineItemsData[0]['quantity'] ?? 1,
+                    variant: $lineItemsData[0]['variant'],
+                    quantity: $lineItemsData[0]['quantity'],
                     lineItems: $lineItemsData
                 );
 
@@ -251,9 +254,9 @@ class OrderCreationService
             $priceSnapshot['attribution_type'] = $attributedLinkId !== null ? 'tracking_link' : null;
 
             // 9. Enforce Plan Limits & Create Lunar Order (BL-04)
-            $tenant = function_exists('tenant') && tenant('id') ? \App\Models\Tenant::find(tenant('id')) : null;
-            if ($tenant) {
-                \App\Support\Billing\Limits::ensure('monthly_orders', $tenant);
+            $tenant = function_exists('tenant') && tenant('id') ? Tenant::find(tenant('id')) : null;
+            if ($tenant instanceof Tenant) {
+                Limits::ensure('monthly_orders', $tenant);
             }
 
             $storefrontCustomerId = $payload->customer_id ?? (Auth::guard('customer')->check() ? (int) Auth::guard('customer')->id() : null);

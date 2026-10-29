@@ -158,12 +158,21 @@ class PlatformMarketingAndOnboardingTest extends TestCase
         $this->assertArrayNotHasKey('pending_jobs', $publicData['checks']['queue']);
 
         // Authenticated with token reveals detailed diagnostics
-        $token = env('HEALTH_CHECK_TOKEN', 'affiliateos_health_sec_2026');
-        $authResponse = $this->get("/health?token={$token}");
+        config(['services.health.token' => 'test-health-token']);
+        $authResponse = $this->withHeader('X-Health-Token', 'test-health-token')->get('/health');
         $authResponse->assertStatus(200);
         $authData = $authResponse->json();
         $this->assertArrayHasKey('free_bytes', $authData['checks']['storage']);
         $this->assertArrayHasKey('pending_jobs', $authData['checks']['queue']);
+
+        // Query-string tokens leak into access logs and are not accepted
+        $queryData = $this->withHeaders(['X-Health-Token' => ''])->get('/health?token=test-health-token')->json();
+        $this->assertArrayNotHasKey('pending_jobs', $queryData['checks']['queue']);
+
+        // An unset server token never authorizes, even when the caller sends an empty value
+        config(['services.health.token' => '']);
+        $emptyData = $this->withHeader('X-Health-Token', '')->get('/health')->json();
+        $this->assertArrayNotHasKey('pending_jobs', $emptyData['checks']['queue']);
     }
 
     public function test_platform_faq_page_renders_with_faq_page_schema(): void

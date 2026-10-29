@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Store;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Support\Settings\GeneralSettings;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -97,7 +98,7 @@ class OrderDocumentController extends Controller
         $user = $request->user();
         $tenantId = tenant('id') ? (string) tenant('id') : null;
 
-        if (! $user || ($tenantId && $user->tenant_id !== $tenantId && ! $user->is_platform_admin)) {
+        if (! $user instanceof User || ($tenantId && $user->tenant_id !== $tenantId && ! $user->is_platform_admin)) {
             abort(403, 'غير مصرح بعرض بوليصة الشحن بدون تسجيل دخول كموظف للمتجر.');
         }
 
@@ -121,13 +122,14 @@ class OrderDocumentController extends Controller
         // 2. Staff user of the tenant or platform admin
         $user = $request->user();
         $tenantId = tenant('id') ? (string) tenant('id') : null;
-        if ($user && ($user->is_platform_admin || ! $tenantId || $user->tenant_id === $tenantId)) {
+        if ($user instanceof User && ($user->is_platform_admin || ! $tenantId || $user->tenant_id === $tenantId)) {
             return;
         }
 
         // 3. Authenticated customer who owns the order
         $customer = $request->user('customer');
-        if ($customer && $order->storefront_customer_id && (int) $customer->id === (int) $order->storefront_customer_id) {
+        $ownerId = $order->getAttribute('storefront_customer_id');
+        if ($customer && $ownerId && (int) $customer->getAuthIdentifier() === (int) $ownerId) {
             return;
         }
 

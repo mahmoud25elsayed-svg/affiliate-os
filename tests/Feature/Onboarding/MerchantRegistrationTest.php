@@ -6,6 +6,7 @@ namespace Tests\Feature\Onboarding;
 
 use App\Models\Tenant;
 use App\Models\User;
+use App\Support\Auth\OtpService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Notification;
@@ -243,13 +244,13 @@ class MerchantRegistrationTest extends TestCase
 
     public function test_otp_brute_force_protection_invalidates_code_after_5_failed_attempts(): void
     {
-        $otpService = new \App\Support\Auth\OtpService();
+        $otpService = new OtpService;
         $phone = '01122334455';
 
         // Set real code in cache
         $normalized = '+201122334455';
         $cacheKey = 'otp_code:'.md5($normalized);
-        \Illuminate\Support\Facades\Cache::put($cacheKey, '987654', 300);
+        Cache::put($cacheKey, '987654', 300);
 
         // 4 failed attempts with wrong code
         for ($i = 0; $i < 4; $i++) {
@@ -262,6 +263,6 @@ class MerchantRegistrationTest extends TestCase
 
         // Now code must be purged from cache and even correct code must fail
         $this->assertFalse($otpService->verifyOtp($phone, '987654'));
-        $this->assertNull(\Illuminate\Support\Facades\Cache::get($cacheKey));
+        $this->assertNull(Cache::get($cacheKey));
     }
 }

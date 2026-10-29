@@ -2,10 +2,14 @@
 
 use App\Domain\CallCenter\Jobs\ProcessExhaustedCallAttemptsJob;
 use App\Domain\CallCenter\Jobs\ReleaseExpiredOrderLocksJob;
+use App\Jobs\Subscriptions\CheckExpiringSubscriptions;
+use App\Jobs\Subscriptions\ProcessPastDueSubscriptions;
+use App\Jobs\Subscriptions\SuspendDelinquentSubscriptions;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schedule;
+use Laravel\Horizon\Horizon;
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
@@ -17,7 +21,7 @@ Schedule::call(function () {
 })->everyMinute()->name('scheduler-heartbeat');
 
 // Only run horizon snapshot when using redis and Horizon is installed (Fix #5)
-if (config('queue.default') === 'redis' && class_exists(\Laravel\Horizon\Horizon::class)) {
+if (config('queue.default') === 'redis' && class_exists(Horizon::class)) {
     Schedule::command('horizon:snapshot')->everyFiveMinutes();
 }
 
@@ -43,6 +47,6 @@ Schedule::job(new ReleaseExpiredOrderLocksJob)->everyFiveMinutes();
 Schedule::job(new ProcessExhaustedCallAttemptsJob)->hourly();
 
 // Subscription life cycle automations (BL-03)
-Schedule::job(new \App\Jobs\Subscriptions\CheckExpiringSubscriptions)->dailyAt('08:00');
-Schedule::job(new \App\Jobs\Subscriptions\ProcessPastDueSubscriptions)->dailyAt('08:30');
-Schedule::job(new \App\Jobs\Subscriptions\SuspendDelinquentSubscriptions)->dailyAt('09:00');
+Schedule::job(new CheckExpiringSubscriptions)->dailyAt('08:00');
+Schedule::job(new ProcessPastDueSubscriptions)->dailyAt('08:30');
+Schedule::job(new SuspendDelinquentSubscriptions)->dailyAt('09:00');

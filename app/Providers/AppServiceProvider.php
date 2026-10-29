@@ -16,9 +16,11 @@ use App\Domain\Tenancy\Contracts\HostingerClientInterface;
 use App\Domain\Tenancy\Services\HostingerDomainService;
 use App\Domain\Tenancy\Services\SystemDnsResolver;
 use App\Domain\Tracking\Listeners\TrackOrderDeliveredConversionListener;
+use App\Http\Middleware\AbortUnlessLunarHubEnabled;
 use App\Models\Affiliate;
 use App\Models\TrackingLink;
 use App\Models\WholesalePrice;
+use Filament\Panel;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
@@ -37,7 +39,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        LunarPanel::register();
+        // Lunar's internals need its panel registered, but the stock hub is not tenant-aware (its own
+        // "staff" guard sees every store's data) and merchants use the Store panel instead. Its routes
+        // therefore 404 unless explicitly enabled, e.g. for local debugging.
+        LunarPanel::panel(fn (Panel $panel) => $panel->middleware([AbortUnlessLunarHubEnabled::class], isPersistent: true))
+            ->register();
 
         $this->app->singleton(
             CustomerWalletServiceInterface::class,

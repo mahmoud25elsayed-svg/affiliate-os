@@ -131,7 +131,7 @@ Route::middleware([
         }
 
         return back()->with('newsletter_message', $result['message']);
-    })->name('storefront.newsletter.subscribe');
+    })->middleware('throttle:10,1')->name('storefront.newsletter.subscribe');
 
     // Customer Authentication & Accounts (P10)
     Route::get('/login', CustomerLoginPage::class)->name('storefront.login');
@@ -163,9 +163,9 @@ Route::middleware([
 
     // Embeddable Order Form for Landing Pages (P29)
     Route::prefix('embed/order')->group(function () {
-        Route::post('/quote', [EmbedOrderController::class, 'quote'])->name('storefront.embed.quote');
+        Route::post('/quote', [EmbedOrderController::class, 'quote'])->middleware('throttle:60,1')->name('storefront.embed.quote');
         Route::get('/{product}', [EmbedOrderController::class, 'show'])->name('storefront.embed.show');
-        Route::post('/{product}', [EmbedOrderController::class, 'store'])->name('storefront.embed.store');
+        Route::post('/{product}', [EmbedOrderController::class, 'store'])->middleware('throttle:10,1')->name('storefront.embed.store');
     });
 
     // SEO Routes
@@ -299,11 +299,11 @@ Route::middleware([
     // Affiliate Portal Routes (P16)
     Route::prefix('partners')->group(function () {
         Route::get('/join', [AffiliateAuthController::class, 'showJoin'])->name('affiliate.join');
-        Route::post('/register', [AffiliateAuthController::class, 'register'])->name('affiliate.register');
+        Route::post('/register', [AffiliateAuthController::class, 'register'])->middleware('throttle:10,1')->name('affiliate.register');
         Route::get('/login', [AffiliateAuthController::class, 'showLogin'])->name('affiliate.login');
-        Route::post('/login', [AffiliateAuthController::class, 'login'])->name('affiliate.login.submit');
+        Route::post('/login', [AffiliateAuthController::class, 'login'])->middleware('throttle:10,1')->name('affiliate.login.submit');
         Route::get('/verify-otp', [AffiliateAuthController::class, 'showVerifyOtp'])->name('affiliate.verify-otp.show');
-        Route::post('/verify-otp', [AffiliateAuthController::class, 'verifyOtp'])->name('affiliate.verify-otp.submit');
+        Route::post('/verify-otp', [AffiliateAuthController::class, 'verifyOtp'])->middleware('throttle:10,1')->name('affiliate.verify-otp.submit');
 
         Route::middleware(EnsureAffiliateAuthenticated::class)->group(function () {
             Route::post('/logout', [AffiliateAuthController::class, 'logout'])->name('affiliate.logout');
@@ -311,8 +311,8 @@ Route::middleware([
             Route::get('/kyc', [AffiliateKycController::class, 'show'])->name('affiliate.kyc.show');
             Route::post('/kyc', [AffiliateKycController::class, 'submit'])->name('affiliate.kyc.submit');
             Route::get('/payout-settings', [AffiliatePayoutController::class, 'show'])->name('affiliate.payout-settings.show');
-            Route::post('/payout-settings/request-otp', [AffiliatePayoutController::class, 'requestOtp'])->name('affiliate.payout-settings.request-otp');
-            Route::post('/payout-settings', [AffiliatePayoutController::class, 'update'])->name('affiliate.payout-settings.update');
+            Route::post('/payout-settings/request-otp', [AffiliatePayoutController::class, 'requestOtp'])->middleware('throttle:3,1')->name('affiliate.payout-settings.request-otp');
+            Route::post('/payout-settings', [AffiliatePayoutController::class, 'update'])->middleware('throttle:10,1')->name('affiliate.payout-settings.update');
 
             // Affiliate Ad Tracking Pixels (P30)
             Route::get('/pixels', [AffiliatePixelController::class, 'show'])->name('affiliate.pixels.show');
@@ -400,8 +400,8 @@ Route::middleware([
                 Route::get('/profile', [AppProfileController::class, 'index'])->name('affiliate.app.profile.index');
                 Route::post('/profile', [AppProfileController::class, 'update'])->name('affiliate.app.profile.update');
                 Route::post('/profile/kyc', [AppProfileController::class, 'submitKyc'])->name('affiliate.app.profile.kyc');
-                Route::post('/profile/payout-otp', [AppProfileController::class, 'requestPayoutOtp'])->name('affiliate.app.profile.payout-otp');
-                Route::post('/profile/payout-settings', [AppProfileController::class, 'updatePayoutSettings'])->name('affiliate.app.profile.payout-settings');
+                Route::post('/profile/payout-otp', [AppProfileController::class, 'requestPayoutOtp'])->middleware('throttle:3,1')->name('affiliate.app.profile.payout-otp');
+                Route::post('/profile/payout-settings', [AppProfileController::class, 'updatePayoutSettings'])->middleware('throttle:10,1')->name('affiliate.app.profile.payout-settings');
             });
         });
     });

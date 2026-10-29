@@ -6,6 +6,7 @@ namespace App\Filament\Store\Resources\StaffResource\Pages;
 
 use App\Filament\Store\Resources\StaffResource;
 use App\Models\User;
+use App\Support\Billing\Limits;
 use App\Support\Tenancy\Permissions\TenantPermissionMatrix;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
@@ -20,7 +21,7 @@ class ListStaff extends ListRecords
             CreateAction::make()
                 ->before(function (): void {
                     if (tenancy()->initialized) {
-                        \App\Support\Billing\Limits::ensure('staff', tenant());
+                        Limits::ensure('staff', tenant());
                     }
                 })
                 ->mutateFormDataUsing(function (array $data): array {

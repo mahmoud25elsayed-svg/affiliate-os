@@ -36,7 +36,7 @@ interface Props {
     };
     payoutRequests: PayoutRequestItem[];
     payoutMethod?: string | null;
-    payoutDetails?: Record<string, any> | null;
+    payoutDetails?: Record<string, string | null> | null;
 }
 
 export default function Wallet({

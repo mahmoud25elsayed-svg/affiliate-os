@@ -44,7 +44,29 @@ return [
 
     'anthropic' => [
         'key' => env('ANTHROPIC_API_KEY', ''),
-        'model' => env('ANTHROPIC_MODEL', 'claude-3-5-haiku-20241022'),
+        'model' => env('ANTHROPIC_MODEL', 'claude-haiku-5-5'),
+    ],
+
+    'smsmisr' => [
+        'username' => env('SMSMISR_USERNAME', ''),
+        'password' => env('SMSMISR_PASSWORD', ''),
+        'sender_id' => env('SMSMISR_SENDER_ID', 'AffiliateOS'),
+        'endpoint' => env('SMSMISR_ENDPOINT', 'https://smsmisr.com/api/v2/'),
+    ],
+
+    'whatsapp' => [
+        'access_token' => env('WHATSAPP_ACCESS_TOKEN', ''),
+        'phone_number_id' => env('WHATSAPP_PHONE_NUMBER_ID', ''),
+    ],
+
+    'paymob' => [
+        'hmac_secret' => env('PAYMOB_HMAC_SECRET'),
+    ],
+
+    // Token that unlocks verbose /health telemetry. Empty disables token access (platform admins still see it).
+    'health' => [
+        'token' => env('HEALTH_CHECK_TOKEN', ''),
+        'account_storage_limit_mb' => env('ACCOUNT_STORAGE_LIMIT_MB'),
     ],
 
 ];

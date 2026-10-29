@@ -10,7 +10,7 @@ export interface AffiliateUser {
     kyc_rejection_reason?: string | null;
     national_id_number?: string | null;
     payout_method?: 'wallet_phone' | 'instapay' | 'bank_account' | null;
-    payout_details?: Record<string, any> | null;
+    payout_details?: Record<string, string | null> | null;
     can_withdraw?: boolean;
     is_frozen?: boolean;
     frozen_until?: string | null;
@@ -93,4 +93,11 @@ export interface TrackingLinkItem {
     target_url: string;
     qr_url: string;
     created_at: string;
+}
+
+export interface AppSharedProps {
+    auth?: { affiliate?: Pick<AffiliateUser, 'id' | 'name' | 'code'> | null };
+    tenant?: { name?: string | null } | null;
+    flash?: { success?: string | null; error?: string | null };
+    url?: string;
 }

@@ -34,22 +34,25 @@ class CourierWebhookController extends Controller
             return response()->json(['error' => 'لم يتم العثور على شحنة مطابقة لهذا الرقم'], 404);
         }
 
-        // 2. Validate webhook secret / signature if configured on account (SEC-08: constant-time HMAC check)
+        // 2. Authenticate the courier (SEC-08: constant-time HMAC check). Fail closed: without a configured
+        // secret anyone who knows a tracking number could mark the order delivered and trigger commission.
         $account = $shipment->courierAccount;
-        if ($account && ! empty($account->webhook_secret)) {
-            $incomingSignature = (string) ($request->header('X-Webhook-Signature') ?? $request->header('X-Bosta-Signature') ?? '');
+        if (! $account || empty($account->webhook_secret)) {
+            throw new UnauthorizedHttpException('Signature', 'لم يتم ضبط المفتاح السري للـ Webhook على حساب شركة الشحن.');
+        }
 
-            if (empty($incomingSignature)) {
-                throw new UnauthorizedHttpException('Signature', 'توقيع الـ Webhook مفقود في الترويسات.');
-            }
+        $incomingSignature = (string) ($request->header('X-Webhook-Signature') ?? $request->header('X-Bosta-Signature') ?? '');
 
-            $expectedHmac = hash_hmac('sha256', (string) $request->getContent(), (string) $account->webhook_secret);
-            $isValid = hash_equals((string) $account->webhook_secret, $incomingSignature)
-                || hash_equals($expectedHmac, $incomingSignature);
+        if (empty($incomingSignature)) {
+            throw new UnauthorizedHttpException('Signature', 'توقيع الـ Webhook مفقود في الترويسات.');
+        }
 
-            if (! $isValid) {
-                throw new UnauthorizedHttpException('Signature', 'توقيع الإشعار غير متطابق مع مفتاح الحساب السري.');
-            }
+        $expectedHmac = hash_hmac('sha256', (string) $request->getContent(), (string) $account->webhook_secret);
+        $isValid = hash_equals((string) $account->webhook_secret, $incomingSignature)
+            || hash_equals($expectedHmac, $incomingSignature);
+
+        if (! $isValid) {
+            throw new UnauthorizedHttpException('Signature', 'توقيع الإشعار غير متطابق مع مفتاح الحساب السري.');
         }
 
         // 3. Map status based on driver / payload

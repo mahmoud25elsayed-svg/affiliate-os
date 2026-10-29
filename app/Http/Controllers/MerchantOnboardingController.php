@@ -15,6 +15,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
@@ -168,52 +169,43 @@ class MerchantOnboardingController extends Controller
 
         RateLimiter::hit($rateKey, 3600);
 
-        // 1. Create Tenant in provisioning state
-        /** @var Tenant $tenant */
-        $tenant = Tenant::create([
-            'id' => $subdomain,
-            'name' => $validated['store_name'],
-            'status' => 'provisioning',
-        ]);
+        // 1+2. Create the tenant (provisioning state) and its owner atomically
+        [$tenant, $owner] = DB::transaction(function () use ($subdomain, $validated, $normalizedPhone): array {
+            /** @var Tenant $tenant */
+            $tenant = Tenant::create([
+                'id' => $subdomain,
+                'name' => $validated['store_name'],
+                'status' => 'provisioning',
+            ]);
 
-        // 2. Create Owner User
-        /** @var User $owner */
-        $owner = User::create([
-            'tenant_id' => $tenant->id,
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
-            'phone' => $normalizedPhone,
-            'phone_verified_at' => now(),
-        ]);
+            /** @var User $owner */
+            $owner = User::create([
+                'tenant_id' => $tenant->id,
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'password' => Hash::make($validated['password']),
+                'phone' => $normalizedPhone,
+                'phone_verified_at' => now(),
+            ]);
 
-        // 3. Dispatch ProvisionTenant job
+            return [$tenant, $owner];
+        });
+
+        // 3. Dispatch ProvisionTenant job (the owner already exists, so no credentials go into the queue payload)
         $rootDomain = (string) config('tenancy.root_domain', 'localhost');
         $tenantDomain = "{$tenant->id}.{$rootDomain}";
 
-        $ownerPayload = [
-            'user_id' => $owner->id,
-            'name' => $owner->name,
-            'email' => $owner->email,
-            'password_hash' => $owner->password,
-            'phone' => $normalizedPhone,
-        ];
-
-        if (app()->environment('testing')) {
-            (new ProvisionTenant(
-                tenantId: (string) $tenant->id,
-                name: (string) $tenant->name,
-                domain: $tenantDomain,
-                ownerData: $ownerPayload
-            ))->handle();
-        } else {
-            ProvisionTenant::dispatch(
-                tenantId: (string) $tenant->id,
-                name: (string) $tenant->name,
-                domain: $tenantDomain,
-                ownerData: $ownerPayload
-            );
-        }
+        ProvisionTenant::dispatch(
+            tenantId: (string) $tenant->id,
+            name: (string) $tenant->name,
+            domain: $tenantDomain,
+            ownerData: [
+                'user_id' => (int) $owner->id,
+                'name' => (string) $owner->name,
+                'email' => (string) $owner->email,
+                'phone' => $normalizedPhone,
+            ]
+        );
 
         // 4. Send Welcome Notification
         $owner->notify(new MerchantWelcomeNotification($tenant));

@@ -180,8 +180,8 @@ class PlatformMarketingController extends Controller
             abort(404, 'الوثيقة القانونية غير موجودة.');
         }
 
-        $filePath = base_path('docs/legal/' . $map[$type]['file']);
-        $markdown = file_exists($filePath) ? file_get_contents($filePath) : '# الوثيقة قيد التحديث';
+        $filePath = base_path('docs/legal/'.$map[$type]['file']);
+        $markdown = file_exists($filePath) ? (string) file_get_contents($filePath) : '# الوثيقة قيد التحديث';
         $html = Str::markdown($markdown);
 
         return view('platform.marketing.legal', [
@@ -221,8 +221,8 @@ class PlatformMarketingController extends Controller
             ];
         }
 
-        $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
-        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>'."\n";
+        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'."\n";
 
         foreach ($urls as $u) {
             $xml .= "  <url>\n";

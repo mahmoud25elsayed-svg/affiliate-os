@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 
 class QueueCronCommand extends Command
 {
@@ -39,7 +40,7 @@ class QueueCronCommand extends Command
         if ($queueOrder === 'finance,notifications,courier,default') {
             try {
                 /** @var array<string> $extraQueues */
-                $extraQueues = \Illuminate\Support\Facades\DB::table('jobs')->distinct()->pluck('queue')->filter()->all();
+                $extraQueues = DB::table('jobs')->distinct()->pluck('queue')->filter()->all();
                 $queues = array_values(array_unique(array_merge(['finance', 'notifications', 'courier', 'default'], $extraQueues)));
                 $queueOrder = implode(',', $queues);
             } catch (\Throwable) {

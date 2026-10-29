@@ -146,6 +146,14 @@ class StorefrontPagesTest extends TestCase
         $response->assertSee('أريكة جلدية إيطالية');
     }
 
+    public function test_search_page_renders_without_a_query(): void
+    {
+        $domain = $this->tenant->domains->first()?->domain ?? 'mystore.test';
+
+        $this->get("http://{$domain}/search")->assertStatus(200);
+        $this->get("http://{$domain}/search?q=")->assertStatus(200);
+    }
+
     public function test_static_pages_render_correctly(): void
     {
         $domain = $this->tenant->domains->first()?->domain ?? 'mystore.test';

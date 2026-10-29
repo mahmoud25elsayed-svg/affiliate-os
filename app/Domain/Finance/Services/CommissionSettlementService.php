@@ -14,6 +14,7 @@ use App\Models\Affiliate;
 use App\Models\JournalEntry;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Lunar\Models\Order;
 
 class CommissionSettlementService
@@ -155,14 +156,14 @@ class CommissionSettlementService
             ->where(function ($query) use ($cutoff) {
                 // AF-16: Check actual delivery event / journal entry timestamp, fallback to updated_at
                 $query->whereExists(function ($sub) use ($cutoff) {
-                    $sub->select(\Illuminate\Support\Facades\DB::raw(1))
+                    $sub->select(DB::raw(1))
                         ->from('journal_entries')
                         ->whereColumn('journal_entries.ref_id', 'lunar_orders.id')
                         ->where('journal_entries.type', 'order_delivered')
                         ->where('journal_entries.created_at', '<=', $cutoff);
                 })->orWhere(function ($fallback) use ($cutoff) {
                     $fallback->whereNotExists(function ($sub) {
-                        $sub->select(\Illuminate\Support\Facades\DB::raw(1))
+                        $sub->select(DB::raw(1))
                             ->from('journal_entries')
                             ->whereColumn('journal_entries.ref_id', 'lunar_orders.id')
                             ->where('journal_entries.type', 'order_delivered');
@@ -182,7 +183,7 @@ class CommissionSettlementService
 
             if (! $alreadySettled) {
                 // AF-16: Execute transition and ledger settlement in a single atomic database transaction
-                \Illuminate\Support\Facades\DB::transaction(function () use ($order, $actor) {
+                DB::transaction(function () use ($order, $actor) {
                     $transitionedOrder = $this->transitionService->transition(
                         order: $order,
                         to: OrderStatus::SETTLED,

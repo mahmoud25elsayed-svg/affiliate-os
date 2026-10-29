@@ -6,6 +6,7 @@ namespace Tests\Feature\Checkout;
 
 use App\Domain\Checkout\Services\Gateways\FakePaymentGateway;
 use App\Domain\Checkout\Services\Gateways\PaymobPaymentGateway;
+use App\Domain\Checkout\Services\PaymentManager;
 use App\Domain\Customer\Contracts\CustomerWalletServiceInterface;
 use App\Domain\Orders\Enums\OrderStatus;
 use App\Models\Customer;
@@ -298,6 +299,31 @@ class PaymentGatewaysTest extends TestCase
 
         $response->assertStatus(401);
         $response->assertJson(['error' => 'Invalid webhook signature.']);
+    }
+
+    public function test_fake_gateway_is_not_available_in_production(): void
+    {
+        $this->app->detectEnvironment(fn () => 'production');
+
+        $manager = new PaymentManager;
+
+        // Its webhook secret is public, so a production fake gateway would accept forged "paid" callbacks
+        $this->expectException(\InvalidArgumentException::class);
+        $manager->get('fake');
+    }
+
+    public function test_payment_webhook_resolves_tenant_from_transaction_reference(): void
+    {
+        $payload = [
+            'transaction_id' => 'NO-SUCH-TXN',
+            'transaction_ref' => 'NO-SUCH-TXN',
+            'success' => true,
+        ];
+
+        // Must not crash on the transaction lookup (previously queried a non-existent column)
+        $this->withHeaders(['X-Signature' => 'invalid'])
+            ->postJson('/api/webhooks/payments/fake', $payload)
+            ->assertStatus(401);
     }
 
     public function test_payment_webhook_is_idempotent(): void

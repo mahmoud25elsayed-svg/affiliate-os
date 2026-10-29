@@ -17,8 +17,8 @@ class HealthCheckAndDeploymentTest extends TestCase
     {
         parent::setUp();
 
-        $token = env('HEALTH_CHECK_TOKEN', 'affiliateos_health_sec_2026');
-        $this->withHeader('X-Health-Token', (string) $token);
+        config(['services.health.token' => 'test-health-token']);
+        $this->withHeader('X-Health-Token', 'test-health-token');
 
         // Clear health-related caches and temporary queue items
         Cache::forget('system:last_scheduler_run');
@@ -147,7 +147,7 @@ class HealthCheckAndDeploymentTest extends TestCase
             '--retention-days' => 14,
         ]);
 
-        $this->assertEquals(0, $exitCode);
+        $this->assertEquals(0, $exitCode, Artisan::output());
         $this->assertTrue(File::isDirectory($backupDir));
 
         $files = File::files($backupDir);

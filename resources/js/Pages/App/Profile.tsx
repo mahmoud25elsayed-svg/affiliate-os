@@ -252,7 +252,7 @@ export default function Profile({ affiliate, settings }: Props) {
                             <label className="block text-[11px] text-slate-400 mb-1">طريقة الاستلام</label>
                             <select
                                 value={payoutForm.data.payout_method}
-                                onChange={(e) => payoutForm.setData('payout_method', e.target.value as any)}
+                                onChange={(e) => payoutForm.setData('payout_method', e.target.value as NonNullable<AffiliateUser['payout_method']>)}
                                 className="w-full h-10 px-3 rounded-xl bg-slate-800 border border-slate-700 text-xs text-white focus:outline-none focus:border-indigo-500"
                             >
                                 <option value="wallet_phone">محفظة كاش (فودافون كاش / أورنج / وي)</option>

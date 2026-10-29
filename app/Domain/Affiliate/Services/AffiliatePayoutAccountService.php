@@ -10,10 +10,13 @@ use App\Domain\Notifications\Services\NotificationManager;
 use App\Models\Affiliate;
 use App\Models\Tenant;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use InvalidArgumentException;
 
 class AffiliatePayoutAccountService
 {
+    public const MAX_OTP_ATTEMPTS = 5;
+
     public function __construct(
         protected NotificationManager $notificationManager
     ) {}
@@ -66,9 +69,22 @@ class AffiliatePayoutAccountService
             throw new InvalidArgumentException('انتهت صلاحية رمز التحقق المدخل. يرجى طلب رمز جديد.');
         }
 
-        if (trim($affiliate->otp_code) !== trim($otpCode)) {
+        if (! hash_equals(trim($affiliate->otp_code), trim($otpCode))) {
+            // Burn the code after repeated wrong guesses so payout details cannot be hijacked by brute force.
+            $attemptsKey = "affiliate_payout_otp_failures:{$affiliate->getKey()}";
+            $failures = (int) Cache::get($attemptsKey, 0) + 1;
+            Cache::put($attemptsKey, $failures, $affiliate->otp_expires_at);
+            if ($failures >= self::MAX_OTP_ATTEMPTS) {
+                $affiliate->updateQuietly(['otp_code' => null, 'otp_expires_at' => null]);
+                Cache::forget($attemptsKey);
+
+                throw new InvalidArgumentException('تم إلغاء رمز التحقق بسبب تكرار الإدخال الخاطئ. يرجى طلب رمز جديد.');
+            }
+
             throw new InvalidArgumentException('رمز التحقق غير صحيح.');
         }
+
+        Cache::forget("affiliate_payout_otp_failures:{$affiliate->getKey()}");
 
         // Validate method
         $validMethods = [

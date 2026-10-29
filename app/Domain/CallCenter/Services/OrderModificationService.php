@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Support\Location\City;
 use App\Support\Location\Governorate;
 use DomainException;
+use Lunar\DataTypes\Price;
 use Lunar\Models\Order;
 use Lunar\Models\OrderAddress;
 use Lunar\Models\OrderLine;
@@ -70,10 +71,11 @@ class OrderModificationService
             throw new DomainException('الكمية يجب أن تكون قطعة واحدة على الأقل.');
         }
 
-        $existingUnitPrice = $firstLine instanceof OrderLine ? (int) ($firstLine->unit_price->value ?? $firstLine->unit_price ?? 0) : 0;
+        $unitPrice = $firstLine instanceof OrderLine ? $firstLine->getAttribute('unit_price') : null;
+        $existingUnitPrice = $unitPrice instanceof Price ? (int) $unitPrice->value : (int) $unitPrice;
         $fallbackSellingPrice = $existingUnitPrice > 0
             ? $existingUnitPrice
-            : (int) ($variant->wholesalePrice?->min_price_minor ?? 20000);
+            : (int) ($variant->wholesalePrice->min_price_minor ?? 20000);
 
         $sellingPriceMinor = isset($data['selling_price_minor'])
             ? (int) $data['selling_price_minor']

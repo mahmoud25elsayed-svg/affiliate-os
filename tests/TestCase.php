@@ -4,11 +4,15 @@ namespace Tests;
 
 use App\Jobs\ProvisionTenant;
 use App\Models\Tenant;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Lunar\Models\Language;
 
 abstract class TestCase extends BaseTestCase
 {
+    // Every test runs against a fresh in-memory schema (see phpunit.xml), never the dev database.
+    use RefreshDatabase;
+
     protected function ensureTenantExists(string $id, ?string $domain = null): Tenant
     {
         $domain = $domain ?? "{$id}.localhost";

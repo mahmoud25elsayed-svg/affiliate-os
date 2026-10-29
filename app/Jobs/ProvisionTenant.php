@@ -16,6 +16,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Lunar\Models\Channel;
 use Lunar\Models\Currency;
 use Lunar\Models\CustomerGroup;
@@ -27,7 +28,7 @@ class ProvisionTenant implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
-     * @param  array{name?: string, email?: string, password?: string, phone?: string}  $ownerData
+     * @param  array{user_id?: int, name?: string, email?: string, password?: string, phone?: string}  $ownerData
      */
     public function __construct(
         public string $tenantId,
@@ -155,11 +156,10 @@ class ProvisionTenant implements ShouldQueue
                 /** @var User|null $ownerUser */
                 $ownerUser = ! empty($this->ownerData['user_id'])
                     ? User::find($this->ownerData['user_id'])
-                    : User::firstWhere('email', $this->ownerData['email']);
+                    : User::firstWhere('email', $this->ownerData['email'] ?? '');
 
-                if (! $ownerUser) {
-                    $passwordHash = $this->ownerData['password_hash']
-                        ?? Hash::make($this->ownerData['password'] ?? \Illuminate\Support\Str::random(32));
+                if (! $ownerUser && ! empty($this->ownerData['email'])) {
+                    $passwordHash = Hash::make($this->ownerData['password'] ?? Str::random(32));
 
                     $ownerUser = User::create([
                         'email' => $this->ownerData['email'],
@@ -171,7 +171,10 @@ class ProvisionTenant implements ShouldQueue
                     ]);
                 }
 
-                TenantPermissionMatrix::assignRole($ownerUser, TenantPermissionMatrix::ROLE_OWNER, (string) $tenant->id);
+                // Never grant ownership of this store to an account that belongs to a different tenant.
+                if ($ownerUser && ($ownerUser->tenant_id === null || (string) $ownerUser->tenant_id === (string) $tenant->id)) {
+                    TenantPermissionMatrix::assignRole($ownerUser, TenantPermissionMatrix::ROLE_OWNER, (string) $tenant->id);
+                }
             }
         });
 

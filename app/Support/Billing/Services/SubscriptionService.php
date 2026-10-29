@@ -10,6 +10,7 @@ use App\Models\SubscriptionInvoice;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Support\Billing\Gateways\ManualGateway;
+use App\Support\Billing\Limits;
 use InvalidArgumentException;
 
 class SubscriptionService
@@ -183,7 +184,7 @@ class SubscriptionService
         $reasons = [];
 
         foreach (['products', 'affiliates', 'staff'] as $limitKey) {
-            $currentUsage = \App\Support\Billing\Limits::usage($limitKey, $tenant);
+            $currentUsage = Limits::usage($limitKey, $tenant);
             $newLimit = $targetPlan->getLimit($limitKey);
 
             if ($newLimit !== -1 && $currentUsage > $newLimit) {

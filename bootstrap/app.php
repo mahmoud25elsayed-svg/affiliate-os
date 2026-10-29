@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\EnsureFeatureEnabled;
+use App\Http\Middleware\EnsureUserBelongsToTenant;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\SecurityHeadersMiddleware;
 use App\Http\Middleware\StorefrontHttpCacheMiddleware;
@@ -28,8 +29,16 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'feature' => EnsureFeatureEnabled::class,
             'storefront.cache' => StorefrontHttpCacheMiddleware::class,
-            'tenant.user' => \App\Http\Middleware\EnsureUserBelongsToTenant::class,
+            'tenant.user' => EnsureUserBelongsToTenant::class,
         ]);
+
+        // Couriers call these server-to-server; they are authenticated by signature, not session CSRF.
+        $middleware->validateCsrfTokens(except: ['webhooks/courier/*']);
+
+        // Store staff sign in on their own store domain; only central routes fall back to the platform login.
+        $middleware->redirectGuestsTo(fn () => function_exists('tenancy') && tenancy()->initialized
+            ? url('/store/login')
+            : route('login'));
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

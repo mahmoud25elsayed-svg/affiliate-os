@@ -2,9 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Seeder;
-use Lunar\Admin\Models\Staff;
 use Lunar\Models\Channel;
 use Lunar\Models\Currency;
 use Lunar\Models\CustomerGroup;
@@ -71,24 +69,7 @@ class TenantSeeder extends Seeder
             ]);
         }
 
-        // 7. Store Owner User
-        User::firstOrCreate(
-            ['email' => 'admin@tenant.local'],
-            [
-                'name' => 'Store Owner',
-                'password' => bcrypt('password'),
-            ]
-        );
-
-        // 8. Staff for Lunar Panel
-        Staff::firstOrCreate(
-            ['email' => 'admin@tenant.local'],
-            [
-                'firstname' => 'Store',
-                'lastname' => 'Admin',
-                'password' => bcrypt('password'),
-                'admin' => true,
-            ]
-        );
+        // No default users here: a shared "admin@tenant.local / password" account would be a backdoor into
+        // every store this seeder runs for. Owners are created by ProvisionTenant / merchant onboarding.
     }
 }

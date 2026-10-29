@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
+import type { AppSharedProps } from '../types/affiliate';
 import {
     Home,
     ShoppingBag,
@@ -24,7 +25,7 @@ interface Props {
 }
 
 export default function AppLayout({ title, children }: Props) {
-    const { auth, tenant, flash, url } = usePage().props as any;
+    const { auth, tenant, flash, url } = usePage().props as AppSharedProps;
     const affiliate = auth?.affiliate;
     const [copied, setCopied] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
@@ -36,7 +37,7 @@ export default function AppLayout({ title, children }: Props) {
         setTimeout(() => setCopied(false), 2000);
     };
 
-    const currentPath = typeof window !== 'undefined' ? window.location.pathname : url;
+    const currentPath = typeof window !== 'undefined' ? window.location.pathname : (url ?? '');
 
     const navItems = [
         { name: 'الرئيسية', href: '/partners/app', icon: Home, exact: true },

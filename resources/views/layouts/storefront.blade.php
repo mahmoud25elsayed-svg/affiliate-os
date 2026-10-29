@@ -65,7 +65,8 @@
 
     @if(!empty($theme->custom_css))
     <style>
-        {!! $theme->custom_css !!}
+        {{-- "<" never appears in valid CSS rules; stripping it stops "</style><script>" break-outs --}}
+        {!! str_replace('<', '', (string) $theme->custom_css) !!}
     </style>
     @endif
 

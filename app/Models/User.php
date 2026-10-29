@@ -112,9 +112,11 @@ class User extends Authenticatable implements FilamentUser, HasTenants
         $cleanCode = trim($code);
 
         // Check recovery codes
-        $recoveryCodes = $this->two_factor_recovery_codes ?? [];
-        if (in_array($cleanCode, $recoveryCodes, true)) {
-            $this->two_factor_recovery_codes = array_values(array_diff($recoveryCodes, [$cleanCode]));
+        $recoveryCodes = $this->getAttribute('two_factor_recovery_codes');
+        $recoveryCodes = is_array($recoveryCodes) ? array_map('strval', $recoveryCodes) : [];
+        if ($cleanCode !== '' && in_array($cleanCode, $recoveryCodes, true)) {
+            // Recovery codes are single-use
+            $this->setAttribute('two_factor_recovery_codes', array_values(array_diff($recoveryCodes, [$cleanCode])));
             $this->saveQuietly();
 
             return true;
@@ -153,7 +155,7 @@ class User extends Authenticatable implements FilamentUser, HasTenants
         $binaryChunks = str_split($binaryString, 8);
         foreach ($binaryChunks as $chunk) {
             if (strlen($chunk) === 8) {
-                $secretKey .= chr(bindec($chunk));
+                $secretKey .= chr((int) bindec($chunk));
             }
         }
 
@@ -161,7 +163,8 @@ class User extends Authenticatable implements FilamentUser, HasTenants
         $hmac = hash_hmac('sha1', $timeBinary, $secretKey, true);
         $offset = ord(substr($hmac, -1)) & 0x0F;
         $hashPart = substr($hmac, $offset, 4);
-        $value = unpack('N', $hashPart)[1] & 0x7FFFFFFF;
+        $unpacked = unpack('N', $hashPart);
+        $value = ($unpacked === false ? 0 : (int) $unpacked[1]) & 0x7FFFFFFF;
         $otp = $value % 1000000;
 
         return str_pad((string) $otp, 6, '0', STR_PAD_LEFT);

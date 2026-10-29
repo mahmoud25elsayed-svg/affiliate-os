@@ -68,6 +68,11 @@ return [
     'timezone' => env('APP_TIMEZONE', 'Africa/Cairo'),
 
     /*
+    | Stock Lunar admin hub (/lunar). Not tenant-aware, so it stays off unless explicitly enabled.
+    */
+    'lunar_admin_panel' => (bool) env('LUNAR_ADMIN_PANEL', false),
+
+    /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration
     |--------------------------------------------------------------------------

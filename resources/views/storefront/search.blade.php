@@ -11,7 +11,7 @@
             نتائج البحث عن: <span class="text-brand-600">"{{ $query }}"</span>
         </h1>
         <p class="text-sm text-gray-500 mt-1">
-            تم العثور على {{ $products->total() ?? $products->count() }} منتج
+            تم العثور على {{ $products instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator ? $products->total() : $products->count() }} منتج
         </p>
     </div>
 

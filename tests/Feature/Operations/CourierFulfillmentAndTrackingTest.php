@@ -513,6 +513,25 @@ class CourierFulfillmentAndTrackingTest extends TestCase
         $this->assertNotSame(ShipmentStatus::DELIVERED, $shipment->status);
     }
 
+    public function test_courier_webhook_is_rejected_when_account_has_no_secret(): void
+    {
+        /** @var ShipmentDispatchService $dispatchService */
+        $dispatchService = app(ShipmentDispatchService::class);
+
+        $this->mockAccount->update(['webhook_secret' => null]);
+
+        $order = $this->createOrder(OrderStatus::CONFIRMED);
+        $shipment = $dispatchService->dispatchOrder($order, $this->mockAccount);
+
+        // Knowing a tracking number must not be enough to mark an order delivered (and accrue commission)
+        $this->postJson('https://ful-test-store.localhost/webhooks/courier/mock', [
+            'trackingNumber' => $shipment->tracking_number,
+            'state' => 'DELIVERED',
+        ])->assertStatus(401);
+
+        $this->assertNotSame(ShipmentStatus::DELIVERED, $shipment->refresh()->status);
+    }
+
     public function test_merchant_can_view_shipments_list_and_details_in_store_admin(): void
     {
         /** @var ShipmentDispatchService $dispatchService */

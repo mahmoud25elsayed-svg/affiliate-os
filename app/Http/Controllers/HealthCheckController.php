@@ -44,11 +44,12 @@ class HealthCheckController extends Controller
 
         $httpCode = ($overallStatus === 'unhealthy') ? 503 : 200;
 
-        // Security (GEN-02 / SC-09): Restrict verbose infrastructure telemetry to authorized callers (headers preferred, query fallback)
-        $token = $request->header('X-Health-Token') ?? $request->bearerToken() ?? $request->query('token');
-        $expectedToken = config('services.health.token', env('HEALTH_CHECK_TOKEN', 'affiliateos_health_sec_2026'));
-        $isAuthorized = ($token && hash_equals((string) $expectedToken, (string) $token))
-            || (auth()->check() && (auth()->user()->is_platform_admin ?? false));
+        // Security (GEN-02 / SC-09): verbose telemetry only for authorized callers. Header/Bearer only —
+        // query-string tokens leak into access logs.
+        $token = $request->header('X-Health-Token') ?? $request->bearerToken();
+        $expectedToken = (string) config('services.health.token', '');
+        $isAuthorized = ($expectedToken !== '' && is_string($token) && $token !== '' && hash_equals($expectedToken, $token))
+            || (bool) (auth()->user()->is_platform_admin ?? false);
 
         if ($isAuthorized) {
             $checksOutput = $checks;
@@ -182,7 +183,7 @@ class HealthCheckController extends Controller
         try {
             $lastRunCarbon = Carbon::parse($lastRun);
             // Fix #4: Use unix timestamp diff to ensure positive duration across Carbon 2 and Carbon 3
-            $secondsSince = max(0, (int) (now()->timestamp - $lastRunCarbon->timestamp));
+            $secondsSince = max(0, now()->getTimestamp() - $lastRunCarbon->getTimestamp());
 
             // Cron runs every minute; if > 180s (3 missed runs), report degraded
             $status = ($secondsSince > 180) ? 'degraded' : 'healthy';
@@ -225,7 +226,7 @@ class HealthCheckController extends Controller
         }
 
         // Fix #21: Measure account/app storage quota rather than host-wide 8.5TB partition
-        $accountQuotaMb = env('ACCOUNT_STORAGE_LIMIT_MB');
+        $accountQuotaMb = config('services.health.account_storage_limit_mb');
         $effectiveTotal = (int) $totalBytes;
         $effectiveFree = (int) $freeBytes;
 
@@ -272,6 +273,7 @@ class HealthCheckController extends Controller
             }
 
             $size = 0;
+
             try {
                 $iterator = new \RecursiveIteratorIterator(
                     new \RecursiveDirectoryIterator($appDir, \FilesystemIterator::SKIP_DOTS)

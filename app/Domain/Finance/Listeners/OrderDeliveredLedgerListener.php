@@ -15,6 +15,7 @@ use App\Domain\Finance\Services\Ledger;
 use App\Domain\Orders\Enums\OrderStatus;
 use App\Domain\Orders\Events\OrderDelivered;
 use App\Models\Affiliate;
+use Lunar\DataTypes\Price;
 use Lunar\Models\Order;
 
 class OrderDeliveredLedgerListener
@@ -32,7 +33,8 @@ class OrderDeliveredLedgerListener
         $order = $event->order;
 
         // AF-11: Record courier COD receivable and store sales revenue upon delivery
-        $orderTotalMinor = $order->total instanceof \Lunar\DataTypes\Price ? $order->total->value : (int) $order->total;
+        $total = $order->getAttribute('total');
+        $orderTotalMinor = $total instanceof Price ? (int) $total->value : (int) $total;
         if ($orderTotalMinor > 0) {
             $codReceivableAccount = $this->accountResolver->getPlatformCodReceivableAccount();
             $storeRevenueAccount = $this->accountResolver->getStoreRevenueAccount();

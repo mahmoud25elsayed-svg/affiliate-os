@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Support\Auth;
 
+use App\Domain\Notifications\Drivers\SMS\SmsMisrDriver;
+use App\Domain\Notifications\DTOs\NotificationMessage;
+use App\Domain\Notifications\Enums\NotificationChannel;
 use App\Support\Phone\EgyptianPhone;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -80,25 +83,24 @@ class OtpService
         $cacheKey = 'otp_code:'.md5($normalized);
         Cache::put($cacheKey, $code, self::EXPIRATION_SECONDS);
 
-        // 5. Send SMS via configured SMS driver (SEC-05)
-        if (! app()->environment('testing')) {
-            try {
-                $driver = app(\App\Domain\Notifications\Drivers\SMS\SmsMisrDriver::class);
-                $message = new \App\Domain\Notifications\DTOs\NotificationMessage(
-                    recipient: $normalized,
-                    content: "رمز التحقق الخاص بك في AffiliateOS هو: {$code}. صالح لمدة 5 دقائق.",
-                    senderId: 'AffiliateOS'
-                );
-                $result = $driver->send($message);
-                if (! $result->isSuccessful()) {
-                    Log::warning('SMS delivery attempted but failed or not configured', [
-                        'phone_hash' => $parsed->hash(config('app.key', 'secret')),
-                        'error' => $result->errorMessage,
-                    ]);
-                }
-            } catch (\Throwable $e) {
-                Log::error('SMS delivery exception: '.$e->getMessage());
+        // 5. Send SMS via configured SMS driver (SEC-05).
+        // Without credentials the driver returns a failure result without any HTTP call.
+        try {
+            $result = app(SmsMisrDriver::class)->send(new NotificationMessage(
+                channel: NotificationChannel::SMS,
+                recipient: $normalized,
+                content: "رمز التحقق الخاص بك في AffiliateOS هو: {$code}. صالح لمدة 5 دقائق.",
+                eventType: 'otp',
+                senderId: 'AffiliateOS'
+            ));
+            if (! $result->success) {
+                Log::warning('SMS delivery attempted but failed or not configured', [
+                    'phone_hash' => $parsed->hash((string) config('app.key', 'secret')),
+                    'error' => $result->errorMessage,
+                ]);
             }
+        } catch (\Throwable $e) {
+            Log::error('SMS delivery exception: '.$e->getMessage());
         }
 
         Log::info('OTP generated for Egyptian phone', [

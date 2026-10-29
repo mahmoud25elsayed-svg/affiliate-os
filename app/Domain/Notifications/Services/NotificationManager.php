@@ -124,7 +124,8 @@ class NotificationManager
             $result = NotificationResult::failure('Driver dispatch exception: '.$e->getMessage());
         }
 
-        // 5. Persist Log (Guaranteed Non-Blocking)
+        // 5. Persist Log (Guaranteed Non-Blocking). One-time codes are never stored: anyone who can
+        // read the log could otherwise sign in as the recipient.
         $log = NotificationLog::create([
             'tenant_id' => $tenantId,
             'channel' => $channelEnum->value,
@@ -132,7 +133,7 @@ class NotificationManager
             'recipient' => $recipient,
             'event_type' => $eventType,
             'subject' => $subject,
-            'content' => $content,
+            'content' => str_contains($eventType, 'otp') ? '[redacted one-time code message]' : $content,
             'status' => $result->success ? 'sent' : 'failed',
             'error_message' => $result->errorMessage,
             'external_id' => $result->externalId,

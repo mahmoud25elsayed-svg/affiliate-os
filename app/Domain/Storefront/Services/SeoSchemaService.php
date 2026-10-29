@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Storefront\Services;
 
+use App\Support\Money;
 use App\Support\Settings\GeneralSettings;
 use Lunar\Models\Price;
 use Lunar\Models\Product;
@@ -33,7 +34,7 @@ class SeoSchemaService
             'priceRange' => 'EGP',
         ];
 
-        return (string) json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        return $this->encode($schema);
     }
 
     /**
@@ -48,7 +49,7 @@ class SeoSchemaService
         $variant = $product->variants->first();
         /** @var Price|null $price */
         $price = $variant?->prices->first();
-        $priceValue = $price ? (float) $price->price->decimal() : 0.0;
+        $priceMinor = $price ? (int) $price->price->value : 0;
         $sku = $variant instanceof ProductVariant ? $variant->sku : 'SKU-'.$product->id;
 
         $schema = [
@@ -61,7 +62,7 @@ class SeoSchemaService
                 '@type' => 'Offer',
                 'url' => url('/products/'.$product->id),
                 'priceCurrency' => 'EGP',
-                'price' => number_format($priceValue, 2, '.', ''),
+                'price' => Money::fromMinor($priceMinor)->toDecimalString(),
                 'availability' => 'https://schema.org/InStock',
                 'itemCondition' => 'https://schema.org/NewCondition',
             ],
@@ -72,7 +73,7 @@ class SeoSchemaService
             $schema['image'] = [$thumbnail->getUrl()];
         }
 
-        return (string) json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        return $this->encode($schema);
     }
 
     /**
@@ -98,6 +99,20 @@ class SeoSchemaService
             'itemListElement' => $itemList,
         ];
 
-        return (string) json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        return $this->encode($schema);
+    }
+
+    /**
+     * The JSON is printed raw inside a <script> tag, so "<", ">" and "&" must be escaped:
+     * otherwise a product or store name containing "</script>" breaks out of the tag.
+     *
+     * @param  array<string, mixed>  $schema
+     */
+    protected function encode(array $schema): string
+    {
+        return (string) json_encode(
+            $schema,
+            JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
+        );
     }
 }

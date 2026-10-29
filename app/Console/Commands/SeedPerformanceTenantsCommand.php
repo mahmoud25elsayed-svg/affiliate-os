@@ -47,9 +47,6 @@ class SeedPerformanceTenantsCommand extends Command
 
         $this->info("Seeding {$count} performance test tenants for staging load testing...");
 
-        $channel = Channel::first() ?? Channel::create(['name' => 'Default', 'handle' => 'default', 'default' => true]);
-        $currency = Currency::first() ?? Currency::create(['code' => 'EGP', 'name' => 'Egyptian Pound', 'exchange_rate' => 1, 'decimal_places' => 2, 'enabled' => true, 'default' => true]);
-
         $bar = $this->output->createProgressBar($count);
         $bar->start();
 
@@ -76,26 +73,35 @@ class SeedPerformanceTenantsCommand extends Command
                 ]
             );
 
-            // Seed minimal orders for composite index benchmarks
-            for ($o = 1; $o <= $ordersPerTenant; $o++) {
-                $ref = "ORD-PERF-{$i}-{$o}";
-                if (! Order::withoutGlobalScope(TenantScope::class)->where('reference', $ref)->exists()) {
-                    Order::withoutGlobalScope(TenantScope::class)->create([
-                        'tenant_id' => (string) $tenant->id,
-                        'channel_id' => $channel->id,
-                        'currency_code' => $currency->code,
-                        'status' => $o % 2 === 0 ? 'delivered' : 'pending_confirmation',
-                        'reference' => $ref,
-                        'customer_reference' => "CUST-PERF-{$i}-{$o}",
-                        'sub_total' => 15000 * $o,
-                        'discount_total' => 0,
-                        'shipping_total' => 4500,
-                        'tax_total' => 0,
-                        'tax_breakdown' => new TaxBreakdown,
-                        'total' => (15000 * $o) + 4500,
-                    ]);
+            // Channels, currencies and orders are tenant-scoped, so seed them inside the tenant's context.
+            $tenant->run(function () use ($tenant, $i, $ordersPerTenant): void {
+                $channel = Channel::firstOrCreate(['handle' => 'default'], ['name' => 'Default', 'default' => true]);
+                $currency = Currency::firstOrCreate(
+                    ['code' => 'EGP'],
+                    ['name' => 'Egyptian Pound', 'exchange_rate' => 1, 'decimal_places' => 2, 'enabled' => true, 'default' => true]
+                );
+
+                // Seed minimal orders for composite index benchmarks
+                for ($o = 1; $o <= $ordersPerTenant; $o++) {
+                    $ref = "ORD-PERF-{$i}-{$o}";
+                    if (! Order::withoutGlobalScope(TenantScope::class)->where('reference', $ref)->exists()) {
+                        Order::create([
+                            'tenant_id' => (string) $tenant->id,
+                            'channel_id' => $channel->id,
+                            'currency_code' => $currency->code,
+                            'status' => $o % 2 === 0 ? 'delivered' : 'pending_confirmation',
+                            'reference' => $ref,
+                            'customer_reference' => "CUST-PERF-{$i}-{$o}",
+                            'sub_total' => 15000 * $o,
+                            'discount_total' => 0,
+                            'shipping_total' => 4500,
+                            'tax_total' => 0,
+                            'tax_breakdown' => new TaxBreakdown,
+                            'total' => (15000 * $o) + 4500,
+                        ]);
+                    }
                 }
-            }
+            });
 
             $bar->advance();
         }
@@ -122,6 +128,8 @@ class SeedPerformanceTenantsCommand extends Command
 
         DB::transaction(function () use ($tenantIds) {
             Order::withoutGlobalScope(TenantScope::class)->whereIn('tenant_id', $tenantIds)->delete();
+            Channel::withoutGlobalScope(TenantScope::class)->whereIn('tenant_id', $tenantIds)->forceDelete();
+            Currency::withoutGlobalScope(TenantScope::class)->whereIn('tenant_id', $tenantIds)->delete();
             Domain::whereIn('tenant_id', $tenantIds)->delete();
             Tenant::whereIn('id', $tenantIds)->delete();
         });

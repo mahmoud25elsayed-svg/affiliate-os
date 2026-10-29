@@ -55,7 +55,8 @@ class BackupDatabaseCommand extends Command
 
         $driver = (string) ($dbConfig['driver'] ?? 'mysql');
         $dbName = (string) ($dbConfig['database'] ?? 'affiliate_os');
-        $dbBaseName = basename($dbName);
+        // Keep the name filesystem-safe (e.g. sqlite ":memory:" or names with path separators).
+        $dbBaseName = trim((string) preg_replace('/[^A-Za-z0-9_.-]+/', '_', basename($dbName)), '_') ?: 'database';
 
         $sqlFile = "{$destinationDir}/backup_{$dbBaseName}_{$timestamp}.sql";
         $gzFile = "{$sqlFile}.gz";
@@ -257,12 +258,15 @@ class BackupDatabaseCommand extends Command
             // Memory or non-file SQLite: dump via PDO schema & tables
             $tables = DB::select("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'");
             $out = '-- SQLite in-memory dump generated at '.now()->toIso8601String()."\n";
+            $out .= "PRAGMA foreign_keys=OFF;\n";
 
             foreach ($tables as $table) {
                 /** @var object{name: string} $table */
                 $tableName = $table->name;
                 $createRow = DB::selectOne("SELECT sql FROM sqlite_master WHERE type='table' AND name = ?", [$tableName]);
                 if ($createRow && isset($createRow->sql)) {
+                    // Drop first so the dump can be replayed onto a database that already has the schema.
+                    $out .= "DROP TABLE IF EXISTS `{$tableName}`;\n";
                     $out .= $createRow->sql.";\n";
                 }
 
@@ -275,13 +279,15 @@ class BackupDatabaseCommand extends Command
                             return 'NULL';
                         }
 
-                        return "'".addslashes((string) $v)."'";
+                        // SQLite escapes quotes by doubling them; backslashes are literal.
+                        return "'".str_replace("'", "''", (string) $v)."'";
                     }, array_values($data));
 
                     $out .= "INSERT INTO `{$tableName}` (".implode(',', $cols).') VALUES ('.implode(',', $vals).");\n";
                 }
             }
 
+            $out .= "PRAGMA foreign_keys=ON;\n";
             File::put($outputSqlPath, $out);
 
             return;

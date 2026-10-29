@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\Customer\Services;
 
+use App\Domain\Notifications\Enums\NotificationChannel;
+use App\Domain\Notifications\Services\NotificationManager;
 use App\Models\Customer;
+use App\Models\Tenant;
 use App\Support\Phone\EgyptianPhone;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -21,6 +24,10 @@ class CustomerOtpService
     public const MAX_FAILED_ATTEMPTS = 5;
 
     public const LOCKOUT_MINUTES = 15;
+
+    public function __construct(
+        protected NotificationManager $notificationManager
+    ) {}
 
     /**
      * Request an OTP for the given phone number.
@@ -62,8 +69,21 @@ class CustomerOtpService
         $otpKey = "customer_otp_code_{$phoneHash}";
         Cache::put($otpKey, $code, now()->addMinutes(self::OTP_TTL_MINUTES));
 
-        // In production, send SMS. For now log it safely.
-        Log::info("Customer OTP requested for {$parsed->e164}: {$code}");
+        // Deliver by SMS. Never log the code or the raw phone number.
+        try {
+            $tenant = function_exists('tenancy') && tenancy()->initialized ? tenancy()->tenant : null;
+            $this->notificationManager->send(
+                channel: NotificationChannel::SMS,
+                recipient: $parsed->e164,
+                eventType: 'otp_verification',
+                data: [
+                    'otp_code' => $code,
+                    'store_name' => $tenant instanceof Tenant ? $tenant->name : 'متجرنا',
+                ],
+            );
+        } catch (\Throwable $e) {
+            Log::error('Customer OTP SMS dispatch failed: '.$e->getMessage(), ['phone_hash' => $phoneHash]);
+        }
 
         return $code;
     }
@@ -93,7 +113,7 @@ class CustomerOtpService
         $otpKey = "customer_otp_code_{$phoneHash}";
         $cachedCode = Cache::get($otpKey);
 
-        if ($cachedCode === null || trim($code) !== (string) $cachedCode) {
+        if ($cachedCode === null || ! hash_equals((string) $cachedCode, trim($code))) {
             $failedKey = "customer_otp_failed_{$phoneHash}";
             $failedCount = (int) Cache::get($failedKey, 0) + 1;
             Cache::put($failedKey, $failedCount, now()->addMinutes(self::LOCKOUT_MINUTES));

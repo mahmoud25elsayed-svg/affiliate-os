@@ -67,7 +67,7 @@ class RestoreDatabaseCommand extends Command
             if (File::exists($checksumFile)) {
                 $this->info('1. Verifying archive SHA-256 integrity checksum...');
                 $expectedLine = trim((string) File::get($checksumFile));
-                $expectedHash = explode(' ', $expectedLine)[0] ?? '';
+                $expectedHash = explode(' ', $expectedLine)[0];
                 $actualHash = hash_file('sha256', $filePath);
 
                 if (! hash_equals($expectedHash, (string) $actualHash)) {
@@ -94,7 +94,7 @@ class RestoreDatabaseCommand extends Command
             if (str_ends_with($workingFile, '.enc')) {
                 $this->info('2. Decrypting archive using AES-256-CBC...');
                 $key = $this->resolveDecryptionKey();
-                $decryptedFile = preg_replace('/\.enc$/', '', $workingFile);
+                $decryptedFile = (string) preg_replace('/\.enc$/', '', $workingFile);
                 if ($decryptedFile === $workingFile) {
                     $decryptedFile .= '.dec';
                 }
@@ -108,7 +108,7 @@ class RestoreDatabaseCommand extends Command
             // 3. Decompress if gzipped
             if (str_ends_with($workingFile, '.gz')) {
                 $this->info('3. Decompressing Gzip stream...');
-                $sqlFile = preg_replace('/\.gz$/', '', $workingFile);
+                $sqlFile = (string) preg_replace('/\.gz$/', '', $workingFile);
                 if ($sqlFile === $workingFile) {
                     $sqlFile .= '.sql';
                 }
@@ -188,6 +188,7 @@ class RestoreDatabaseCommand extends Command
         $outHandle = fopen($outputFile, 'wb');
         if (! $outHandle) {
             gzclose($gzHandle);
+
             throw new \RuntimeException("Unable to open output file for writing: {$outputFile}");
         }
 
@@ -286,4 +287,3 @@ class RestoreDatabaseCommand extends Command
         throw new \RuntimeException('No decryption key configured! Provide --encryption-key or set BACKUP_ENCRYPTION_KEY / APP_KEY.');
     }
 }
-

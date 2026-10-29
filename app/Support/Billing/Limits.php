@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Support\Billing;
 
+use App\Models\Affiliate;
 use App\Models\AiUsageLog;
+use App\Models\Plan;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Support\Billing\Exceptions\LimitExceededException;
@@ -28,8 +30,8 @@ class Limits
                 return -1;
             }
 
-            /** @var \App\Models\Plan|null $starter */
-            $starter = \App\Models\Plan::where('slug', 'starter')->first();
+            /** @var Plan|null $starter */
+            $starter = Plan::where('slug', 'starter')->first();
 
             return $starter ? $starter->getLimit($limit) : 0;
         }
@@ -116,7 +118,7 @@ class Limits
     private static function countAffiliates(Tenant $tenant): int
     {
         // BL-08: Count directly from Affiliate model for accurate plan usage tracking
-        return \App\Models\Affiliate::where('tenant_id', $tenant->id)->count();
+        return Affiliate::where('tenant_id', $tenant->id)->count();
     }
 
     private static function countStaff(Tenant $tenant): int
@@ -133,6 +135,7 @@ class Limits
         }
 
         $totalBytes = 0;
+
         try {
             $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($tenantPath, \FilesystemIterator::SKIP_DOTS));
             foreach ($iterator as $file) {

@@ -149,7 +149,7 @@ class PaymentWebhookController extends Controller
             $txnRef = $payload['transaction_id'] ?? $payload['obj']['id'] ?? null;
             if ($txnRef) {
                 $txn = PaymentTransaction::withoutGlobalScopes()
-                    ->where('transaction_reference', (string) $txnRef)
+                    ->where('transaction_ref', (string) $txnRef)
                     ->first();
                 if ($txn && $txn->tenant_id) {
                     $tenantId = (string) $txn->tenant_id;

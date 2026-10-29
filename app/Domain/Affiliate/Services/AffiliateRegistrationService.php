@@ -13,12 +13,15 @@ use App\Models\Plan;
 use App\Models\Tenant;
 use App\Support\Phone\EgyptianPhone;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 
 class AffiliateRegistrationService
 {
+    public const MAX_OTP_ATTEMPTS = 5;
+
     public function __construct(
         protected NotificationManager $notificationManager
     ) {}
@@ -145,10 +148,20 @@ class AffiliateRegistrationService
             return false;
         }
 
-        if (trim($affiliate->otp_code) !== trim($code)) {
+        if (! hash_equals(trim($affiliate->otp_code), trim($code))) {
+            // Burn the code after repeated wrong guesses so it cannot be brute-forced across IPs.
+            $attemptsKey = "affiliate_phone_otp_failures:{$affiliate->getKey()}";
+            $failures = (int) Cache::get($attemptsKey, 0) + 1;
+            Cache::put($attemptsKey, $failures, $affiliate->otp_expires_at);
+            if ($failures >= self::MAX_OTP_ATTEMPTS) {
+                $affiliate->updateQuietly(['otp_code' => null, 'otp_expires_at' => null]);
+                Cache::forget($attemptsKey);
+            }
+
             return false;
         }
 
+        Cache::forget("affiliate_phone_otp_failures:{$affiliate->getKey()}");
         $affiliate->verifyPhone();
 
         return true;

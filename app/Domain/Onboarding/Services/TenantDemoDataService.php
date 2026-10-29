@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Onboarding\Services;
 
+use App\Domain\Orders\Enums\OrderStatus;
 use App\Models\Affiliate;
 use App\Models\Customer;
 use App\Models\CustomerAddress;
@@ -203,9 +204,9 @@ class TenantDemoDataService
 
                 // 4. Seed 3 Sample Orders in different stages
                 $ordersStatuses = [
-                    ['ref' => 'DEMO-ORD-101', 'status' => 'placed', 'variant' => $createdVariants[0], 'aff' => $createdAffiliates[0]],
-                    ['ref' => 'DEMO-ORD-102', 'status' => 'confirmed', 'variant' => $createdVariants[1], 'aff' => $createdAffiliates[1]],
-                    ['ref' => 'DEMO-ORD-103', 'status' => 'delivered', 'variant' => $createdVariants[2], 'aff' => $createdAffiliates[0]],
+                    ['ref' => 'DEMO-ORD-101', 'status' => OrderStatus::PENDING_CONFIRMATION->value, 'variant' => $createdVariants[0], 'aff' => $createdAffiliates[0]],
+                    ['ref' => 'DEMO-ORD-102', 'status' => OrderStatus::CONFIRMED->value, 'variant' => $createdVariants[1], 'aff' => $createdAffiliates[1]],
+                    ['ref' => 'DEMO-ORD-103', 'status' => OrderStatus::DELIVERED->value, 'variant' => $createdVariants[2], 'aff' => $createdAffiliates[0]],
                 ];
 
                 foreach ($ordersStatuses as $oData) {

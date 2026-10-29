@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,8 +18,8 @@ class EnsureUserBelongsToTenant
     {
         $user = $request->user();
 
-        if (! $user) {
-            return redirect()->guest(route('login'));
+        if (! $user instanceof User) {
+            return redirect()->guest(tenant('id') ? url('/store/login') : route('login'));
         }
 
         // Platform admins have cross-tenant access rights
@@ -28,13 +29,10 @@ class EnsureUserBelongsToTenant
 
         $tenantId = function_exists('tenant') && tenant('id') ? (string) tenant('id') : null;
 
-        if ($tenantId) {
-            if ($user->tenant_id === null) {
-                $user->updateQuietly(['tenant_id' => $tenantId]);
-                $user->tenant_id = $tenantId;
-            } elseif ($user->tenant_id !== $tenantId) {
-                abort(403, 'غير مصرح لك بالوصول إلى بيانات أو لوحة تحكم هذا المتجر.');
-            }
+        // A user without a tenant is never adopted by the store they happen to visit:
+        // membership is only granted at provisioning or staff invitation time.
+        if ($tenantId && (string) $user->tenant_id !== $tenantId) {
+            abort(403, __('غير مصرح لك بالوصول إلى بيانات أو لوحة تحكم هذا المتجر.'));
         }
 
         return $next($request);

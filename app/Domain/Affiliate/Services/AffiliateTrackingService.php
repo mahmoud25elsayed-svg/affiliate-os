@@ -196,7 +196,7 @@ class AffiliateTrackingService
                 $itemSubtotal = (int) ($item['subtotal_minor'] ?? ($item['unit_price_minor'] * $itemQty));
 
                 $isLinked = ($link->product_variant_id !== null && (int) $link->product_variant_id === (int) $itemVariant->id)
-                    || ($link->product_id !== null && $itemVariant->product_id !== null && (int) $link->product_id === (int) $itemVariant->product_id);
+                    || ($link->product_id !== null && (int) $link->product_id === (int) $itemVariant->product_id);
 
                 if ($link->custom_selling_price_minor !== null && $isLinked) {
                     $wholesale = $itemVariant->relationLoaded('wholesalePrice') && $itemVariant->getRelation('wholesalePrice') !== null

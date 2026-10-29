@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Affiliate\App;
 
+use App\Domain\Affiliate\Services\TrackingLinkPriceValidator;
 use App\Domain\Affiliate\Settings\AffiliateProgramSettings;
 use App\Http\Controllers\Controller;
 use App\Models\Affiliate;
 use App\Models\TrackingLink;
-use App\Models\WholesalePrice;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -85,7 +85,7 @@ class AppLinksController extends Controller
         $validated = $request->validate([
             'product_id' => 'nullable|integer|exists:lunar_products,id',
             'title' => 'nullable|string|max:100',
-            'custom_selling_price' => 'nullable|numeric|min:1',
+            'custom_selling_price' => TrackingLinkPriceValidator::INPUT_RULE,
             'custom_code' => 'nullable|string|alpha_dash|max:32',
         ], [
             'custom_code.alpha_dash' => 'كود الرابط المخصص يجب أن يحتوي على أحرف وأرقام وشرطات فقط.',
@@ -105,27 +105,9 @@ class AppLinksController extends Controller
             }
 
             if (! empty($validated['custom_selling_price'])) {
-                // AF-20: Integer minor math via bcmul, never float casting
-                $cleanPrice = trim((string) $validated['custom_selling_price']);
-                $sellingPriceMinor = (int) bcmul(str_replace(',', '', $cleanPrice), '100', 0);
-
-                /** @var WholesalePrice|null $wholesalePrice */
-                $wholesalePrice = WholesalePrice::query()->where('product_variant_id', $firstVariant?->id)->first();
-
-                $wholesaleMinor = $wholesalePrice ? $wholesalePrice->wholesale_price_minor : 10000;
-                $minAllowed = $wholesaleMinor + $settings->min_selling_markup_minor;
-                $maxAllowed = $wholesaleMinor + $settings->max_selling_markup_minor;
-
-                if ($sellingPriceMinor < $minAllowed || $sellingPriceMinor > $maxAllowed) {
-                    $minFormatted = number_format($minAllowed / 100, 2);
-                    $maxFormatted = number_format($maxAllowed / 100, 2);
-
-                    throw ValidationException::withMessages([
-                        'custom_selling_price' => ["سعر البيع يجب أن يكون بين {$minFormatted} و {$maxFormatted} ج.م"],
-                    ]);
-                }
-
-                $customSellingPriceMinor = $sellingPriceMinor;
+                // AF-20: integer minor math, never floats
+                $customSellingPriceMinor = app(TrackingLinkPriceValidator::class)
+                    ->resolveMinor((string) $validated['custom_selling_price'], $firstVariant, $settings);
             }
         }
 

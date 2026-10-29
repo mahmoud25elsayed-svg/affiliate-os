@@ -84,6 +84,9 @@ class SubscriptionInvoice extends Model
         return $this->belongsTo(Subscription::class);
     }
 
+    /**
+     * @return BelongsTo<Plan, $this>
+     */
     public function targetPlan(): BelongsTo
     {
         return $this->belongsTo(Plan::class, 'target_plan_id');

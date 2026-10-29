@@ -15,8 +15,10 @@ use App\Models\Account;
 use App\Models\Affiliate;
 use App\Models\PayoutRequest;
 use App\Models\User;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class PayoutService
 {
@@ -105,11 +107,11 @@ class PayoutService
     {
         // AF-17: Role check for payout approval
         if ($actor->hasRole('call_center') || $actor->hasRole('orders')) {
-            throw new \Illuminate\Auth\Access\AuthorizationException('غير مصرح لك باعتماد طلبات السحب.');
+            throw new AuthorizationException('غير مصرح لك باعتماد طلبات السحب.');
         }
 
         if ($actor->roles()->exists() && ! $actor->isPlatformAdmin() && ! $actor->hasAnyRole(['owner', 'manager', 'finance', 'admin'])) {
-            throw new \Illuminate\Auth\Access\AuthorizationException('غير مصرح لك باعتماد طلبات السحب.');
+            throw new AuthorizationException('غير مصرح لك باعتماد طلبات السحب.');
         }
 
         if (! $request->canBeApproved()) {
@@ -138,16 +140,16 @@ class PayoutService
     ): PayoutRequest {
         // AF-17: Role check and 2FA enforcement for payout execution
         if ($actor->hasRole('call_center') || $actor->hasRole('orders')) {
-            throw new \Illuminate\Auth\Access\AuthorizationException('غير مصرح لك بتنفيذ طلبات السحب.');
+            throw new AuthorizationException('غير مصرح لك بتنفيذ طلبات السحب.');
         }
 
         if ($actor->roles()->exists() && ! $actor->isPlatformAdmin() && ! $actor->hasAnyRole(['owner', 'manager', 'finance', 'admin'])) {
-            throw new \Illuminate\Auth\Access\AuthorizationException('غير مصرح لك بتنفيذ طلبات السحب.');
+            throw new AuthorizationException('غير مصرح لك بتنفيذ طلبات السحب.');
         }
 
         if ($actor->hasTwoFactorEnabled()) {
             if (empty($twoFactorCode) || ! $actor->verifyTwoFactorCode($twoFactorCode)) {
-                throw \Illuminate\Validation\ValidationException::withMessages([
+                throw ValidationException::withMessages([
                     'two_factor_code' => ['رمز التحقق بخطوتين غير صحيح أو مفقود.'],
                 ]);
             }

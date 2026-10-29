@@ -21,7 +21,11 @@ class PaymentManager
     {
         $this->register(new CodPaymentGateway);
         $this->register(new PaymobPaymentGateway);
-        $this->register(new FakePaymentGateway);
+
+        // The fake gateway's webhook secret is public, so in production anyone could forge "paid" callbacks.
+        if (app()->environment(['local', 'testing'])) {
+            $this->register(new FakePaymentGateway);
+        }
     }
 
     public function register(PaymentGatewayInterface $gateway): self
