@@ -42,7 +42,15 @@ class WebhookSubscription extends Model
 
     protected $guarded = [];
 
+    /**
+     * @var list<string>
+     */
+    protected $hidden = [
+        'secret',
+    ];
+
     protected $casts = [
+        'secret' => 'encrypted',
         'events' => 'array',
         'is_active' => 'boolean',
         'failure_count' => 'integer',

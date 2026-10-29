@@ -55,6 +55,13 @@ class ApiKey extends Model
 
     protected $guarded = [];
 
+    /**
+     * @var list<string>
+     */
+    protected $hidden = [
+        'key_hash',
+    ];
+
     protected $casts = [
         'scopes' => 'array',
         'rate_limit_per_minute' => 'integer',
