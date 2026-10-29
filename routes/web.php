@@ -2,10 +2,14 @@
 
 use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\Billing\InvoiceDownloadController;
+use App\Http\Controllers\HealthCheckController;
 use App\Http\Controllers\MerchantOnboardingController;
 use App\Http\Controllers\Platform\PlatformAnalyticsController;
 use App\Support\Auth\ImpersonationService;
 use Illuminate\Support\Facades\Route;
+
+// System Health Monitoring Endpoint (P36)
+Route::get('/health', HealthCheckController::class)->name('health.check');
 
 // Public Landing & Merchant Onboarding (Scoped to Central Domains)
 $centralDomains = (array) config('tenancy.central_domains', ['localhost', '127.0.0.1']);

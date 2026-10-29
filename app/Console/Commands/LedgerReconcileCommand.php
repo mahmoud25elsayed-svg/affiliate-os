@@ -8,6 +8,7 @@ use App\Models\Account;
 use App\Models\LedgerLine;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -58,10 +59,22 @@ class LedgerReconcileCommand extends Command
         }
 
         if (count($discrepancies) > 0) {
+            Cache::put('ledger:last_reconcile_status', [
+                'healthy' => false,
+                'discrepancies_count' => count($discrepancies),
+                'checked_at' => now()->toIso8601String(),
+            ], now()->addDays(7));
+
             $this->error('فشلت المطابقة المحاسبية! تم العثور على '.count($discrepancies).' فروقات أو قيود غير متوازنة.');
 
             return self::FAILURE;
         }
+
+        Cache::put('ledger:last_reconcile_status', [
+            'healthy' => true,
+            'discrepancies_count' => 0,
+            'checked_at' => now()->toIso8601String(),
+        ], now()->addDays(7));
 
         $this->info('المطابقة المحاسبية سليمة 100%! فُحص '.count($accounts).' حساباً وجميع الأرصدة متطابقة تماماً مع مجموع السطور.');
 
