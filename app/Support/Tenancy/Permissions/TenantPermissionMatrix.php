@@ -57,6 +57,8 @@ class TenantPermissionMatrix
 
     public const PERM_AFFILIATES_MANAGE = 'store.affiliates.manage';
 
+    public const PERM_REPORTS_VIEW = 'store.reports.view';
+
     /**
      * @return list<string>
      */
@@ -96,6 +98,7 @@ class TenantPermissionMatrix
             self::PERM_CALL_CENTER_CONFIRM,
             self::PERM_KYC_VIEW,
             self::PERM_AFFILIATES_MANAGE,
+            self::PERM_REPORTS_VIEW,
         ];
     }
 
@@ -123,6 +126,7 @@ class TenantPermissionMatrix
                 self::PERM_CALL_CENTER_CONFIRM,
                 self::PERM_KYC_VIEW,
                 self::PERM_AFFILIATES_MANAGE,
+                self::PERM_REPORTS_VIEW,
             ],
 
             self::ROLE_CATALOG => [
@@ -142,6 +146,7 @@ class TenantPermissionMatrix
                 self::PERM_ORDERS_VIEW,
                 self::PERM_FINANCE_VIEW,
                 self::PERM_FINANCE_MANAGE,
+                self::PERM_REPORTS_VIEW,
             ],
 
             self::ROLE_SUPPORT => [

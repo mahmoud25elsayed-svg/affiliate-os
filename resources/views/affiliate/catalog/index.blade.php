@@ -35,6 +35,9 @@
         </form>
     </div>
 
+    {{-- Public Trust & Performance Badges (P33) --}}
+    @include('affiliate.components.trust_badges')
+
     {{-- Products Grid --}}
     @if($products->isEmpty())
         <div class="bg-white rounded-2xl p-12 text-center border border-slate-200">

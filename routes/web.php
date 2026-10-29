@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\Billing\InvoiceDownloadController;
 use App\Http\Controllers\MerchantOnboardingController;
+use App\Http\Controllers\Platform\PlatformAnalyticsController;
 use App\Support\Auth\ImpersonationService;
 use Illuminate\Support\Facades\Route;
 
@@ -36,4 +37,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Invoice PDF Download
     Route::get('/billing/invoices/{invoice}/download', InvoiceDownloadController::class)->name('billing.invoices.download');
+
+    // Central Platform Analytics (P33)
+    Route::get('/platform/analytics', [PlatformAnalyticsController::class, 'index'])->name('platform.analytics.index');
 });

@@ -125,6 +125,11 @@ class AffiliateProgramSettings extends Settings
      */
     public int $quality_score_critical_threshold = 20;
 
+    /**
+     * Whether public trust metrics (average payout time, delivery rate) are shown on affiliate pages.
+     */
+    public bool $public_trust_metrics_enabled = true;
+
     public static function group(): string
     {
         return 'affiliate_program';

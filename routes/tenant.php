@@ -39,6 +39,7 @@ use App\Http\Controllers\Store\StoreDomainController;
 use App\Http\Controllers\Store\StoreKpiDashboardController;
 use App\Http\Controllers\Store\StorePayoutManagementController;
 use App\Http\Controllers\Store\StorePixelTrackingController;
+use App\Http\Controllers\Store\StoreReportController;
 use App\Http\Controllers\Store\StoreShipmentController;
 use App\Http\Controllers\Store\StoreSupplierController;
 use App\Http\Controllers\Store\StoreSupportTicketController;
@@ -226,6 +227,12 @@ Route::middleware([
 
         // Operational KPI Dashboard (P27)
         Route::get('/kpis', [StoreKpiDashboardController::class, 'index'])->name('store.kpis.index');
+
+        // Advanced Reports & Analytics (P33)
+        Route::prefix('reports')->group(function () {
+            Route::get('/', [StoreReportController::class, 'index'])->name('store.reports.index');
+            Route::get('/export/{type}', [StoreReportController::class, 'export'])->name('store.reports.export');
+        });
 
         // Suppliers & Batches Gateway (P27)
         Route::prefix('suppliers')->group(function () {
