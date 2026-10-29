@@ -29,6 +29,7 @@ use App\Http\Controllers\Affiliate\App\AppWalletController;
 use App\Http\Controllers\Api\OpenApiDocsController;
 use App\Http\Controllers\Store\AffiliateKycDocumentController;
 use App\Http\Controllers\Store\CourierWebhookController;
+use App\Http\Controllers\Store\MerchantOnboardingWizardController;
 use App\Http\Controllers\Store\OrderDocumentController;
 use App\Http\Controllers\Store\StoreAffiliateSettingsController;
 use App\Http\Controllers\Store\StoreAiToolsController;
@@ -182,6 +183,11 @@ Route::middleware([
 
     // Store Admin Payouts & Affiliate Settings (P20)
     Route::middleware('auth')->prefix('store')->group(function () {
+        // Merchant Onboarding & Demo Data (P38)
+        Route::get('/onboarding/progress', [MerchantOnboardingWizardController::class, 'progress'])->name('store.onboarding.progress');
+        Route::post('/demo-data/seed', [MerchantOnboardingWizardController::class, 'seedDemo'])->name('store.demo-data.seed');
+        Route::post('/demo-data/purge', [MerchantOnboardingWizardController::class, 'purgeDemo'])->name('store.demo-data.purge');
+
         Route::get('/affiliates/settings', [StoreAffiliateSettingsController::class, 'show'])->name('store.affiliates.settings.show');
         Route::post('/affiliates/settings', [StoreAffiliateSettingsController::class, 'update'])->name('store.affiliates.settings.update');
 
