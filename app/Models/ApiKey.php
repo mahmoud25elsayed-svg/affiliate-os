@@ -55,6 +55,8 @@ class ApiKey extends Model
 
     public const SCOPE_AFFILIATE_WALLET_READ = 'affiliate:wallet:read';
 
+    public const SCOPE_MOBILE_DEVICES_MANAGE = 'mobile:devices:manage';
+
     protected $guarded = [];
 
     /**

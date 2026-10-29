@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\OpenApiDocsController;
 use App\Http\Controllers\Api\V1\Affiliate\AffiliateCatalogApiController;
 use App\Http\Controllers\Api\V1\Affiliate\AffiliateOrderApiController;
 use App\Http\Controllers\Api\V1\Affiliate\AffiliateWalletApiController;
+use App\Http\Controllers\Api\V1\Mobile\MobileDeviceApiController;
 use App\Http\Controllers\Api\V1\Store\StoreCustomerApiController;
 use App\Http\Controllers\Api\V1\Store\StoreInventoryApiController;
 use App\Http\Controllers\Api\V1\Store\StoreOrderApiController;
@@ -115,5 +116,19 @@ Route::prefix('v1')->middleware([AuthenticateApiKey::class])->group(function () 
         Route::get('/wallet', [AffiliateWalletApiController::class, 'show'])
             ->middleware(RequireApiKeyScope::class.':'.ApiKey::SCOPE_AFFILIATE_WALLET_READ)
             ->name('api.v1.affiliate.wallet.show');
+    });
+
+    // Mobile Devices & Push Endpoints
+    Route::prefix('mobile')->group(function () {
+        Route::post('/devices', [MobileDeviceApiController::class, 'register'])
+            ->middleware(RequireApiKeyScope::class.':'.ApiKey::SCOPE_MOBILE_DEVICES_MANAGE)
+            ->name('api.v1.mobile.devices.register');
+
+        Route::delete('/devices/{token}', [MobileDeviceApiController::class, 'unregister'])
+            ->middleware(RequireApiKeyScope::class.':'.ApiKey::SCOPE_MOBILE_DEVICES_MANAGE)
+            ->name('api.v1.mobile.devices.unregister');
+
+        Route::get('/config', [MobileDeviceApiController::class, 'config'])
+            ->name('api.v1.mobile.config');
     });
 });
