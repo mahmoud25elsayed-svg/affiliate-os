@@ -32,7 +32,7 @@
                     @endif
                     <div>
                         <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem;">{{ app()->getLocale() === 'en' && $plan->name_en ? $plan->name_en : $plan->name_ar }}</h3>
-                        <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem; min-height: 48px;">{{ $plan->description_ar }}</p>
+                        <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem; min-height: 48px;">{{ $plan->description }}</p>
 
                         <div style="margin-bottom: 2rem;">
                             <div class="price-monthly-box">

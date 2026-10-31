@@ -14,7 +14,7 @@
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:title" content="{{ $pageTitle ?? 'AffiliateOS' }}">
     <meta property="og:description" content="{{ $metaDescription ?? '' }}">
-    <meta property="og:locale" content="ar_EG">
+    <meta property="og:locale" content="{{ app()->getLocale() === 'ar' ? 'ar_EG' : 'en_US' }}">
     <meta property="og:site_name" content="AffiliateOS">
 
     <!-- Twitter Card -->
@@ -30,13 +30,13 @@
       "name": "AffiliateOS",
       "applicationCategory": "BusinessApplication",
       "operatingSystem": "All",
-      "inLanguage": "ar",
+      "inLanguage": "{{ app()->getLocale() }}",
       "offers": {
         "@@type": "Offer",
         "price": "499",
         "priceCurrency": "EGP"
       },
-      "description": @js(__('نظام تشغيل متكامل لإدارة المتاجر الإلكترونية وشبكات التسويق بالعمولة بنظام الدفع عند الاستلام في الوطن العربي.'))
+      "description": {!! json_encode(__('نظام تشغيل متكامل لإدارة المتاجر الإلكترونية وشبكات التسويق بالعمولة بنظام الدفع عند الاستلام في الوطن العربي.'), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) !!}
     }
     </script>
 

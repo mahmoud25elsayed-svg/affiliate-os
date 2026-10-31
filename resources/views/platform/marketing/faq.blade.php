@@ -91,18 +91,18 @@
   "mainEntity": [
     {
       "@@type": "Question",
-      "name": @js(__('كيف أبدأ مع المنصة وكم تستغرق تهيئة المتجر؟')),
+      "name": {!! json_encode(__('كيف أبدأ مع المنصة وكم تستغرق تهيئة المتجر؟'), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) !!},
       "acceptedAnswer": {
         "@@type": "Answer",
-        "text": @js(__('تستغرق عملية إنشاء المتجر أقل من 60 ثانية بمجرد تسجيل اسم النطاق ورقم الهاتف وتأكيده برمز OTP.'))
+        "text": {!! json_encode(__('تستغرق عملية إنشاء المتجر أقل من 60 ثانية بمجرد تسجيل اسم النطاق ورقم الهاتف وتأكيده برمز OTP.'), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) !!}
       }
     },
     {
       "@@type": "Question",
-      "name": @js(__('كيف تضمن المنصة عدم التلاعب بالعمولات عند إلغاء أو إرجاع الشحنات؟')),
+      "name": {!! json_encode(__('كيف تضمن المنصة عدم التلاعب بالعمولات عند إلغاء أو إرجاع الشحنات؟'), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) !!},
       "acceptedAnswer": {
         "@@type": "Answer",
-        "text": @js(__('تعتمد المنصة على دفتر أستاذ محاسبي مزدوج واحتجاز العمولة حتى تسليم الشحنة وانقضاء فترة الإرجاع القانونية.'))
+        "text": {!! json_encode(__('تعتمد المنصة على دفتر أستاذ محاسبي مزدوج واحتجاز العمولة حتى تسليم الشحنة وانقضاء فترة الإرجاع القانونية.'), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) !!}
       }
     }
   ]
