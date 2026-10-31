@@ -26,13 +26,27 @@ class SubscriptionInvoiceResource extends Resource
 
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-receipt-percent';
 
-    protected static ?string $navigationLabel = 'فواتير الاشتراكات';
+    public static function getNavigationLabel(): string
+    {
 
-    protected static ?string $modelLabel = 'فاتورة اشتراك';
+        return __('فواتير الاشتراكات');
 
-    protected static ?string $pluralModelLabel = 'فواتير الاشتراكات';
+    }
 
-    protected static \UnitEnum|string|null $navigationGroup = 'الفوترة والاشتراكات';
+    public static function getModelLabel(): string
+    {
+        return __('فاتورة اشتراك');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('فواتير الاشتراكات');
+    }
+
+    public static function getNavigationGroup(): string|\UnitEnum|null
+    {
+        return __('الفوترة والاشتراكات');
+    }
 
     public static function form(Schema $schema): Schema
     {
@@ -44,36 +58,36 @@ class SubscriptionInvoiceResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('invoice_number')
-                    ->label('رقم الفاتورة')
+                    ->label(__('رقم الفاتورة'))
                     ->searchable()
                     ->sortable()
                     ->fontFamily('mono')
                     ->weight('bold'),
 
                 TextColumn::make('tenant.name')
-                    ->label('المتجر')
+                    ->label(__('المتجر'))
                     ->searchable()
                     ->sortable(),
 
                 TextColumn::make('subscription.plan.name_ar')
-                    ->label('الباقة')
+                    ->label(__('الباقة'))
                     ->badge(),
 
                 TextColumn::make('amount')
-                    ->label('المبلغ')
+                    ->label(__('المبلغ'))
                     ->formatStateUsing(fn (SubscriptionInvoice $record) => $record->amountMoney()->format())
                     ->weight('bold'),
 
                 TextColumn::make('payment_method')
-                    ->label('وسيلة الدفع')
+                    ->label(__('وسيلة الدفع'))
                     ->badge(),
 
                 TextColumn::make('payment_reference')
-                    ->label('الرقم المرجعي')
+                    ->label(__('الرقم المرجعي'))
                     ->placeholder('-'),
 
                 TextColumn::make('status')
-                    ->label('الحالة')
+                    ->label(__('الحالة'))
                     ->badge()
                     ->colors([
                         'warning' => 'pending',
@@ -81,39 +95,39 @@ class SubscriptionInvoiceResource extends Resource
                         'danger' => 'rejected',
                     ])
                     ->formatStateUsing(fn (string $state) => match ($state) {
-                        'pending' => 'قيد المراجعة',
-                        'paid' => 'مدفوعة ومفعلة',
-                        'rejected' => 'مرفوضة',
+                        'pending' => __('قيد المراجعة'),
+                        'paid' => __('مدفوعة ومفعلة'),
+                        'rejected' => __('مرفوضة'),
                         default => $state,
                     }),
 
                 TextColumn::make('created_at')
-                    ->label('تاريخ الإنشاء')
+                    ->label(__('تاريخ الإنشاء'))
                     ->dateTime('Y-m-d H:i')
                     ->sortable(),
             ])
             ->defaultSort('created_at', 'desc')
             ->recordActions([
                 Action::make('view_receipt')
-                    ->label('معاينة الإيصال')
+                    ->label(__('معاينة الإيصال'))
                     ->icon('heroicon-o-eye')
                     ->color('gray')
                     ->visible(fn (SubscriptionInvoice $record) => ! empty($record->receipt_path))
                     ->url(fn (SubscriptionInvoice $record) => asset('storage/'.$record->receipt_path), shouldOpenInNewTab: true),
 
                 Action::make('download_pdf')
-                    ->label('تحميل PDF')
+                    ->label(__('تحميل PDF'))
                     ->icon('heroicon-o-arrow-down-tray')
                     ->color('info')
                     ->url(fn (SubscriptionInvoice $record) => route('billing.invoices.download', $record), shouldOpenInNewTab: true),
 
                 Action::make('approve_payment')
-                    ->label('اعتماد السداد')
+                    ->label(__('اعتماد السداد'))
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
                     ->requiresConfirmation()
-                    ->modalHeading('اعتماد سداد الفاتورة وتفعيل الاشتراك')
-                    ->modalDescription('هل تأكدت من وصول المبلغ إلى الحساب البنكي / المحفظة؟ سيتم تفعيل المتجر والاشتراك فورًا.')
+                    ->modalHeading(__('اعتماد سداد الفاتورة وتفعيل الاشتراك'))
+                    ->modalDescription(__('هل تأكدت من وصول المبلغ إلى الحساب البنكي / المحفظة؟ سيتم تفعيل المتجر والاشتراك فورًا.'))
                     ->visible(fn (SubscriptionInvoice $record) => $record->isPending())
                     ->action(function (SubscriptionInvoice $record, SubscriptionService $service) {
                         /** @var User $admin */
@@ -121,21 +135,21 @@ class SubscriptionInvoiceResource extends Resource
                         $service->approveInvoice($record, $admin);
 
                         Notification::make()
-                            ->title('تم اعتماد السداد وتفعيل الاشتراك بنجاح')
+                            ->title(__('تم اعتماد السداد وتفعيل الاشتراك بنجاح'))
                             ->success()
                             ->send();
                     }),
 
                 Action::make('reject_payment')
-                    ->label('رفض السداد')
+                    ->label(__('رفض السداد'))
                     ->icon('heroicon-o-x-circle')
                     ->color('danger')
                     ->visible(fn (SubscriptionInvoice $record) => $record->isPending())
                     ->schema([
                         Textarea::make('reason')
-                            ->label('سبب الرفض')
+                            ->label(__('سبب الرفض'))
                             ->required()
-                            ->placeholder('مثال: لم يتم العثور على العملية في كشف الحساب'),
+                            ->placeholder(__('مثال: لم يتم العثور على العملية في كشف الحساب')),
                     ])
                     ->action(function (SubscriptionInvoice $record, array $data, SubscriptionService $service) {
                         /** @var User $admin */
@@ -143,7 +157,7 @@ class SubscriptionInvoiceResource extends Resource
                         $service->rejectInvoice($record, $admin, (string) $data['reason']);
 
                         Notification::make()
-                            ->title('تم رفض الفاتورة وإشعار التاجر')
+                            ->title(__('تم رفض الفاتورة وإشعار التاجر'))
                             ->warning()
                             ->send();
                     }),

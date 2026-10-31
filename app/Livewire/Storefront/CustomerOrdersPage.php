@@ -45,7 +45,7 @@ class CustomerOrdersPage extends Component
     {
         return view('livewire.storefront.customer-orders-page', [
             'orders' => $this->getOrdersProperty(),
-            'pageTitle' => 'طلباتي',
+            'pageTitle' => __('طلباتي'),
         ]);
     }
 }

@@ -4,6 +4,7 @@ import AppLayout from '../../Layouts/AppLayout';
 import { formatCurrency } from '../../utils/format';
 import { Search, Filter, PlusCircle, CheckCircle, Flame, ChevronLeft } from 'lucide-react';
 import { ProductItem } from '../../types/affiliate';
+import { t } from '@/i18n';
 
 interface Props {
     products: {
@@ -45,8 +46,8 @@ export default function Catalog({ products, categories, filters, settings }: Pro
     };
 
     return (
-        <AppLayout title="كتالوج المنتجات">
-            <Head title="كتالوج المنتجات - تطبيق المسوق" />
+        <AppLayout title={t('كتالوج المنتجات')}>
+            <Head title={t('كتالوج المنتجات - تطبيق المسوق')} />
 
             <div className="space-y-4">
                 {/* Search Bar */}
@@ -55,7 +56,7 @@ export default function Catalog({ products, categories, filters, settings }: Pro
                         type="text"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        placeholder="ابحث بالاسم أو SKU..."
+                        placeholder={t('ابحث بالاسم أو SKU...')}
                         className="w-full h-11 pl-4 pr-10 rounded-2xl bg-slate-900 border border-slate-800 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                     />
                     <Search className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5" />
@@ -73,7 +74,7 @@ export default function Catalog({ products, categories, filters, settings }: Pro
                                     : 'bg-slate-900 text-slate-400 border border-slate-800 hover:text-white'
                             }`}
                         >
-                            جميع الأقسام
+                            {t('جميع الأقسام')}
                         </button>
                         {categories.map((cat) => (
                             <button
@@ -95,8 +96,8 @@ export default function Catalog({ products, categories, filters, settings }: Pro
                 {/* Products Grid */}
                 {products.data.length === 0 ? (
                     <div className="p-8 rounded-3xl bg-slate-900/50 border border-slate-800 text-center space-y-2">
-                        <p className="text-sm text-slate-300 font-bold">لا توجد منتجات مطابقة للبحث</p>
-                        <p className="text-xs text-slate-500">جرب البحث بكلمات أخرى أو اختر قسماً مختلفاً.</p>
+                        <p className="text-sm text-slate-300 font-bold">{t('لا توجد منتجات مطابقة للبحث')}</p>
+                        <p className="text-xs text-slate-500">{t('جرب البحث بكلمات أخرى أو اختر قسماً مختلفاً.')}</p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-2 gap-3">
@@ -113,18 +114,18 @@ export default function Catalog({ products, categories, filters, settings }: Pro
                                             alt={product.name}
                                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                             onError={(e) => {
-                                                (e.target as HTMLImageElement).src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100" fill="%231e293b"><rect width="100" height="100"/><text x="50" y="55" font-size="12" fill="%2364748b" text-anchor="middle">منتج</text></svg>';
+                                                (e.target as HTMLImageElement).src = t('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100" fill="%231e293b"><rect width="100" height="100"/><text x="50" y="55" font-size="12" fill="%2364748b" text-anchor="middle">منتج</text></svg>');
                                             }}
                                         />
                                         <div className="absolute top-2 right-2 flex flex-col gap-1">
                                             <span className="px-2 py-0.5 rounded-md bg-emerald-500/90 text-slate-950 font-black text-[10px] shadow">
-                                                تسليم {product.delivery_success_rate}%
+                                                {t('تسليم')} {product.delivery_success_rate}%
                                             </span>
                                         </div>
                                         {!product.is_in_stock && (
                                             <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center">
                                                 <span className="px-2.5 py-1 rounded-md bg-rose-500/90 text-white font-bold text-xs shadow">
-                                                    نفد المخزون
+                                                    {t('نفد المخزون')}
                                                 </span>
                                             </div>
                                         )}
@@ -141,14 +142,14 @@ export default function Catalog({ products, categories, filters, settings }: Pro
 
                                         <div className="mt-2 pt-2 border-t border-slate-800/80 space-y-1">
                                             <div className="flex items-center justify-between text-[11px]">
-                                                <span className="text-slate-400">سعر الجملة:</span>
+                                                <span className="text-slate-400">{t('سعر الجملة:')}</span>
                                                 <span className="font-mono text-slate-300 font-semibold">
                                                     {formatCurrency(product.wholesale_minor)}
                                                 </span>
                                             </div>
 
                                             <div className="flex items-center justify-between text-[11px]">
-                                                <span className="text-slate-400">ربح مقترح:</span>
+                                                <span className="text-slate-400">{t('ربح مقترح:')}</span>
                                                 <span className="font-mono text-emerald-400 font-bold">
                                                     +{formatCurrency(product.suggested_markup_minor)}
                                                 </span>
@@ -163,7 +164,7 @@ export default function Catalog({ products, categories, filters, settings }: Pro
                                         href={`/partners/app/catalog/${product.id}`}
                                         className="w-full py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold text-center block transition-colors"
                                     >
-                                        حاسبة الربح والتفاصيل
+                                        {t('حاسبة الربح والتفاصيل')}
                                     </Link>
 
                                     {product.is_in_stock && (
@@ -172,7 +173,7 @@ export default function Catalog({ products, categories, filters, settings }: Pro
                                             className="w-full py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold text-center flex items-center justify-center gap-1 shadow-sm shadow-indigo-600/30 transition-colors"
                                         >
                                             <PlusCircle className="w-3.5 h-3.5" />
-                                            <span>طلب سريع</span>
+                                            <span>{t('طلب سريع')}</span>
                                         </Link>
                                     )}
                                 </div>

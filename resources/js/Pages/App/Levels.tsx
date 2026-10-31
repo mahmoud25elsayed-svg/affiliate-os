@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Head } from '@inertiajs/react';
 import AppLayout from '../../Layouts/AppLayout';
 import { formatCurrency } from '../../utils/format';
+import { t } from '@/i18n';
 import { 
     Award, 
     TrendingUp, 
@@ -116,8 +117,8 @@ export default function Levels({ currentLevel, nextLevel, allLevels, stats, refe
     const handleShareLink = () => {
         if (navigator.share) {
             navigator.share({
-                title: 'انضم لبرنامج المسوقين وشارك الأرباح',
-                text: `سجل في برنامج التسويق بالعمولة باستخدام كودي: ${referralProgram.referral_code}`,
+                title: t('انضم لبرنامج المسوقين وشارك الأرباح'),
+                text: t('سجل في برنامج التسويق بالعمولة باستخدام كودي: :p0', { p0: referralProgram.referral_code }),
                 url: referralProgram.invite_url,
             }).catch(() => {});
         } else {
@@ -126,8 +127,8 @@ export default function Levels({ currentLevel, nextLevel, allLevels, stats, refe
     };
 
     return (
-        <AppLayout title="مستواي ومكافآتي">
-            <Head title="المستويات ودرجة الجودة والإحالات" />
+        <AppLayout title={t('مستواي ومكافآتي')}>
+            <Head title={t('المستويات ودرجة الجودة والإحالات')} />
 
             <div className="p-4 space-y-5">
                 {/* Current Level Hero Card */}
@@ -143,33 +144,33 @@ export default function Levels({ currentLevel, nextLevel, allLevels, stats, refe
                             <div className="flex items-center gap-2">
                                 <Award className="w-6 h-6 text-amber-300" />
                                 <span className="text-xs font-semibold bg-white/20 backdrop-blur-sm px-2.5 py-1 rounded-full">
-                                    المستوى الحالي
+                                    {t('المستوى الحالي')}
                                 </span>
                             </div>
                             <div className="flex items-center gap-1.5 bg-emerald-500/20 text-emerald-300 text-xs px-2.5 py-1 rounded-full border border-emerald-400/30">
                                 <ShieldCheck className="w-3.5 h-3.5" />
-                                <span>جودة: {stats.quality_score}/100 ({stats.rating})</span>
+                                <span>{t('جودة:')} {stats.quality_score}/100 ({stats.rating})</span>
                             </div>
                         </div>
 
-                        <h2 className="text-2xl font-black mb-1">المستوى {currentLevel.name}</h2>
+                        <h2 className="text-2xl font-black mb-1">{t('المستوى')} {currentLevel.name}</h2>
                         <p className="text-xs text-white/80 mb-4">
-                            تم تسليم {stats.total_delivered_orders} طلب بنجاح بنسبة تسليم {stats.delivery_rate_pct}%
+                            {t('تم تسليم')} {stats.total_delivered_orders} {t('طلب بنجاح بنسبة تسليم')} {stats.delivery_rate_pct}%
                         </p>
 
                         <div className="grid grid-cols-2 gap-2 pt-2 border-t border-white/20 text-xs">
                             <div className="bg-black/20 rounded-xl p-2.5">
-                                <span className="text-white/70 block mb-0.5">بونص إضافي لكل طلب:</span>
+                                <span className="text-white/70 block mb-0.5">{t('بونص إضافي لكل طلب:')}</span>
                                 <span className="text-base font-bold text-amber-300">
                                     {currentLevel.bonus_per_order_minor > 0 
                                         ? `+${formatCurrency(currentLevel.bonus_per_order_minor)}` 
-                                        : (currentLevel.commission_bonus_percent > 0 ? `+${currentLevel.commission_bonus_percent}%` : 'لا يوجد')}
+                                        : (currentLevel.commission_bonus_percent > 0 ? `+${currentLevel.commission_bonus_percent}%` : t('لا يوجد'))}
                                 </span>
                             </div>
                             <div className="bg-black/20 rounded-xl p-2.5">
-                                <span className="text-white/70 block mb-0.5">الحد اليومي المتاح:</span>
+                                <span className="text-white/70 block mb-0.5">{t('الحد اليومي المتاح:')}</span>
                                 <span className="text-base font-bold text-white">
-                                    {currentLevel.daily_order_limit} طلب/يوم
+                                    {currentLevel.daily_order_limit} {t('طلب/يوم')}
                                 </span>
                             </div>
                         </div>
@@ -183,11 +184,11 @@ export default function Levels({ currentLevel, nextLevel, allLevels, stats, refe
                             <div className="flex items-center gap-2">
                                 <Sparkles className="w-5 h-5 text-indigo-600" />
                                 <span className="text-sm font-bold text-slate-800">
-                                    الترقية إلى المستوى {nextLevel.name}
+                                    {t('الترقية إلى المستوى')} {nextLevel.name}
                                 </span>
                             </div>
                             <span className="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full">
-                                متبقي {nextLevel.remaining_orders} طلب
+                                {t('متبقي')} {nextLevel.remaining_orders} {t('طلب')}
                             </span>
                         </div>
 
@@ -203,17 +204,17 @@ export default function Levels({ currentLevel, nextLevel, allLevels, stats, refe
 
                         <div className="grid grid-cols-3 gap-2 text-center text-xs">
                             <div className="bg-slate-50 p-2 rounded-xl border border-slate-100">
-                                <span className="text-slate-500 block text-[10px]">الطلبات المطلوبة</span>
+                                <span className="text-slate-500 block text-[10px]">{t('الطلبات المطلوبة')}</span>
                                 <span className="font-bold text-slate-800">{stats.total_delivered_orders} / {nextLevel.target_delivered_orders}</span>
                             </div>
                             <div className="bg-slate-50 p-2 rounded-xl border border-slate-100">
-                                <span className="text-slate-500 block text-[10px]">نسبة التسليم</span>
+                                <span className="text-slate-500 block text-[10px]">{t('نسبة التسليم')}</span>
                                 <span className={`font-bold ${stats.delivery_rate_pct >= nextLevel.target_delivery_rate ? 'text-emerald-600' : 'text-slate-800'}`}>
                                     {stats.delivery_rate_pct}% / {nextLevel.target_delivery_rate}%
                                 </span>
                             </div>
                             <div className="bg-slate-50 p-2 rounded-xl border border-slate-100">
-                                <span className="text-slate-500 block text-[10px]">نقاط الجودة</span>
+                                <span className="text-slate-500 block text-[10px]">{t('نقاط الجودة')}</span>
                                 <span className={`font-bold ${stats.quality_score >= nextLevel.target_quality_score ? 'text-emerald-600' : 'text-slate-800'}`}>
                                     {stats.quality_score} / {nextLevel.target_quality_score}
                                 </span>
@@ -221,10 +222,10 @@ export default function Levels({ currentLevel, nextLevel, allLevels, stats, refe
                         </div>
 
                         <div className="mt-3 p-2.5 bg-indigo-50/70 rounded-xl text-xs text-indigo-900 flex items-center justify-between">
-                            <span>مميزات الترقية:</span>
+                            <span>{t('مميزات الترقية:')}</span>
                             <span className="font-bold text-indigo-700">
-                                {nextLevel.bonus_per_order_minor > 0 && `+${formatCurrency(nextLevel.bonus_per_order_minor)} بونص/طلب`}
-                                {` • حد ${nextLevel.daily_order_limit} طلب/يوم`}
+                                {nextLevel.bonus_per_order_minor > 0 && t('+:p0 بونص/طلب', { p0: formatCurrency(nextLevel.bonus_per_order_minor) })}
+                                {t(' • حد :p0 طلب/يوم', { p0: nextLevel.daily_order_limit })}
                             </span>
                         </div>
                     </div>
@@ -240,7 +241,7 @@ export default function Levels({ currentLevel, nextLevel, allLevels, stats, refe
                                 : 'border-transparent text-slate-500 hover:text-slate-700'
                         }`}
                     >
-                        خارطة المستويات
+                        {t('خارطة المستويات')}
                     </button>
                     <button
                         onClick={() => setActiveTab('quality')}
@@ -250,7 +251,7 @@ export default function Levels({ currentLevel, nextLevel, allLevels, stats, refe
                                 : 'border-transparent text-slate-500 hover:text-slate-700'
                         }`}
                     >
-                        شفافية درجة الجودة
+                        {t('شفافية درجة الجودة')}
                     </button>
                     <button
                         onClick={() => setActiveTab('referrals')}
@@ -260,7 +261,7 @@ export default function Levels({ currentLevel, nextLevel, allLevels, stats, refe
                                 : 'border-transparent text-slate-500 hover:text-slate-700'
                         }`}
                     >
-                        دعوة المسوقين
+                        {t('دعوة المسوقين')}
                     </button>
                 </div>
 
@@ -268,7 +269,7 @@ export default function Levels({ currentLevel, nextLevel, allLevels, stats, refe
                 {activeTab === 'levels' && (
                     <div className="space-y-3">
                         <div className="text-xs text-slate-600 px-1">
-                            كلما ارتفع مستواك، حصلت على بونص مالي إضافي على كل طلب مسلَّم وارتفع حدك اليومي لإرسال الطلبات:
+                            {t('كلما ارتفع مستواك، حصلت على بونص مالي إضافي على كل طلب مسلَّم وارتفع حدك اليومي لإرسال الطلبات:')}
                         </div>
 
                         {allLevels.map((lvl) => (
@@ -288,21 +289,21 @@ export default function Levels({ currentLevel, nextLevel, allLevels, stats, refe
                                             className="w-4 h-4 rounded-full" 
                                             style={{ backgroundColor: lvl.badge_color }} 
                                         />
-                                        <h3 className="font-bold text-slate-900 text-sm">المستوى {lvl.name}</h3>
+                                        <h3 className="font-bold text-slate-900 text-sm">{t('المستوى')} {lvl.name}</h3>
                                         {lvl.is_current && (
                                             <span className="bg-indigo-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">
-                                                أنت هنا
+                                                {t('أنت هنا')}
                                             </span>
                                         )}
                                     </div>
                                     <div>
                                         {lvl.is_unlocked ? (
                                             <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
-                                                <Unlock className="w-3 h-3" /> مفتوح
+                                                <Unlock className="w-3 h-3" /> {t('مفتوح')}
                                             </span>
                                         ) : (
                                             <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
-                                                <Lock className="w-3 h-3" /> مقفول
+                                                <Lock className="w-3 h-3" /> {t('مقفول')}
                                             </span>
                                         )}
                                     </div>
@@ -310,23 +311,23 @@ export default function Levels({ currentLevel, nextLevel, allLevels, stats, refe
 
                                 <div className="grid grid-cols-2 gap-2 text-xs mb-3">
                                     <div className="bg-white p-2 rounded-xl border border-slate-100">
-                                        <span className="text-slate-400 block text-[10px]">بونص الطلب المسلَّم</span>
+                                        <span className="text-slate-400 block text-[10px]">{t('بونص الطلب المسلَّم')}</span>
                                         <span className="font-bold text-amber-600">
                                             {lvl.bonus_per_order_minor > 0 
                                                 ? `+${formatCurrency(lvl.bonus_per_order_minor)}` 
-                                                : (lvl.commission_bonus_percent > 0 ? `+${lvl.commission_bonus_percent}%` : 'لا يوجد')}
+                                                : (lvl.commission_bonus_percent > 0 ? `+${lvl.commission_bonus_percent}%` : t('لا يوجد'))}
                                         </span>
                                     </div>
                                     <div className="bg-white p-2 rounded-xl border border-slate-100">
-                                        <span className="text-slate-400 block text-[10px]">الحد اليومي للطلبات</span>
-                                        <span className="font-bold text-slate-800">{lvl.daily_order_limit} طلب/يوم</span>
+                                        <span className="text-slate-400 block text-[10px]">{t('الحد اليومي للطلبات')}</span>
+                                        <span className="font-bold text-slate-800">{lvl.daily_order_limit} {t('طلب/يوم')}</span>
                                     </div>
                                 </div>
 
                                 <div className="text-[11px] text-slate-500 bg-slate-50 p-2 rounded-xl flex items-center justify-between">
-                                    <span>شروط المستوى:</span>
+                                    <span>{t('شروط المستوى:')}</span>
                                     <span className="font-medium text-slate-700">
-                                        {lvl.min_delivered_orders} طلب مسلَّم • نسبة تسليم {lvl.min_delivery_rate}% • جودة {lvl.min_quality_score}
+                                        {lvl.min_delivered_orders} {t('طلب مسلَّم • نسبة تسليم')} {lvl.min_delivery_rate}{t('% • جودة')} {lvl.min_quality_score}
                                     </span>
                                 </div>
                             </div>
@@ -340,8 +341,8 @@ export default function Levels({ currentLevel, nextLevel, allLevels, stats, refe
                         <div className="bg-white rounded-2xl p-4 border border-slate-200 space-y-4">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <h3 className="font-bold text-slate-900 text-sm">درجة الجودة الحالية</h3>
-                                    <p className="text-xs text-slate-500">مقياس موثوقية الطلبات ونسبة التسليم</p>
+                                    <h3 className="font-bold text-slate-900 text-sm">{t('درجة الجودة الحالية')}</h3>
+                                    <p className="text-xs text-slate-500">{t('مقياس موثوقية الطلبات ونسبة التسليم')}</p>
                                 </div>
                                 <div className="text-left">
                                     <span className="text-3xl font-black text-indigo-600">{stats.quality_score}</span>
@@ -352,7 +353,7 @@ export default function Levels({ currentLevel, nextLevel, allLevels, stats, refe
                             {/* Meter breakdown */}
                             <div className="space-y-2.5 pt-2 border-t border-slate-100 text-xs">
                                 <div className="flex items-center justify-between">
-                                    <span className="text-slate-600">نسبة التسليم (70 نقطة كحد أقصى):</span>
+                                    <span className="text-slate-600">{t('نسبة التسليم (70 نقطة كحد أقصى):')}</span>
                                     <span className="font-bold text-slate-900">
                                         {stats.reasons.delivery_component ?? 70} / 70
                                     </span>
@@ -365,7 +366,7 @@ export default function Levels({ currentLevel, nextLevel, allLevels, stats, refe
                                 </div>
 
                                 <div className="flex items-center justify-between pt-1">
-                                    <span className="text-slate-600">فحص الجودة وعدم الإلغاء (20 نقطة كحد أقصى):</span>
+                                    <span className="text-slate-600">{t('فحص الجودة وعدم الإلغاء (20 نقطة كحد أقصى):')}</span>
                                     <span className="font-bold text-slate-900">
                                         {stats.reasons.gate_component ?? 20} / 20
                                     </span>
@@ -378,7 +379,7 @@ export default function Levels({ currentLevel, nextLevel, allLevels, stats, refe
                                 </div>
 
                                 <div className="flex items-center justify-between pt-1">
-                                    <span className="text-slate-600">حجم ونشاط الطلبات (10 نقاط كحد أقصى):</span>
+                                    <span className="text-slate-600">{t('حجم ونشاط الطلبات (10 نقاط كحد أقصى):')}</span>
                                     <span className="font-bold text-slate-900">
                                         {stats.reasons.volume_component ?? 10} / 10
                                     </span>
@@ -396,13 +397,13 @@ export default function Levels({ currentLevel, nextLevel, allLevels, stats, refe
                         <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-xs text-amber-900 space-y-2">
                             <div className="flex items-center gap-1.5 font-bold">
                                 <AlertCircle className="w-4 h-4 text-amber-700" />
-                                <span>كيف تؤثر درجة الجودة على حسابك؟</span>
+                                <span>{t('كيف تؤثر درجة الجودة على حسابك؟')}</span>
                             </div>
                             <ul className="list-disc list-inside space-y-1 text-amber-800 text-[11px] leading-relaxed">
-                                <li><strong>جودة 70–100:</strong> حسابك في أفضل أداء، تستفيد من كامل الحد اليومي وبونص مستواك.</li>
-                                <li><strong>جودة أقل من 40:</strong> يتم تخفيض الحد اليومي للطلبات لحماية التاجر ومنع المرتجعات.</li>
-                                <li><strong>جودة أقل من 20:</strong> يتم تجميد إرسال الطلبات الجديدة مؤقتاً لحين مراجعة التاجر.</li>
-                                <li>تُحسب الدرجة يومياً في منتصف الليل استناداً لآخر 30 يوماً من نشاطك.</li>
+                                <li><strong>{t('جودة 70–100:')}</strong> {t('حسابك في أفضل أداء، تستفيد من كامل الحد اليومي وبونص مستواك.')}</li>
+                                <li><strong>{t('جودة أقل من 40:')}</strong> {t('يتم تخفيض الحد اليومي للطلبات لحماية التاجر ومنع المرتجعات.')}</li>
+                                <li><strong>{t('جودة أقل من 20:')}</strong> {t('يتم تجميد إرسال الطلبات الجديدة مؤقتاً لحين مراجعة التاجر.')}</li>
+                                <li>{t('تُحسب الدرجة يومياً في منتصف الليل استناداً لآخر 30 يوماً من نشاطك.')}</li>
                             </ul>
                         </div>
                     </div>
@@ -416,20 +417,20 @@ export default function Levels({ currentLevel, nextLevel, allLevels, stats, refe
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                     <Users className="w-5 h-5 text-indigo-300" />
-                                    <h3 className="font-bold text-sm">دعوة مسوقين شركاء</h3>
+                                    <h3 className="font-bold text-sm">{t('دعوة مسوقين شركاء')}</h3>
                                 </div>
                                 <span className="bg-emerald-500/20 text-emerald-300 text-xs px-2.5 py-1 rounded-full border border-emerald-400/30 font-bold">
-                                    أرباح: {formatCurrency(referralProgram.total_earnings_minor)}
+                                    {t('أرباح:')} {formatCurrency(referralProgram.total_earnings_minor)}
                                 </span>
                             </div>
 
                             <p className="text-xs text-indigo-100 leading-relaxed">
-                                شارك كود الدعوة الخاص بك مع مسوقين آخرين. عندما يكمل أي مسوق تدعوه أول {referralProgram.threshold_orders} طلبات مسلّمة، ستحصل فوراً على مكافأة بقيمة <strong className="text-amber-300">{formatCurrency(referralProgram.reward_amount_minor)}</strong> تضاف إلى محفظتك!
+                                {t('شارك كود الدعوة الخاص بك مع مسوقين آخرين. عندما يكمل أي مسوق تدعوه أول')} {referralProgram.threshold_orders} {t('طلبات مسلّمة، ستحصل فوراً على مكافأة بقيمة')} <strong className="text-amber-300">{formatCurrency(referralProgram.reward_amount_minor)}</strong> {t('تضاف إلى محفظتك!')}
                             </p>
 
                             <div className="bg-black/20 rounded-xl p-3 space-y-2">
                                 <div className="flex items-center justify-between text-xs">
-                                    <span className="text-white/70">كود الإحالة الخاص بك:</span>
+                                    <span className="text-white/70">{t('كود الإحالة الخاص بك:')}</span>
                                     <div className="flex items-center gap-2">
                                         <span className="font-mono font-bold text-base tracking-wider text-amber-300">
                                             {referralProgram.referral_code}
@@ -449,14 +450,14 @@ export default function Levels({ currentLevel, nextLevel, allLevels, stats, refe
                                         className="flex-1 py-2 px-3 bg-white text-indigo-900 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition-all"
                                     >
                                         {copiedLink ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
-                                        <span>نسخ رابط الدعوة</span>
+                                        <span>{t('نسخ رابط الدعوة')}</span>
                                     </button>
                                     <button
                                         onClick={handleShareLink}
                                         className="py-2 px-3 bg-indigo-600/80 hover:bg-indigo-600 text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 border border-white/20 active:scale-95 transition-all"
                                     >
                                         <Share2 className="w-4 h-4" />
-                                        <span>مشاركة</span>
+                                        <span>{t('مشاركة')}</span>
                                     </button>
                                 </div>
                             </div>
@@ -465,15 +466,15 @@ export default function Levels({ currentLevel, nextLevel, allLevels, stats, refe
                         {/* Referrals List */}
                         <div className="space-y-2">
                             <h4 className="text-xs font-bold text-slate-700 px-1">
-                                المسوقون المدعوون ({referralProgram.referrals_count})
+                                {t('المسوقون المدعوون (')}{referralProgram.referrals_count})
                             </h4>
 
                             {referralProgram.referrals.length === 0 ? (
                                 <div className="bg-white rounded-2xl p-6 border border-slate-200 text-center text-xs text-slate-500">
                                     <Users className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-                                    <p>لم تدعُ أي مسوق حتى الآن.</p>
+                                    <p>{t('لم تدعُ أي مسوق حتى الآن.')}</p>
                                     <p className="text-[11px] text-slate-400 mt-1">
-                                        شارك كودك لتبدأ في جني مكافآت الإحالة مباشرة في محفظتك!
+                                        {t('شارك كودك لتبدأ في جني مكافآت الإحالة مباشرة في محفظتك!')}
                                     </p>
                                 </div>
                             ) : (
@@ -482,10 +483,10 @@ export default function Levels({ currentLevel, nextLevel, allLevels, stats, refe
                                         <div>
                                             <div className="flex items-center gap-2 mb-1">
                                                 <span className="font-bold text-slate-900 text-xs">{ref.name}</span>
-                                                <span className="text-[10px] text-slate-400">انضم في {ref.joined_at}</span>
+                                                <span className="text-[10px] text-slate-400">{t('انضم في')} {ref.joined_at}</span>
                                             </div>
                                             <div className="flex items-center gap-2 text-[11px] text-slate-500">
-                                                <span>الطلبات المسلّمة:</span>
+                                                <span>{t('الطلبات المسلّمة:')}</span>
                                                 <span className="font-bold text-slate-800">
                                                     {ref.delivered_orders} / {ref.target_orders}
                                                 </span>
@@ -495,11 +496,11 @@ export default function Levels({ currentLevel, nextLevel, allLevels, stats, refe
                                         <div>
                                             {ref.is_unlocked ? (
                                                 <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-100">
-                                                    <Check className="w-3.5 h-3.5" /> تم كسب {formatCurrency(ref.reward_earned_minor)}
+                                                    <Check className="w-3.5 h-3.5" /> {t('تم كسب')} {formatCurrency(ref.reward_earned_minor)}
                                                 </span>
                                             ) : (
                                                 <span className="text-[11px] font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full">
-                                                    متبقي {Math.max(0, ref.target_orders - ref.delivered_orders)} طلب
+                                                    {t('متبقي')} {Math.max(0, ref.target_orders - ref.delivered_orders)} {t('طلب')}
                                                 </span>
                                             )}
                                         </div>

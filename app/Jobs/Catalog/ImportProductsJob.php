@@ -85,7 +85,7 @@ class ImportProductsJob implements ShouldQueue
 
                 if (empty($name) || empty($sku)) {
                     $this->report['failed']++;
-                    $this->report['errors'][$rowNumber] = "الصف {$rowNumber}: اسم المنتج ورمز SKU مطلوبان.";
+                    $this->report['errors'][$rowNumber] = __('الصف :row_number: اسم المنتج ورمز SKU مطلوبان.', ['row_number' => $rowNumber]);
 
                     continue;
                 }
@@ -94,7 +94,7 @@ class ImportProductsJob implements ShouldQueue
                 if (! Limits::check('products', $this->tenant)) {
                     $this->report['failed']++;
                     $max = Limits::get('products', $this->tenant);
-                    $this->report['errors'][$rowNumber] = "الصف {$rowNumber}: تم تجاوز الحد الأقصى للمنتجات المسموح بها في خطتك ({$max} منتجات).";
+                    $this->report['errors'][$rowNumber] = __('الصف :row_number: تم تجاوز الحد الأقصى للمنتجات المسموح بها في خطتك (:max منتجات).', ['row_number' => $rowNumber, 'max' => $max]);
 
                     continue;
                 }
@@ -122,10 +122,10 @@ class ImportProductsJob implements ShouldQueue
                     $this->report['imported']++;
                 } catch (LimitExceededException $e) {
                     $this->report['failed']++;
-                    $this->report['errors'][$rowNumber] = "الصف {$rowNumber}: استنفدت باقتك الحد المسموح به للمنتجات.";
+                    $this->report['errors'][$rowNumber] = __('الصف :row_number: استنفدت باقتك الحد المسموح به للمنتجات.', ['row_number' => $rowNumber]);
                 } catch (Throwable $e) {
                     $this->report['failed']++;
-                    $this->report['errors'][$rowNumber] = "الصف {$rowNumber}: ".$e->getMessage();
+                    $this->report['errors'][$rowNumber] = __('الصف :row_number: ', ['row_number' => $rowNumber]).$e->getMessage();
                 }
             }
         });

@@ -30,7 +30,7 @@ class ProductController extends Controller
 
         // If product is paused or archived in wholesale table, do not allow public browsing or show appropriate notice
         if ($wholesalePrice && $wholesalePrice->isArchived()) {
-            abort(404, 'المنتج غير متوفر.');
+            abort(404, __('المنتج غير متوفر.'));
         }
 
         $theme = ThemeSettings::load();
@@ -41,18 +41,18 @@ class ProductController extends Controller
         /** @var Collection|null $collection */
         $collection = $product->collections->first();
         $breadcrumbs = [
-            ['name' => 'الرئيسية', 'url' => url('/')],
+            ['name' => __('الرئيسية'), 'url' => url('/')],
         ];
 
         if ($collection instanceof Collection) {
             $breadcrumbs[] = [
-                'name' => (string) ($collection->translateAttribute('name') ?? 'فئة'),
+                'name' => (string) ($collection->translateAttribute('name') ?? __('فئة')),
                 'url' => url('/categories/'.$collection->id),
             ];
         }
 
         $breadcrumbs[] = [
-            'name' => (string) ($product->translateAttribute('name') ?? 'منتج'),
+            'name' => (string) ($product->translateAttribute('name') ?? __('منتج')),
             'url' => url('/products/'.$product->id),
         ];
 

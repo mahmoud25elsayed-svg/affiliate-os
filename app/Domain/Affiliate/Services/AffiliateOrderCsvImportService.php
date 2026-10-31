@@ -33,14 +33,14 @@ class AffiliateOrderCsvImportService
         $filePath = $file instanceof UploadedFile ? $file->getRealPath() : $file;
         $handle = fopen($filePath, 'r');
         if ($handle === false) {
-            throw new DomainException('تعذر قراءة ملف CSV المرفق.');
+            throw new DomainException(__('تعذر قراءة ملف CSV المرفق.'));
         }
 
         $header = fgetcsv($handle);
         if ($header === false) {
             fclose($handle);
 
-            throw new DomainException('ملف CSV فارغ أو لا يحتوي على صف عناوين صالح.');
+            throw new DomainException(__('ملف CSV فارغ أو لا يحتوي على صف عناوين صالح.'));
         }
 
         // Normalize header row (strip BOM and trim)
@@ -124,7 +124,7 @@ class AffiliateOrderCsvImportService
         $required = ['customer_name', 'customer_phone', 'governorate', 'city', 'address', 'sku', 'quantity', 'selling_price'];
         foreach ($required as $req) {
             if (! isset($map[$req])) {
-                throw new DomainException("ملف CSV ينقصه عمود إلزامي: [{$req}]. يرجى التأكد من تطابق عناوين الأعمدة.");
+                throw new DomainException(__('ملف CSV ينقصه عمود إلزامي: [:req]. يرجى التأكد من تطابق عناوين الأعمدة.', ['req' => $req]));
             }
         }
 
@@ -157,7 +157,7 @@ class AffiliateOrderCsvImportService
         $notes = isset($columns['notes']) ? trim((string) ($row[$columns['notes']] ?? '')) : null;
 
         if ($name === '' || $phone === '' || $address === '' || $skuInput === '') {
-            throw new DomainException("السطر {$rowNumber}: يحتوي على حقول فارغة مطلوبة (الاسم، الهاتف، العنوان، أو كود المنتج).");
+            throw new DomainException(__('السطر :row_number: يحتوي على حقول فارغة مطلوبة (الاسم، الهاتف، العنوان، أو كود المنتج).', ['row_number' => $rowNumber]));
         }
 
         // Resolve Governorate
@@ -172,7 +172,7 @@ class AffiliateOrderCsvImportService
         }
 
         if (! $variant instanceof ProductVariant) {
-            throw new DomainException("السطر {$rowNumber}: لم يتم العثور على منتج بكود SKU أو الرقم: [{$skuInput}].");
+            throw new DomainException(__('السطر :row_number: لم يتم العثور على منتج بكود SKU أو الرقم: [:sku_input].', ['row_number' => $rowNumber, 'sku_input' => $skuInput]));
         }
 
         $quantity = max(1, (int) $qtyInput);

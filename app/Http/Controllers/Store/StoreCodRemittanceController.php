@@ -129,7 +129,7 @@ class StoreCodRemittanceController extends Controller
         );
 
         return redirect()->route('store.cod.show', $remittance)
-            ->with('success', "تم استيراد ومطابقة كشف التسوية #{$remittance->reference} بنجاح.");
+            ->with('success', __('تم استيراد ومطابقة كشف التسوية #:reference بنجاح.', ['reference' => $remittance->reference]));
     }
 
     public function show(CodRemittance $remittance): View
@@ -159,6 +159,6 @@ class StoreCodRemittanceController extends Controller
         );
 
         return redirect()->route('store.cod.show', $remittance)
-            ->with('success', "تم تأكيد تسوية وتوريد الكشف #{$remittance->reference} بنجاح وترحيل القيود المالية.");
+            ->with('success', __('تم تأكيد تسوية وتوريد الكشف #:reference بنجاح وترحيل القيود المالية.', ['reference' => $remittance->reference]));
     }
 }

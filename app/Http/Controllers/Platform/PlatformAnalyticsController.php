@@ -20,7 +20,7 @@ class PlatformAnalyticsController extends Controller
     {
         $user = $request->user();
         if (! ($user instanceof User) || ! $user->isPlatformAdmin()) {
-            abort(403, 'غير مصرح بالوصول إلى تحليلات المنصة المركزية');
+            abort(403, __('غير مصرح بالوصول إلى تحليلات المنصة المركزية'));
         }
 
         $activeMerchants = $this->platformAnalytics->getActiveMerchantsCount();

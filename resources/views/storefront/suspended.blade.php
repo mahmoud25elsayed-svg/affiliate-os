@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html dir="rtl" lang="ar">
+<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ __('المتجر مغلق مؤقتًا') }} - {{ $tenantName ?? 'المتجر' }}</title>
+    <title>{{ __('المتجر مغلق مؤقتًا') }} - {{ $tenantName ?? __('المتجر') }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -80,7 +80,7 @@
             </svg>
         </div>
 
-        <div class="store-badge">{{ $tenantName ?? 'المتجر الإلكتروني' }}</div>
+        <div class="store-badge">{{ $tenantName ?? __('المتجر الإلكتروني') }}</div>
 
         <h1>{{ __('المتجر مغلق مؤقتًا') }}</h1>
 

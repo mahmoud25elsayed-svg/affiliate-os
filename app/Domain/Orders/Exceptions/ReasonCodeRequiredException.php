@@ -15,7 +15,7 @@ class ReasonCodeRequiredException extends DomainException
     ) {
         parent::__construct(
             sprintf(
-                'يتطلب الانتقال من حالة [%s] إلى [%s] تحديد كود سبب صالح (ReasonCode).',
+                __('يتطلب الانتقال من حالة [%s] إلى [%s] تحديد كود سبب صالح (ReasonCode).'),
                 $from->label(),
                 $to->label()
             )

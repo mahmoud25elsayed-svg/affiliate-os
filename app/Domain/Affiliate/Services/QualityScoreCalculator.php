@@ -75,7 +75,7 @@ class QualityScoreCalculator
                 'delivery_rate_basis_points' => $deliveryRateBps,
                 'daily_order_limit' => $baseLimit,
                 'reasons' => [
-                    'notice' => 'فترة سماح للمسوقين الجدد (أقل من 5 طلبات منتهية)',
+                    'notice' => __('فترة سماح للمسوقين الجدد (أقل من 5 طلبات منتهية)'),
                     'delivery_component' => 70,
                     'gate_component' => 20,
                     'volume_component' => 10,

@@ -39,13 +39,13 @@ class ViewOrder extends ViewRecord
 
         $actions = [
             Action::make('print_invoice')
-                ->label('طباعة الفاتورة')
+                ->label(__('طباعة الفاتورة'))
                 ->icon('heroicon-o-document-text')
                 ->color('gray')
                 ->url(route('store.orders.invoice', ['reference' => $record->reference]), shouldOpenInNewTab: true),
 
             Action::make('print_waybill')
-                ->label('بوليصة الشحن')
+                ->label(__('بوليصة الشحن'))
                 ->icon('heroicon-o-truck')
                 ->color('gray')
                 ->url(route('store.orders.waybill', ['reference' => $record->reference]), shouldOpenInNewTab: true),
@@ -63,28 +63,28 @@ class ViewOrder extends ViewRecord
                 ->color($this->getTransitionActionColor($targetStatus))
                 ->icon($this->getTransitionActionIcon($targetStatus))
                 ->requiresConfirmation()
-                ->modalHeading('تغيير حالة الطلب إلى: '.$targetStatus->label())
-                ->modalSubmitActionLabel('تنفيذ التغيير');
+                ->modalHeading(__('تغيير حالة الطلب إلى: ').$targetStatus->label())
+                ->modalSubmitActionLabel(__('تنفيذ التغيير'));
 
             if ($requiresReason) {
                 $reasonOptions = collect(ReasonCode::cases())->mapWithKeys(fn (ReasonCode $r) => [$r->value => $r->label()])->all();
 
                 $action->schema([
                     Select::make('reason_code')
-                        ->label('سبب الإجراء (إلزامي)')
+                        ->label(__('سبب الإجراء (إلزامي)'))
                         ->options($reasonOptions)
                         ->required()
                         ->searchable(),
 
                     Textarea::make('note')
-                        ->label('ملاحظات إضافية')
-                        ->placeholder('اكتب تفاصيل أو أسباب إضافية هنا...'),
+                        ->label(__('ملاحظات إضافية'))
+                        ->placeholder(__('اكتب تفاصيل أو أسباب إضافية هنا...')),
                 ]);
             } else {
                 $action->schema([
                     Textarea::make('note')
-                        ->label('ملاحظات اختيارية')
-                        ->placeholder('اكتب أي ملاحظة إن وجدت...'),
+                        ->label(__('ملاحظات اختيارية'))
+                        ->placeholder(__('اكتب أي ملاحظة إن وجدت...')),
                 ]);
             }
 
@@ -97,7 +97,7 @@ class ViewOrder extends ViewRecord
                 $service->transition($record, $targetStatus, $reason, $actor, [], $note);
 
                 Notification::make()
-                    ->title('تم تحديث حالة الطلب بنجاح إلى: '.$targetStatus->label())
+                    ->title(__('تم تحديث حالة الطلب بنجاح إلى: ').$targetStatus->label())
                     ->success()
                     ->send();
 
@@ -135,23 +135,23 @@ class ViewOrder extends ViewRecord
     protected function getTransitionActionLabel(OrderStatus $status): string
     {
         return match ($status) {
-            OrderStatus::CONFIRMED => 'تأكيد الطلب',
-            OrderStatus::CANCELLED_BY_CUSTOMER => 'إلغاء الطلب',
-            OrderStatus::UNREACHABLE => 'تعذر الاتصال',
-            OrderStatus::CANCELLED_NO_ANSWER => 'إلغاء لعدم الرد',
-            OrderStatus::RESERVED => 'حجز المخزون',
-            OrderStatus::OUT_OF_STOCK => 'نفاد المخزون',
-            OrderStatus::PACKED => 'تجهيز وتعبئة',
-            OrderStatus::SHIPPED => 'تسليم للشحن',
-            OrderStatus::OUT_FOR_DELIVERY => 'خرج للتوصيل',
-            OrderStatus::DELIVERED => 'تم التسليم والتحصيل',
-            OrderStatus::DELIVERY_FAILED => 'تعذر التسليم',
-            OrderStatus::RETURNING => 'شحن المرتجع',
-            OrderStatus::RETURN_REQUESTED => 'طلب استرجاع',
-            OrderStatus::RETURNED => 'استلام المرتجع بالمخزن',
-            OrderStatus::SETTLED => 'تسوية مالية',
-            OrderStatus::PENDING_CONFIRMATION => 'إعادة لانتظار التأكيد',
-            OrderStatus::REJECTED_QUALITY => 'رفض فحص الجودة',
+            OrderStatus::CONFIRMED => __('تأكيد الطلب'),
+            OrderStatus::CANCELLED_BY_CUSTOMER => __('إلغاء الطلب'),
+            OrderStatus::UNREACHABLE => __('تعذر الاتصال'),
+            OrderStatus::CANCELLED_NO_ANSWER => __('إلغاء لعدم الرد'),
+            OrderStatus::RESERVED => __('حجز المخزون'),
+            OrderStatus::OUT_OF_STOCK => __('نفاد المخزون'),
+            OrderStatus::PACKED => __('تجهيز وتعبئة'),
+            OrderStatus::SHIPPED => __('تسليم للشحن'),
+            OrderStatus::OUT_FOR_DELIVERY => __('خرج للتوصيل'),
+            OrderStatus::DELIVERED => __('تم التسليم والتحصيل'),
+            OrderStatus::DELIVERY_FAILED => __('تعذر التسليم'),
+            OrderStatus::RETURNING => __('شحن المرتجع'),
+            OrderStatus::RETURN_REQUESTED => __('طلب استرجاع'),
+            OrderStatus::RETURNED => __('استلام المرتجع بالمخزن'),
+            OrderStatus::SETTLED => __('تسوية مالية'),
+            OrderStatus::PENDING_CONFIRMATION => __('إعادة لانتظار التأكيد'),
+            OrderStatus::REJECTED_QUALITY => __('رفض فحص الجودة'),
             default => $status->label(),
         };
     }

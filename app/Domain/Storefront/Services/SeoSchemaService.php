@@ -42,7 +42,7 @@ class SeoSchemaService
      */
     public function productSchema(Product $product): string
     {
-        $name = (string) ($product->translateAttribute('name') ?? 'منتج');
+        $name = (string) ($product->translateAttribute('name') ?? __('منتج'));
         $description = (string) ($product->translateAttribute('description') ?? $name);
 
         /** @var ProductVariant|null $variant */

@@ -52,7 +52,7 @@ class CommissionSettlementService
         $entryData = new EntryData(
             type: 'commission_settled',
             idempotencyKey: "order_settled_{$order->id}",
-            description: "تسوية عمولة الطلب #{$order->reference} ونقلها إلى الرصيد المتاح للسحب",
+            description: __('تسوية عمولة الطلب #:reference ونقلها إلى الرصيد المتاح للسحب', ['reference' => $order->reference]),
             lines: [
                 new LedgerLineData(account: $pendingAccount, amountMinor: -$profitMinor),
                 new LedgerLineData(account: $availableAccount, amountMinor: $profitMinor),
@@ -80,7 +80,7 @@ class CommissionSettlementService
                 $bonusSettlement = new EntryData(
                     type: 'tier_bonus_settled',
                     idempotencyKey: "order_tier_bonus_settled_{$order->id}_{$affiliate->id}",
-                    description: "تسوية بونص مستوى المسوق للطلب #{$order->reference} ونقلها إلى الرصيد المتاح",
+                    description: __('تسوية بونص مستوى المسوق للطلب #:reference ونقلها إلى الرصيد المتاح', ['reference' => $order->reference]),
                     lines: [
                         new LedgerLineData(account: $pendingAccount, amountMinor: -$bonusMinor),
                         new LedgerLineData(account: $availableAccount, amountMinor: $bonusMinor),
@@ -122,7 +122,7 @@ class CommissionSettlementService
                             $this->ledger->post(new EntryData(
                                 type: 'referral_reward_settled',
                                 idempotencyKey: $settlementKey,
-                                description: "تسوية مكافأة إحالة المسوق #{$affiliate->id} ونقلها للرصيد المتاح",
+                                description: __('تسوية مكافأة إحالة المسوق #:id ونقلها للرصيد المتاح', ['id' => $affiliate->id]),
                                 lines: [
                                     new LedgerLineData(account: $refPending, amountMinor: -$amount),
                                     new LedgerLineData(account: $refAvailable, amountMinor: $amount),
@@ -190,7 +190,7 @@ class CommissionSettlementService
                         reason: null,
                         actor: $actor,
                         meta: [],
-                        note: 'تسوية أوتوماتيكية بعد انتهاء نافذة المرتجع المقررة.'
+                        note: __('تسوية أوتوماتيكية بعد انتهاء نافذة المرتجع المقررة.')
                     );
 
                     $this->settleOrder($transitionedOrder);

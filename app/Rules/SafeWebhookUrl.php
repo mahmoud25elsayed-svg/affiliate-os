@@ -19,19 +19,19 @@ class SafeWebhookUrl implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         if (! is_string($value) || trim($value) === '') {
-            $fail('رابط الـ Webhook غير صالح.');
+            $fail(__('رابط الـ Webhook غير صالح.'));
 
             return;
         }
 
         if (! filter_var($value, FILTER_VALIDATE_URL)) {
-            $fail('رابط الـ Webhook ليس رابط إنترنت صحيحاً.');
+            $fail(__('رابط الـ Webhook ليس رابط إنترنت صحيحاً.'));
 
             return;
         }
 
         if (! SsrfProtection::isSafeUrl($value)) {
-            $fail('رابط الـ Webhook غير مسموح به لأسباب أمنية (حظر العناوين المحلية والشبكات الداخلية).');
+            $fail(__('رابط الـ Webhook غير مسموح به لأسباب أمنية (حظر العناوين المحلية والشبكات الداخلية).'));
         }
     }
 }

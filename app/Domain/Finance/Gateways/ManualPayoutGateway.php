@@ -17,7 +17,7 @@ class ManualPayoutGateway implements PayoutGatewayInterface
     {
         return PayoutGatewayResult::successful(
             referenceNumber: $payoutRequest->reference_number ?? ('MANUAL-'.uniqid()),
-            message: 'تم تسجيل التحويل اليدوي بنجاح'
+            message: __('تم تسجيل التحويل اليدوي بنجاح')
         );
     }
 

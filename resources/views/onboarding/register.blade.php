@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تسجيل تاجر جديد | AffiliateOS</title>
+    <title>{{ __('تسجيل تاجر جديد | AffiliateOS') }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -181,8 +181,9 @@
         <div class="card">
             <div class="header">
                 <a href="{{ url('/') }}" class="logo">⚡ AffiliateOS</a>
-                <h1 class="title">سجل متجرك الآن مجاناً</h1>
-                <p class="subtitle">أنشئ متجرك الإلكتروني وبرنامج الأفلييت وابدأ البيع خلال دقيقة واحدة</p>
+                <a href="?lang={{ app()->getLocale() === 'ar' ? 'en' : 'ar' }}" style="display:block;margin-top:.4rem;font-size:.8rem;color:#94a3b8">{{ app()->getLocale() === 'ar' ? 'English' : 'العربية' }}</a>
+                <h1 class="title">{{ __('سجل متجرك الآن مجاناً') }}</h1>
+                <p class="subtitle">{{ __('أنشئ متجرك الإلكتروني وبرنامج الأفلييت وابدأ البيع خلال دقيقة واحدة') }}</p>
             </div>
 
             @if ($errors->any())
@@ -199,17 +200,17 @@
                 @csrf
                 <div class="form-grid">
                     <div class="form-group">
-                        <label for="name" class="form-label">الاسم الكامل</label>
-                        <input type="text" id="name" name="name" class="form-input" value="{{ old('name') }}" placeholder="أحمد محمد" required>
+                        <label for="name" class="form-label">{{ __('الاسم الكامل') }}</label>
+                        <input type="text" id="name" name="name" class="form-input" value="{{ old('name') }}" placeholder="{{ __('أحمد محمد') }}" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="store_name" class="form-label">اسم المتجر</label>
-                        <input type="text" id="store_name" name="store_name" class="form-input" value="{{ old('store_name') }}" placeholder="متجر النخبة" required>
+                        <label for="store_name" class="form-label">{{ __('اسم المتجر') }}</label>
+                        <input type="text" id="store_name" name="store_name" class="form-input" value="{{ old('store_name') }}" placeholder="{{ __('متجر النخبة') }}" required>
                     </div>
 
                     <div class="form-group full-width">
-                        <label for="subdomain" class="form-label">رابط المتجر (النطاق الفرعي بالإنجليزية)</label>
+                        <label for="subdomain" class="form-label">{{ __('رابط المتجر (النطاق الفرعي بالإنجليزية)') }}</label>
                         <div class="subdomain-input-wrap">
                             <input type="text" id="subdomain" name="subdomain" class="form-input subdomain-input" value="{{ old('subdomain') }}" placeholder="el-nokhba" required>
                             <span class="subdomain-suffix">.{{ config('tenancy.root_domain', 'localhost') }}</span>
@@ -242,28 +243,28 @@
                         <label for="phone" class="form-label">{{ __('رقم الموبايل (لإرسال رمز التحقق OTP)') }}</label>
                         <div class="input-group">
                             <input type="tel" id="phone" name="phone" class="form-input" value="{{ old('phone') }}" placeholder="01012345678" required>
-                            <button type="button" id="btnSendOtp" class="btn-otp">إرسال الرمز</button>
+                            <button type="button" id="btnSendOtp" class="btn-otp">{{ __('إرسال الرمز') }}</button>
                         </div>
                         <span id="otpStatus" class="status-badge"></span>
                     </div>
 
                     <div class="form-group full-width">
-                        <label for="otp" class="form-label">رمز التحقق (OTP مكون من 6 أرقام)</label>
+                        <label for="otp" class="form-label">{{ __('رمز التحقق (OTP مكون من 6 أرقام)') }}</label>
                         <input type="text" id="otp" name="otp" class="form-input" placeholder="123456" maxlength="6" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="email" class="form-label">البريد الإلكتروني</label>
+                        <label for="email" class="form-label">{{ __('البريد الإلكتروني') }}</label>
                         <input type="email" id="email" name="email" class="form-input" value="{{ old('email') }}" placeholder="ahmed@example.com" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="password" class="form-label">كلمة المرور (8 خانات على الأقل)</label>
+                        <label for="password" class="form-label">{{ __('كلمة المرور (8 خانات على الأقل)') }}</label>
                         <input type="password" id="password" name="password" class="form-input" placeholder="••••••••" required>
                     </div>
                 </div>
 
-                <button type="submit" class="btn-submit">إنشاء المتجر وتجهيز الحساب ←</button>
+                <button type="submit" class="btn-submit">{{ __('إنشاء المتجر وتجهيز الحساب ←') }}</button>
             </form>
         </div>
     </div>
@@ -308,13 +309,13 @@
         btnSendOtp.addEventListener('click', function() {
             const phone = phoneInput.value.trim();
             if (!phone) {
-                otpStatus.textContent = 'يرجى إدخال رقم الهاتف أولاً';
+                otpStatus.textContent = @js(__('يرجى إدخال رقم الهاتف أولاً'));
                 otpStatus.className = 'status-badge unavailable';
                 return;
             }
 
             btnSendOtp.disabled = true;
-            btnSendOtp.textContent = 'جاري الإرسال...';
+            btnSendOtp.textContent = @js(__('جاري الإرسال...'));
 
             fetch(`{{ route('onboarding.send-otp') }}`, {
                 method: 'POST',
@@ -327,24 +328,24 @@
             .then(r => r.json())
             .then(data => {
                 if (data.success) {
-                    otpStatus.textContent = 'تم إرسال رمز التحقق بنجاح.';
+                    otpStatus.textContent = @js(__('تم إرسال رمز التحقق بنجاح.'));
                     otpStatus.className = 'status-badge available';
                     if (data.code) {
                         document.getElementById('otp').value = data.code;
                     }
                     startCooldown(60);
                 } else {
-                    otpStatus.textContent = data.message || 'فشل إرسال الرمز';
+                    otpStatus.textContent = data.message || @js(__('فشل إرسال الرمز'));
                     otpStatus.className = 'status-badge unavailable';
                     btnSendOtp.disabled = false;
-                    btnSendOtp.textContent = 'إرسال الرمز';
+                    btnSendOtp.textContent = @js(__('إرسال الرمز'));
                 }
             })
             .catch(() => {
-                otpStatus.textContent = 'حدث خطأ في الاتصال';
+                otpStatus.textContent = @js(__('حدث خطأ في الاتصال'));
                 otpStatus.className = 'status-badge unavailable';
                 btnSendOtp.disabled = false;
-                btnSendOtp.textContent = 'إرسال الرمز';
+                btnSendOtp.textContent = @js(__('إرسال الرمز'));
             });
         });
 
@@ -355,9 +356,9 @@
                 if (left <= 0) {
                     clearInterval(timer);
                     btnSendOtp.disabled = false;
-                    btnSendOtp.textContent = 'إعادة إرسال الرمز';
+                    btnSendOtp.textContent = @js(__('إعادة إرسال الرمز'));
                 } else {
-                    btnSendOtp.textContent = `انتظر (${left}) ثانية`;
+                    btnSendOtp.textContent = `{{ __('انتظر') }} (${left}) {{ __('ثانية') }}`;
                 }
             }, 1000);
         }

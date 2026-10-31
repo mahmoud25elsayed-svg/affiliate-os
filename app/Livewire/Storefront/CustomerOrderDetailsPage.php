@@ -37,7 +37,7 @@ class CustomerOrderDetailsPage extends Component
             ->first();
 
         if (! $order) {
-            abort(404, 'الطلب غير موجود.');
+            abort(404, __('الطلب غير موجود.'));
         }
 
         // Authorize access
@@ -48,7 +48,7 @@ class CustomerOrderDetailsPage extends Component
             || ($customer->phone_hash && $phoneHash === $customer->phone_hash);
 
         if (! $isOwner) {
-            abort(403, 'غير مصرح لك بعرض هذا الطلب.');
+            abort(403, __('غير مصرح لك بعرض هذا الطلب.'));
         }
 
         return $order;
@@ -65,7 +65,7 @@ class CustomerOrderDetailsPage extends Component
         return view('livewire.storefront.customer-order-details-page', [
             'order' => $order,
             'events' => $events,
-            'pageTitle' => 'تفاصيل الطلب '.$this->reference,
+            'pageTitle' => __('تفاصيل الطلب ').$this->reference,
         ]);
     }
 }

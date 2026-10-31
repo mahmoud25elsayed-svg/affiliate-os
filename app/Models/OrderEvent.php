@@ -96,10 +96,10 @@ class OrderEvent extends Model
         $name = $this->actor_name ?? $this->actor_id;
 
         return match ($this->actor_type) {
-            'system' => 'النظام الآلي',
-            'staff' => $name !== null ? "الموظف ({$name})" : 'موظف المتجر',
-            'customer' => $name !== null ? "العميل ({$name})" : 'العميل',
-            'affiliate' => $name !== null ? "المسوق ({$name})" : 'المسوق',
+            'system' => __('النظام الآلي'),
+            'staff' => $name !== null ? __('الموظف (:name)', ['name' => $name]) : __('موظف المتجر'),
+            'customer' => $name !== null ? __('العميل (:name)', ['name' => $name]) : __('العميل'),
+            'affiliate' => $name !== null ? __('المسوق (:name)', ['name' => $name]) : __('المسوق'),
             default => $this->actor_type,
         };
     }

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import AppLayout from '../../Layouts/AppLayout';
 import { formatCurrency } from '../../utils/format';
+import { t } from '@/i18n';
 import {
     BarChart3,
     TrendingUp,
@@ -54,43 +55,43 @@ export default function Analytics({ overview, byProduct, byGovernorate, bySource
     const [tab, setTab] = useState<'product' | 'governorate' | 'source'>('product');
 
     return (
-        <AppLayout title="التحليلات والمبيعات">
-            <Head title="التحليلات - تطبيق المسوق" />
+        <AppLayout title={t('التحليلات والمبيعات')}>
+            <Head title={t('التحليلات - تطبيق المسوق')} />
 
             <div className="space-y-4">
                 {/* Header */}
                 <div>
                     <h1 className="text-base font-bold text-white flex items-center gap-1.5">
                         <BarChart3 className="w-5 h-5 text-emerald-400" />
-                        <span>تحليلات المبيعات والأداء</span>
+                        <span>{t('تحليلات المبيعات والأداء')}</span>
                     </h1>
                     <p className="text-xs text-slate-400">
-                        تحليل تفصيلي لمعدلات التسليم حسب المنتج والمحافظة ومصدر الحملات.
+                        {t('تحليل تفصيلي لمعدلات التسليم حسب المنتج والمحافظة ومصدر الحملات.')}
                     </p>
                 </div>
 
                 {/* Overview KPIs Cards */}
                 <div className="p-4 rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-950/40 to-slate-900 border border-indigo-500/20 shadow-xl space-y-3">
-                    <span className="text-xs text-slate-400">إجمالي الأرباح المحققة من الطلبات المسلمة</span>
+                    <span className="text-xs text-slate-400">{t('إجمالي الأرباح المحققة من الطلبات المسلمة')}</span>
                     <div className="text-3xl font-black text-emerald-300 font-mono">
                         +{formatCurrency(overview.total_profit_minor)}
                     </div>
 
                     <div className="grid grid-cols-3 gap-2 pt-3 border-t border-slate-800 text-center">
                         <div className="p-2 rounded-xl bg-slate-800/40">
-                            <span className="text-[10px] text-slate-400 block">إجمالي الطلبات</span>
+                            <span className="text-[10px] text-slate-400 block">{t('إجمالي الطلبات')}</span>
                             <span className="text-sm font-bold text-white font-mono mt-0.5 block">
                                 {overview.total_orders}
                             </span>
                         </div>
                         <div className="p-2 rounded-xl bg-slate-800/40">
-                            <span className="text-[10px] text-emerald-400 block">نسبة التسليم</span>
+                            <span className="text-[10px] text-emerald-400 block">{t('نسبة التسليم')}</span>
                             <span className="text-sm font-bold text-emerald-400 font-mono mt-0.5 block">
                                 {overview.delivery_rate}%
                             </span>
                         </div>
                         <div className="p-2 rounded-xl bg-slate-800/40">
-                            <span className="text-[10px] text-rose-400 block">نسبة الارتجاع</span>
+                            <span className="text-[10px] text-rose-400 block">{t('نسبة الارتجاع')}</span>
                             <span className="text-sm font-bold text-rose-400 font-mono mt-0.5 block">
                                 {overview.return_rate}%
                             </span>
@@ -108,7 +109,7 @@ export default function Analytics({ overview, byProduct, byGovernorate, bySource
                         }`}
                     >
                         <Package className="w-3.5 h-3.5" />
-                        <span>حسب المنتج</span>
+                        <span>{t('حسب المنتج')}</span>
                     </button>
                     <button
                         type="button"
@@ -118,7 +119,7 @@ export default function Analytics({ overview, byProduct, byGovernorate, bySource
                         }`}
                     >
                         <MapPin className="w-3.5 h-3.5" />
-                        <span>حسب المحافظة</span>
+                        <span>{t('حسب المحافظة')}</span>
                     </button>
                     <button
                         type="button"
@@ -128,7 +129,7 @@ export default function Analytics({ overview, byProduct, byGovernorate, bySource
                         }`}
                     >
                         <Share2 className="w-3.5 h-3.5" />
-                        <span>المصدر</span>
+                        <span>{t('المصدر')}</span>
                     </button>
                 </div>
 
@@ -137,7 +138,7 @@ export default function Analytics({ overview, byProduct, byGovernorate, bySource
                     <div className="space-y-2">
                         {byProduct.length === 0 ? (
                             <div className="p-6 rounded-2xl bg-slate-900/50 border border-slate-800 text-center text-xs text-slate-400">
-                                لا توجد بيانات مبيعات للمنتجات بعد.
+                                {t('لا توجد بيانات مبيعات للمنتجات بعد.')}
                             </div>
                         ) : (
                             <div className="space-y-2">
@@ -155,15 +156,15 @@ export default function Analytics({ overview, byProduct, byGovernorate, bySource
 
                                         <div className="grid grid-cols-3 gap-2 text-center text-[11px] pt-1 border-t border-slate-800/80">
                                             <div className="text-slate-400">
-                                                <span>طلبات: </span>
+                                                <span>{t('طلبات:')} </span>
                                                 <span className="font-mono text-white font-bold">{p.orders_count}</span>
                                             </div>
                                             <div className="text-emerald-400">
-                                                <span>تسليم: </span>
+                                                <span>{t('تسليم:')} </span>
                                                 <span className="font-mono font-bold">{p.delivery_rate}%</span>
                                             </div>
                                             <div className="text-rose-400">
-                                                <span>ارتجاع: </span>
+                                                <span>{t('ارتجاع:')} </span>
                                                 <span className="font-mono font-bold">{p.return_rate}%</span>
                                             </div>
                                         </div>
@@ -179,7 +180,7 @@ export default function Analytics({ overview, byProduct, byGovernorate, bySource
                     <div className="space-y-2">
                         {byGovernorate.length === 0 ? (
                             <div className="p-6 rounded-2xl bg-slate-900/50 border border-slate-800 text-center text-xs text-slate-400">
-                                لا توجد طلبات جغرافية مسجلة بعد.
+                                {t('لا توجد طلبات جغرافية مسجلة بعد.')}
                             </div>
                         ) : (
                             <div className="space-y-2">
@@ -191,7 +192,7 @@ export default function Analytics({ overview, byProduct, byGovernorate, bySource
                                         <div>
                                             <span className="font-bold text-white block">{g.governorate}</span>
                                             <span className="text-[10px] text-slate-500">
-                                                {g.orders_count} طلب • {g.delivered_count} مسلّم
+                                                {g.orders_count} {t('طلب •')} {g.delivered_count} {t('مسلّم')}
                                             </span>
                                         </div>
 
@@ -199,7 +200,7 @@ export default function Analytics({ overview, byProduct, byGovernorate, bySource
                                             <span className="text-emerald-400 font-mono font-bold text-sm block">
                                                 {g.delivery_rate}%
                                             </span>
-                                            <span className="text-[10px] text-slate-400 block">نسبة التسليم</span>
+                                            <span className="text-[10px] text-slate-400 block">{t('نسبة التسليم')}</span>
                                         </div>
                                     </div>
                                 ))}
@@ -223,7 +224,7 @@ export default function Analytics({ overview, byProduct, byGovernorate, bySource
                                         </div>
                                         <div>
                                             <span className="font-bold text-white block">{s.source}</span>
-                                            <span className="text-[10px] text-slate-500">{s.orders_count} طلب مسجل</span>
+                                            <span className="text-[10px] text-slate-500">{s.orders_count} {t('طلب مسجل')}</span>
                                         </div>
                                     </div>
 
@@ -231,7 +232,7 @@ export default function Analytics({ overview, byProduct, byGovernorate, bySource
                                         <span className="text-indigo-400 font-mono font-bold text-sm block">
                                             {s.delivery_rate}%
                                         </span>
-                                        <span className="text-[10px] text-slate-400 block">معدل التسليم</span>
+                                        <span className="text-[10px] text-slate-400 block">{t('معدل التسليم')}</span>
                                     </div>
                                 </div>
                             ))}

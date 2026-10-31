@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تفعيل المصادقة الثنائية (2FA) | AffiliateOS</title>
+    <title>{{ __('تفعيل المصادقة الثنائية (2FA) | AffiliateOS') }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -87,26 +87,26 @@
 <body>
     <div class="card">
         <div class="header">
-            <h1 class="title">تفعيل المصادقة الثنائية (2FA)</h1>
-            <p class="subtitle">المصادقة الثنائية إلزامية لمديري المنصة لضمان أمان النظام وحماية الحسابات.</p>
+            <h1 class="title">{{ __('تفعيل المصادقة الثنائية (2FA)') }}</h1>
+            <p class="subtitle">{{ __('المصادقة الثنائية إلزامية لمديري المنصة لضمان أمان النظام وحماية الحسابات.') }}</p>
         </div>
 
         <div class="secret-box">
-            <div class="secret-label">أدخل المفتاح السري يدويًا في تطبيق المصادقة (Google Authenticator / Authy):</div>
+            <div class="secret-label">{{ __('أدخل المفتاح السري يدويًا في تطبيق المصادقة (Google Authenticator / Authy):') }}</div>
             <div class="secret-key">{{ $secret }}</div>
         </div>
 
         <form action="{{ route('platform.2fa.confirm') }}" method="POST">
             @csrf
             <div class="form-group">
-                <label for="code" class="form-label">رمز التحقق المكون من 6 أرقام</label>
+                <label for="code" class="form-label">{{ __('رمز التحقق المكون من 6 أرقام') }}</label>
                 <input type="text" id="code" name="code" class="form-input" placeholder="000000" maxlength="6" autofocus required>
                 @error('code')
                     <div class="error-message">{{ $message }}</div>
                 @enderror
             </div>
 
-            <button type="submit" class="btn-submit">تأكيد التفعيل والدخول</button>
+            <button type="submit" class="btn-submit">{{ __('تأكيد التفعيل والدخول') }}</button>
         </form>
     </div>
 </body>

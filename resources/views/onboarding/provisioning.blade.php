@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>جاري تجهيز متجرك... | AffiliateOS</title>
+    <title>{{ __('جاري تجهيز متجرك... | AffiliateOS') }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -112,8 +112,8 @@
 <body>
     <div class="card">
         <div class="spinner" id="mainSpinner"></div>
-        <h1 class="title">جاري تجهيز متجرك...</h1>
-        <p class="subtitle">نحن نقوم الآن بإنشاء المتجر وتعيين كافة الإعدادات الافتراضية لمتجر <strong style="color: #fff;">{{ $tenant->name }}</strong>.</p>
+        <h1 class="title">{{ __('جاري تجهيز متجرك...') }}</h1>
+        <p class="subtitle">{{ __('نحن نقوم الآن بإنشاء المتجر وتعيين كافة الإعدادات الافتراضية لمتجر') }} <strong style="color: #fff;">{{ $tenant->name }}</strong>.</p>
 
         <div class="progress-bar-wrap">
             <div class="progress-bar"></div>
@@ -122,23 +122,23 @@
         <div class="steps">
             <div class="step done">
                 <span class="step-icon">✓</span>
-                <span>تسجيل بيانات التاجر وحجز النطاق الفرعي</span>
+                <span>{{ __('تسجيل بيانات التاجر وحجز النطاق الفرعي') }}</span>
             </div>
             <div class="step done">
                 <span class="step-icon">✓</span>
-                <span>تهيئة قاعدة البيانات والعزل الرقمي التام</span>
+                <span>{{ __('تهيئة قاعدة البيانات والعزل الرقمي التام') }}</span>
             </div>
             <div class="step" id="stepLunar">
                 <span class="step-icon" id="iconLunar">⚡</span>
-                <span>تجهيز العملة المصرية EGP وقنوات البيع والكتالوج</span>
+                <span>{{ __('تجهيز عملة المتجر وقنوات البيع والكتالوج') }}</span>
             </div>
             <div class="step" id="stepRoles">
                 <span class="step-icon" id="iconRoles">🔒</span>
-                <span>تفعيل صلاحيات المالك ونظام الأمان المتقدم</span>
+                <span>{{ __('تفعيل صلاحيات المالك ونظام الأمان المتقدم') }}</span>
             </div>
         </div>
 
-        <p style="font-size: 0.85rem; color: var(--text-muted);">سيتم توجيهك تلقائياً إلى لوحة التحكم فور الانتهاء...</p>
+        <p style="font-size: 0.85rem; color: var(--text-muted);">{{ __('سيتم توجيهك تلقائياً إلى لوحة التحكم فور الانتهاء...') }}</p>
     </div>
 
     <script>

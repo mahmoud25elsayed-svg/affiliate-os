@@ -36,7 +36,7 @@ class WalletPaymentService
         int $requestedAmountMinor
     ): CustomerWalletTransaction {
         if ($requestedAmountMinor <= 0) {
-            throw new InvalidArgumentException('مبلغ الخصم من المحفظة يجب أن يكون أكبر من الصفر.');
+            throw new InvalidArgumentException(__('مبلغ الخصم من المحفظة يجب أن يكون أكبر من الصفر.'));
         }
 
         $customerId = is_int($customer) ? $customer : (int) $customer->id;
@@ -44,7 +44,7 @@ class WalletPaymentService
 
         if ($requestedAmountMinor > $availableBalance) {
             throw new DomainException(sprintf(
-                'رصيد المحفظة غير كافٍ. المتاح: %s '.Money::symbol().'، المطلوب: %s '.Money::symbol(),
+                __('رصيد المحفظة غير كافٍ. المتاح: %s ').Money::symbol().__('، المطلوب: %s ').Money::symbol(),
                 number_format($availableBalance / 100, 2),
                 number_format($requestedAmountMinor / 100, 2)
             ));
@@ -63,7 +63,7 @@ class WalletPaymentService
                 amountMinor: $payableMinor,
                 type: CustomerWalletTransaction::TYPE_PURCHASE,
                 referenceId: (string) $order->id,
-                notes: "سداد قيمة الطلب #{$order->reference} من رصيد المحفظة"
+                notes: __('سداد قيمة الطلب #:reference من رصيد المحفظة', ['reference' => $order->reference])
             );
 
             // Update order price snapshot
@@ -89,7 +89,7 @@ class WalletPaymentService
                 $entryData = new EntryData(
                     type: 'wallet_purchase_payment',
                     idempotencyKey: "wallet_payment_order_{$order->id}_{$tx->id}",
-                    description: "سداد من محفظة العميل للطلب #{$order->reference} بمبلغ ".Money::show($payableMinor),
+                    description: __('سداد من محفظة العميل للطلب #:reference بمبلغ ', ['reference' => $order->reference]).Money::show($payableMinor),
                     lines: [
                         new LedgerLineData(account: $revenueAccount, amountMinor: $payableMinor),
                         new LedgerLineData(account: $walletAccount, amountMinor: -$payableMinor),

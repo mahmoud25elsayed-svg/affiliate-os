@@ -20,16 +20,16 @@ enum ShipmentStatus: string
     public function label(): string
     {
         return match ($this) {
-            self::DRAFT => 'مسودة',
-            self::CREATED => 'تم تسجيل الشحنة وإصدار البوليصة',
-            self::PICKED_UP => 'تم الاستلام من المخزن',
-            self::IN_TRANSIT => 'في الطريق لمركز التوزيع',
-            self::OUT_FOR_DELIVERY => 'خرج للتسليم مع المندوب',
-            self::DELIVERED => 'تم التسليم والتحصيل بنجاح',
-            self::FAILED_ATTEMPT => 'تعذر التسليم (محاولة)',
-            self::RETURNING => 'قيد الإرجاع للمتجر',
-            self::RETURNED => 'مرتجع مستلم بالمخزن',
-            self::CANCELLED => 'شحنة ملغاة',
+            self::DRAFT => __('مسودة'),
+            self::CREATED => __('تم تسجيل الشحنة وإصدار البوليصة'),
+            self::PICKED_UP => __('تم الاستلام من المخزن'),
+            self::IN_TRANSIT => __('في الطريق لمركز التوزيع'),
+            self::OUT_FOR_DELIVERY => __('خرج للتسليم مع المندوب'),
+            self::DELIVERED => __('تم التسليم والتحصيل بنجاح'),
+            self::FAILED_ATTEMPT => __('تعذر التسليم (محاولة)'),
+            self::RETURNING => __('قيد الإرجاع للمتجر'),
+            self::RETURNED => __('مرتجع مستلم بالمخزن'),
+            self::CANCELLED => __('شحنة ملغاة'),
         };
     }
 

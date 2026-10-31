@@ -15,7 +15,7 @@ class ListCoupons extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make()->label('إضافة كوبون جديد'),
+            CreateAction::make()->label(__('إضافة كوبون جديد')),
         ];
     }
 }

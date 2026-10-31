@@ -108,11 +108,11 @@ class TicketMessage extends Model
     public function getSenderName(): string
     {
         return match ($this->sender_type) {
-            self::SENDER_STAFF => $this->user ? $this->user->name : 'فريق الدعم الفني',
-            self::SENDER_AFFILIATE => $this->affiliate ? $this->affiliate->name : 'المسوق',
-            self::SENDER_CUSTOMER => $this->customer ? $this->customer->name : 'العميل',
-            self::SENDER_PLATFORM_ADMIN => 'إدارة المنصة',
-            default => 'النظام التلقائي',
+            self::SENDER_STAFF => $this->user ? $this->user->name : __('فريق الدعم الفني'),
+            self::SENDER_AFFILIATE => $this->affiliate ? $this->affiliate->name : __('المسوق'),
+            self::SENDER_CUSTOMER => $this->customer ? $this->customer->name : __('العميل'),
+            self::SENDER_PLATFORM_ADMIN => __('إدارة المنصة'),
+            default => __('النظام التلقائي'),
         };
     }
 

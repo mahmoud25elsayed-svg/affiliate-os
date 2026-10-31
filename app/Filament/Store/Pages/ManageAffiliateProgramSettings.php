@@ -7,6 +7,7 @@ namespace App\Filament\Store\Pages;
 use App\Domain\Affiliate\Settings\AffiliateProgramSettings;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Illuminate\Contracts\Support\Htmlable;
 
 class ManageAffiliateProgramSettings extends Page
 {
@@ -14,11 +15,24 @@ class ManageAffiliateProgramSettings extends Page
 
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-adjustments-horizontal';
 
-    protected static ?string $navigationLabel = 'إعدادات برنامج المسوقين';
+    public static function getNavigationLabel(): string
+    {
 
-    protected static ?string $title = 'إعدادات وقواعد برنامج الأفلييت';
+        return __('إعدادات برنامج المسوقين');
 
-    protected static \UnitEnum|string|null $navigationGroup = 'برنامج الأفلييت';
+    }
+
+    public function getTitle(): string|Htmlable
+    {
+        return __('إعدادات وقواعد برنامج الأفلييت');
+    }
+
+    public static function getNavigationGroup(): string|\UnitEnum|null
+    {
+
+        return __('برنامج الأفلييت');
+
+    }
 
     protected static ?int $navigationSort = 2;
 
@@ -125,7 +139,7 @@ class ManageAffiliateProgramSettings extends Page
         $settings->save();
 
         Notification::make()
-            ->title('تم حفظ إعدادات برنامج المسوقين بنجاح')
+            ->title(__('تم حفظ إعدادات برنامج المسوقين بنجاح'))
             ->success()
             ->send();
     }

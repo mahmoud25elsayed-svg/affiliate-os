@@ -18,6 +18,7 @@ use App\Domain\Tenancy\Services\SystemDnsResolver;
 use App\Domain\Tracking\Listeners\TrackOrderDeliveredConversionListener;
 use App\Http\Middleware\AbortUnlessLunarHubEnabled;
 use App\Http\Middleware\InitializeTenancyForLivewire;
+use App\Http\Middleware\SetLocale;
 use App\Models\Affiliate;
 use App\Models\TrackingLink;
 use App\Models\WholesalePrice;
@@ -82,7 +83,7 @@ class AppServiceProvider extends ServiceProvider
     {
         // Storefront Livewire components need the tenant of the domain they were rendered on.
         Livewire::setUpdateRoute(fn ($handle) => Route::post('/livewire/update', $handle)
-            ->middleware(['web', InitializeTenancyForLivewire::class]));
+            ->middleware(['web', InitializeTenancyForLivewire::class, SetLocale::class]));
 
         RateLimiter::for('merchant-registration', function (Request $request) {
             return Limit::perHour(5)->by($request->ip() ?? '127.0.0.1');

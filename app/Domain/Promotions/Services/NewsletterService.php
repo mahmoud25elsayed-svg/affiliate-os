@@ -20,7 +20,7 @@ class NewsletterService
 
         if (! filter_var($normalizedEmail, FILTER_VALIDATE_EMAIL)) {
             throw ValidationException::withMessages([
-                'email' => 'يرجى إدخال بريد إلكتروني صالح.',
+                'email' => __('يرجى إدخال بريد إلكتروني صالح.'),
             ]);
         }
 
@@ -33,7 +33,7 @@ class NewsletterService
                 return [
                     'success' => true,
                     'already_subscribed' => true,
-                    'message' => 'أنت مشترك بالفعل في نشرتنا البريدية!',
+                    'message' => __('أنت مشترك بالفعل في نشرتنا البريدية!'),
                     'subscriber' => $existing,
                 ];
             }
@@ -49,7 +49,7 @@ class NewsletterService
             return [
                 'success' => true,
                 'already_subscribed' => false,
-                'message' => 'تمت إعادة تفعيل اشتراكك في النشرة البريدية بنجاح!',
+                'message' => __('تمت إعادة تفعيل اشتراكك في النشرة البريدية بنجاح!'),
                 'subscriber' => $existing,
             ];
         }
@@ -66,7 +66,7 @@ class NewsletterService
         return [
             'success' => true,
             'already_subscribed' => false,
-            'message' => 'تم اشتراكك بنجاح في النشرة البريدية!',
+            'message' => __('تم اشتراكك بنجاح في النشرة البريدية!'),
             'subscriber' => $subscriber,
         ];
     }

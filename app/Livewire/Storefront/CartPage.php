@@ -64,7 +64,7 @@ class CartPage extends Component
             'subtotalMinor' => $subtotalMinor,
             'subtotalDecimal' => number_format($subtotalMinor / 100, 2),
         ])->layout('layouts.storefront', [
-            'title' => 'سلة المشتريات',
+            'title' => __('سلة المشتريات'),
         ]);
     }
 }

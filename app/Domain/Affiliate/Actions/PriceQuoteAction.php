@@ -34,13 +34,13 @@ class PriceQuoteAction
         int $governorateId
     ): PriceQuoteResult {
         if ($quantity <= 0) {
-            throw new DomainException('يجب أن تكون الكمية المطلوبة قطعة واحدة على الأقل.');
+            throw new DomainException(__('يجب أن تكون الكمية المطلوبة قطعة واحدة على الأقل.'));
         }
 
         /** @var WholesalePrice|null $wholesalePrice */
         $wholesalePrice = $variant->wholesalePrice ?? WholesalePrice::query()->where('product_variant_id', $variant->id)->first();
         if (! $wholesalePrice instanceof WholesalePrice || ! $wholesalePrice->isActive()) {
-            throw new DomainException('هذا المنتج غير متاح للطلب بسعر الجملة حالياً.');
+            throw new DomainException(__('هذا المنتج غير متاح للطلب بسعر الجملة حالياً.'));
         }
 
         $wholesaleUnitMinor = (int) $wholesalePrice->wholesale_price_minor;
@@ -80,7 +80,7 @@ class PriceQuoteAction
             $maxFormatted = number_format($effectiveMaxUnitMinor / 100, 2);
 
             throw new DomainException(
-                "سعر البيع المطلوب ({$sellingFormatted} ".Money::symbol().") خارج النطاق المسموح به لهذا المنتج. الحد الأدنى: {$minFormatted} ".Money::symbol()."، والحد الأقصى: {$maxFormatted} ".Money::symbol().'.'
+                __('سعر البيع المطلوب (:selling_formatted ', ['selling_formatted' => $sellingFormatted]).Money::symbol().__(') خارج النطاق المسموح به لهذا المنتج. الحد الأدنى: :min_formatted ', ['min_formatted' => $minFormatted]).Money::symbol().__('، والحد الأقصى: :max_formatted ', ['max_formatted' => $maxFormatted]).Money::symbol().'.'
             );
         }
 
@@ -103,24 +103,24 @@ class PriceQuoteAction
 
         // Warning: Low margin (< 10% markup over wholesale)
         if ($wholesaleUnitMinor > 0 && ($affiliateUnitProfitMinor / $wholesaleUnitMinor) < 0.10) {
-            $warnings[] = 'WARNING_LOW_MARGIN: هامش الربح المحدد منخفض جداً وقريب من سعر التكلفة.';
+            $warnings[] = __('WARNING_LOW_MARGIN: هامش الربح المحدد منخفض جداً وقريب من سعر التكلفة.');
         }
 
         // Warning: Low stock
         $stock = (int) ($variant->stock ?? 0);
         if ($stock > 0 && $stock <= 5) {
-            $warnings[] = "WARNING_LOW_STOCK: المخزون المتبقي لهذا المنتج منخفض جداً ({$stock} قطع فقط).";
+            $warnings[] = __('WARNING_LOW_STOCK: المخزون المتبقي لهذا المنتج منخفض جداً (:stock قطع فقط).', ['stock' => $stock]);
         }
 
         // Warning: High return rate in governorate
         $highReturn = $this->isGovernorateHighRisk($governorateId);
         if ($highReturn) {
-            $warnings[] = 'WARNING_HIGH_RETURN_REGION: نسبة الارتجاع في هذه المحافظة مرتفعة تاريخياً.';
+            $warnings[] = __('WARNING_HIGH_RETURN_REGION: نسبة الارتجاع في هذه المحافظة مرتفعة تاريخياً.');
         }
 
         /** @var Product|null $product */
         $product = $variant->product;
-        $productName = $product instanceof Product ? ($product->translateAttribute('name') ?? 'منتج') : 'منتج';
+        $productName = $product instanceof Product ? ($product->translateAttribute('name') ?? __('منتج')) : __('منتج');
         $sku = $variant->sku ?? 'SKU-'.$variant->id;
 
         return new PriceQuoteResult(

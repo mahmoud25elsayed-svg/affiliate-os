@@ -10,10 +10,10 @@
             
             <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
                 <a href="{{ route('platform.marketing.home') }}" class="btn btn-secondary">
-                    ← العودة للصفحة الرئيسية
+                    {{ __('← العودة للصفحة الرئيسية') }}
                 </a>
                 <a href="{{ route('onboarding.register') }}" class="btn btn-primary">
-                    ابدأ تجربتك المجانية الآن
+                    {{ __('ابدأ تجربتك المجانية الآن') }}
                 </a>
             </div>
         </div>

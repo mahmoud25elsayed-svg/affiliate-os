@@ -17,6 +17,7 @@ import {
     KeyRound,
 } from 'lucide-react';
 import { AffiliateUser } from '../../types/affiliate';
+import { t } from '@/i18n';
 
 interface Props {
     affiliate: AffiliateUser;
@@ -88,13 +89,13 @@ export default function Profile({ affiliate, settings }: Props) {
     const getKycBadge = () => {
         switch (affiliate.kyc_status) {
             case 'approved':
-                return { text: 'موثق ومعتمد', color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20', icon: CheckCircle2 };
+                return { text: t('موثق ومعتمد'), color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20', icon: CheckCircle2 };
             case 'pending':
-                return { text: 'قيد المراجعة', color: 'bg-amber-500/10 text-amber-400 border-amber-500/20', icon: Clock };
+                return { text: t('قيد المراجعة'), color: 'bg-amber-500/10 text-amber-400 border-amber-500/20', icon: Clock };
             case 'rejected':
-                return { text: 'مرفوض', color: 'bg-rose-500/10 text-rose-400 border-rose-500/20', icon: XCircle };
+                return { text: t('مرفوض'), color: 'bg-rose-500/10 text-rose-400 border-rose-500/20', icon: XCircle };
             default:
-                return { text: 'غير موثق', color: 'bg-slate-700 text-slate-300 border-slate-600', icon: AlertCircle };
+                return { text: t('غير موثق'), color: 'bg-slate-700 text-slate-300 border-slate-600', icon: AlertCircle };
         }
     };
 
@@ -102,18 +103,18 @@ export default function Profile({ affiliate, settings }: Props) {
     const KycIcon = kycBadge.icon;
 
     return (
-        <AppLayout title="الملف الشخصي و KYC">
-            <Head title="الملف الشخصي - تطبيق المسوق" />
+        <AppLayout title={t('الملف الشخصي و KYC')}>
+            <Head title={t('الملف الشخصي - تطبيق المسوق')} />
 
             <div className="space-y-4">
                 {/* Header */}
                 <div>
                     <h1 className="text-base font-bold text-white flex items-center gap-1.5">
                         <User className="w-5 h-5 text-indigo-400" />
-                        <span>الملف الشخصي وإعدادات الأمان</span>
+                        <span>{t('الملف الشخصي وإعدادات الأمان')}</span>
                     </h1>
                     <p className="text-xs text-slate-400">
-                        بيانات حسابك، توثيق الهوية، وطرق استلام الأرباح.
+                        {t('بيانات حسابك، توثيق الهوية، وطرق استلام الأرباح.')}
                     </p>
                 </div>
 
@@ -127,7 +128,7 @@ export default function Profile({ affiliate, settings }: Props) {
                             <div>
                                 <h2 className="text-sm font-bold text-white">{affiliate.name}</h2>
                                 <span className="font-mono text-xs text-indigo-400 font-semibold">
-                                    كود المسوق: {affiliate.code}
+                                    {t('كود المسوق:')} {affiliate.code}
                                 </span>
                             </div>
                         </div>
@@ -145,7 +146,7 @@ export default function Profile({ affiliate, settings }: Props) {
                         </div>
                         <div className="flex items-center gap-1.5">
                             <Mail className="w-3.5 h-3.5 text-slate-500" />
-                            <span className="truncate">{affiliate.email || 'لا يوجد بريد'}</span>
+                            <span className="truncate">{affiliate.email || t('لا يوجد بريد')}</span>
                         </div>
                     </div>
                 </div>
@@ -155,7 +156,7 @@ export default function Profile({ affiliate, settings }: Props) {
                     <div className="flex items-center justify-between">
                         <h3 className="text-xs font-bold text-white flex items-center gap-1.5">
                             <Shield className="w-4 h-4 text-emerald-400" />
-                            <span>توثيق الهوية (KYC)</span>
+                            <span>{t('توثيق الهوية (KYC)')}</span>
                         </h3>
                         <span className={`text-[10px] px-2 py-0.5 rounded-full border ${kycBadge.color}`}>
                             {kycBadge.text}
@@ -165,23 +166,23 @@ export default function Profile({ affiliate, settings }: Props) {
                     {affiliate.kyc_status === 'approved' ? (
                         <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs flex items-center gap-2">
                             <CheckCircle2 className="w-4 h-4 shrink-0" />
-                            <span>تم توثيق هويتك بنجاح وبإمكانك سحب أرباحك في أي وقت.</span>
+                            <span>{t('تم توثيق هويتك بنجاح وبإمكانك سحب أرباحك في أي وقت.')}</span>
                         </div>
                     ) : affiliate.kyc_status === 'pending' ? (
                         <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs flex items-center gap-2">
                             <Clock className="w-4 h-4 shrink-0" />
-                            <span>وثائق الهوية قيد المراجعة والتدقيق من إدارة المتجر.</span>
+                            <span>{t('وثائق الهوية قيد المراجعة والتدقيق من إدارة المتجر.')}</span>
                         </div>
                     ) : (
                         <form onSubmit={handleKycSubmit} className="space-y-3 pt-1">
                             {affiliate.kyc_rejection_reason && (
                                 <div className="p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs">
-                                    سبب رفض الوثائق السابقة: {affiliate.kyc_rejection_reason}
+                                    {t('سبب رفض الوثائق السابقة:')} {affiliate.kyc_rejection_reason}
                                 </div>
                             )}
 
                             <div>
-                                <label className="block text-[11px] text-slate-400 mb-1">الرقم القومي (14 رقم)</label>
+                                <label className="block text-[11px] text-slate-400 mb-1">{t('الرقم القومي (14 رقم)')}</label>
                                 <input
                                     type="text"
                                     required
@@ -199,7 +200,7 @@ export default function Profile({ affiliate, settings }: Props) {
 
                             <div className="grid grid-cols-2 gap-2">
                                 <div>
-                                    <label className="block text-[11px] text-slate-400 mb-1">صورة وجه البطاقة</label>
+                                    <label className="block text-[11px] text-slate-400 mb-1">{t('صورة وجه البطاقة')}</label>
                                     <input
                                         type="file"
                                         required
@@ -213,7 +214,7 @@ export default function Profile({ affiliate, settings }: Props) {
                                 </div>
 
                                 <div>
-                                    <label className="block text-[11px] text-slate-400 mb-1">صورة ظهر البطاقة</label>
+                                    <label className="block text-[11px] text-slate-400 mb-1">{t('صورة ظهر البطاقة')}</label>
                                     <input
                                         type="file"
                                         required
@@ -232,7 +233,7 @@ export default function Profile({ affiliate, settings }: Props) {
                                 disabled={kycForm.processing}
                                 className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md shadow-emerald-600/20 disabled:opacity-50 transition-colors"
                             >
-                                {kycForm.processing ? 'جاري الرفع...' : 'رفع وثائق الهوية للتوثيق'}
+                                {kycForm.processing ? t('جاري الرفع...') : t('رفع وثائق الهوية للتوثيق')}
                             </button>
                         </form>
                     )}
@@ -243,28 +244,28 @@ export default function Profile({ affiliate, settings }: Props) {
                     <div className="flex items-center justify-between">
                         <h3 className="text-xs font-bold text-white flex items-center gap-1.5">
                             <CreditCard className="w-4 h-4 text-indigo-400" />
-                            <span>بيانات استلام الأرباح</span>
+                            <span>{t('بيانات استلام الأرباح')}</span>
                         </h3>
                     </div>
 
                     <form onSubmit={handlePayoutSubmit} className="space-y-3">
                         <div>
-                            <label className="block text-[11px] text-slate-400 mb-1">طريقة الاستلام</label>
+                            <label className="block text-[11px] text-slate-400 mb-1">{t('طريقة الاستلام')}</label>
                             <select
                                 value={payoutForm.data.payout_method}
                                 onChange={(e) => payoutForm.setData('payout_method', e.target.value as NonNullable<AffiliateUser['payout_method']>)}
                                 className="w-full h-10 px-3 rounded-xl bg-slate-800 border border-slate-700 text-xs text-white focus:outline-none focus:border-indigo-500"
                             >
-                                <option value="wallet_phone">محفظة كاش (فودافون كاش / أورنج / وي)</option>
-                                <option value="instapay">إنستاباي (InstaPay)</option>
-                                <option value="bank_account">تحويل بنكي مباشر</option>
+                                <option value="wallet_phone">{t('محفظة كاش (فودافون كاش / أورنج / وي)')}</option>
+                                <option value="instapay">{t('إنستاباي (InstaPay)')}</option>
+                                <option value="bank_account">{t('تحويل بنكي مباشر')}</option>
                             </select>
                         </div>
 
                         {payoutForm.data.payout_method === 'wallet_phone' && (
                             <div className="space-y-2">
                                 <div>
-                                    <label className="block text-[11px] text-slate-400 mb-1">رقم هاتف المحفظة</label>
+                                    <label className="block text-[11px] text-slate-400 mb-1">{t('رقم هاتف المحفظة')}</label>
                                     <input
                                         type="tel"
                                         dir="ltr"
@@ -278,7 +279,7 @@ export default function Profile({ affiliate, settings }: Props) {
 
                         {payoutForm.data.payout_method === 'instapay' && (
                             <div>
-                                <label className="block text-[11px] text-slate-400 mb-1">معرف إنستاباي (IPA Handle)</label>
+                                <label className="block text-[11px] text-slate-400 mb-1">{t('معرف إنستاباي (IPA Handle)')}</label>
                                 <input
                                     type="text"
                                     dir="ltr"
@@ -293,7 +294,7 @@ export default function Profile({ affiliate, settings }: Props) {
                         {payoutForm.data.payout_method === 'bank_account' && (
                             <div className="space-y-2">
                                 <div>
-                                    <label className="block text-[11px] text-slate-400 mb-1">اسم البنك</label>
+                                    <label className="block text-[11px] text-slate-400 mb-1">{t('اسم البنك')}</label>
                                     <input
                                         type="text"
                                         value={payoutForm.data.bank_name}
@@ -302,7 +303,7 @@ export default function Profile({ affiliate, settings }: Props) {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-[11px] text-slate-400 mb-1">رقم الآيبان (IBAN)</label>
+                                    <label className="block text-[11px] text-slate-400 mb-1">{t('رقم الآيبان (IBAN)')}</label>
                                     <input
                                         type="text"
                                         dir="ltr"
@@ -317,13 +318,13 @@ export default function Profile({ affiliate, settings }: Props) {
                         {/* OTP Verification for Security */}
                         <div className="p-3 rounded-2xl bg-slate-800/60 border border-slate-700/60 space-y-2">
                             <div className="flex items-center justify-between">
-                                <span className="text-[11px] text-slate-300 font-semibold">تأكيد التغيير برمز OTP</span>
+                                <span className="text-[11px] text-slate-300 font-semibold">{t('تأكيد التغيير برمز OTP')}</span>
                                 <button
                                     type="button"
                                     onClick={handleRequestPayoutOtp}
                                     className="text-[11px] text-indigo-400 hover:underline font-bold"
                                 >
-                                    {payoutOtpRequested ? 'إعادة إرسال الرمز' : 'إرسال الرمز لهاتفي'}
+                                    {payoutOtpRequested ? t('إعادة إرسال الرمز') : t('إرسال الرمز لهاتفي')}
                                 </button>
                             </div>
 
@@ -342,7 +343,7 @@ export default function Profile({ affiliate, settings }: Props) {
                             )}
 
                             <p className="text-[10px] text-slate-400">
-                                تنبيه أمني: عند تغيير بيانات السحب، سيتم تجميد السحب مؤقتاً لمدة 24 ساعة لحماية أرباحك.
+                                {t('تنبيه أمني: عند تغيير بيانات السحب، سيتم تجميد السحب مؤقتاً لمدة 24 ساعة لحماية أرباحك.')}
                             </p>
                         </div>
 
@@ -351,7 +352,7 @@ export default function Profile({ affiliate, settings }: Props) {
                             disabled={payoutForm.processing}
                             className="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-md shadow-indigo-600/20 disabled:opacity-50 transition-colors"
                         >
-                            {payoutForm.processing ? 'جاري الحفظ...' : 'حفظ بيانات استلام الأرباح'}
+                            {payoutForm.processing ? t('جاري الحفظ...') : t('حفظ بيانات استلام الأرباح')}
                         </button>
                     </form>
                 </div>
@@ -360,12 +361,12 @@ export default function Profile({ affiliate, settings }: Props) {
                 <div className="p-4 rounded-3xl bg-slate-900 border border-slate-800 space-y-3">
                     <h3 className="text-xs font-bold text-white flex items-center gap-1.5">
                         <KeyRound className="w-4 h-4 text-indigo-400" />
-                        <span>البيانات الأساسية وتغيير كلمة المرور</span>
+                        <span>{t('البيانات الأساسية وتغيير كلمة المرور')}</span>
                     </h3>
 
                     <form onSubmit={handleProfileSubmit} className="space-y-3">
                         <div>
-                            <label className="block text-[11px] text-slate-400 mb-1">الاسم الكامل</label>
+                            <label className="block text-[11px] text-slate-400 mb-1">{t('الاسم الكامل')}</label>
                             <input
                                 type="text"
                                 required
@@ -376,7 +377,7 @@ export default function Profile({ affiliate, settings }: Props) {
                         </div>
 
                         <div>
-                            <label className="block text-[11px] text-slate-400 mb-1">البريد الإلكتروني</label>
+                            <label className="block text-[11px] text-slate-400 mb-1">{t('البريد الإلكتروني')}</label>
                             <input
                                 type="email"
                                 value={profileForm.data.email}
@@ -386,12 +387,12 @@ export default function Profile({ affiliate, settings }: Props) {
                         </div>
 
                         <div className="pt-2 border-t border-slate-800 space-y-2">
-                            <span className="text-[11px] text-slate-400 block font-semibold">تغيير كلمة المرور (اختياري)</span>
+                            <span className="text-[11px] text-slate-400 block font-semibold">{t('تغيير كلمة المرور (اختياري)')}</span>
 
                             <div>
                                 <input
                                     type="password"
-                                    placeholder="كلمة المرور الحالية"
+                                    placeholder={t('كلمة المرور الحالية')}
                                     value={profileForm.data.current_password}
                                     onChange={(e) => profileForm.setData('current_password', e.target.value)}
                                     className="w-full h-10 px-3 rounded-xl bg-slate-800 border border-slate-700 text-xs text-white focus:outline-none focus:border-indigo-500"
@@ -404,14 +405,14 @@ export default function Profile({ affiliate, settings }: Props) {
                             <div className="grid grid-cols-2 gap-2">
                                 <input
                                     type="password"
-                                    placeholder="كلمة المرور الجديدة"
+                                    placeholder={t('كلمة المرور الجديدة')}
                                     value={profileForm.data.new_password}
                                     onChange={(e) => profileForm.setData('new_password', e.target.value)}
                                     className="w-full h-10 px-3 rounded-xl bg-slate-800 border border-slate-700 text-xs text-white focus:outline-none focus:border-indigo-500"
                                 />
                                 <input
                                     type="password"
-                                    placeholder="تأكيد كلمة المرور"
+                                    placeholder={t('تأكيد كلمة المرور')}
                                     value={profileForm.data.new_password_confirmation}
                                     onChange={(e) => profileForm.setData('new_password_confirmation', e.target.value)}
                                     className="w-full h-10 px-3 rounded-xl bg-slate-800 border border-slate-700 text-xs text-white focus:outline-none focus:border-indigo-500"
@@ -424,7 +425,7 @@ export default function Profile({ affiliate, settings }: Props) {
                             disabled={profileForm.processing}
                             className="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs transition-colors"
                         >
-                            {profileForm.processing ? 'جاري التحديث...' : 'حفظ التعديلات'}
+                            {profileForm.processing ? t('جاري التحديث...') : t('حفظ التعديلات')}
                         </button>
                     </form>
                 </div>
@@ -438,7 +439,7 @@ export default function Profile({ affiliate, settings }: Props) {
                         className="w-full py-3 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 text-xs font-bold flex items-center justify-center gap-1.5 transition-colors"
                     >
                         <LogOut className="w-4 h-4" />
-                        <span>تسجيل الخروج من الحساب</span>
+                        <span>{t('تسجيل الخروج من الحساب')}</span>
                     </Link>
                 </div>
             </div>

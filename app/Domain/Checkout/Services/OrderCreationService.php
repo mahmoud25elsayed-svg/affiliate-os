@@ -96,7 +96,7 @@ class OrderCreationService
             // 2. Validate Items
             if (empty($payload->items)) {
                 throw ValidationException::withMessages([
-                    'items' => ['سلة التسوق فارغة.'],
+                    'items' => [__('سلة التسوق فارغة.')],
                 ]);
             }
 
@@ -116,7 +116,7 @@ class OrderCreationService
 
                 if ($variant === null) {
                     throw ValidationException::withMessages([
-                        'items' => ["المنتج المحدد غير متوفر (معرف: {$purchasableId})."],
+                        'items' => [__('المنتج المحدد غير متوفر (معرف: :purchasable_id).', ['purchasable_id' => $purchasableId])],
                     ]);
                 }
 
@@ -137,7 +137,7 @@ class OrderCreationService
                     }
                 }
 
-                $productName = $product instanceof Product ? ($product->translateAttribute('name') ?? 'منتج') : 'منتج';
+                $productName = $product instanceof Product ? ($product->translateAttribute('name') ?? __('منتج')) : __('منتج');
                 $sku = $variant->sku ?? 'SKU-'.$variant->id;
 
                 $lineItemsData[] = [
@@ -164,7 +164,7 @@ class OrderCreationService
 
                 if (! $couponResult->isValid) {
                     throw ValidationException::withMessages([
-                        'coupon_code' => [$couponResult->errorMessage ?? 'الكوبون غير صالح.'],
+                        'coupon_code' => [$couponResult->errorMessage ?? __('الكوبون غير صالح.')],
                     ]);
                 }
 
@@ -366,7 +366,7 @@ class OrderCreationService
                 'actor_type' => 'customer',
                 'actor_id' => $storefrontCustomerId !== null ? (string) $storefrontCustomerId : null,
                 'actor_name' => $payload->customer_name,
-                'note' => 'تم استلام الطلب من المتجر الإلكتروني',
+                'note' => __('تم استلام الطلب من المتجر الإلكتروني'),
                 'meta' => [
                     'ip' => request()->ip(),
                     'quality_result' => $spamResult->status,

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تأكيد الدخول - المصادقة الثنائية | AffiliateOS</title>
+    <title>{{ __('تأكيد الدخول - المصادقة الثنائية | AffiliateOS') }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -77,21 +77,21 @@
 <body>
     <div class="card">
         <div class="header">
-            <h1 class="title">المصادقة الثنائية (2FA)</h1>
-            <p class="subtitle">أدخل الرمز المكون من 6 أرقام من تطبيق المصادقة، أو أحد رموز الاسترداد الاحتياطية (مثل ABCDE-12345).</p>
+            <h1 class="title">{{ __('المصادقة الثنائية (2FA)') }}</h1>
+            <p class="subtitle">{{ __('أدخل الرمز المكون من 6 أرقام من تطبيق المصادقة، أو أحد رموز الاسترداد الاحتياطية (مثل ABCDE-12345).') }}</p>
         </div>
 
         <form action="{{ route('platform.2fa.verify') }}" method="POST">
             @csrf
             <div class="form-group">
-                <label for="code" class="form-label">رمز التحقق</label>
+                <label for="code" class="form-label">{{ __('رمز التحقق') }}</label>
                 <input type="text" id="code" name="code" class="form-input" placeholder="000000" maxlength="32" autocomplete="one-time-code" autocapitalize="characters" dir="ltr" autofocus required>
                 @error('code')
                     <div class="error-message">{{ $message }}</div>
                 @enderror
             </div>
 
-            <button type="submit" class="btn-submit">تحقق ومتابعة</button>
+            <button type="submit" class="btn-submit">{{ __('تحقق ومتابعة') }}</button>
         </form>
     </div>
 </body>

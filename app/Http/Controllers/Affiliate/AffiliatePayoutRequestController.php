@@ -40,7 +40,7 @@ class AffiliatePayoutRequestController extends Controller
 
         return view('affiliate.payouts.index', [
             'affiliate' => $affiliate,
-            'storeName' => $tenant instanceof Tenant ? $tenant->name : 'متجرنا',
+            'storeName' => $tenant instanceof Tenant ? $tenant->name : __('متجرنا'),
             'settings' => $settings,
             'payoutRequests' => $payoutRequests,
             'availableBalance' => $affiliate->getAvailableBalance(),
@@ -62,9 +62,9 @@ class AffiliatePayoutRequestController extends Controller
         $request->validate([
             'amount' => ['required', 'numeric', 'min:'.($settings->min_payout_minor / 100)],
         ], [
-            'amount.required' => 'يرجى إدخال مبلغ السحب المطلوب',
-            'amount.numeric' => 'مبلغ السحب يجب أن يكون رقماً صحيحاً',
-            'amount.min' => 'الحد الأدنى لطلب السحب هو '.Money::show($settings->min_payout_minor),
+            'amount.required' => __('يرجى إدخال مبلغ السحب المطلوب'),
+            'amount.numeric' => __('مبلغ السحب يجب أن يكون رقماً صحيحاً'),
+            'amount.min' => __('الحد الأدنى لطلب السحب هو ').Money::show($settings->min_payout_minor),
         ]);
 
         $amountMinor = (int) round(((float) $request->input('amount')) * 100);
@@ -76,7 +76,7 @@ class AffiliatePayoutRequestController extends Controller
             );
 
             return redirect()->route('affiliate.payouts.index')
-                ->with('success', 'تم تقديم طلب السحب بنجاح وحجز المبلغ من رصيدك المتاح، وسيتم تحويله في موعد الدفع القادم.');
+                ->with('success', __('تم تقديم طلب السحب بنجاح وحجز المبلغ من رصيدك المتاح، وسيتم تحويله في موعد الدفع القادم.'));
         } catch (InsufficientAffiliateBalanceException|PayoutNotEligibleException $e) {
             return back()->withInput()->with('error', $e->getMessage());
         }
@@ -94,7 +94,7 @@ class AffiliatePayoutRequestController extends Controller
             $this->payoutService->cancelPayout($payoutRequest, $affiliate);
 
             return redirect()->route('affiliate.payouts.index')
-                ->with('success', 'تم إلغاء طلب السحب بنجاح واسترجاع المبلغ إلى رصيدك المتاح.');
+                ->with('success', __('تم إلغاء طلب السحب بنجاح واسترجاع المبلغ إلى رصيدك المتاح.'));
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }

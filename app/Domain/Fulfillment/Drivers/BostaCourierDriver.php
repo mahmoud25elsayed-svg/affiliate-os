@@ -59,7 +59,7 @@ class BostaCourierDriver implements CourierDriverInterface
                     'city' => $data->deliveryCity,
                     'firstLine' => $data->deliveryAddress,
                 ],
-                'notes' => $data->notes ?? 'يرجى الاتصال بالعميل قبل التسليم',
+                'notes' => $data->notes ?? __('يرجى الاتصال بالعميل قبل التسليم'),
                 'businessReference' => $data->order->reference,
             ]);
 
@@ -77,9 +77,9 @@ class BostaCourierDriver implements CourierDriverInterface
                 );
             }
 
-            return ShipmentResult::failure('فشل الاتصال مع بوسطة: '.$response->body());
+            return ShipmentResult::failure(__('فشل الاتصال مع بوسطة: ').$response->body());
         } catch (Throwable $e) {
-            return ShipmentResult::failure('خطأ أثناء إنشاء الشحنة مع بوسطة: '.$e->getMessage());
+            return ShipmentResult::failure(__('خطأ أثناء إنشاء الشحنة مع بوسطة: ').$e->getMessage());
         }
     }
 
@@ -108,8 +108,8 @@ class BostaCourierDriver implements CourierDriverInterface
             return new TrackingResult(
                 trackingNumber: $trackingNumber,
                 status: ShipmentStatus::IN_TRANSIT,
-                currentLocation: 'القاهرة - محطة الفرز',
-                note: 'جاري التوصيل'
+                currentLocation: __('القاهرة - محطة الفرز'),
+                note: __('جاري التوصيل')
             );
         }
 

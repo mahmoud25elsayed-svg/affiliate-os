@@ -30,8 +30,8 @@ class PlatformMarketingController extends Controller
 
         return view('platform.marketing.home', [
             'plans' => $plans,
-            'pageTitle' => 'AffiliateOS — نظام التجارة الإلكترونية وإدارة شبكات الأفلييت للتجار في مصر',
-            'metaDescription' => 'أنشئ متجرك الإلكتروني المستقل، وابنِ شبكة مسوقين بالعمولة بنظام الدفع عند الاستلام مع دفتر أستاذ محاسبي مزدوج وإدارة شحن متكاملة.',
+            'pageTitle' => __('AffiliateOS — نظام التجارة الإلكترونية وإدارة شبكات الأفلييت للتجار في الوطن العربي'),
+            'metaDescription' => __('أنشئ متجرك الإلكتروني المستقل، وابنِ شبكة مسوقين بالعمولة بنظام الدفع عند الاستلام مع دفتر أستاذ محاسبي مزدوج وإدارة شحن متكاملة.'),
         ]);
     }
 
@@ -41,8 +41,8 @@ class PlatformMarketingController extends Controller
     public function features(): View
     {
         return view('platform.marketing.features', [
-            'pageTitle' => 'الميزات والحلول — AffiliateOS',
-            'metaDescription' => 'تعرف على إمكانيات AffiliateOS: متجر Lunar فائق السرعة، إسناد النقرة الأخيرة، دفتر الأستاذ المالي، كول سنتر التوزيع، وربط شركات الشحن المصرية.',
+            'pageTitle' => __('الميزات والحلول — AffiliateOS'),
+            'metaDescription' => __('تعرف على إمكانيات AffiliateOS: متجر Lunar فائق السرعة، إسناد النقرة الأخيرة، دفتر الأستاذ المالي، كول سنتر التوزيع، وربط شركات الشحن المصرية.'),
         ]);
     }
 
@@ -55,8 +55,8 @@ class PlatformMarketingController extends Controller
 
         return view('platform.marketing.pricing', [
             'plans' => $plans,
-            'pageTitle' => 'خطط الأسعار ومقارنة الباقات — AffiliateOS',
-            'metaDescription' => 'اختر الخطة المناسبة لحجم تجارتك. باقات شهرية وسنوية تبدأ من 499 ج.م مع تجربة مجانية لجميع الخطط.',
+            'pageTitle' => __('خطط الأسعار ومقارنة الباقات — AffiliateOS'),
+            'metaDescription' => __('اختر الخطة المناسبة لحجم تجارتك. باقات شهرية وسنوية تبدأ من 499 ج.م مع تجربة مجانية لجميع الخطط.'),
         ]);
     }
 
@@ -66,8 +66,8 @@ class PlatformMarketingController extends Controller
     public function faq(): View
     {
         return view('platform.marketing.faq', [
-            'pageTitle' => 'الأسئلة الشائعة — AffiliateOS',
-            'metaDescription' => 'إجابات شاملة عن كل ما يخص بدء التجارة، شحن COD، تسوية مستحقات المسوقين، الدومينات المخصصة، والتحويلات المالية.',
+            'pageTitle' => __('الأسئلة الشائعة — AffiliateOS'),
+            'metaDescription' => __('إجابات شاملة عن كل ما يخص بدء التجارة، شحن COD، تسوية مستحقات المسوقين، الدومينات المخصصة، والتحويلات المالية.'),
         ]);
     }
 
@@ -80,8 +80,8 @@ class PlatformMarketingController extends Controller
 
         return view('platform.marketing.blog', [
             'articles' => $articles,
-            'pageTitle' => 'مدونة التجارة والتسويق بالعمولة — AffiliateOS',
-            'metaDescription' => 'أحدث المقالات والاستراتيجيات لتوسيع تجارتك الإلكترونية وإدارة شبكات المسوقين بالعمولة في السوق المصري.',
+            'pageTitle' => __('مدونة التجارة والتسويق بالعمولة — AffiliateOS'),
+            'metaDescription' => __('أحدث المقالات والاستراتيجيات لتوسيع تجارتك الإلكترونية وإدارة شبكات المسوقين بالعمولة في الأسواق العربية.'),
         ]);
     }
 
@@ -94,12 +94,12 @@ class PlatformMarketingController extends Controller
         $article = collect($articles)->firstWhere('slug', $slug);
 
         if (! $article) {
-            abort(404, 'المقال غير موجود.');
+            abort(404, __('المقال غير موجود.'));
         }
 
         return view('platform.marketing.blog_post', [
             'article' => $article,
-            'pageTitle' => "{$article['title']} — مدونة AffiliateOS",
+            'pageTitle' => __(':title — مدونة AffiliateOS', ['title' => $article['title']]),
             'metaDescription' => $article['excerpt'],
         ]);
     }
@@ -110,8 +110,8 @@ class PlatformMarketingController extends Controller
     public function contact(): View
     {
         return view('platform.marketing.contact', [
-            'pageTitle' => 'تواصل معنا واستشر خبراء المنصة — AffiliateOS',
-            'metaDescription' => 'فريق الدعم الفني والمستشارين جاهز للرد على استفساراتك ومساعدتك في إطلاق متجرك الإلكتروني وشبكة المسوقين.',
+            'pageTitle' => __('تواصل معنا واستشر خبراء المنصة — AffiliateOS'),
+            'metaDescription' => __('فريق الدعم الفني والمستشارين جاهز للرد على استفساراتك ومساعدتك في إطلاق متجرك الإلكتروني وشبكة المسوقين.'),
         ]);
     }
 
@@ -127,7 +127,7 @@ class PlatformMarketingController extends Controller
             $seconds = RateLimiter::availableIn($rateKey);
 
             throw ValidationException::withMessages([
-                'email' => ["تم تجاوز الحد المسموح للرسائل. يرجى الانتظار {$seconds} ثانية."],
+                'email' => [__('تم تجاوز الحد المسموح للرسائل. يرجى الانتظار :seconds ثانية.', ['seconds' => $seconds])],
             ]);
         }
 
@@ -145,7 +145,7 @@ class PlatformMarketingController extends Controller
         $this->analyticsService->recordConversion($request, 'contact_submitted');
 
         return redirect()->route('platform.marketing.contact')
-            ->with('success', 'شكراً لتواصلك معنا! استلمنا رسالتك وسيتواصل معك أحد مستشاري التجارة بالمنصة خلال 24 ساعة.');
+            ->with('success', __('شكراً لتواصلك معنا! استلمنا رسالتك وسيتواصل معك أحد مستشاري التجارة بالمنصة خلال 24 ساعة.'));
     }
 
     /**
@@ -156,32 +156,32 @@ class PlatformMarketingController extends Controller
         $map = [
             'terms' => [
                 'file' => 'merchant-terms.md',
-                'title' => 'شروط وأحكام الخدمة للتجار — AffiliateOS',
-                'desc' => 'شروط وأحكام استخدام منصة AffiliateOS وخدمات التجارة السحابية وإدارة المسوقين.',
+                'title' => __('شروط وأحكام الخدمة للتجار — AffiliateOS'),
+                'desc' => __('شروط وأحكام استخدام منصة AffiliateOS وخدمات التجارة السحابية وإدارة المسوقين.'),
             ],
             'privacy' => [
                 'file' => 'privacy-policy.md',
-                'title' => 'سياسة الخصوصية وحماية البيانات — AffiliateOS',
-                'desc' => 'سياسة الخصوصية وجمع ومعالجة البيانات وفق القانون المصري رقم 151 لسنة 2020.',
+                'title' => __('سياسة الخصوصية وحماية البيانات — AffiliateOS'),
+                'desc' => __('سياسة الخصوصية وجمع ومعالجة البيانات وفق القانون المصري رقم 151 لسنة 2020.'),
             ],
             'dpa' => [
                 'file' => 'data-processing-agreement.md',
-                'title' => 'اتفاقية معالجة البيانات (DPA) — AffiliateOS',
-                'desc' => 'اتفاقية معالجة البيانات الشخصية لرواد الأعمال والمتاجر الشريكة.',
+                'title' => __('اتفاقية معالجة البيانات (DPA) — AffiliateOS'),
+                'desc' => __('اتفاقية معالجة البيانات الشخصية لرواد الأعمال والمتاجر الشريكة.'),
             ],
             'affiliate-terms' => [
                 'file' => 'affiliate-terms.md',
-                'title' => 'شروط وأحكام برنامج الأفلييت — AffiliateOS',
-                'desc' => 'القواعد والشروط المنظمة لبرامج التسويق بالعمولة واحتساب نسب العمولات والأرباح.',
+                'title' => __('شروط وأحكام برنامج الأفلييت — AffiliateOS'),
+                'desc' => __('القواعد والشروط المنظمة لبرامج التسويق بالعمولة واحتساب نسب العمولات والأرباح.'),
             ],
         ];
 
         if (! isset($map[$type])) {
-            abort(404, 'الوثيقة القانونية غير موجودة.');
+            abort(404, __('الوثيقة القانونية غير موجودة.'));
         }
 
         $filePath = base_path('docs/legal/'.$map[$type]['file']);
-        $markdown = file_exists($filePath) ? (string) file_get_contents($filePath) : '# الوثيقة قيد التحديث';
+        $markdown = file_exists($filePath) ? (string) file_get_contents($filePath) : __('# الوثيقة قيد التحديث');
         $html = Str::markdown($markdown);
 
         return view('platform.marketing.legal', [
@@ -246,30 +246,30 @@ class PlatformMarketingController extends Controller
         return [
             [
                 'slug' => 'cod-ecommerce-egypt-scaling-guide',
-                'title' => 'الدليل الشامل للتوسع في تجارة الدفع عند الاستلام (COD) في مصر',
-                'excerpt' => 'كيف تدير سيولة التحصيل، وتخفض نسب الارتجاع من 35% إلى أقل من 12% باستخدام تأكيد الطلبات عبر الكول سنتر.',
+                'title' => __('الدليل الشامل للتوسع في تجارة الدفع عند الاستلام (COD) في مصر'),
+                'excerpt' => __('كيف تدير سيولة التحصيل، وتخفض نسب الارتجاع من 35% إلى أقل من 12% باستخدام تأكيد الطلبات عبر الكول سنتر.'),
                 'date' => '2026-10-25',
-                'reading_time' => '6 دقائق',
-                'author' => 'فريق استشارات AffiliateOS',
-                'content' => 'يعتبر نموذج الدفع عند الاستلام شريان التجارة الإلكترونية في الشرق الأوسط ومصر بشكل خاص. للنجاح في هذا النموذج، تحتاج إلى بنية محكمة تربط بين سرعة التأكيد الهاتفية وعزل العمولات المحاسبية.',
+                'reading_time' => __('6 دقائق'),
+                'author' => __('فريق استشارات AffiliateOS'),
+                'content' => __('يعتبر نموذج الدفع عند الاستلام شريان التجارة الإلكترونية في الشرق الأوسط ومصر بشكل خاص. للنجاح في هذا النموذج، تحتاج إلى بنية محكمة تربط بين سرعة التأكيد الهاتفية وعزل العمولات المحاسبية.'),
             ],
             [
                 'slug' => 'double-entry-ledger-affiliate-networks',
-                'title' => 'لماذا تحتاج كل شبكة تسويق بالعمولة إلى دفتر أستاذ محاسبي مزدوج؟',
-                'excerpt' => 'تجنب أخطاء تكرار احتساب الأرباح واختفاء الفوارق المالية عند إلغاء الشحنات عبر المعمارية المحاسبية المزدوجة.',
+                'title' => __('لماذا تحتاج كل شبكة تسويق بالعمولة إلى دفتر أستاذ محاسبي مزدوج؟'),
+                'excerpt' => __('تجنب أخطاء تكرار احتساب الأرباح واختفاء الفوارق المالية عند إلغاء الشحنات عبر المعمارية المحاسبية المزدوجة.'),
                 'date' => '2026-10-20',
-                'reading_time' => '5 دقائق',
-                'author' => 'المهندس المالي للمنصة',
-                'content' => 'في شبكات التسويق بالعمولة، تحدث الفوضى عندما ترتبط أرباح المسوق بسجلات أحادية القيد. باستخدام دفتر الأستاذ المزدوج، يمثل كل استحقاق قيداً متوازناً يمنع أي فارق سنت واحد.',
+                'reading_time' => __('5 دقائق'),
+                'author' => __('المهندس المالي للمنصة'),
+                'content' => __('في شبكات التسويق بالعمولة، تحدث الفوضى عندما ترتبط أرباح المسوق بسجلات أحادية القيد. باستخدام دفتر الأستاذ المزدوج، يمثل كل استحقاق قيداً متوازناً يمنع أي فارق سنت واحد.'),
             ],
             [
                 'slug' => 'last-click-attribution-vs-multi-touch',
-                'title' => 'نموذج إسناد النقرة الأخيرة (Last-Click): لماذا يفضله المسوقون في مصر؟',
-                'excerpt' => 'مقارنة فنية بين نماذج الإسناد وكيف تضمن شفافية احتساب أرباح الحملات الإعلانية على تيك توك وميتا.',
+                'title' => __('نموذج إسناد النقرة الأخيرة (Last-Click): لماذا يفضله المسوقون في مصر؟'),
+                'excerpt' => __('مقارنة فنية بين نماذج الإسناد وكيف تضمن شفافية احتساب أرباح الحملات الإعلانية على تيك توك وميتا.'),
                 'date' => '2026-10-15',
-                'reading_time' => '4 دقائق',
-                'author' => 'قسم أداء التسويق',
-                'content' => 'الشفافية هي العامل الحاسم في جذب كبار المسوقين. نموذج النقرة الأخيرة يمنح المسوق ثقة كاملة بأن جهوده الترويجية المباشرة هي التي تحصد العمولة المستحقة دون التباس.',
+                'reading_time' => __('4 دقائق'),
+                'author' => __('قسم أداء التسويق'),
+                'content' => __('الشفافية هي العامل الحاسم في جذب كبار المسوقين. نموذج النقرة الأخيرة يمنح المسوق ثقة كاملة بأن جهوده الترويجية المباشرة هي التي تحصد العمولة المستحقة دون التباس.'),
             ],
         ];
     }

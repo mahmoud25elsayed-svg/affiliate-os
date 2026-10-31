@@ -17,10 +17,10 @@ class InvalidOrderTransitionException extends DomainException
         string $message = ''
     ) {
         $msg = $message !== '' ? $message : sprintf(
-            'لا يمكن الانتقال من حالة [%s] إلى حالة [%s]%s.',
+            __('لا يمكن الانتقال من حالة [%s] إلى حالة [%s]%s.'),
             $from->label(),
             $to->label(),
-            $actor !== null ? " بواسطة [{$actor->type}]" : ''
+            $actor !== null ? __(' بواسطة [:type]', ['type' => $actor->type]) : ''
         );
 
         parent::__construct($msg);

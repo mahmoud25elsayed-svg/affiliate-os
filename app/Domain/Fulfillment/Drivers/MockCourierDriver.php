@@ -58,13 +58,13 @@ class MockCourierDriver implements CourierDriverInterface
         return new TrackingResult(
             trackingNumber: $trackingNumber,
             status: $status,
-            currentLocation: 'مركز توزيع القاهرة الرئيسي',
-            note: 'الشحنة في المسار الطبيعي',
+            currentLocation: __('مركز توزيع القاهرة الرئيسي'),
+            note: __('الشحنة في المسار الطبيعي'),
             events: [
                 [
                     'status' => 'created',
                     'timestamp' => Carbon::now()->subHours(5)->toIso8601String(),
-                    'description' => 'تم إنشاء بوليصة الشحن',
+                    'description' => __('تم إنشاء بوليصة الشحن'),
                 ],
                 [
                     'status' => $status->value,

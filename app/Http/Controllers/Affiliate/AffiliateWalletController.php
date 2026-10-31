@@ -10,6 +10,7 @@ use App\Models\Account;
 use App\Models\Affiliate;
 use App\Models\LedgerLine;
 use App\Support\Money;
+use App\Support\Translate;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -79,16 +80,16 @@ class AffiliateWalletController extends Controller
             fprintf($handle, chr(0xEF).chr(0xBB).chr(0xBF));
 
             fputcsv($handle, [
-                'معرف الحركة',
-                'التاريخ والوقت',
-                'الحساب',
-                'نوع القيد',
-                'البيان',
-                'المبلغ ('.Money::symbol().')',
+                Translate::t('معرف الحركة'),
+                Translate::t('التاريخ والوقت'),
+                Translate::t('الحساب'),
+                Translate::t('نوع القيد'),
+                Translate::t('البيان'),
+                Translate::t('المبلغ (').Money::symbol().')',
             ]);
 
             foreach ($lines as $line) {
-                $accountName = $line->account ? $line->account->name : 'غير محدد';
+                $accountName = $line->account ? $line->account->name : Translate::t('غير محدد');
                 $entryType = $line->journalEntry ? $line->journalEntry->type : '';
                 $description = $line->journalEntry ? $line->journalEntry->description : '';
                 $amountFormatted = number_format($line->amount_minor / 100, 2, '.', '');

@@ -46,7 +46,7 @@ class CustomerWishlistPage extends Component
             ->where('id', $wishlistId)
             ->delete();
 
-        $this->successMessage = 'تمت إزالة المنتج من المفضلة.';
+        $this->successMessage = __('تمت إزالة المنتج من المفضلة.');
     }
 
     public function addToCart(int $productId, StorefrontCartService $cartService): void
@@ -56,7 +56,7 @@ class CustomerWishlistPage extends Component
         if ($variant) {
             $cartService->addItem($variant->id, 1);
             $this->dispatch('cart-updated');
-            $this->successMessage = 'تمت إضافة المنتج إلى السلة بنجاح.';
+            $this->successMessage = __('تمت إضافة المنتج إلى السلة بنجاح.');
         }
     }
 
@@ -64,7 +64,7 @@ class CustomerWishlistPage extends Component
     {
         return view('livewire.storefront.customer-wishlist-page', [
             'items' => $this->getWishlistItemsProperty(),
-            'pageTitle' => 'قائمة المفضلة',
+            'pageTitle' => __('قائمة المفضلة'),
         ]);
     }
 }

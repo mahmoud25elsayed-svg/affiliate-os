@@ -68,9 +68,9 @@ class AppProfileController extends Controller
             'current_password' => ['nullable', 'string'],
             'new_password' => ['nullable', 'string', 'min:8', 'confirmed'],
         ], [
-            'name.required' => 'الاسم مطلوب',
-            'new_password.min' => 'يجب ألا تقل كلمة المرور الجديدة عن 8 أحرف',
-            'new_password.confirmed' => 'تأكيد كلمة المرور غير متطابق',
+            'name.required' => __('الاسم مطلوب'),
+            'new_password.min' => __('يجب ألا تقل كلمة المرور الجديدة عن 8 أحرف'),
+            'new_password.confirmed' => __('تأكيد كلمة المرور غير متطابق'),
         ]);
 
         $affiliate->name = (string) $validated['name'];
@@ -81,7 +81,7 @@ class AppProfileController extends Controller
         if (! empty($validated['new_password'])) {
             if (empty($validated['current_password']) || ! Hash::check((string) $validated['current_password'], (string) $affiliate->password)) {
                 throw ValidationException::withMessages([
-                    'current_password' => ['كلمة المرور الحالية غير صحيحة.'],
+                    'current_password' => [__('كلمة المرور الحالية غير صحيحة.')],
                 ]);
             }
 
@@ -90,7 +90,7 @@ class AppProfileController extends Controller
 
         $affiliate->save();
 
-        return redirect()->route('affiliate.app.profile.index')->with('success', 'تم تحديث بيانات الحساب بنجاح.');
+        return redirect()->route('affiliate.app.profile.index')->with('success', __('تم تحديث بيانات الحساب بنجاح.'));
     }
 
     public function submitKyc(Request $request): RedirectResponse
@@ -103,9 +103,9 @@ class AppProfileController extends Controller
             'id_card_front' => ['required', 'file', 'image', 'max:5120'],
             'id_card_back' => ['required', 'file', 'image', 'max:5120'],
         ], [
-            'national_id_number.required' => 'الرقم القومي مطلوب',
-            'id_card_front.required' => 'صورة وجه البطاقة مطلوبة',
-            'id_card_back.required' => 'صورة ظهر البطاقة مطلوبة',
+            'national_id_number.required' => __('الرقم القومي مطلوب'),
+            'id_card_front.required' => __('صورة وجه البطاقة مطلوبة'),
+            'id_card_back.required' => __('صورة ظهر البطاقة مطلوبة'),
         ]);
 
         /** @var UploadedFile $front */
@@ -122,7 +122,7 @@ class AppProfileController extends Controller
             );
 
             return redirect()->route('affiliate.app.profile.index')
-                ->with('success', 'تم رفع وثائق الهوية بنجاح! سيتم مراجعتها من قِبل إدارة المتجر.');
+                ->with('success', __('تم رفع وثائق الهوية بنجاح! سيتم مراجعتها من قِبل إدارة المتجر.'));
         } catch (InvalidArgumentException $e) {
             return back()->withInput()->with('error', $e->getMessage());
         }
@@ -135,7 +135,7 @@ class AppProfileController extends Controller
 
         $this->payoutAccountService->requestChangeOtp($affiliate);
 
-        return back()->with('success', 'تم إرسال رمز التحقق (OTP) إلى هاتفك المسجل.');
+        return back()->with('success', __('تم إرسال رمز التحقق (OTP) إلى هاتفك المسجل.'));
     }
 
     public function updatePayoutSettings(Request $request): RedirectResponse
@@ -147,9 +147,9 @@ class AppProfileController extends Controller
             'payout_method' => ['required', 'string', 'in:wallet_phone,instapay,bank_account'],
             'otp_code' => ['required', 'string', 'size:6'],
         ], [
-            'payout_method.required' => 'يرجى اختيار طريقة استلام الأرباح',
-            'otp_code.required' => 'رمز التحقق مطلوب لتأكيد التغيير',
-            'otp_code.size' => 'رمز التحقق يتكون من 6 أرقام',
+            'payout_method.required' => __('يرجى اختيار طريقة استلام الأرباح'),
+            'otp_code.required' => __('رمز التحقق مطلوب لتأكيد التغيير'),
+            'otp_code.size' => __('رمز التحقق يتكون من 6 أرقام'),
         ]);
 
         $method = (string) $request->input('payout_method');
@@ -176,7 +176,7 @@ class AppProfileController extends Controller
             $this->payoutAccountService->updatePayoutDetails($affiliate, $method, $details, $otpCode);
 
             return redirect()->route('affiliate.app.profile.index')
-                ->with('success', 'تم تحديث بيانات استلام الأرباح بنجاح. لأسباب أمنية تم تجميد السحب مؤقتاً لمدة 24 ساعة.');
+                ->with('success', __('تم تحديث بيانات استلام الأرباح بنجاح. لأسباب أمنية تم تجميد السحب مؤقتاً لمدة 24 ساعة.'));
         } catch (InvalidArgumentException $e) {
             return back()->withInput()->with('error', $e->getMessage());
         }

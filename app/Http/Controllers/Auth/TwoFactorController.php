@@ -51,7 +51,7 @@ class TwoFactorController extends Controller
         $secret = (string) session()->get('two_factor_setup_secret');
 
         if (! $secret || ! $this->totpService->verify($secret, (string) $request->input('code'))) {
-            return back()->withErrors(['code' => 'رمز التحقق غير صحيح. تأكد من إدخال الرمز من تطبيق المصادقة.']);
+            return back()->withErrors(['code' => __('رمز التحقق غير صحيح. تأكد من إدخال الرمز من تطبيق المصادقة.')]);
         }
 
         $user->forceFill([
@@ -62,7 +62,7 @@ class TwoFactorController extends Controller
         session()->forget('two_factor_setup_secret');
         session()->put('two_factor_authenticated', true);
 
-        return redirect('/platform')->with('success', 'تم تفعيل المصادقة الثنائية بنجاح.');
+        return redirect('/platform')->with('success', __('تم تفعيل المصادقة الثنائية بنجاح.'));
     }
 
     public function showChallenge(): View
@@ -86,7 +86,7 @@ class TwoFactorController extends Controller
             : $user->consumeRecoveryCode($code);
 
         if (! $valid) {
-            return back()->withErrors(['code' => 'رمز التحقق منتهي أو غير صحيح.']);
+            return back()->withErrors(['code' => __('رمز التحقق منتهي أو غير صحيح.')]);
         }
 
         session()->put('two_factor_authenticated', true);

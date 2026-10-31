@@ -38,7 +38,7 @@ class PaymentManager
     public function get(string $identifier): PaymentGatewayInterface
     {
         if (! isset($this->gateways[$identifier])) {
-            throw new InvalidArgumentException("بوابة الدفع غير معروفة: {$identifier}");
+            throw new InvalidArgumentException(__('بوابة الدفع غير معروفة: :identifier', ['identifier' => $identifier]));
         }
 
         return $this->gateways[$identifier];

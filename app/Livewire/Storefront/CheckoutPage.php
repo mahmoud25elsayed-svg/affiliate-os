@@ -69,17 +69,20 @@ class CheckoutPage extends Component
     }
 
     /**
-     * @var array<string, string>
+     * @return array<string, string>
      */
-    protected $messages = [
-        'customer_name.required' => 'يرجى إدخال الاسم بالكامل.',
-        'customer_name.min' => 'يجب أن يتكون الاسم من 3 أحرف على الأقل.',
-        'customer_phone.required' => 'يرجى إدخال رقم الهاتف.',
-        'governorate_id.required' => 'يرجى اختيار المحافظة.',
-        'governorate_id.exists' => 'المحافظة المختارة غير صالحة.',
-        'city.required' => 'يرجى إدخال المدينة أو المنطقة.',
-        'address.required' => 'يرجى إدخال العنوان بالتفصيل.',
-    ];
+    protected function messages(): array
+    {
+        return [
+            'customer_name.required' => __('يرجى إدخال الاسم بالكامل.'),
+            'customer_name.min' => __('يجب أن يتكون الاسم من 3 أحرف على الأقل.'),
+            'customer_phone.required' => __('يرجى إدخال رقم الهاتف.'),
+            'governorate_id.required' => __('يرجى اختيار المحافظة.'),
+            'governorate_id.exists' => __('المحافظة المختارة غير صالحة.'),
+            'city.required' => __('يرجى إدخال المدينة أو المنطقة.'),
+            'address.required' => __('يرجى إدخال العنوان بالتفصيل.'),
+        ];
+    }
 
     public function mount(): void
     {
@@ -115,7 +118,7 @@ class CheckoutPage extends Component
         $items = $cartService->getItems();
 
         if (empty($items)) {
-            $this->coupon_error = 'سلة المشتريات فارغة.';
+            $this->coupon_error = __('سلة المشتريات فارغة.');
 
             return;
         }
@@ -143,7 +146,7 @@ class CheckoutPage extends Component
         $this->applied_coupon_code = $result->coupon?->code;
         $this->discount_minor = $result->discountMinor;
         $this->is_free_shipping = $result->isFreeShipping;
-        $this->coupon_success = 'تم تفعيل الكوبون بنجاح!';
+        $this->coupon_success = __('تم تفعيل الكوبون بنجاح!');
     }
 
     public function removeCoupon(): void
@@ -164,7 +167,7 @@ class CheckoutPage extends Component
         $rawCart = $cartService->getRawCart();
 
         if (empty($rawCart)) {
-            $this->addError('cart', 'سلة المشتريات فارغة لا يمكن إتمام الطلب.');
+            $this->addError('cart', __('سلة المشتريات فارغة لا يمكن إتمام الطلب.'));
 
             return null;
         }
@@ -218,7 +221,7 @@ class CheckoutPage extends Component
         $governorates = Governorate::forCountries();
 
         // Calculate shipping quote
-        $shippingQuote = new ShippingQuote(0, 'غير متاح', false);
+        $shippingQuote = new ShippingQuote(0, __('غير متاح'), false);
         if ($this->governorate_id !== null) {
             $coupon = null;
             if ($this->applied_coupon_code !== null) {
@@ -257,7 +260,7 @@ class CheckoutPage extends Component
             'settings' => $settings,
             'activeGateways' => $activeGateways,
         ])->layout('layouts.storefront', [
-            'title' => 'إتمام الطلب',
+            'title' => __('إتمام الطلب'),
         ]);
     }
 }

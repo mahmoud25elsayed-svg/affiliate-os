@@ -54,18 +54,18 @@ class AccountResolver
     public function getAffiliateAccount(Affiliate $affiliate, string $kind): Account
     {
         $allowed = [
-            self::KIND_PENDING => 'أرباح معلقة',
-            self::KIND_AVAILABLE => 'أرباح متاحة للسحب',
-            self::KIND_LOCKED => 'أرباح محجوزة للسحب',
-            self::KIND_WITHDRAWN => 'إجمالي المسحوبات',
+            self::KIND_PENDING => __('أرباح معلقة'),
+            self::KIND_AVAILABLE => __('أرباح متاحة للسحب'),
+            self::KIND_LOCKED => __('أرباح محجوزة للسحب'),
+            self::KIND_WITHDRAWN => __('إجمالي المسحوبات'),
         ];
 
         if (! array_key_exists($kind, $allowed)) {
-            throw new InvalidArgumentException("نوع حساب مسوق غير صالح: {$kind}");
+            throw new InvalidArgumentException(__('نوع حساب مسوق غير صالح: :kind', ['kind' => $kind]));
         }
 
         $code = "aff:{$affiliate->id}:{$kind}";
-        $name = "{$allowed[$kind]} - مسوق #{$affiliate->id} ({$affiliate->name})";
+        $name = __(':kind - مسوق #:id (:name)', ['kind' => $allowed[$kind], 'id' => $affiliate->id, 'name' => $affiliate->name]);
 
         $tenantId = tenant('id') ? (string) tenant('id') : $affiliate->tenant_id;
 

@@ -52,7 +52,7 @@ class StoreSupplierController extends Controller
         Supplier::create($validated);
 
         return redirect()->route('store.suppliers.index')
-            ->with('success', 'تم إضافة المورد بنجاح.');
+            ->with('success', __('تم إضافة المورد بنجاح.'));
     }
 
     public function show(Supplier $supplier, AccountResolver $accountResolver): View
@@ -141,7 +141,7 @@ class StoreSupplierController extends Controller
             $entryData = new EntryData(
                 type: 'supplier_batch_received',
                 idempotencyKey: "supplier_batch_{$batch->id}",
-                description: "توريد وارد جديد #{$batchNumber} من المورد {$supplier->name} ({$quantity} قطعة)",
+                description: __('توريد وارد جديد #:batch_number من المورد :name (:quantity قطعة)', ['batch_number' => $batchNumber, 'name' => $supplier->name, 'quantity' => $quantity]),
                 lines: [
                     new LedgerLineData(account: $inventoryAccount, amountMinor: $totalCostMinor),
                     new LedgerLineData(account: $supplierAccount, amountMinor: -$totalCostMinor),
@@ -155,6 +155,6 @@ class StoreSupplierController extends Controller
         });
 
         return redirect()->route('store.suppliers.show', $supplier->id)
-            ->with('success', "تم تسجيل الوارد بنجاح برقم إذن {$batchNumber} وإضافة الكمية للمخزون وترحيل المستحقات للدفتر.");
+            ->with('success', __('تم تسجيل الوارد بنجاح برقم إذن :batch_number وإضافة الكمية للمخزون وترحيل المستحقات للدفتر.', ['batch_number' => $batchNumber]));
     }
 }

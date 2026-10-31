@@ -79,8 +79,8 @@ class AppOrderController extends Controller
                 'id' => $order->id,
                 'reference' => $order->reference ?? (string) $order->id,
                 'status' => $order->status,
-                'customer_name' => $firstName ?? ($snapshot['customer_name'] ?? 'عميل'),
-                'customer_city' => $snapshot['customer_city'] ?? 'غير محدد',
+                'customer_name' => $firstName ?? ($snapshot['customer_name'] ?? __('عميل')),
+                'customer_city' => $snapshot['customer_city'] ?? __('غير محدد'),
                 'customer_phone' => $snapshot['customer_phone'] ?? '***',
                 'items_count' => (int) ($snapshot['quantity'] ?? 1),
                 'total_minor' => Money::minorOf($order->total) ?: (int) ($snapshot['customer_total_minor'] ?? 0),
@@ -103,7 +103,7 @@ class AppOrderController extends Controller
         $products = Product::with(['variants.prices'])->get()->map(function (Product $p) use ($settings) {
             return [
                 'id' => $p->id,
-                'name' => $p->translateAttribute('name') ?? "منتج #{$p->id}",
+                'name' => $p->translateAttribute('name') ?? __('منتج #:id', ['id' => $p->id]),
                 'variants' => $p->variants->map(function ($v) use ($settings) {
                     /** @var ProductVariant $v */
                     $wholesale = WholesalePrice::where('product_variant_id', $v->id)->first();
@@ -125,10 +125,10 @@ class AppOrderController extends Controller
 
         $governorates = Governorate::with('cities')->get()->map(fn (Governorate $g) => [
             'id' => $g->id,
-            'name' => $g->name_ar ?: $g->name_en,
+            'name' => (app()->getLocale() === 'en' ? $g->name_en : $g->name_ar) ?: $g->name_ar,
             'cities' => $g->cities->map(fn ($c) => [
                 'id' => $c->id,
-                'name' => $c->name_ar ?: $c->name_en,
+                'name' => (app()->getLocale() === 'en' ? $c->name_en : $c->name_ar) ?: $c->name_ar,
             ]),
         ]);
 
@@ -196,7 +196,7 @@ class AppOrderController extends Controller
                 'customer_name' => $validated['customer_name'],
                 'customer_phone' => $validated['customer_phone'],
                 'governorate_id' => (int) $validated['governorate_id'],
-                'city' => 'القاهرة',
+                'city' => __('القاهرة'),
                 'address' => $validated['address'],
                 'notes' => $validated['notes'] ?? null,
                 'items' => [
@@ -211,7 +211,7 @@ class AppOrderController extends Controller
             ]);
 
             return redirect()->route('affiliate.app.orders.show', $order->reference)
-                ->with('success', "تم تسجيل الطلب #{$order->reference} بنجاح وفحص جودته.");
+                ->with('success', __('تم تسجيل الطلب #:reference بنجاح وفحص جودته.', ['reference' => $order->reference]));
         } catch (\Exception $e) {
             return back()->withInput()->with('error', $e->getMessage());
         }
@@ -251,7 +251,7 @@ class AppOrderController extends Controller
                 return [
                     'id' => $ev->id,
                     'event_type' => $ev->to_status,
-                    'description' => $ev->note ?? "تغيير الحالة إلى {$ev->to_status}",
+                    'description' => $ev->note ?? __('تغيير الحالة إلى :to_status', ['to_status' => $ev->to_status]),
                     'reason_code' => $ev->reason_code?->value,
                     'created_at' => $ev->created_at->format('Y-m-d H:i'),
                 ];
@@ -277,12 +277,12 @@ class AppOrderController extends Controller
                 'id' => $order->id,
                 'reference' => $order->reference ?? (string) $order->id,
                 'status' => $order->status,
-                'customer_name' => $firstName ?? ($snapshot['customer_name'] ?? 'عميل'),
+                'customer_name' => $firstName ?? ($snapshot['customer_name'] ?? __('عميل')),
                 'customer_phone' => $phone,
                 'customer_governorate' => $snapshot['customer_governorate'] ?? '',
                 'customer_city' => $snapshot['customer_city'] ?? '',
                 'customer_address' => $snapshot['customer_address'] ?? '',
-                'product_name' => $snapshot['product_name'] ?? 'المنتج',
+                'product_name' => $snapshot['product_name'] ?? __('المنتج'),
                 'quantity' => (int) ($snapshot['quantity'] ?? 1),
                 'selling_price_minor' => (int) ($snapshot['selling_price_minor'] ?? 0),
                 'wholesale_price_minor' => (int) ($snapshot['wholesale_price_minor'] ?? 0),
@@ -313,9 +313,9 @@ class AppOrderController extends Controller
             ->firstOrFail();
 
         try {
-            $cancelAction->execute($affiliate, $order, 'إلغاء بناء على طلب المسوق');
+            $cancelAction->execute($affiliate, $order, __('إلغاء بناء على طلب المسوق'));
 
-            return back()->with('success', 'تم إلغاء الطلب بنجاح.');
+            return back()->with('success', __('تم إلغاء الطلب بنجاح.'));
         } catch (DomainException $e) {
             return back()->with('error', $e->getMessage());
         }

@@ -4,6 +4,7 @@ import AppLayout from '../../Layouts/AppLayout';
 import { formatCurrency, getOrderStatusLabel } from '../../utils/format';
 import { ClipboardList, PlusCircle, ChevronLeft, Package, User, MapPin } from 'lucide-react';
 import { OrderListItem } from '../../types/affiliate';
+import { t } from '@/i18n';
 
 interface Props {
     orders: {
@@ -17,11 +18,11 @@ interface Props {
 
 export default function Orders({ orders, currentStatus }: Props) {
     const tabs = [
-        { label: 'الكل', value: '' },
-        { label: 'قيد المعالجة', value: 'in_progress' },
-        { label: 'تم التسليم', value: 'delivered' },
-        { label: 'ملغي', value: 'cancelled' },
-        { label: 'مرتجع', value: 'returned' },
+        { label: t('الكل'), value: '' },
+        { label: t('قيد المعالجة'), value: 'in_progress' },
+        { label: t('تم التسليم'), value: 'delivered' },
+        { label: t('ملغي'), value: 'cancelled' },
+        { label: t('مرتجع'), value: 'returned' },
     ];
 
     const handleTabClick = (val: string) => {
@@ -31,8 +32,8 @@ export default function Orders({ orders, currentStatus }: Props) {
     };
 
     return (
-        <AppLayout title="قائمة الطلبات">
-            <Head title="طلباتي - تطبيق المسوق" />
+        <AppLayout title={t('قائمة الطلبات')}>
+            <Head title={t('طلباتي - تطبيق المسوق')} />
 
             <div className="space-y-4">
                 {/* Header */}
@@ -40,10 +41,10 @@ export default function Orders({ orders, currentStatus }: Props) {
                     <div>
                         <h1 className="text-base font-bold text-white flex items-center gap-1.5">
                             <ClipboardList className="w-5 h-5 text-indigo-400" />
-                            <span>متابعة الطلبات ({orders.total})</span>
+                            <span>{t('متابعة الطلبات (')}{orders.total})</span>
                         </h1>
                         <p className="text-xs text-slate-400">
-                            تابع حالة الشحن والتسليم وأسباب الإلغاء لحظة بلحظة.
+                            {t('تابع حالة الشحن والتسليم وأسباب الإلغاء لحظة بلحظة.')}
                         </p>
                     </div>
 
@@ -52,7 +53,7 @@ export default function Orders({ orders, currentStatus }: Props) {
                         className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center gap-1 shadow-sm shadow-indigo-600/30"
                     >
                         <PlusCircle className="w-3.5 h-3.5" />
-                        <span>طلب جديد</span>
+                        <span>{t('طلب جديد')}</span>
                     </Link>
                 </div>
 
@@ -81,14 +82,14 @@ export default function Orders({ orders, currentStatus }: Props) {
                 {orders.data.length === 0 ? (
                     <div className="p-8 rounded-3xl bg-slate-900/50 border border-slate-800 text-center space-y-3">
                         <Package className="w-8 h-8 text-slate-500 mx-auto" />
-                        <p className="text-sm font-bold text-slate-300">لا توجد طلبات في هذا القسم</p>
-                        <p className="text-xs text-slate-500">ابدأ بإنشاء طلب جديد أو شارك روابط المنتجات لزيادة مبيعاتك.</p>
+                        <p className="text-sm font-bold text-slate-300">{t('لا توجد طلبات في هذا القسم')}</p>
+                        <p className="text-xs text-slate-500">{t('ابدأ بإنشاء طلب جديد أو شارك روابط المنتجات لزيادة مبيعاتك.')}</p>
                         <Link
                             href="/partners/app/orders/create"
                             className="inline-flex items-center gap-1 px-4 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold"
                         >
                             <PlusCircle className="w-3.5 h-3.5" />
-                            <span>إنشاء طلب سريع</span>
+                            <span>{t('إنشاء طلب سريع')}</span>
                         </Link>
                     </div>
                 ) : (
@@ -126,14 +127,14 @@ export default function Orders({ orders, currentStatus }: Props) {
 
                                     <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-xs">
                                         <div>
-                                            <span className="text-slate-500 text-[11px]">مبلغ التحصيل: </span>
+                                            <span className="text-slate-500 text-[11px]">{t('مبلغ التحصيل:')} </span>
                                             <span className="font-mono font-bold text-slate-200">
                                                 {formatCurrency(order.total_minor)}
                                             </span>
                                         </div>
 
                                         <div className="flex items-center gap-1">
-                                            <span className="text-slate-500 text-[11px]">عمولتك: </span>
+                                            <span className="text-slate-500 text-[11px]">{t('عمولتك:')} </span>
                                             <span className="font-mono font-black text-emerald-400">
                                                 +{formatCurrency(profit)}
                                             </span>

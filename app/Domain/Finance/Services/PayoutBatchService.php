@@ -35,7 +35,7 @@ class PayoutBatchService
             ->get();
 
         if ($requests->isEmpty()) {
-            throw new InvalidArgumentException('لم يتم العثور على أي طلبات سحب صالحة مؤهلة للإدراج في الدفعة');
+            throw new InvalidArgumentException(__('لم يتم العثور على أي طلبات سحب صالحة مؤهلة للإدراج في الدفعة'));
         }
 
         return DB::transaction(function () use ($tenantId, $paymentMethod, $requests, $creator) {
@@ -70,7 +70,7 @@ class PayoutBatchService
         $output = fopen('php://temp', 'r+');
 
         if ($output === false) {
-            throw new InvalidArgumentException('فشل فتح مجرى ملف CSV المؤقت');
+            throw new InvalidArgumentException(__('فشل فتح مجرى ملف CSV المؤقت'));
         }
 
         // Add UTF-8 BOM
@@ -78,7 +78,7 @@ class PayoutBatchService
 
         if ($batch->payment_method === 'wallet_phone') {
             // Vodafone Cash / Mobile wallets format
-            fputcsv($output, ['رقم الطلب', 'اسم المسوق', 'رقم المحفظة (فودافون كاش/أورانج/اتصالات)', 'مزود المحفظة', 'المبلغ ('.Money::symbol().')', 'ملاحظات']);
+            fputcsv($output, [__('رقم الطلب'), __('اسم المسوق'), __('رقم المحفظة (فودافون كاش/أورانج/اتصالات)'), __('مزود المحفظة'), __('المبلغ (').Money::symbol().')', __('ملاحظات')]);
             foreach ($batch->requests as $req) {
                 $aff = $req->affiliate;
                 /** @var array<string, mixed> $details */
@@ -93,12 +93,12 @@ class PayoutBatchService
                     $phone,
                     $provider,
                     $amountEgp,
-                    "سحب أرباح طلب رقم #{$req->id}",
+                    __('سحب أرباح طلب رقم #:id', ['id' => $req->id]),
                 ]);
             }
         } elseif ($batch->payment_method === 'instapay') {
             // InstaPay format
-            fputcsv($output, ['رقم الطلب', 'اسم المسوق', 'عنوان إنستاباي (IPA / Mobile)', 'المبلغ ('.Money::symbol().')', 'ملاحظات']);
+            fputcsv($output, [__('رقم الطلب'), __('اسم المسوق'), __('عنوان إنستاباي (IPA / Mobile)'), __('المبلغ (').Money::symbol().')', __('ملاحظات')]);
             foreach ($batch->requests as $req) {
                 $aff = $req->affiliate;
                 /** @var array<string, mixed> $details */
@@ -111,12 +111,12 @@ class PayoutBatchService
                     $aff ? $aff->name : '',
                     $handle,
                     $amountEgp,
-                    "إنستاباي طلب #{$req->id}",
+                    __('إنستاباي طلب #:id', ['id' => $req->id]),
                 ]);
             }
         } else {
             // Bank Transfer format
-            fputcsv($output, ['رقم الطلب', 'اسم المستفيد', 'اسم البنك', 'رقم الحساب / IBAN', 'كود السويفت (SWIFT)', 'المبلغ ('.Money::symbol().')']);
+            fputcsv($output, [__('رقم الطلب'), __('اسم المستفيد'), __('اسم البنك'), __('رقم الحساب / IBAN'), __('كود السويفت (SWIFT)'), __('المبلغ (').Money::symbol().')']);
             foreach ($batch->requests as $req) {
                 $aff = $req->affiliate;
                 /** @var array<string, mixed> $details */
@@ -172,7 +172,7 @@ class PayoutBatchService
                 'status' => PayoutBatch::STATUS_COMPLETED,
                 'processed_by' => $actor->id,
                 'processed_at' => now(),
-                'notes' => "تم تنفيذ الدفعة برقم مرجعي: {$batchReferenceNumber}",
+                'notes' => __('تم تنفيذ الدفعة برقم مرجعي: :batch_reference_number', ['batch_reference_number' => $batchReferenceNumber]),
             ]);
         });
     }

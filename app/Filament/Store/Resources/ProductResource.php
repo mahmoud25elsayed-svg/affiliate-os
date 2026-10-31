@@ -38,101 +38,115 @@ class ProductResource extends Resource
 
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-shopping-bag';
 
-    protected static ?string $navigationLabel = 'المنتجات';
+    public static function getNavigationLabel(): string
+    {
 
-    protected static ?string $modelLabel = 'منتج';
+        return __('المنتجات');
 
-    protected static ?string $pluralModelLabel = 'المنتجات';
+    }
 
-    protected static \UnitEnum|string|null $navigationGroup = 'إدارة الكتالوج';
+    public static function getModelLabel(): string
+    {
+        return __('منتج');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('المنتجات');
+    }
+
+    public static function getNavigationGroup(): string|\UnitEnum|null
+    {
+        return __('إدارة الكتالوج');
+    }
 
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('معلومات المنتج الأساسية')->schema([
+            Section::make(__('معلومات المنتج الأساسية'))->schema([
                 TextInput::make('name_ar')
-                    ->label('اسم المنتج (بالعربية)')
+                    ->label(__('اسم المنتج (بالعربية)'))
                     ->required()
                     ->maxLength(255),
 
                 TextInput::make('name_en')
-                    ->label('اسم المنتج (بالإنجليزية)')
+                    ->label(__('اسم المنتج (بالإنجليزية)'))
                     ->maxLength(255),
 
                 TextInput::make('sku')
-                    ->label('رمز المنتج (SKU)')
+                    ->label(__('رمز المنتج (SKU)'))
                     ->required()
                     ->maxLength(100),
 
                 Select::make('brand_id')
-                    ->label('العلامة التجارية (Brand)')
+                    ->label(__('العلامة التجارية (Brand)'))
                     ->options(fn () => Brand::pluck('name', 'id'))
                     ->searchable()
                     ->nullable(),
 
                 Select::make('collection_ids')
-                    ->label('الفئات والتصنيفات')
+                    ->label(__('الفئات والتصنيفات'))
                     ->multiple()
                     ->options(fn () => Collection::all()->mapWithKeys(function ($c) {
                         /** @var Collection $c */
-                        return [$c->id => (string) ($c->translateAttribute('name') ?? 'فئة #'.$c->id)];
+                        return [$c->id => (string) ($c->translateAttribute('name') ?? __('فئة #').$c->id)];
                     }))
                     ->searchable(),
 
                 Select::make('status')
-                    ->label('حالة المنتج')
+                    ->label(__('حالة المنتج'))
                     ->options([
-                        WholesalePrice::STATUS_ACTIVE => 'نشط ومتاح للطلب',
-                        WholesalePrice::STATUS_DRAFT => 'مسودة (Draft)',
-                        WholesalePrice::STATUS_PAUSED => 'موقوف مؤقتًا',
-                        WholesalePrice::STATUS_ARCHIVED => 'مؤرشف',
+                        WholesalePrice::STATUS_ACTIVE => __('نشط ومتاح للطلب'),
+                        WholesalePrice::STATUS_DRAFT => __('مسودة (Draft)'),
+                        WholesalePrice::STATUS_PAUSED => __('موقوف مؤقتًا'),
+                        WholesalePrice::STATUS_ARCHIVED => __('مؤرشف'),
                     ])
                     ->default(WholesalePrice::STATUS_ACTIVE)
                     ->required(),
 
                 Textarea::make('pause_reason')
-                    ->label('سبب الإيقاف (مطلوب عند الإيقاف المؤقت)')
+                    ->label(__('سبب الإيقاف (مطلوب عند الإيقاف المؤقت)'))
                     ->rows(2)
                     ->nullable(),
             ])->columns(2),
 
-            Section::make('التسعير وسياسة البيع للأفلييت (بالجنيه المصري)')->schema([
-                static::moneyInput('retail_price', 'سعر البيع المقترح للعميل')
+            Section::make(__('التسعير وسياسة البيع للأفلييت (بعملة المتجر)'))->schema([
+                static::moneyInput('retail_price', __('سعر البيع المقترح للعميل'))
                     ->required()
-                    ->helperText('مثال: 250 أو 249.99'),
+                    ->helperText(__('مثال: 250 أو 249.99')),
 
-                static::moneyInput('compare_at_price', 'السعر قبل الخصم (اختياري)')
+                static::moneyInput('compare_at_price', __('السعر قبل الخصم (اختياري)'))
                     ->nullable(),
 
-                static::moneyInput('wholesale_price', 'سعر الجملة للمسوق (Wholesale)')
+                static::moneyInput('wholesale_price', __('سعر الجملة للمسوق (Wholesale)'))
                     ->required()
-                    ->helperText('سعر تكلفة المنتج على التاجر للأفلييت'),
+                    ->helperText(__('سعر تكلفة المنتج على التاجر للأفلييت')),
 
-                static::moneyInput('min_price', 'الحد الأدنى لسعر بيع المسوق (Min)')
+                static::moneyInput('min_price', __('الحد الأدنى لسعر بيع المسوق (Min)'))
                     ->required()
-                    ->helperText('أقل سعر يُسمح للمسوق بالبيع به (يجب أن يكون ≥ الجملة)'),
+                    ->helperText(__('أقل سعر يُسمح للمسوق بالبيع به (يجب أن يكون ≥ الجملة)')),
 
-                static::moneyInput('max_price', 'الحد الأقصى لسعر بيع المسوق (Max)')
+                static::moneyInput('max_price', __('الحد الأقصى لسعر بيع المسوق (Max)'))
                     ->required()
-                    ->helperText('أعلى سعر يُسمح للمسوق بالبيع به (يجب أن يكون ≥ الأدنى)'),
+                    ->helperText(__('أعلى سعر يُسمح للمسوق بالبيع به (يجب أن يكون ≥ الأدنى)')),
             ])->columns(3),
 
-            Section::make('المخزون الافتتاحي')->schema([
+            Section::make(__('المخزون الافتتاحي'))->schema([
                 TextInput::make('opening_stock')
-                    ->label('الكمية المتوفرة الآن')
+                    ->label(__('الكمية المتوفرة الآن'))
                     ->integer()
                     ->minValue(0)
                     ->default(0)
-                    ->helperText('تُضاف إلى المستودع الافتراضي لتصبح قابلة للبيع والحجز. الإضافات اللاحقة من صفحة أرصدة المخزون.'),
+                    ->helperText(__('تُضاف إلى المستودع الافتراضي لتصبح قابلة للبيع والحجز. الإضافات اللاحقة من صفحة أرصدة المخزون.')),
             ])->visibleOn('create'),
 
-            Section::make('المنتجات الرقمية (Digital Products)')->schema([
+            Section::make(__('المنتجات الرقمية (Digital Products)'))->schema([
                 Toggle::make('is_digital')
-                    ->label('منتج رقمي (ملف قابل للتحميل بعد الدفع)')
+                    ->label(__('منتج رقمي (ملف قابل للتحميل بعد الدفع)'))
                     ->default(false),
 
                 FileUpload::make('digital_file_path')
-                    ->label('الملف الرقمي')
+                    ->label(__('الملف الرقمي'))
                     ->disk('public')
                     ->directory('digital-products')
                     ->visible(fn ($get) => (bool) $get('is_digital')),
@@ -145,8 +159,8 @@ class ProductResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->label('اسم المنتج')
-                    ->getStateUsing(fn (Product $record) => $record->translateAttribute('name') ?? 'منتج #'.$record->id)
+                    ->label(__('اسم المنتج'))
+                    ->getStateUsing(fn (Product $record) => $record->translateAttribute('name') ?? __('منتج #').$record->id)
                     ->searchable(query: function (Builder $query, string $search) {
                         return $query->where('attribute_data', 'like', "%{$search}%");
                     })
@@ -162,7 +176,7 @@ class ProductResource extends Resource
                     }),
 
                 TextColumn::make('retail_price')
-                    ->label('سعر التجزئة')
+                    ->label(__('سعر التجزئة'))
                     ->getStateUsing(function (Product $record) {
                         $variant = static::getFirstVariant($record);
                         /** @var Price|null $price */
@@ -173,7 +187,7 @@ class ProductResource extends Resource
                     ->weight('bold'),
 
                 TextColumn::make('wholesale_price')
-                    ->label('سعر الجملة')
+                    ->label(__('سعر الجملة'))
                     ->getStateUsing(function (Product $record) {
                         $pricing = static::getWholesalePrice($record);
 
@@ -181,7 +195,7 @@ class ProductResource extends Resource
                     }),
 
                 TextColumn::make('affiliate_range')
-                    ->label('نطاق بيع الأفلييت')
+                    ->label(__('نطاق بيع الأفلييت'))
                     ->getStateUsing(function (Product $record) {
                         $pricing = static::getWholesalePrice($record);
                         if (! $pricing) {
@@ -192,7 +206,7 @@ class ProductResource extends Resource
                     }),
 
                 TextColumn::make('status')
-                    ->label('الحالة')
+                    ->label(__('الحالة'))
                     ->badge()
                     ->getStateUsing(function (Product $record) {
                         $pricing = static::getWholesalePrice($record);
@@ -206,16 +220,16 @@ class ProductResource extends Resource
                         'danger' => WholesalePrice::STATUS_ARCHIVED,
                     ])
                     ->formatStateUsing(fn (string $state) => match ($state) {
-                        WholesalePrice::STATUS_ACTIVE => 'نشط',
-                        WholesalePrice::STATUS_DRAFT => 'مسودة',
-                        WholesalePrice::STATUS_PAUSED => 'موقوف',
-                        WholesalePrice::STATUS_ARCHIVED => 'مؤرشف',
+                        WholesalePrice::STATUS_ACTIVE => __('نشط'),
+                        WholesalePrice::STATUS_DRAFT => __('مسودة'),
+                        WholesalePrice::STATUS_PAUSED => __('موقوف'),
+                        WholesalePrice::STATUS_ARCHIVED => __('مؤرشف'),
                         default => $state,
                     }),
             ])
             ->recordActions([
                 Action::make('pause_product')
-                    ->label('إيقاف مؤقت')
+                    ->label(__('إيقاف مؤقت'))
                     ->icon('heroicon-o-pause')
                     ->color('warning')
                     ->visible(function (Product $record) {
@@ -225,17 +239,17 @@ class ProductResource extends Resource
                     })
                     ->schema([
                         TextInput::make('reason')
-                            ->label('سبب الإيقاف المؤقت')
+                            ->label(__('سبب الإيقاف المؤقت'))
                             ->required()
-                            ->placeholder('مثال: نفاد المخزون مؤقتًا من المورد'),
+                            ->placeholder(__('مثال: نفاد المخزون مؤقتًا من المورد')),
                     ])
                     ->action(function (Product $record, array $data, ProductService $service) {
                         $service->updateStatus($record, WholesalePrice::STATUS_PAUSED, (string) $data['reason']);
-                        Notification::make()->title('تم إيقاف المنتج مؤقتًا')->warning()->send();
+                        Notification::make()->title(__('تم إيقاف المنتج مؤقتًا'))->warning()->send();
                     }),
 
                 Action::make('activate_product')
-                    ->label('تفعيل المنتج')
+                    ->label(__('تفعيل المنتج'))
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
                     ->visible(function (Product $record) {
@@ -245,7 +259,7 @@ class ProductResource extends Resource
                     })
                     ->action(function (Product $record, ProductService $service) {
                         $service->updateStatus($record, WholesalePrice::STATUS_ACTIVE);
-                        Notification::make()->title('تم تفعيل المنتج بنجاح')->success()->send();
+                        Notification::make()->title(__('تم تفعيل المنتج بنجاح'))->success()->send();
                     }),
             ]);
     }

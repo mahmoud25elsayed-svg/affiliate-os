@@ -82,11 +82,11 @@ class StoreCustomerWalletController extends Controller
         }
 
         if ($user->hasRole('call_center') || $user->hasRole('orders')) {
-            abort(403, 'تعديل رصيد المحفظة مقتصر على الأدوار المالية والإدارية المعتمدة فقط.');
+            abort(403, __('تعديل رصيد المحفظة مقتصر على الأدوار المالية والإدارية المعتمدة فقط.'));
         }
 
         if ($user->roles()->exists() && ! $user->is_platform_admin && ! $user->hasAnyRole(['owner', 'manager', 'finance', 'admin'])) {
-            abort(403, 'تعديل رصيد المحفظة مقتصر على الأدوار المالية والإدارية المعتمدة فقط.');
+            abort(403, __('تعديل رصيد المحفظة مقتصر على الأدوار المالية والإدارية المعتمدة فقط.'));
         }
 
         $tenantId = tenant('id') ? (string) tenant('id') : null;
@@ -110,18 +110,18 @@ class StoreCustomerWalletController extends Controller
                 amountMinor: $amountMinor,
                 type: CustomerWalletTransaction::TYPE_ADJUSTMENT,
                 referenceId: 'manual_adj_'.uniqid(),
-                notes: "تعديل يدوي من إدارة المتجر: {$notes}"
+                notes: __('تعديل يدوي من إدارة المتجر: :notes', ['notes' => $notes])
             );
-            $msg = 'تمت إضافة '.number_format($amountMinor / 100, 2).' '.Money::symbol().' إلى محفظة العميل بنجاح.';
+            $msg = __('تمت إضافة ').number_format($amountMinor / 100, 2).' '.Money::symbol().__(' إلى محفظة العميل بنجاح.');
         } else {
             $walletService->debit(
                 customer: $wallet->customer_id,
                 amountMinor: $amountMinor,
                 type: CustomerWalletTransaction::TYPE_ADJUSTMENT,
                 referenceId: 'manual_adj_'.uniqid(),
-                notes: "خصم يدوي من إدارة المتجر: {$notes}"
+                notes: __('خصم يدوي من إدارة المتجر: :notes', ['notes' => $notes])
             );
-            $msg = 'تم خصم '.number_format($amountMinor / 100, 2).' '.Money::symbol().' من محفظة العميل بنجاح.';
+            $msg = __('تم خصم ').number_format($amountMinor / 100, 2).' '.Money::symbol().__(' من محفظة العميل بنجاح.');
         }
 
         return redirect()->route('store.wallets.show', $wallet)
@@ -140,11 +140,11 @@ class StoreCustomerWalletController extends Controller
         }
 
         if ($user->hasRole('call_center') || $user->hasRole('orders')) {
-            abort(403, 'تعديل نقاط الولاء مقتصر على الأدوار المالية والإدارية المعتمدة فقط.');
+            abort(403, __('تعديل نقاط الولاء مقتصر على الأدوار المالية والإدارية المعتمدة فقط.'));
         }
 
         if ($user->roles()->exists() && ! $user->is_platform_admin && ! $user->hasAnyRole(['owner', 'manager', 'finance', 'admin'])) {
-            abort(403, 'تعديل نقاط الولاء مقتصر على الأدوار المالية والإدارية المعتمدة فقط.');
+            abort(403, __('تعديل نقاط الولاء مقتصر على الأدوار المالية والإدارية المعتمدة فقط.'));
         }
 
         $tenantId = tenant('id') ? (string) tenant('id') : null;
@@ -168,16 +168,16 @@ class StoreCustomerWalletController extends Controller
             $account->award(
                 points: $points,
                 type: 'adjustment',
-                notes: "تعديل يدوي بالزيادة من إدارة المتجر: {$notes}"
+                notes: __('تعديل يدوي بالزيادة من إدارة المتجر: :notes', ['notes' => $notes])
             );
-            $msg = "تم منح {$points} نقطة ولاء للعميل بنجاح.";
+            $msg = __('تم منح :points نقطة ولاء للعميل بنجاح.', ['points' => $points]);
         } else {
             $account->redeem(
                 points: $points,
                 type: 'adjustment',
-                notes: "خصم نقاط يدوي من إدارة المتجر: {$notes}"
+                notes: __('خصم نقاط يدوي من إدارة المتجر: :notes', ['notes' => $notes])
             );
-            $msg = "تم خصم {$points} نقطة ولاء من حساب العميل بنجاح.";
+            $msg = __('تم خصم :points نقطة ولاء من حساب العميل بنجاح.', ['points' => $points]);
         }
 
         return redirect()->route('store.wallets.show', $wallet)

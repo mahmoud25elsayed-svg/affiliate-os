@@ -5,7 +5,7 @@
                 <svg class="w-4 h-4 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
-                <span>العودة لطلباتي</span>
+                <span>{{ __('العودة لطلباتي') }}</span>
             </a>
         </div>
 
@@ -15,11 +15,11 @@
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                     <div class="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-gray-100">
                         <div>
-                            <span class="text-xs text-gray-400 block">رقم الطلب</span>
+                            <span class="text-xs text-gray-400 block">{{ __('رقم الطلب') }}</span>
                             <h1 class="text-xl font-bold font-mono text-gray-900">{{ $order->reference }}</h1>
                         </div>
                         <div class="text-left">
-                            <span class="text-xs text-gray-400 block">تاريخ الإجراء</span>
+                            <span class="text-xs text-gray-400 block">{{ __('تاريخ الإجراء') }}</span>
                             <span class="text-sm font-medium text-gray-700">{{ $order->created_at?->translatedFormat('d F Y - h:i A') }}</span>
                         </div>
                     </div>
@@ -31,7 +31,7 @@
                                 <div>
                                     <h3 class="text-sm font-semibold text-gray-900">{{ $line->description }}</h3>
                                     <p class="text-xs text-gray-400 font-mono mt-0.5">{{ $line->identifier ?? '' }}</p>
-                                    <p class="text-xs text-gray-500 mt-1">الكمية: {{ $line->quantity }}</p>
+                                    <p class="text-xs text-gray-500 mt-1">{{ __('الكمية:') }} {{ $line->quantity }}</p>
                                 </div>
                                 <div class="text-left font-bold text-sm text-gray-900">
                                     {{ \App\Support\Money::show(($line->sub_total->value ?? 0)) }}
@@ -43,21 +43,21 @@
                     <!-- Pricing Breakdown -->
                     <div class="pt-4 border-t border-gray-100 space-y-2 text-sm">
                         <div class="flex justify-between text-gray-600">
-                            <span>المجموع الفرعي</span>
+                            <span>{{ __('المجموع الفرعي') }}</span>
                             <span>{{ \App\Support\Money::show(($order->sub_total->value ?? 0)) }}</span>
                         </div>
                         @if (($order->discount_total->value ?? 0) > 0)
                             <div class="flex justify-between text-emerald-600 font-medium">
-                                <span>خصم الكوبون</span>
+                                <span>{{ __('خصم الكوبون') }}</span>
                                 <span>-{{ \App\Support\Money::show(($order->discount_total->value ?? 0)) }}</span>
                             </div>
                         @endif
                         <div class="flex justify-between text-gray-600">
-                            <span>الشحن</span>
+                            <span>{{ __('الشحن') }}</span>
                             <span>{{ \App\Support\Money::show(($order->shipping_total->value ?? 0)) }}</span>
                         </div>
                         <div class="flex justify-between text-base font-bold text-gray-900 pt-2 border-t border-gray-100">
-                            <span>الإجمالي الكلي</span>
+                            <span>{{ __('الإجمالي الكلي') }}</span>
                             <span class="text-emerald-700">{{ \App\Support\Money::show(($order->total->value ?? 0)) }}</span>
                         </div>
                     </div>
@@ -71,10 +71,10 @@
                     $statusEnum = \App\Domain\Orders\Enums\OrderStatus::tryFrom($order->status);
                 @endphp
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-4">
-                    <h2 class="text-xs font-bold uppercase tracking-wider text-gray-400">متابعة مسار الطلب</h2>
+                    <h2 class="text-xs font-bold uppercase tracking-wider text-gray-400">{{ __('متابعة مسار الطلب') }}</h2>
 
                     <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
-                        <span class="text-xs text-emerald-600 block mb-0.5">الحالة الحالية:</span>
+                        <span class="text-xs text-emerald-600 block mb-0.5">{{ __('الحالة الحالية:') }}</span>
                         <span class="text-sm font-bold text-emerald-800">
                             {{ $statusEnum?->customerLabel() ?? $order->status }}
                         </span>
@@ -82,9 +82,9 @@
 
                     <!-- Customer Timeline -->
                     <div class="pt-3 border-t border-gray-100">
-                        <h3 class="text-xs font-bold text-gray-700 mb-3">سجل التحديثات:</h3>
+                        <h3 class="text-xs font-bold text-gray-700 mb-3">{{ __('سجل التحديثات:') }}</h3>
                         @if ($events->isEmpty())
-                            <p class="text-xs text-gray-400">جاري معالجة وتحديث مسار الطلب...</p>
+                            <p class="text-xs text-gray-400">{{ __('جاري معالجة وتحديث مسار الطلب...') }}</p>
                         @else
                             <ol class="relative border-r border-gray-200 space-y-4 mr-2">
                                 @foreach ($events as $event)
@@ -105,12 +105,12 @@
                         @endif
                     </div>
 
-                    <p class="text-xs text-gray-500 pt-2 border-t border-gray-100">طريقة الدفع: {{ $order->payment_method === 'cod' ? 'الدفع عند الاستلام' : 'بطاقة إلكترونية' }}</p>
+                    <p class="text-xs text-gray-500 pt-2 border-t border-gray-100">{{ __('طريقة الدفع:') }} {{ $order->payment_method === 'cod' ? __('الدفع عند الاستلام') : __('بطاقة إلكترونية') }}</p>
                 </div>
 
                 <!-- Shipping Address -->
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                    <h2 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">عنوان الشحن</h2>
+                    <h2 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">{{ __('عنوان الشحن') }}</h2>
                     @if ($order->shippingAddress)
                         <div class="text-sm text-gray-700 space-y-1">
                             <p class="font-bold text-gray-900">{{ $order->shippingAddress->first_name }} {{ $order->shippingAddress->last_name }}</p>
@@ -119,7 +119,7 @@
                             <p class="text-gray-500 text-xs">{{ $order->shippingAddress->city }}</p>
                         </div>
                     @else
-                        <p class="text-sm text-gray-400">لا يوجد عنوان شحن مسجل.</p>
+                        <p class="text-sm text-gray-400">{{ __('لا يوجد عنوان شحن مسجل.') }}</p>
                     @endif
                 </div>
             </div>

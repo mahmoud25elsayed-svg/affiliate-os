@@ -43,7 +43,7 @@ class OrderReturnedLedgerListener
                 $codReversalEntry = new EntryData(
                     type: 'order_returned_cod',
                     idempotencyKey: "order_returned_cod_{$order->id}",
-                    description: "إلغاء مستحقات تحصيل COD وإيراد المبيعات لمرتجع الطلب #{$order->reference}",
+                    description: __('إلغاء مستحقات تحصيل COD وإيراد المبيعات لمرتجع الطلب #:reference', ['reference' => $order->reference]),
                     lines: [
                         new LedgerLineData(account: $codReceivableAccount, amountMinor: -$orderTotalMinor),
                         new LedgerLineData(account: $storeRevenueAccount, amountMinor: $orderTotalMinor),
@@ -90,7 +90,7 @@ class OrderReturnedLedgerListener
             $entryData = new EntryData(
                 type: 'order_returned_late',
                 idempotencyKey: "order_late_return_reversal_{$order->id}",
-                description: "عكس عمولة مرتجع متأخر بعد التسوية للطلب #{$order->reference}",
+                description: __('عكس عمولة مرتجع متأخر بعد التسوية للطلب #:reference', ['reference' => $order->reference]),
                 lines: [
                     new LedgerLineData(account: $availableAccount, amountMinor: -$profitMinor),
                     new LedgerLineData(account: $expenseAccount, amountMinor: $profitMinor),
@@ -115,7 +115,7 @@ class OrderReturnedLedgerListener
                 $entryData = new EntryData(
                     type: 'order_returned',
                     idempotencyKey: "order_return_reversal_{$order->id}",
-                    description: "إلغاء عمولة معلقة لمرتجع الطلب #{$order->reference}",
+                    description: __('إلغاء عمولة معلقة لمرتجع الطلب #:reference', ['reference' => $order->reference]),
                     lines: [
                         new LedgerLineData(account: $pendingAccount, amountMinor: -$profitMinor),
                         new LedgerLineData(account: $expenseAccount, amountMinor: $profitMinor),
@@ -156,7 +156,7 @@ class OrderReturnedLedgerListener
                 $reversalEntry = new EntryData(
                     type: $bonusReversalType,
                     idempotencyKey: "order_tier_bonus_reversal_{$order->id}_{$affiliate->id}",
-                    description: "إلغاء بونص مستوى المسوق لمرتجع الطلب #{$order->reference}",
+                    description: __('إلغاء بونص مستوى المسوق لمرتجع الطلب #:reference', ['reference' => $order->reference]),
                     lines: [
                         new LedgerLineData(account: $targetAccount, amountMinor: -$bonusMinor),
                         new LedgerLineData(account: $bonusExpenseAccount, amountMinor: $bonusMinor),

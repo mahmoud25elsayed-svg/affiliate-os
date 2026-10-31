@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مركز المساعدة والأسئلة الشائعة - {{ $tenant->name ?? 'المتجر' }}</title>
+    <title>{{ __('مركز المساعدة والأسئلة الشائعة -') }} {{ $tenant->name ?? __('المتجر') }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,15 +17,15 @@
 
         <!-- Header -->
         <div class="text-center space-y-3">
-            <h1 class="text-3xl font-black text-slate-900">مركز المساعدة والأسئلة الشائعة</h1>
+            <h1 class="text-3xl font-black text-slate-900">{{ __('مركز المساعدة والأسئلة الشائعة') }}</h1>
             <p class="text-sm text-slate-500 max-w-lg mx-auto">
-                إجابات شاملة لجميع استفساراتك حول الشحن، التوصيل، طرق الدفع عند الاستلام، وسياسة الاستبدال والاسترجاع.
+                {{ __('إجابات شاملة لجميع استفساراتك حول الشحن، التوصيل، طرق الدفع عند الاستلام، وسياسة الاستبدال والاسترجاع.') }}
             </p>
         </div>
 
         <!-- Search Bar -->
         <form action="{{ route('storefront.help.index') }}" method="GET" class="relative max-w-xl mx-auto">
-            <input type="text" name="q" value="{{ $searchQuery }}" placeholder="ابحث عن سؤال أو استفسار (مثال: موعد التوصيل، الاسترجاع)..." class="w-full py-3.5 pr-12 pl-4 text-xs font-semibold rounded-2xl border border-slate-200 bg-white shadow-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+            <input type="text" name="q" value="{{ $searchQuery }}" placeholder="{{ __('ابحث عن سؤال أو استفسار (مثال: موعد التوصيل، الاسترجاع)...') }}" class="w-full py-3.5 pr-12 pl-4 text-xs font-semibold rounded-2xl border border-slate-200 bg-white shadow-sm focus:ring-2 focus:ring-indigo-500 outline-none">
             <span class="absolute right-4 top-3.5 text-slate-400">🔍</span>
         </form>
 
@@ -33,7 +33,7 @@
         @if(! empty($categories))
             <div class="flex flex-wrap items-center justify-center gap-2">
                 <a href="{{ route('storefront.help.index') }}" class="px-4 py-2 rounded-xl text-xs font-bold transition {{ empty($currentCategory) && empty($searchQuery) ? 'bg-indigo-600 text-white' : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100' }}">
-                    جميع الأسئلة
+                    {{ __('جميع الأسئلة') }}
                 </a>
                 @foreach($categories as $cat)
                     <a href="{{ route('storefront.help.index', ['category' => $cat]) }}" class="px-4 py-2 rounded-xl text-xs font-bold transition {{ $currentCategory === $cat ? 'bg-indigo-600 text-white' : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100' }}">
@@ -57,7 +57,7 @@
                 </div>
             @empty
                 <div class="bg-white rounded-3xl border border-slate-200/80 p-12 text-center text-slate-400 text-xs">
-                    لم يتم العثور على إجابات تطابق استفسارك. يرجى مراجعة فريق الدعم الفني.
+                    {{ __('لم يتم العثور على إجابات تطابق استفسارك. يرجى مراجعة فريق الدعم الفني.') }}
                 </div>
             @endforelse
         </div>

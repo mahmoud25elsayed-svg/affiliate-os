@@ -55,7 +55,7 @@ class HandleInertiaRequests extends Middleware
             ],
             'tenant' => $tenant ? [
                 'id' => (string) $tenant->getKey(),
-                'name' => (string) ($tenant->getAttribute('name') ?? 'متجرنا'),
+                'name' => (string) ($tenant->getAttribute('name') ?? __('متجرنا')),
             ] : null,
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),

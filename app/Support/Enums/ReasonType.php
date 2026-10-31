@@ -14,10 +14,10 @@ enum ReasonType: string
     public function label(string $locale = 'ar'): string
     {
         return match ($this) {
-            self::CANCELLATION => $locale === 'ar' ? 'إلغاء الطلب' : 'Cancellation',
-            self::RETURN => $locale === 'ar' ? 'مرتجع' : 'Return',
-            self::QUALITY_REJECTION => $locale === 'ar' ? 'رفض جودة الطلب' : 'Quality Rejection',
-            self::DELIVERY_FAILURE => $locale === 'ar' ? 'فشل التسليم' : 'Delivery Failure',
+            self::CANCELLATION => $locale === 'ar' ? __('إلغاء الطلب') : 'Cancellation',
+            self::RETURN => $locale === 'ar' ? __('مرتجع') : 'Return',
+            self::QUALITY_REJECTION => $locale === 'ar' ? __('رفض جودة الطلب') : 'Quality Rejection',
+            self::DELIVERY_FAILURE => $locale === 'ar' ? __('فشل التسليم') : 'Delivery Failure',
         };
     }
 }

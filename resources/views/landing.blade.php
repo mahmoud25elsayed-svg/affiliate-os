@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AffiliateOS — منصة التجارة والتسويق بالعمولة للتجار</title>
+    <title>{{ __('AffiliateOS — منصة التجارة والتسويق بالعمولة للتجار') }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -148,39 +148,39 @@
                 <span>⚡ AffiliateOS</span>
             </div>
             <div class="nav-actions">
-                <a href="{{ route('onboarding.register') }}" class="btn btn-primary">ابدأ مجاناً</a>
+                <a href="{{ route('onboarding.register') }}" class="btn btn-primary">{{ __('ابدأ مجاناً') }}</a>
             </div>
         </header>
 
         <section class="hero">
-            <div class="badge">🚀 الجيل الجديد من التجارة الإلكترونية والتسويق بالعمولة</div>
-            <h1>متجرك الإلكتروني وشبكة مسوقيك <br><span>في منصة واحدة خلال دقيقة</span></h1>
-            <p>حل متكامل مصمم خصيصاً للتجارة الإلكترونية في مصر. بدون تعقيد، مع عزل تام للبيانات، ونظام دفع وتسوية عمولات دقيق بالقرش.</p>
+            <div class="badge">{{ __('🚀 الجيل الجديد من التجارة الإلكترونية والتسويق بالعمولة') }}</div>
+            <h1>{{ __('متجرك الإلكتروني وشبكة مسوقيك') }} <br><span>{{ __('في منصة واحدة خلال دقيقة') }}</span></h1>
+            <p>{{ __('حل متكامل مصمم خصيصاً للتجارة الإلكترونية في الوطن العربي. بدون تعقيد، مع عزل تام للبيانات، ونظام دفع وتسوية عمولات دقيق بالقرش.') }}</p>
             <div class="hero-actions">
-                <a href="{{ route('onboarding.register') }}" class="btn btn-primary" style="padding: 1rem 2.25rem; font-size: 1.15rem;">سجل متجرك الآن مجاناً ←</a>
+                <a href="{{ route('onboarding.register') }}" class="btn btn-primary" style="padding: 1rem 2.25rem; font-size: 1.15rem;">{{ __('سجل متجرك الآن مجاناً ←') }}</a>
             </div>
         </section>
 
         <section class="features">
             <div class="feature-card">
                 <div class="feature-icon">🏬</div>
-                <h3 class="feature-title">متجر مستقل لكل تاجر</h3>
-                <p class="feature-desc">كتالوج متطور، إدارة المخزون، خيارات المنتجات، ونطاق فرعي فوري مع دعم كامل للغة العربية والعملة المصرية (EGP).</p>
+                <h3 class="feature-title">{{ __('متجر مستقل لكل تاجر') }}</h3>
+                <p class="feature-desc">{{ __('كتالوج متطور، إدارة المخزون، خيارات المنتجات، ونطاق فرعي فوري مع دعم كامل للعربية والإنجليزية و28 عملة.') }}</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">🤝</div>
-                <h3 class="feature-title">برنامج تسويق بالعمولة مدمج</h3>
-                <p class="feature-desc">روابط تتبع مخصصة لمسوقيك، احتساب دقيق للعمولات بدون كسور، وتسوية فورية لأرباح المسوقين.</p>
+                <h3 class="feature-title">{{ __('برنامج تسويق بالعمولة مدمج') }}</h3>
+                <p class="feature-desc">{{ __('روابط تتبع مخصصة لمسوقيك، احتساب دقيق للعمولات بدون كسور، وتسوية فورية لأرباح المسوقين.') }}</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">🔒</div>
-                <h3 class="feature-title">عزل تام وأمان متقدم</h3>
-                <p class="feature-desc">عزل كامل لبيانات متجرك وسجل التدقيق، مع حماية ثنائية (2FA) وأدوار وصلاحيات دقيقة لفريق عملك.</p>
+                <h3 class="feature-title">{{ __('عزل تام وأمان متقدم') }}</h3>
+                <p class="feature-desc">{{ __('عزل كامل لبيانات متجرك وسجل التدقيق، مع حماية ثنائية (2FA) وأدوار وصلاحيات دقيقة لفريق عملك.') }}</p>
             </div>
         </section>
 
         <footer>
-            <p>© {{ date('Y') }} AffiliateOS. جميع الحقوق محفوظة.</p>
+            <p>© {{ date('Y') }} {{ __('AffiliateOS. جميع الحقوق محفوظة.') }}</p>
         </footer>
     </div>
 </body>

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تقارير أداء الكول سنتر وعينات الجودة (QA) - لوحة المتجر</title>
+    <title>{{ __('تقارير أداء الكول سنتر وعينات الجودة (QA) - لوحة المتجر') }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,16 +22,16 @@
                 <div class="flex items-center gap-3">
                     <span class="p-2.5 bg-indigo-600 text-white rounded-2xl shadow-sm text-lg font-black">📊</span>
                     <div>
-                        <h1 class="text-2xl font-black text-slate-900">تقارير أداء الكول سنتر وعينات الجودة (QA)</h1>
+                        <h1 class="text-2xl font-black text-slate-900">{{ __('تقارير أداء الكول سنتر وعينات الجودة (QA)') }}</h1>
                         <p class="text-xs text-slate-500 mt-0.5">
-                            متابعة معدلات التأكيد اللحظية، متوسط زمن المكالمة، وسجل التدقيق لعينات المكالمات المسجلة
+                            {{ __('متابعة معدلات التأكيد اللحظية، متوسط زمن المكالمة، وسجل التدقيق لعينات المكالمات المسجلة') }}
                         </p>
                     </div>
                 </div>
             </div>
             <div class="flex items-center space-x-2 space-x-reverse">
                 <a href="{{ route('store.call-center.index') }}" class="px-4 py-2.5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
-                    🎧 العودة لمكتب الاتصال
+                    {{ __('🎧 العودة لمكتب الاتصال') }}
                 </a>
             </div>
         </div>
@@ -39,29 +39,29 @@
         <!-- Metric KPI Cards -->
         <div class="grid grid-cols-2 md:grid-cols-6 gap-3">
             <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
-                <div class="text-[11px] font-bold text-slate-500">إجمالي المكالمات</div>
+                <div class="text-[11px] font-bold text-slate-500">{{ __('إجمالي المكالمات') }}</div>
                 <div class="text-2xl font-black text-slate-900 mt-1">{{ number_format($totalAttempts) }}</div>
             </div>
             <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
-                <div class="text-[11px] font-bold text-slate-500">طلبات مؤكدة</div>
+                <div class="text-[11px] font-bold text-slate-500">{{ __('طلبات مؤكدة') }}</div>
                 <div class="text-2xl font-black text-emerald-600 mt-1">{{ number_format($confirmedCount) }}</div>
             </div>
             <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
-                <div class="text-[11px] font-bold text-slate-500">طلبات ملغاة</div>
+                <div class="text-[11px] font-bold text-slate-500">{{ __('طلبات ملغاة') }}</div>
                 <div class="text-2xl font-black text-rose-600 mt-1">{{ number_format($cancelledCount) }}</div>
             </div>
             <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
-                <div class="text-[11px] font-bold text-slate-500">تعذر الوصول (استنفاد)</div>
+                <div class="text-[11px] font-bold text-slate-500">{{ __('تعذر الوصول (استنفاد)') }}</div>
                 <div class="text-2xl font-black text-amber-600 mt-1">{{ number_format($unreachableCount) }}</div>
             </div>
             <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
-                <div class="text-[11px] font-bold text-slate-500">معدل التأكيد (Confirmation %)</div>
+                <div class="text-[11px] font-bold text-slate-500">{{ __('معدل التأكيد (Confirmation %)') }}</div>
                 <div class="text-2xl font-black text-indigo-600 mt-1">{{ $confirmationRate }}%</div>
             </div>
             <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
-                <div class="text-[11px] font-bold text-slate-500">متوسط زمن المكالمة</div>
+                <div class="text-[11px] font-bold text-slate-500">{{ __('متوسط زمن المكالمة') }}</div>
                 <div class="text-2xl font-black text-slate-800 mt-1">
-                    {{ floor($avgDuration / 60) }}د {{ $avgDuration % 60 }}ث
+                    {{ floor($avgDuration / 60) }}{{ __('د') }} {{ $avgDuration % 60 }}{{ __('ث') }}
                 </div>
             </div>
         </div>
@@ -70,8 +70,8 @@
         <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
             <div class="p-6 border-b border-slate-100 flex items-center justify-between">
                 <div>
-                    <h2 class="text-base font-black text-slate-900">سجل عينات تدقيق الجودة (QA Sampling)</h2>
-                    <p class="text-xs text-slate-500 mt-0.5">آخر 20 مكالمة مسجلة لمراجعة الجودة وملاحظات العملاء</p>
+                    <h2 class="text-base font-black text-slate-900">{{ __('سجل عينات تدقيق الجودة (QA Sampling)') }}</h2>
+                    <p class="text-xs text-slate-500 mt-0.5">{{ __('آخر 20 مكالمة مسجلة لمراجعة الجودة وملاحظات العملاء') }}</p>
                 </div>
             </div>
 
@@ -79,14 +79,14 @@
                 <table class="w-full text-right text-xs">
                     <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200/80">
                         <tr>
-                            <th class="py-3 px-4">رقم الطلب</th>
-                            <th class="py-3 px-4">الموظف (Agent)</th>
-                            <th class="py-3 px-4">المحاولة</th>
-                            <th class="py-3 px-4">النتيجة</th>
-                            <th class="py-3 px-4">المدة</th>
-                            <th class="py-3 px-4">التاريخ والوقت</th>
-                            <th class="py-3 px-4">الملاحظات</th>
-                            <th class="py-3 px-4">التسجيل الصوتي</th>
+                            <th class="py-3 px-4">{{ __('رقم الطلب') }}</th>
+                            <th class="py-3 px-4">{{ __('الموظف (Agent)') }}</th>
+                            <th class="py-3 px-4">{{ __('المحاولة') }}</th>
+                            <th class="py-3 px-4">{{ __('النتيجة') }}</th>
+                            <th class="py-3 px-4">{{ __('المدة') }}</th>
+                            <th class="py-3 px-4">{{ __('التاريخ والوقت') }}</th>
+                            <th class="py-3 px-4">{{ __('الملاحظات') }}</th>
+                            <th class="py-3 px-4">{{ __('التسجيل الصوتي') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 font-medium text-slate-700">
@@ -96,10 +96,10 @@
                                     #{{ $call->order_id }}
                                 </td>
                                 <td class="py-3.5 px-4 font-bold text-slate-900">
-                                    {{ $call->agent?->name ?? 'غير محدد' }}
+                                    {{ $call->agent?->name ?? __('غير محدد') }}
                                 </td>
                                 <td class="py-3.5 px-4">
-                                    محاولة {{ $call->attempt_number }}
+                                    {{ __('محاولة') }} {{ $call->attempt_number }}
                                 </td>
                                 <td class="py-3.5 px-4">
                                     @php
@@ -115,7 +115,7 @@
                                     </span>
                                 </td>
                                 <td class="py-3.5 px-4">
-                                    {{ $call->duration_seconds ? "{$call->duration_seconds} ثانية" : '-' }}
+                                    {{ $call->duration_seconds ? __(':duration_seconds ثانية', ['duration_seconds' => $call->duration_seconds]) : '-' }}
                                 </td>
                                 <td class="py-3.5 px-4 text-slate-500 text-[11px]">
                                     {{ $call->created_at?->format('Y-m-d H:i') }}
@@ -127,17 +127,17 @@
                                     @if($call->recording_url)
                                         <a href="{{ $call->recording_url }}" target="_blank" class="px-2.5 py-1 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-lg text-[11px] font-bold border border-indigo-200 transition inline-flex items-center gap-1">
                                             <span>▶️</span>
-                                            <span>استماع</span>
+                                            <span>{{ __('استماع') }}</span>
                                         </a>
                                     @else
-                                        <span class="text-slate-400 text-[11px]">غير متوفر</span>
+                                        <span class="text-slate-400 text-[11px]">{{ __('غير متوفر') }}</span>
                                     @endif
                                 </td>
                             </tr>
                         @empty
                             <tr>
                                 <td colspan="8" class="py-8 text-center text-slate-400 font-bold">
-                                    لا توجد مكالمات مسجلة حتى الآن.
+                                    {{ __('لا توجد مكالمات مسجلة حتى الآن.') }}
                                 </td>
                             </tr>
                         @endforelse

@@ -15,7 +15,10 @@ class PlatformOverviewStats extends StatsOverviewWidget
 {
     protected static ?int $sort = 1;
 
-    protected ?string $heading = 'نظرة عامة على المنصة';
+    protected function getHeading(): ?string
+    {
+        return __('نظرة عامة على المنصة');
+    }
 
     /**
      * @return array<Stat>
@@ -26,18 +29,18 @@ class PlatformOverviewStats extends StatsOverviewWidget
         $pendingInvoices = SubscriptionInvoice::query()->where('status', SubscriptionInvoice::STATUS_PENDING)->count();
 
         return [
-            Stat::make('المتاجر النشطة', (string) $analytics->getActiveMerchantsCount())
-                ->description('من إجمالي '.Tenant::query()->count().' متجر')
+            Stat::make(__('المتاجر النشطة'), (string) $analytics->getActiveMerchantsCount())
+                ->description(__('من إجمالي ').Tenant::query()->count().__(' متجر'))
                 ->descriptionIcon('heroicon-m-building-storefront')
                 ->color('success'),
-            Stat::make('الإيراد الشهري المتكرر (MRR)', Money::fromMinor($analytics->getMonthlyRecurringRevenueMinor())->format())
+            Stat::make(__('الإيراد الشهري المتكرر (MRR)'), Money::fromMinor($analytics->getMonthlyRecurringRevenueMinor())->format())
                 ->descriptionIcon('heroicon-m-banknotes')
                 ->color('primary'),
-            Stat::make('معدل الإلغاء (Churn)', $analytics->getChurnRate().'%')
+            Stat::make(__('معدل الإلغاء (Churn)'), $analytics->getChurnRate().'%')
                 ->descriptionIcon('heroicon-m-arrow-trending-down')
                 ->color('warning'),
-            Stat::make('فواتير بانتظار المراجعة', (string) $pendingInvoices)
-                ->description('تحويلات يدوية تحتاج اعتماد')
+            Stat::make(__('فواتير بانتظار المراجعة'), (string) $pendingInvoices)
+                ->description(__('تحويلات يدوية تحتاج اعتماد'))
                 ->descriptionIcon('heroicon-m-document-check')
                 ->color($pendingInvoices > 0 ? 'danger' : 'gray'),
         ];

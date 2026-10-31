@@ -39,11 +39,11 @@ class CodSettlementService
         ?string $notes = null
     ): CodRemittance {
         if ($remittance->status === CodRemittanceStatus::SETTLED) {
-            throw new DomainException('كشف التسوية هذا تمت تسويته مسبقاً.');
+            throw new DomainException(__('كشف التسوية هذا تمت تسويته مسبقاً.'));
         }
 
         if ($remittance->status === CodRemittanceStatus::CANCELLED) {
-            throw new DomainException('لا يمكن تسوية كشف ملغي.');
+            throw new DomainException(__('لا يمكن تسوية كشف ملغي.'));
         }
 
         return DB::transaction(function () use ($remittance, $settler, $bankReference, $notes): CodRemittance {
@@ -76,7 +76,7 @@ class CodSettlementService
                             'remittance_reference' => $remittance->reference,
                             'bank_reference' => $bankReference,
                         ],
-                        note: "تمت تسوية التحصيل والتوريد من شركة الشحن عبر كشف رقم {$remittance->reference}."
+                        note: __('تمت تسوية التحصيل والتوريد من شركة الشحن عبر كشف رقم :reference.', ['reference' => $remittance->reference])
                     );
 
                     // Settle affiliate commission (pending -> available)
@@ -123,7 +123,7 @@ class CodSettlementService
                 $entryData = new EntryData(
                     type: 'cod_remittance_settled',
                     idempotencyKey: "cod_remittance_settled_{$remittance->id}",
-                    description: "تسوية وتوريد كشف متحصلات الشحن رقم {$remittance->reference}",
+                    description: __('تسوية وتوريد كشف متحصلات الشحن رقم :reference', ['reference' => $remittance->reference]),
                     lines: $lines,
                     refType: CodRemittance::class,
                     refId: $remittance->id,

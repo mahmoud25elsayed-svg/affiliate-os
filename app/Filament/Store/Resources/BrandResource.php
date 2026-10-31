@@ -22,20 +22,34 @@ class BrandResource extends Resource
 
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-tag';
 
-    protected static ?string $navigationLabel = 'العلامات التجارية';
+    public static function getNavigationLabel(): string
+    {
 
-    protected static ?string $modelLabel = 'علامة تجارية';
+        return __('العلامات التجارية');
 
-    protected static ?string $pluralModelLabel = 'العلامات التجارية';
+    }
 
-    protected static \UnitEnum|string|null $navigationGroup = 'إدارة الكتالوج';
+    public static function getModelLabel(): string
+    {
+        return __('علامة تجارية');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('العلامات التجارية');
+    }
+
+    public static function getNavigationGroup(): string|\UnitEnum|null
+    {
+        return __('إدارة الكتالوج');
+    }
 
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('العلامة التجارية')->schema([
+            Section::make(__('العلامة التجارية'))->schema([
                 TextInput::make('name')
-                    ->label('اسم العلامة التجارية')
+                    ->label(__('اسم العلامة التجارية'))
                     ->required()
                     ->maxLength(255),
             ]),
@@ -47,18 +61,18 @@ class BrandResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->label('اسم العلامة التجارية')
+                    ->label(__('اسم العلامة التجارية'))
                     ->weight('bold')
                     ->searchable()
                     ->sortable(),
 
                 TextColumn::make('products_count')
-                    ->label('عدد المنتجات')
+                    ->label(__('عدد المنتجات'))
                     ->counts('products')
                     ->badge(),
 
                 TextColumn::make('created_at')
-                    ->label('تاريخ الإنشاء')
+                    ->label(__('تاريخ الإنشاء'))
                     ->dateTime('Y-m-d')
                     ->sortable(),
             ]);

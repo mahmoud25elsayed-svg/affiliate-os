@@ -36,88 +36,102 @@ class FlashSaleResource extends Resource
 
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-bolt';
 
-    protected static ?string $navigationLabel = 'عروض الفلاش سيل';
+    public static function getNavigationLabel(): string
+    {
 
-    protected static ?string $modelLabel = 'فلاش سيل';
+        return __('عروض الفلاش سيل');
 
-    protected static ?string $pluralModelLabel = 'عروض الفلاش سيل';
+    }
 
-    protected static \UnitEnum|string|null $navigationGroup = 'التسويق والمبيعات';
+    public static function getModelLabel(): string
+    {
+        return __('فلاش سيل');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('عروض الفلاش سيل');
+    }
+
+    public static function getNavigationGroup(): string|\UnitEnum|null
+    {
+        return __('التسويق والمبيعات');
+    }
 
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('معلومات الفلاش سيل')->schema([
+            Section::make(__('معلومات الفلاش سيل'))->schema([
                 Grid::make(2)->schema([
                     TextInput::make('name')
-                        ->label('اسم الحملة / العرض')
+                        ->label(__('اسم الحملة / العرض'))
                         ->required()
                         ->maxLength(255),
 
                     Toggle::make('is_active')
-                        ->label('مفعل')
+                        ->label(__('مفعل'))
                         ->default(true),
 
                     DateTimePicker::make('starts_at')
-                        ->label('تاريخ ووقت البدء')
+                        ->label(__('تاريخ ووقت البدء'))
                         ->required()
                         ->default(now()),
 
                     DateTimePicker::make('ends_at')
-                        ->label('تاريخ ووقت الانتهاء')
+                        ->label(__('تاريخ ووقت الانتهاء'))
                         ->required()
                         ->default(now()->addDays(2)),
                 ]),
 
                 Textarea::make('terms_and_conditions')
-                    ->label('الشروط والأحكام الخاصة بالعرض')
+                    ->label(__('الشروط والأحكام الخاصة بالعرض'))
                     ->rows(2)
                     ->nullable(),
             ]),
 
-            Section::make('المنتجات المشمولة بالعرض والكميات المخصصة')->schema([
+            Section::make(__('المنتجات المشمولة بالعرض والكميات المخصصة'))->schema([
                 Repeater::make('items')
                     ->relationship('items')
                     ->schema([
                         Select::make('product_variant_id')
-                            ->label('المتغير / المنتج')
+                            ->label(__('المتغير / المنتج'))
                             ->options(function () {
                                 return ProductVariant::with(['product', 'prices'])
                                     ->get()
                                     ->mapWithKeys(function (ProductVariant $variant) {
                                         $prod = $variant->product;
-                                        $prodName = $prod instanceof Product ? (string) ($prod->translateAttribute('name') ?? 'منتج') : 'منتج';
+                                        $prodName = $prod instanceof Product ? (string) ($prod->translateAttribute('name') ?? __('منتج')) : __('منتج');
                                         $sku = $variant->sku ?? 'SKU-'.$variant->id;
                                         $firstPrice = $variant->prices->first();
                                         $stdPrice = $firstPrice instanceof Price ? $firstPrice->price->formatted() : '0 '.Money::symbol();
 
-                                        return [$variant->id => "{$prodName} ({$sku}) - سعر أصلي: {$stdPrice}"];
+                                        return [$variant->id => __(':prod_name (:sku) - سعر أصلي: :std_price', ['prod_name' => $prodName, 'sku' => $sku, 'std_price' => $stdPrice])];
                                     });
                             })
                             ->searchable()
                             ->required(),
 
                         TextInput::make('flash_price_minor')
-                            ->label('سعر التخفيض الفوري (بالقروش - Minor Units)')
-                            ->helperText('مثال: 15000 تعني 150.00 '.Money::symbol())
+                            ->label(__('سعر التخفيض الفوري (بالقروش - Minor Units)'))
+                            ->helperText(__('مثال: 15000 تعني 150.00 ').Money::symbol())
                             ->numeric()
                             ->required(),
 
                         TextInput::make('allocated_quantity')
-                            ->label('الكمية المخصصة للعرض')
+                            ->label(__('الكمية المخصصة للعرض'))
                             ->numeric()
                             ->default(10)
                             ->required(),
 
                         TextInput::make('max_per_order')
-                            ->label('الحد الأقصى للقطعة في الطلب الواحد')
+                            ->label(__('الحد الأقصى للقطعة في الطلب الواحد'))
                             ->numeric()
                             ->default(1)
                             ->nullable(),
                     ])
                     ->columns(2)
                     ->defaultItems(1)
-                    ->addActionLabel('إضافة منتج للعرض'),
+                    ->addActionLabel(__('إضافة منتج للعرض')),
             ]),
         ]);
     }
@@ -127,46 +141,46 @@ class FlashSaleResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->label('اسم العرض')
+                    ->label(__('اسم العرض'))
                     ->searchable()
                     ->sortable()
                     ->weight('bold'),
 
                 IconColumn::make('is_active')
-                    ->label('مفعل')
+                    ->label(__('مفعل'))
                     ->boolean(),
 
                 TextColumn::make('starts_at')
-                    ->label('يبدأ في')
+                    ->label(__('يبدأ في'))
                     ->dateTime('d/m/Y H:i')
                     ->sortable(),
 
                 TextColumn::make('ends_at')
-                    ->label('ينتهي في')
+                    ->label(__('ينتهي في'))
                     ->dateTime('d/m/Y H:i')
                     ->sortable(),
 
                 TextColumn::make('items_count')
-                    ->label('عدد المنتجات')
+                    ->label(__('عدد المنتجات'))
                     ->counts('items')
                     ->badge()
                     ->color('info'),
 
                 TextColumn::make('status')
-                    ->label('الحالة الحالية')
+                    ->label(__('الحالة الحالية'))
                     ->state(function (FlashSale $record): string {
                         $now = now();
                         if (! $record->is_active) {
-                            return 'معطل';
+                            return __('معطل');
                         }
                         if ($now->lt($record->starts_at)) {
-                            return 'قادم قريباً';
+                            return __('قادم قريباً');
                         }
                         if ($now->gt($record->ends_at)) {
-                            return 'منتهي';
+                            return __('منتهي');
                         }
 
-                        return 'نشط الآن ⚡';
+                        return __('نشط الآن ⚡');
                     })
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {

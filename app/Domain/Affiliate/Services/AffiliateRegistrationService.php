@@ -72,12 +72,12 @@ class AffiliateRegistrationService
 
         // Check uniqueness within tenant
         if (Affiliate::query()->where('tenant_id', $tenantId)->where('phone', $phoneE164)->exists()) {
-            throw new InvalidArgumentException('رقم الهاتف مسجل بالفعل في برنامج المسوقين لهذا المتجر.');
+            throw new InvalidArgumentException(__('رقم الهاتف مسجل بالفعل في برنامج المسوقين لهذا المتجر.'));
         }
 
         if (! empty($data['email'])) {
             if (Affiliate::query()->where('tenant_id', $tenantId)->where('email', $data['email'])->exists()) {
-                throw new InvalidArgumentException('البريد الإلكتروني مسجل بالفعل في برنامج المسوقين لهذا المتجر.');
+                throw new InvalidArgumentException(__('البريد الإلكتروني مسجل بالفعل في برنامج المسوقين لهذا المتجر.'));
             }
         }
 
@@ -130,7 +130,7 @@ class AffiliateRegistrationService
             data: [
                 'customer_name' => $affiliate->name,
                 'otp_code' => $otp,
-                'store_name' => $tenant instanceof Tenant ? $tenant->name : 'متجرنا',
+                'store_name' => $tenant instanceof Tenant ? $tenant->name : __('متجرنا'),
             ],
             notifiable: $affiliate
         );
@@ -188,7 +188,7 @@ class AffiliateRegistrationService
                 data: [
                     'customer_name' => $affiliate->name,
                     'otp_code' => $otp,
-                    'store_name' => $tenant instanceof Tenant ? $tenant->name : 'متجرنا',
+                    'store_name' => $tenant instanceof Tenant ? $tenant->name : __('متجرنا'),
                 ],
                 notifiable: $affiliate
             );

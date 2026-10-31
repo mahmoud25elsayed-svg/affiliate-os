@@ -1,16 +1,16 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
     <!-- Breadcrumb -->
     <nav class="flex items-center text-sm text-slate-500 mb-8" aria-label="Breadcrumb">
-        <a href="{{ route('storefront.home') }}" class="hover:text-emerald-600 transition">الرئيسية</a>
+        <a href="{{ route('storefront.home') }}" class="hover:text-emerald-600 transition">{{ __('الرئيسية') }}</a>
         <span class="mx-2 text-slate-300">/</span>
-        <a href="{{ route('storefront.cart') }}" class="hover:text-emerald-600 transition">السلة</a>
+        <a href="{{ route('storefront.cart') }}" class="hover:text-emerald-600 transition">{{ __('السلة') }}</a>
         <span class="mx-2 text-slate-300">/</span>
-        <span class="text-slate-900 font-semibold">إتمام الطلب</span>
+        <span class="text-slate-900 font-semibold">{{ __('إتمام الطلب') }}</span>
     </nav>
 
     <div class="mb-8">
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900">إتمام الشراء والدفع</h1>
-        <p class="text-sm text-slate-500 mt-1">أدخل بيانات التوصيل وأكد طلبك في خطوة واحدة سريعة.</p>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900">{{ __('إتمام الشراء والدفع') }}</h1>
+        <p class="text-sm text-slate-500 mt-1">{{ __('أدخل بيانات التوصيل وأكد طلبك في خطوة واحدة سريعة.') }}</p>
     </div>
 
     @if($count === 0)
@@ -20,10 +20,10 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                 </svg>
             </div>
-            <h2 class="text-xl font-bold text-slate-900 mb-2">سلتك فارغة</h2>
-            <p class="text-slate-500 text-sm mb-6">لا يمكنك إتمام الطلب لأن سلة التسوق فارغة حالياً.</p>
+            <h2 class="text-xl font-bold text-slate-900 mb-2">{{ __('سلتك فارغة') }}</h2>
+            <p class="text-slate-500 text-sm mb-6">{{ __('لا يمكنك إتمام الطلب لأن سلة التسوق فارغة حالياً.') }}</p>
             <a href="{{ route('storefront.products.index') }}" class="inline-flex px-6 py-3 bg-emerald-600 text-white rounded-xl font-bold text-sm hover:bg-emerald-700 transition">
-                تصفح المنتجات
+                {{ __('تصفح المنتجات') }}
             </a>
         </div>
     @else
@@ -37,30 +37,30 @@
                             1
                         </div>
                         <div>
-                            <h2 class="text-lg font-bold text-slate-900">بيانات التوصيل</h2>
-                            <p class="text-xs text-slate-400">أدخل اسمك ورقم هاتفك المصري لتأكيد الطلب</p>
+                            <h2 class="text-lg font-bold text-slate-900">{{ __('بيانات التوصيل') }}</h2>
+                            <p class="text-xs text-slate-400">{{ __('أدخل اسمك ورقم هاتفك لتأكيد الطلب') }}</p>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <!-- Customer Name -->
                         <div class="sm:col-span-2">
-                            <label for="customer_name" class="block text-xs font-bold text-slate-700 mb-1.5">الاسم بالكامل *</label>
-                            <input wire:model="customer_name" type="text" id="customer_name" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition text-sm text-slate-900 @error('customer_name') border-red-500 @enderror" placeholder="مثال: أحمد محمد علي">
+                            <label for="customer_name" class="block text-xs font-bold text-slate-700 mb-1.5">{{ __('الاسم بالكامل *') }}</label>
+                            <input wire:model="customer_name" type="text" id="customer_name" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition text-sm text-slate-900 @error('customer_name') border-red-500 @enderror" placeholder="{{ __('مثال: أحمد محمد علي') }}">
                             @error('customer_name') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                         </div>
 
                         <!-- Customer Phone -->
                         <div class="sm:col-span-2">
-                            <label for="customer_phone" class="block text-xs font-bold text-slate-700 mb-1.5">رقم الهاتف (موبايل مصري) *</label>
+                            <label for="customer_phone" class="block text-xs font-bold text-slate-700 mb-1.5">{{ __('رقم الموبايل *') }}</label>
                             <input wire:model="customer_phone" type="tel" id="customer_phone" dir="ltr" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition text-sm text-slate-900 text-right @error('customer_phone') border-red-500 @enderror" placeholder="{{ \App\Support\Location\Market::country()->example }}">
-                            <p class="text-xs text-slate-400 mt-1">سيتم التواصل معك عبر الهاتف أو الواتساب لتأكيد موعد التسليم.</p>
+                            <p class="text-xs text-slate-400 mt-1">{{ __('سيتم التواصل معك عبر الهاتف أو الواتساب لتأكيد موعد التسليم.') }}</p>
                             @error('customer_phone') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                         </div>
 
                         <!-- Governorate -->
                         <div>
-                            <label for="governorate_id" class="block text-xs font-bold text-slate-700 mb-1.5">المحافظة *</label>
+                            <label for="governorate_id" class="block text-xs font-bold text-slate-700 mb-1.5">{{ __('المحافظة *') }}</label>
                             <select wire:model.live="governorate_id" id="governorate_id" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition text-sm text-slate-900 bg-white">
                                 @foreach($governorates as $gov)
                                     <option value="{{ $gov->id }}">{{ $gov->label() }}</option>
@@ -71,22 +71,22 @@
 
                         <!-- City -->
                         <div>
-                            <label for="city" class="block text-xs font-bold text-slate-700 mb-1.5">المدينة / المنطقة *</label>
-                            <input wire:model="city" type="text" id="city" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition text-sm text-slate-900 @error('city') border-red-500 @enderror" placeholder="مثال: مدينة نصر / سموحة">
+                            <label for="city" class="block text-xs font-bold text-slate-700 mb-1.5">{{ __('المدينة / المنطقة *') }}</label>
+                            <input wire:model="city" type="text" id="city" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition text-sm text-slate-900 @error('city') border-red-500 @enderror" placeholder="{{ __('مثال: مدينة نصر / سموحة') }}">
                             @error('city') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                         </div>
 
                         <!-- Full Address -->
                         <div class="sm:col-span-2">
-                            <label for="address" class="block text-xs font-bold text-slate-700 mb-1.5">العنوان بالتفصيل *</label>
-                            <input wire:model="address" type="text" id="address" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition text-sm text-slate-900 @error('address') border-red-500 @enderror" placeholder="اسم الشارع، رقم العقار، رقم الشقة أو علامة مميزة">
+                            <label for="address" class="block text-xs font-bold text-slate-700 mb-1.5">{{ __('العنوان بالتفصيل *') }}</label>
+                            <input wire:model="address" type="text" id="address" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition text-sm text-slate-900 @error('address') border-red-500 @enderror" placeholder="{{ __('اسم الشارع، رقم العقار، رقم الشقة أو علامة مميزة') }}">
                             @error('address') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                         </div>
 
                         <!-- Delivery Notes -->
                         <div class="sm:col-span-2">
-                            <label for="notes" class="block text-xs font-bold text-slate-700 mb-1.5">ملاحظات إضافية للتوصيل (اختياري)</label>
-                            <textarea wire:model="notes" id="notes" rows="2" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition text-sm text-slate-900" placeholder="أي تعليمات خاصة للمندوب..."></textarea>
+                            <label for="notes" class="block text-xs font-bold text-slate-700 mb-1.5">{{ __('ملاحظات إضافية للتوصيل (اختياري)') }}</label>
+                            <textarea wire:model="notes" id="notes" rows="2" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition text-sm text-slate-900" placeholder="{{ __('أي تعليمات خاصة للمندوب...') }}"></textarea>
                         </div>
                     </div>
                 </div>
@@ -98,8 +98,8 @@
                             2
                         </div>
                         <div>
-                            <h2 class="text-lg font-bold text-slate-900">طريقة الدفع</h2>
-                            <p class="text-xs text-slate-400">اختر طريقة الدفع المناسبة لك</p>
+                            <h2 class="text-lg font-bold text-slate-900">{{ __('طريقة الدفع') }}</h2>
+                            <p class="text-xs text-slate-400">{{ __('اختر طريقة الدفع المناسبة لك') }}</p>
                         </div>
                     </div>
 
@@ -111,18 +111,18 @@
                                     <div class="flex items-center justify-between">
                                         <span class="text-sm font-bold text-slate-900">{{ $gatewayName }}</span>
                                         @if($gatewayKey === 'cod' && $settings->allow_cod && $settings->cod_fee_minor > 0)
-                                            <span class="text-xs font-semibold text-slate-500">+ {{ $codFeeDecimal }} {{ \App\Support\Money::symbol() }} رسم دفع</span>
+                                            <span class="text-xs font-semibold text-slate-500">+ {{ $codFeeDecimal }} {{ \App\Support\Money::symbol() }} {{ __('رسم دفع') }}</span>
                                         @elseif($gatewayKey === 'paymob')
-                                            <span class="text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">كروت ومحافظ وإنستاباي</span>
+                                            <span class="text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">{{ __('كروت ومحافظ وإنستاباي') }}</span>
                                         @endif
                                     </div>
                                     <p class="text-xs text-slate-500 mt-0.5">
                                         @if($gatewayKey === 'cod')
-                                            ادفع نقدًا لمندوب التوصيل بعد استلام ومعاينة طلبك بأمان.
+                                            {{ __('ادفع نقدًا لمندوب التوصيل بعد استلام ومعاينة طلبك بأمان.') }}
                                         @elseif($gatewayKey === 'paymob')
-                                            دفع فوري آمن ومباشر عبر الفيزا والماستركارد أو المحافظ الإلكترونية.
+                                            {{ __('دفع فوري آمن ومباشر عبر الفيزا والماستركارد أو المحافظ الإلكترونية.') }}
                                         @else
-                                            دفع إلكتروني فوري ومباشر.
+                                            {{ __('دفع إلكتروني فوري ومباشر.') }}
                                         @endif
                                     </p>
                                 </div>
@@ -135,7 +135,7 @@
             <!-- Right 5 columns: Order Summary, Coupon & Confirm -->
             <div class="lg:col-span-5 space-y-6">
                 <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 sm:p-8 space-y-6">
-                    <h2 class="text-lg font-bold text-slate-900 border-b border-slate-100 pb-4">ملخص الطلب ({{ $count }} منتجات)</h2>
+                    <h2 class="text-lg font-bold text-slate-900 border-b border-slate-100 pb-4">{{ __('ملخص الطلب (') }}{{ $count }} {{ __('منتجات)') }}</h2>
 
                     <!-- Items list snapshot -->
                     <div class="divide-y divide-slate-100 max-h-60 overflow-y-auto pl-1">
@@ -156,7 +156,7 @@
 
                     <!-- Coupon Code Input -->
                     <div class="border-t border-slate-100 pt-4 space-y-2">
-                        <label for="coupon_code" class="block text-xs font-bold text-slate-700">كوبون الخصم</label>
+                        <label for="coupon_code" class="block text-xs font-bold text-slate-700">{{ __('كوبون الخصم') }}</label>
                         @if($applied_coupon_code)
                             <div class="flex items-center justify-between p-3 bg-emerald-50 rounded-xl border border-emerald-200">
                                 <div class="flex items-center gap-2">
@@ -166,14 +166,14 @@
                                     <span class="text-sm font-bold text-emerald-800">{{ $applied_coupon_code }}</span>
                                 </div>
                                 <button wire:click="removeCoupon" type="button" class="text-xs font-bold text-red-500 hover:text-red-700 transition">
-                                    إلغاء
+                                    {{ __('إلغاء') }}
                                 </button>
                             </div>
                         @else
                             <div class="flex gap-2">
-                                <input wire:model="coupon_code" type="text" id="coupon_code" placeholder="أدخل كود الكوبون" class="flex-1 px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-emerald-600 uppercase">
+                                <input wire:model="coupon_code" type="text" id="coupon_code" placeholder="{{ __('أدخل كود الكوبون') }}" class="flex-1 px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-emerald-600 uppercase">
                                 <button wire:click="applyCoupon" type="button" class="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition">
-                                    تطبيق
+                                    {{ __('تطبيق') }}
                                 </button>
                             </div>
                         @endif
@@ -189,25 +189,25 @@
                     <!-- Financial Breakdown (Server Calculated) -->
                     <div class="border-t border-slate-100 pt-4 space-y-3 text-sm">
                         <div class="flex justify-between text-slate-600">
-                            <span>المجموع الفرعي:</span>
+                            <span>{{ __('المجموع الفرعي:') }}</span>
                             <span class="font-bold text-slate-900">{{ $subtotalDecimal }} {{ \App\Support\Money::symbol() }}</span>
                         </div>
 
                         @if($discount_minor > 0)
                             <div class="flex justify-between text-emerald-600 font-semibold">
-                                <span>خصم الكوبون:</span>
+                                <span>{{ __('خصم الكوبون:') }}</span>
                                 <span>- {{ $discountDecimal }} {{ \App\Support\Money::symbol() }}</span>
                             </div>
                         @endif
 
                         <div class="flex justify-between text-slate-600">
                             <div>
-                                <span>تكلفة الشحن:</span>
+                                <span>{{ __('تكلفة الشحن:') }}</span>
                                 <span class="text-xs text-slate-400 block">{{ $shippingQuote->delivery_time_ar }}</span>
                             </div>
                             <div class="text-left">
                                 @if($shippingQuote->is_free)
-                                    <span class="bg-emerald-100 text-emerald-800 text-xs px-2 py-0.5 rounded-full font-bold">مجاني</span>
+                                    <span class="bg-emerald-100 text-emerald-800 text-xs px-2 py-0.5 rounded-full font-bold">{{ __('مجاني') }}</span>
                                 @else
                                     <span class="font-bold text-slate-900">{{ $shippingDecimal }} {{ \App\Support\Money::symbol() }}</span>
                                 @endif
@@ -216,7 +216,7 @@
 
                         @if($payment_method === 'cod' && $codFeeDecimal > 0)
                             <div class="flex justify-between text-slate-600">
-                                <span>رسم الدفع عند الاستلام:</span>
+                                <span>{{ __('رسم الدفع عند الاستلام:') }}</span>
                                 <span class="font-bold text-slate-900">{{ $codFeeDecimal }} {{ \App\Support\Money::symbol() }}</span>
                             </div>
                         @endif
@@ -224,7 +224,7 @@
 
                     <!-- Final Total -->
                     <div class="border-t-2 border-slate-900/10 pt-4 flex justify-between items-center text-xl font-black text-slate-900">
-                        <span>الإجمالي الكلي:</span>
+                        <span>{{ __('الإجمالي الكلي:') }}</span>
                         <span class="text-emerald-600 text-2xl font-black">{{ $totalDecimal }} {{ \App\Support\Money::symbol() }}</span>
                     </div>
 
@@ -237,13 +237,13 @@
 
                     <!-- Place Order Button -->
                     <button type="submit" wire:loading.attr="disabled" class="w-full flex items-center justify-center py-4 px-6 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-xl text-base font-extrabold transition shadow-lg shadow-emerald-600/30">
-                        <span wire:loading.remove>تأكيد الطلب الآن</span>
+                        <span wire:loading.remove>{{ __('تأكيد الطلب الآن') }}</span>
                         <span wire:loading class="flex items-center gap-2">
                             <svg class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
                             </svg>
-                            جاري تأكيد الطلب...
+                            {{ __('جاري تأكيد الطلب...') }}
                         </span>
                     </button>
 
@@ -251,7 +251,7 @@
                         <svg class="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                         </svg>
-                        <span>تسوق آمن ومحمي 100% — الدفع عند الاستلام بعد المعاينة</span>
+                        <span>{{ __('تسوق آمن ومحمي 100% — الدفع عند الاستلام بعد المعاينة') }}</span>
                     </div>
                 </div>
             </div>

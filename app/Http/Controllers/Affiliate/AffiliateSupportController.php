@@ -96,7 +96,7 @@ class AffiliateSupportController extends Controller
         );
 
         return redirect()->route('affiliate.support.show', $ticket->id)
-            ->with('success', 'تم فتح تذكرة الدعم بنجاح وسيتم الرد عليك في أقرب وقت.');
+            ->with('success', __('تم فتح تذكرة الدعم بنجاح وسيتم الرد عليك في أقرب وقت.'));
     }
 
     public function show(int $id): View
@@ -153,6 +153,6 @@ class AffiliateSupportController extends Controller
         );
 
         return redirect()->route('affiliate.support.show', $ticket->id)
-            ->with('success', 'تم إرسال ردك بنجاح.');
+            ->with('success', __('تم إرسال ردك بنجاح.'));
     }
 }

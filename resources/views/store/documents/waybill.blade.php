@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوليصة شحن طلب {{ $order->reference }}</title>
+    <title>{{ __('بوليصة شحن طلب') }} {{ $order->reference }}</title>
     <style>
         @page {
             size: A5 landscape;
@@ -150,71 +150,71 @@
 
     @if (! ($isPdf ?? false))
         <div class="action-bar no-print">
-            <button onclick="window.print()" class="btn">طباعة البوليصة 🖨️</button>
-            <a href="?pdf=1" class="btn" style="background: #4b5563;">تحميل كـ PDF 📄</a>
+            <button onclick="window.print()" class="btn">{{ __('طباعة البوليصة 🖨️') }}</button>
+            <a href="?pdf=1" class="btn" style="background: #4b5563;">{{ __('تحميل كـ PDF 📄') }}</a>
         </div>
     @endif
 
     <div class="container">
         <div class="header">
             <div class="title">
-                <h1>بوليصة شحن وتوصيل داخلية</h1>
-                <p>متجر: <strong>{{ $settings->platform_name ?? 'AffiliateOS Store' }}</strong> | التاريخ: {{ $order->created_at?->format('Y-m-d') }}</p>
+                <h1>{{ __('بوليصة شحن وتوصيل داخلية') }}</h1>
+                <p>{{ __('متجر:') }} <strong>{{ $settings->platform_name ?? 'AffiliateOS Store' }}</strong> {{ __('| التاريخ:') }} {{ $order->created_at?->format('Y-m-d') }}</p>
             </div>
             <div class="barcode-box">
                 <span class="barcode-font">*{{ $order->reference }}*</span>
-                <span style="font-size: 10px; color: #4b5563;">رقم الشحنة المرجعي</span>
+                <span style="font-size: 10px; color: #4b5563;">{{ __('رقم الشحنة المرجعي') }}</span>
             </div>
         </div>
 
         <div class="parties-grid">
             <div class="party-card">
-                <h3>بيانات الراسل (المتجر)</h3>
-                <p><strong>الاسم:</strong> {{ $settings->platform_name ?? 'المتجر الإلكتروني' }}</p>
-                <p><strong>هاتف التواصل:</strong> {{ $settings->support_phone ?? '' }}</p>
-                <p><strong>المحافظة:</strong> القاهرة</p>
-                <p><strong>نوع الشحنة:</strong> طرد تجاري مغلف</p>
+                <h3>{{ __('بيانات الراسل (المتجر)') }}</h3>
+                <p><strong>{{ __('الاسم:') }}</strong> {{ $settings->platform_name ?? __('المتجر الإلكتروني') }}</p>
+                <p><strong>{{ __('هاتف التواصل:') }}</strong> {{ $settings->support_phone ?? '' }}</p>
+                <p><strong>{{ __('المحافظة:') }}</strong> {{ __('القاهرة') }}</p>
+                <p><strong>{{ __('نوع الشحنة:') }}</strong> {{ __('طرد تجاري مغلف') }}</p>
             </div>
             <div class="party-card">
-                <h3>بيانات المستلم (العميل)</h3>
-                <p><strong>الاسم:</strong> {{ $order->shippingAddress?->first_name ?? 'العميل' }} {{ $order->shippingAddress?->last_name ?? '' }}</p>
-                <p><strong>رقم الهاتف الأساسي:</strong> <span dir="ltr">{{ $order->shippingAddress?->contact_phone ?? $order->customer_phone_e164 }}</span></p>
-                <p><strong>المحافظة والمدينة:</strong> {{ $order->shippingAddress?->city ?? '' }}</p>
-                <p><strong>العنوان بالتفصيل:</strong> {{ $order->shippingAddress?->line_one ?? '' }}</p>
+                <h3>{{ __('بيانات المستلم (العميل)') }}</h3>
+                <p><strong>{{ __('الاسم:') }}</strong> {{ $order->shippingAddress?->first_name ?? __('العميل') }} {{ $order->shippingAddress?->last_name ?? '' }}</p>
+                <p><strong>{{ __('رقم الهاتف الأساسي:') }}</strong> <span dir="ltr">{{ $order->shippingAddress?->contact_phone ?? $order->customer_phone_e164 }}</span></p>
+                <p><strong>{{ __('المحافظة والمدينة:') }}</strong> {{ $order->shippingAddress?->city ?? '' }}</p>
+                <p><strong>{{ __('العنوان بالتفصيل:') }}</strong> {{ $order->shippingAddress?->line_one ?? '' }}</p>
                 @if ($order->notes)
-                    <p><strong>ملاحظات التسليم:</strong> {{ $order->notes }}</p>
+                    <p><strong>{{ __('ملاحظات التسليم:') }}</strong> {{ $order->notes }}</p>
                 @endif
             </div>
         </div>
 
         <div class="cod-banner">
             @if ($order->payment_method === 'cod')
-                <h2>المبلغ المطلوب تحصيله نقداً عند الاستلام (COD)</h2>
-                <div class="amount">{{ number_format(($order->total->value ?? 0) / 100, 2) }} جنيه مصري</div>
-                <div style="font-size: 11px; color: #7f1d1d; margin-top: 3px;">* برجاء عدم تسليم الشحنة للعميل إلا بعد تحصيل كامل المبلغ أعلاه</div>
+                <h2>{{ __('المبلغ المطلوب تحصيله نقداً عند الاستلام (COD)') }}</h2>
+                <div class="amount">{{ \App\Support\Money::show($order->total) }}</div>
+                <div style="font-size: 11px; color: #7f1d1d; margin-top: 3px;">{{ __('* برجاء عدم تسليم الشحنة للعميل إلا بعد تحصيل كامل المبلغ أعلاه') }}</div>
             @else
-                <h2 style="color: #065f46;">شحنة مدفوعة مسبقاً (دفع إلكتروني)</h2>
+                <h2 style="color: #065f46;">{{ __('شحنة مدفوعة مسبقاً (دفع إلكتروني)') }}</h2>
                 <div class="amount" style="color: #047857;">0.00 {{ \App\Support\Money::symbol() }}</div>
-                <div style="font-size: 11px; color: #065f46; margin-top: 3px;">* تم سداد القيمة إلكترونياً بالكامل - لا يُحصّل أي مبلغ من العميل</div>
+                <div style="font-size: 11px; color: #065f46; margin-top: 3px;">{{ __('* تم سداد القيمة إلكترونياً بالكامل - لا يُحصّل أي مبلغ من العميل') }}</div>
             @endif
         </div>
 
         <div class="items-summary">
-            <h4>محتويات الطرد ({{ $order->lines->count() }} صنف):</h4>
+            <h4>{{ __('محتويات الطرد (') }}{{ $order->lines->count() }} {{ __('صنف):') }}</h4>
             <div style="font-size: 11px; color: #374151;">
                 @foreach ($order->lines as $line)
-                    <span>• {{ $line->description }} (كمية: {{ $line->quantity }})</span>{{ ! $loop->last ? ' | ' : '' }}
+                    <span>• {{ $line->description }} {{ __('(كمية:') }} {{ $line->quantity }})</span>{{ ! $loop->last ? ' | ' : '' }}
                 @endforeach
             </div>
         </div>
 
         <div class="signatures">
             <div>
-                <span>توقيع واستلام مندوب الشحن:</span>
+                <span>{{ __('توقيع واستلام مندوب الشحن:') }}</span>
                 <div class="sig-box"></div>
             </div>
             <div>
-                <span>توقيع واستلام العميل المستلم:</span>
+                <span>{{ __('توقيع واستلام العميل المستلم:') }}</span>
                 <div class="sig-box"></div>
             </div>
         </div>

@@ -29,50 +29,64 @@ class WarehouseResource extends Resource
 
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-building-office-2';
 
-    protected static ?string $navigationLabel = 'المستودعات';
+    public static function getNavigationLabel(): string
+    {
 
-    protected static ?string $modelLabel = 'مستودع';
+        return __('المستودعات');
 
-    protected static ?string $pluralModelLabel = 'المستودعات';
+    }
 
-    protected static \UnitEnum|string|null $navigationGroup = 'المخزون والمستودعات';
+    public static function getModelLabel(): string
+    {
+        return __('مستودع');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('المستودعات');
+    }
+
+    public static function getNavigationGroup(): string|\UnitEnum|null
+    {
+        return __('المخزون والمستودعات');
+    }
 
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('معلومات المستودع')->schema([
+            Section::make(__('معلومات المستودع'))->schema([
                 Grid::make(2)->schema([
                     TextInput::make('name')
-                        ->label('اسم المستودع')
+                        ->label(__('اسم المستودع'))
                         ->required()
                         ->maxLength(100),
 
                     TextInput::make('code')
-                        ->label('كود المستودع')
+                        ->label(__('كود المستودع'))
                         ->required()
                         ->maxLength(50)
                         ->extraInputAttributes(['style' => 'text-transform: uppercase']),
 
                     Select::make('type')
-                        ->label('نوع المستودع')
+                        ->label(__('نوع المستودع'))
                         ->options([
-                            'own' => 'مستودع خاص (Own)',
-                            '3pl' => 'طرف ثالث (3PL Fulfillment)',
-                            'supplier' => 'مستودع مورد (Supplier)',
+                            'own' => __('مستودع خاص (Own)'),
+                            '3pl' => __('طرف ثالث (3PL Fulfillment)'),
+                            'supplier' => __('مستودع مورد (Supplier)'),
                         ])
                         ->default('own')
                         ->required(),
 
                     TextInput::make('address')
-                        ->label('العنوان')
+                        ->label(__('العنوان'))
                         ->maxLength(255),
 
                     Toggle::make('is_default')
-                        ->label('المستودع الافتراضي')
+                        ->label(__('المستودع الافتراضي'))
                         ->default(false),
 
                     Toggle::make('is_active')
-                        ->label('مستودع مفعّل')
+                        ->label(__('مستودع مفعّل'))
                         ->default(true),
                 ]),
             ]),
@@ -84,23 +98,23 @@ class WarehouseResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->label('اسم المستودع')
+                    ->label(__('اسم المستودع'))
                     ->weight('bold')
                     ->searchable()
                     ->sortable(),
 
                 TextColumn::make('code')
-                    ->label('الكود')
+                    ->label(__('الكود'))
                     ->badge()
                     ->color('gray')
                     ->searchable(),
 
                 TextColumn::make('type')
-                    ->label('النوع')
+                    ->label(__('النوع'))
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'own' => 'مستودع خاص',
-                        '3pl' => 'طرف ثالث 3PL',
-                        'supplier' => 'مورد',
+                        'own' => __('مستودع خاص'),
+                        '3pl' => __('طرف ثالث 3PL'),
+                        'supplier' => __('مورد'),
                         default => $state,
                     })
                     ->badge()
@@ -112,15 +126,15 @@ class WarehouseResource extends Resource
                     }),
 
                 IconColumn::make('is_default')
-                    ->label('افتراضي')
+                    ->label(__('افتراضي'))
                     ->boolean(),
 
                 IconColumn::make('is_active')
-                    ->label('نشط')
+                    ->label(__('نشط'))
                     ->boolean(),
 
                 TextColumn::make('created_at')
-                    ->label('تاريخ الإنشاء')
+                    ->label(__('تاريخ الإنشاء'))
                     ->dateTime('Y-m-d')
                     ->sortable(),
             ])

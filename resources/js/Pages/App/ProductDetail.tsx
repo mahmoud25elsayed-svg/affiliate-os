@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import AppLayout from '../../Layouts/AppLayout';
 import { formatCurrency, currencySymbol } from '../../utils/format';
+import { t } from '@/i18n';
 import {
     Calculator,
     CheckCircle2,
@@ -68,7 +69,7 @@ export default function ProductDetail({ product, settings }: Props) {
 
     return (
         <AppLayout title={product.name}>
-            <Head title={`${product.name} - تطبيق المسوق`} />
+            <Head title={t(':p0 - تطبيق المسوق', { p0: product.name })} />
 
             <div className="space-y-4">
                 {/* Back button */}
@@ -77,7 +78,7 @@ export default function ProductDetail({ product, settings }: Props) {
                     className="inline-flex items-center gap-1 text-xs text-slate-400 hover:text-white transition-colors"
                 >
                     <ChevronLeft className="w-4 h-4 rotate-180" />
-                    <span>العودة للكتالوج</span>
+                    <span>{t('العودة للكتالوج')}</span>
                 </Link>
 
                 {/* Image Gallery */}
@@ -88,12 +89,12 @@ export default function ProductDetail({ product, settings }: Props) {
                             alt={product.name}
                             className="w-full h-full object-cover"
                             onError={(e) => {
-                                (e.target as HTMLImageElement).src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100" fill="%231e293b"><rect width="100" height="100"/><text x="50" y="55" font-size="12" fill="%2364748b" text-anchor="middle">منتج</text></svg>';
+                                (e.target as HTMLImageElement).src = t('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100" fill="%231e293b"><rect width="100" height="100"/><text x="50" y="55" font-size="12" fill="%2364748b" text-anchor="middle">منتج</text></svg>');
                             }}
                         />
                         <div className="absolute top-3 right-3">
                             <span className="px-2.5 py-1 rounded-full bg-slate-900/80 backdrop-blur-md text-emerald-400 font-bold text-xs border border-emerald-500/30">
-                                متبقي بالمخزن: {product.stock}
+                                {t('متبقي بالمخزن:')} {product.stock}
                             </span>
                         </div>
                     </div>
@@ -122,7 +123,7 @@ export default function ProductDetail({ product, settings }: Props) {
                     <h1 className="text-base font-bold text-white">{product.name}</h1>
                     <p className="text-xs text-slate-400 leading-relaxed">{product.description}</p>
                     <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-xs">
-                        <span className="text-slate-400">سعر جملة المسوق:</span>
+                        <span className="text-slate-400">{t('سعر جملة المسوق:')}</span>
                         <span className="text-sm font-bold text-white font-mono">
                             {formatCurrency(product.wholesale_minor)}
                         </span>
@@ -133,7 +134,7 @@ export default function ProductDetail({ product, settings }: Props) {
                 <div className="p-4 rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-950/30 to-slate-900 border border-indigo-500/30 shadow-xl space-y-4">
                     <div className="flex items-center gap-2 text-indigo-400">
                         <Calculator className="w-5 h-5" />
-                        <h2 className="text-sm font-bold text-white">حاسبة الربح الصادقة</h2>
+                        <h2 className="text-sm font-bold text-white">{t('حاسبة الربح الصادقة')}</h2>
                         <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-medium mr-auto">
                             D4 Honest Calc
                         </span>
@@ -142,7 +143,7 @@ export default function ProductDetail({ product, settings }: Props) {
                     {/* Quantity & Selling Price Inputs */}
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <label className="block text-[11px] text-slate-400 mb-1">الكمية</label>
+                            <label className="block text-[11px] text-slate-400 mb-1">{t('الكمية')}</label>
                             <div className="flex items-center h-11 rounded-2xl bg-slate-800 border border-slate-700 px-2 justify-between">
                                 <button
                                     type="button"
@@ -164,7 +165,7 @@ export default function ProductDetail({ product, settings }: Props) {
 
                         <div>
                             <label className="block text-[11px] text-slate-400 mb-1">
-                                سعر البيع للقطعة ({currencySymbol()})
+                                {t('سعر البيع للقطعة (')}{currencySymbol()})
                             </label>
                             <input
                                 type="number"
@@ -189,14 +190,14 @@ export default function ProductDetail({ product, settings }: Props) {
                             className="w-full accent-indigo-500 cursor-pointer"
                         />
                         <div className="flex justify-between text-[10px] text-slate-500 font-mono">
-                            <span>الحد الأدنى: {minSellingPounds} {currencySymbol()}</span>
-                            <span>الحد الأقصى: {maxSellingPounds} {currencySymbol()}</span>
+                            <span>{t('الحد الأدنى:')} {minSellingPounds} {currencySymbol()}</span>
+                            <span>{t('الحد الأقصى:')} {maxSellingPounds} {currencySymbol()}</span>
                         </div>
                     </div>
 
                     {/* Quick Markup Presets */}
                     <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
-                        <span className="text-[10px] text-slate-400 shrink-0">ربح سريع:</span>
+                        <span className="text-[10px] text-slate-400 shrink-0">{t('ربح سريع:')}</span>
                         {[50, 100, 150, 200].map((preset) => (
                             <button
                                 key={preset}
@@ -215,13 +216,13 @@ export default function ProductDetail({ product, settings }: Props) {
                         <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 space-y-1">
                             <div className="flex items-center gap-1.5 font-bold text-xs">
                                 <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                                <span>لو سُلّم الطلب</span>
+                                <span>{t('لو سُلّم الطلب')}</span>
                             </div>
                             <div className="text-xl font-extrabold text-emerald-300 font-mono">
                                 +{totalNetProfitPounds} {currencySymbol()}
                             </div>
                             <span className="text-[10px] text-emerald-500 block">
-                                صافي ربح بحسابك ({profitMarginPercent}% هامش)
+                                {t('صافي ربح بحسابك (')}{profitMarginPercent}{t('% هامش)')}
                             </span>
                         </div>
 
@@ -229,13 +230,13 @@ export default function ProductDetail({ product, settings }: Props) {
                         <div className="p-3 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 space-y-1">
                             <div className="flex items-center gap-1.5 font-bold text-xs">
                                 <XCircle className="w-4 h-4 text-rose-400" />
-                                <span>لو رُفض الطلب</span>
+                                <span>{t('لو رُفض الطلب')}</span>
                             </div>
                             <div className="text-xl font-extrabold text-rose-300 font-mono">
                                 0 {currencySymbol()}
                             </div>
                             <span className="text-[10px] text-rose-500 block">
-                                لا تُصرف عمولة + شحن المرتجع
+                                {t('لا تُصرف عمولة + شحن المرتجع')}
                             </span>
                         </div>
                     </div>
@@ -246,7 +247,7 @@ export default function ProductDetail({ product, settings }: Props) {
                     <div className="p-4 rounded-3xl bg-slate-900 border border-slate-800 space-y-3">
                         <div className="flex items-center gap-2 text-xs font-bold text-white">
                             <Share2 className="w-4 h-4 text-indigo-400" />
-                            <span>النصوص الإعلانية الجاهزة للنشر</span>
+                            <span>{t('النصوص الإعلانية الجاهزة للنشر')}</span>
                         </div>
 
                         <div className="space-y-2.5">
@@ -263,12 +264,12 @@ export default function ProductDetail({ product, settings }: Props) {
                                         {copiedIndex === index ? (
                                             <>
                                                 <Check className="w-3.5 h-3.5 text-emerald-400" />
-                                                <span>تم نسخ النص بنجاح!</span>
+                                                <span>{t('تم نسخ النص بنجاح!')}</span>
                                             </>
                                         ) : (
                                             <>
                                                 <Copy className="w-3.5 h-3.5" />
-                                                <span>نسخ النص الإعلاني</span>
+                                                <span>{t('نسخ النص الإعلاني')}</span>
                                             </>
                                         )}
                                     </button>
@@ -285,7 +286,7 @@ export default function ProductDetail({ product, settings }: Props) {
                         className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-sm text-center flex items-center justify-center gap-2 shadow-xl shadow-indigo-600/30 transition-all active:scale-[0.98]"
                     >
                         <PlusCircle className="w-4 h-4" />
-                        <span>إنشاء طلب سريع لهذا المنتج فوراً</span>
+                        <span>{t('إنشاء طلب سريع لهذا المنتج فوراً')}</span>
                     </Link>
                 </div>
             </div>

@@ -25,26 +25,26 @@ class ListInventoryBalances extends ListRecords
     {
         return [
             Action::make('receive_stock')
-                ->label('استلام مخزون وارد')
+                ->label(__('استلام مخزون وارد'))
                 ->icon('heroicon-o-arrow-down-tray')
-                ->modalHeading('استلام كمية جديدة إلى المستودع')
+                ->modalHeading(__('استلام كمية جديدة إلى المستودع'))
                 ->schema([
                     Select::make('variant_id')
-                        ->label('المنتج')
+                        ->label(__('المنتج'))
                         ->options(fn (): array => InventoryBalanceResource::variantOptions())
                         ->searchable()
                         ->required(),
                     Select::make('warehouse_id')
-                        ->label('المستودع')
+                        ->label(__('المستودع'))
                         ->options(fn (): array => Warehouse::query()->active()->pluck('name', 'id')->all())
                         ->default(fn (): int => Warehouse::resolveDefault()->id)
                         ->required(),
                     TextInput::make('quantity')
-                        ->label('الكمية المستلمة')
+                        ->label(__('الكمية المستلمة'))
                         ->integer()
                         ->minValue(1)
                         ->required(),
-                    Textarea::make('notes')->label('ملاحظات (رقم إذن الاستلام مثلاً)'),
+                    Textarea::make('notes')->label(__('ملاحظات (رقم إذن الاستلام مثلاً)')),
                 ])
                 ->action(function (array $data): void {
                     app(InboundStockAction::class)->execute(
@@ -56,7 +56,7 @@ class ListInventoryBalances extends ListRecords
                         notes: isset($data['notes']) ? (string) $data['notes'] : null,
                     );
 
-                    Notification::make()->title('تمت إضافة الكمية إلى المخزون')->success()->send();
+                    Notification::make()->title(__('تمت إضافة الكمية إلى المخزون'))->success()->send();
                 }),
         ];
     }

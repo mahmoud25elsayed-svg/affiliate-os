@@ -30,7 +30,7 @@ class AffiliatePayoutController extends Controller
 
         return view('affiliate.payout-settings', [
             'affiliate' => $affiliate,
-            'storeName' => $tenant instanceof Tenant ? $tenant->name : 'متجرنا',
+            'storeName' => $tenant instanceof Tenant ? $tenant->name : __('متجرنا'),
             'settings' => $settings,
         ]);
     }
@@ -42,7 +42,7 @@ class AffiliatePayoutController extends Controller
 
         $this->payoutAccountService->requestChangeOtp($affiliate);
 
-        return back()->with('success', 'تم إرسال رمز التحقق (OTP) إلى هاتفك المسجل.');
+        return back()->with('success', __('تم إرسال رمز التحقق (OTP) إلى هاتفك المسجل.'));
     }
 
     public function update(Request $request): RedirectResponse
@@ -54,9 +54,9 @@ class AffiliatePayoutController extends Controller
             'payout_method' => ['required', 'string', 'in:wallet_phone,instapay,bank_account'],
             'otp_code' => ['required', 'string', 'size:6'],
         ], [
-            'payout_method.required' => 'يرجى اختيار طريقة استلام الأرباح',
-            'otp_code.required' => 'رمز التحقق مطلوب لتأكيد التغيير',
-            'otp_code.size' => 'رمز التحقق يتكون من 6 أرقام',
+            'payout_method.required' => __('يرجى اختيار طريقة استلام الأرباح'),
+            'otp_code.required' => __('رمز التحقق مطلوب لتأكيد التغيير'),
+            'otp_code.size' => __('رمز التحقق يتكون من 6 أرقام'),
         ]);
 
         $method = (string) $request->input('payout_method');
@@ -83,7 +83,7 @@ class AffiliatePayoutController extends Controller
             $this->payoutAccountService->updatePayoutDetails($affiliate, $method, $details, $otpCode);
 
             return redirect()->route('affiliate.payout-settings.show')
-                ->with('success', 'تم تحديث بيانات الدفع بنجاح. لأسباب أمنية، تم تجميد السحب مؤقتاً لمدة 24 ساعة.');
+                ->with('success', __('تم تحديث بيانات الدفع بنجاح. لأسباب أمنية، تم تجميد السحب مؤقتاً لمدة 24 ساعة.'));
         } catch (InvalidArgumentException $e) {
             return back()->withInput()->with('error', $e->getMessage());
         }

@@ -136,7 +136,7 @@ class PromotionPricingService
 
         if ($eligibleSubtotal === 0 && $hasFlashItems) {
             throw ValidationException::withMessages([
-                'coupon_code' => 'هذا الكوبون لا يسري على المنتجات المشمولة بعروض التخفيض الفوري (الفلاش سيل).',
+                'coupon_code' => __('هذا الكوبون لا يسري على المنتجات المشمولة بعروض التخفيض الفوري (الفلاش سيل).'),
             ]);
         }
 

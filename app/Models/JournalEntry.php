@@ -42,11 +42,11 @@ class JournalEntry extends Model
     protected static function booted(): void
     {
         static::updating(function () {
-            throw new ImmutableFinancialRecordException('لا يمكن تعديل القيود المالية المسجلة في اليومية.');
+            throw new ImmutableFinancialRecordException(__('لا يمكن تعديل القيود المالية المسجلة في اليومية.'));
         });
 
         static::deleting(function () {
-            throw new ImmutableFinancialRecordException('لا يمكن حذف القيود المالية المسجلة في اليومية.');
+            throw new ImmutableFinancialRecordException(__('لا يمكن حذف القيود المالية المسجلة في اليومية.'));
         });
     }
 

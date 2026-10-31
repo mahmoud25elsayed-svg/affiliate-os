@@ -22,22 +22,36 @@ class AbandonedCartResource extends Resource
 
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-shopping-cart';
 
-    protected static ?string $navigationLabel = 'السلات المتروكة';
+    public static function getNavigationLabel(): string
+    {
 
-    protected static ?string $modelLabel = 'سلة متروكة';
+        return __('السلات المتروكة');
 
-    protected static ?string $pluralModelLabel = 'السلات المتروكة';
+    }
 
-    protected static \UnitEnum|string|null $navigationGroup = 'التسويق والمبيعات';
+    public static function getModelLabel(): string
+    {
+        return __('سلة متروكة');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('السلات المتروكة');
+    }
+
+    public static function getNavigationGroup(): string|\UnitEnum|null
+    {
+        return __('التسويق والمبيعات');
+    }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
                 TextColumn::make('customer_name')
-                    ->label('العميل')
+                    ->label(__('العميل'))
                     ->formatStateUsing(function (AbandonedCart $record): string {
-                        $name = $record->customer_name ?? 'زائر';
+                        $name = $record->customer_name ?? __('زائر');
                         $contact = $record->customer_phone ?? $record->customer_email ?? '-';
 
                         return "{$name} ({$contact})";
@@ -46,50 +60,50 @@ class AbandonedCartResource extends Resource
                     ->weight('bold'),
 
                 TextColumn::make('item_count')
-                    ->label('عدد المنتجات')
+                    ->label(__('عدد المنتجات'))
                     ->badge()
                     ->color('info')
                     ->sortable(),
 
                 TextColumn::make('subtotal_minor')
-                    ->label('قيمة السلة')
+                    ->label(__('قيمة السلة'))
                     ->formatStateUsing(fn (int $state): string => Money::fromMinor($state)->format())
                     ->sortable()
                     ->weight('bold'),
 
                 TextColumn::make('last_active_at')
-                    ->label('آخر نشاط')
+                    ->label(__('آخر نشاط'))
                     ->dateTime('d/m/Y H:i')
                     ->sortable(),
 
                 TextColumn::make('status')
-                    ->label('حالة الاسترجاع')
+                    ->label(__('حالة الاسترجاع'))
                     ->state(function (AbandonedCart $record): string {
                         if ($record->isRecovered()) {
-                            return 'تم الاسترجاع بنجاح ✅';
+                            return __('تم الاسترجاع بنجاح ✅');
                         }
                         if ($record->reminded_at !== null) {
-                            return 'تم إرسال تذكير 🔔';
+                            return __('تم إرسال تذكير 🔔');
                         }
 
-                        return 'متروكة ⏳';
+                        return __('متروكة ⏳');
                     })
                     ->badge()
                     ->color(fn (string $state): string => match (true) {
-                        str_contains($state, 'تم الاسترجاع') => 'success',
-                        str_contains($state, 'تم إرسال تذكير') => 'warning',
+                        str_contains($state, __('تم الاسترجاع بنجاح ✅')) => 'success',
+                        str_contains($state, __('تم إرسال تذكير 🔔')) => 'warning',
                         default => 'danger',
                     }),
             ])
             ->actions([
                 Action::make('copy_link')
-                    ->label('رابط الاسترجاع')
+                    ->label(__('رابط الاسترجاع'))
                     ->icon('heroicon-o-link')
                     ->color('primary')
                     ->action(function (AbandonedCart $record) {
                         $link = url('/cart/recover/'.$record->recovery_token);
                         Notification::make()
-                            ->title('تم توليد رابط الاسترجاع')
+                            ->title(__('تم توليد رابط الاسترجاع'))
                             ->body($link)
                             ->info()
                             ->send();

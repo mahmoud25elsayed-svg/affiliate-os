@@ -31,13 +31,13 @@ class CustomDomainService
         $domain = mb_strtolower(trim($domain));
 
         if (! filter_var('http://'.$domain, FILTER_VALIDATE_URL) && ! preg_match('/^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$/i', $domain)) {
-            throw new InvalidArgumentException("اسم النطاق غير صالح: {$rawDomain}");
+            throw new InvalidArgumentException(__('اسم النطاق غير صالح: :raw_domain', ['raw_domain' => $rawDomain]));
         }
 
         // Prevent attaching central/reserved domains
         $centralDomains = (array) config('tenancy.central_domains', ['127.0.0.1', 'localhost']);
         if (in_array($domain, $centralDomains, true)) {
-            throw new InvalidArgumentException('لا يمكن استخدام هذا النطاق المركزي كنطاق مخصص.');
+            throw new InvalidArgumentException(__('لا يمكن استخدام هذا النطاق المركزي كنطاق مخصص.'));
         }
 
         return $domain;
@@ -54,7 +54,7 @@ class CustomDomainService
 
         // Check uniqueness across all domains
         if (Domain::query()->where('domain', $normalized)->exists()) {
-            throw new InvalidArgumentException("النطاق '{$normalized}' مستخدم بالفعل.");
+            throw new InvalidArgumentException(__('النطاق \':normalized\' مستخدم بالفعل.', ['normalized' => $normalized]));
         }
 
         $token = 'aff_verify_'.Str::random(32);
@@ -170,11 +170,11 @@ class CustomDomainService
     public function setPrimaryDomain(Tenant $tenant, Domain $domain): void
     {
         if ((string) $domain->tenant_id !== (string) $tenant->id) {
-            throw new InvalidArgumentException('الدومين المحدد لا ينتمي لهذا المستأجر.');
+            throw new InvalidArgumentException(__('الدومين المحدد لا ينتمي لهذا المستأجر.'));
         }
 
         if ($domain->status !== Domain::STATUS_ACTIVE) {
-            throw new InvalidArgumentException('لا يمكن تعيين دومين غير مفعل أو غير مؤكد كنطاق أساسي.');
+            throw new InvalidArgumentException(__('لا يمكن تعيين دومين غير مفعل أو غير مؤكد كنطاق أساسي.'));
         }
 
         // Unset primary on other domains
@@ -203,11 +203,11 @@ class CustomDomainService
     public function removeCustomDomain(Tenant $tenant, Domain $domain): void
     {
         if ((string) $domain->tenant_id !== (string) $tenant->id) {
-            throw new InvalidArgumentException('الدومين المحدد لا ينتمي لهذا المستأجر.');
+            throw new InvalidArgumentException(__('الدومين المحدد لا ينتمي لهذا المستأجر.'));
         }
 
         if (! $domain->is_custom) {
-            throw new InvalidArgumentException('لا يمكن حذف النطاق الفرعي الافتراضي للمتجر.');
+            throw new InvalidArgumentException(__('لا يمكن حذف النطاق الفرعي الافتراضي للمتجر.'));
         }
 
         $wasPrimary = $domain->is_primary;

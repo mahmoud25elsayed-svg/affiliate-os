@@ -38,7 +38,7 @@ class ProductReviews extends Component
         /** @var Customer|null $customer */
         $customer = Auth::guard('customer')->user();
         if (! $customer) {
-            $this->errorMessage = 'يرجى تسجيل الدخول لتتمكن من تقييم المنتج.';
+            $this->errorMessage = __('يرجى تسجيل الدخول لتتمكن من تقييم المنتج.');
 
             return;
         }
@@ -54,10 +54,10 @@ class ProductReviews extends Component
 
             $this->reset(['rating', 'title', 'comment']);
             $this->rating = 5;
-            $this->successMessage = 'شكراً لتقييمك! تم إرسال مراجعتك بنجاح وستظهر فور اعتمادها من إدارة المتجر.';
+            $this->successMessage = __('شكراً لتقييمك! تم إرسال مراجعتك بنجاح وستظهر فور اعتمادها من إدارة المتجر.');
         } catch (ValidationException $e) {
             $err = $e->validator->errors()->first();
-            $this->errorMessage = $err !== '' ? $err : 'تعذر إرسال التقييم.';
+            $this->errorMessage = $err !== '' ? $err : __('تعذر إرسال التقييم.');
         }
     }
 

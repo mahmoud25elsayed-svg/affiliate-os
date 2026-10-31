@@ -167,7 +167,7 @@ class AffiliateOrderController extends Controller
             ]);
 
             return redirect()->route('affiliate.orders.show', ['reference' => $order->reference])
-                ->with('success', 'تم تسجيل الطلب بنجاح وهو الآن قيد المتابعة والتجهيز.');
+                ->with('success', __('تم تسجيل الطلب بنجاح وهو الآن قيد المتابعة والتجهيز.'));
         } catch (DomainException $e) {
             return back()->withInput()->with('error', $e->getMessage());
         }
@@ -189,7 +189,7 @@ class AffiliateOrderController extends Controller
         $showPhone = $settings->shouldShowCustomerPhone();
 
         $phone = (string) $order->getAttribute('customer_phone_e164');
-        $displayedPhone = $showPhone ? $phone : (strlen($phone) > 7 ? substr($phone, 0, 4).'****'.substr($phone, -3) : 'محجوب');
+        $displayedPhone = $showPhone ? $phone : (strlen($phone) > 7 ? substr($phone, 0, 4).'****'.substr($phone, -3) : __('محجوب'));
 
         $canCancel = ! in_array($order->status, [
             OrderStatus::PACKED->value,
@@ -227,7 +227,7 @@ class AffiliateOrderController extends Controller
         try {
             $cancelAction->execute($affiliate, $order, is_string($reason) ? $reason : null);
 
-            return back()->with('success', 'تم إلغاء الطلب بنجاح.');
+            return back()->with('success', __('تم إلغاء الطلب بنجاح.'));
         } catch (DomainException $e) {
             return back()->with('error', $e->getMessage());
         }
@@ -249,7 +249,7 @@ class AffiliateOrderController extends Controller
 
         $file = $request->file('csv_file');
         if (! $file) {
-            abort(400, 'الملف غير موجود');
+            abort(400, __('الملف غير موجود'));
         }
 
         try {

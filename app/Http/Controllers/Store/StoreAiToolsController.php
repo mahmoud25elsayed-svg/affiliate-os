@@ -90,7 +90,7 @@ class StoreAiToolsController extends Controller
         } catch (Throwable $e) {
             return response()->json([
                 'success' => false,
-                'error' => 'حدث خطأ أثناء معالجة الطلب عبر الذكاء الاصطناعي: '.$e->getMessage(),
+                'error' => __('حدث خطأ أثناء معالجة الطلب عبر الذكاء الاصطناعي: ').$e->getMessage(),
             ], 500);
         }
     }
@@ -130,7 +130,7 @@ class StoreAiToolsController extends Controller
         } catch (Throwable $e) {
             return response()->json([
                 'success' => false,
-                'error' => 'فشل توليد التصنيفات: '.$e->getMessage(),
+                'error' => __('فشل توليد التصنيفات: ').$e->getMessage(),
             ], 500);
         }
     }
@@ -172,7 +172,7 @@ class StoreAiToolsController extends Controller
         } catch (Throwable $e) {
             return response()->json([
                 'success' => false,
-                'error' => 'فشلت الترجمة: '.$e->getMessage(),
+                'error' => __('فشلت الترجمة: ').$e->getMessage(),
             ], 500);
         }
     }

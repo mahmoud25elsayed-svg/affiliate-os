@@ -49,7 +49,7 @@ class PayoutService
         if ($amountMinor < $settings->min_payout_minor) {
             $minMajor = number_format($settings->min_payout_minor / 100, 2);
 
-            throw new InsufficientAffiliateBalanceException("الحد الأدنى لطلب السحب هو {$minMajor} ".Money::symbol());
+            throw new InsufficientAffiliateBalanceException(__('الحد الأدنى لطلب السحب هو :min_major ', ['min_major' => $minMajor]).Money::symbol());
         }
 
         $method = $paymentMethod ?? $affiliate->payout_method ?? Affiliate::PAYOUT_METHOD_WALLET;
@@ -88,7 +88,7 @@ class PayoutService
             $this->ledger->post(new EntryData(
                 type: 'payout_requested',
                 idempotencyKey: "payout_req_{$payoutRequest->id}",
-                description: "حجز رصيد سحب أرباح طلب #{$payoutRequest->id}",
+                description: __('حجز رصيد سحب أرباح طلب #:id', ['id' => $payoutRequest->id]),
                 lines: [
                     new LedgerLineData(account: $lockedAvailableAccount, amountMinor: -$amountMinor),
                     new LedgerLineData(account: $lockedAccount, amountMinor: $amountMinor),
@@ -108,11 +108,11 @@ class PayoutService
     {
         // AF-17: Role check for payout approval
         if ($actor->hasRole('call_center') || $actor->hasRole('orders')) {
-            throw new AuthorizationException('غير مصرح لك باعتماد طلبات السحب.');
+            throw new AuthorizationException(__('غير مصرح لك باعتماد طلبات السحب.'));
         }
 
         if ($actor->roles()->exists() && ! $actor->isPlatformAdmin() && ! $actor->hasAnyRole(['owner', 'manager', 'finance', 'admin'])) {
-            throw new AuthorizationException('غير مصرح لك باعتماد طلبات السحب.');
+            throw new AuthorizationException(__('غير مصرح لك باعتماد طلبات السحب.'));
         }
 
         if (! $request->canBeApproved()) {
@@ -141,17 +141,17 @@ class PayoutService
     ): PayoutRequest {
         // AF-17: Role check and 2FA enforcement for payout execution
         if ($actor->hasRole('call_center') || $actor->hasRole('orders')) {
-            throw new AuthorizationException('غير مصرح لك بتنفيذ طلبات السحب.');
+            throw new AuthorizationException(__('غير مصرح لك بتنفيذ طلبات السحب.'));
         }
 
         if ($actor->roles()->exists() && ! $actor->isPlatformAdmin() && ! $actor->hasAnyRole(['owner', 'manager', 'finance', 'admin'])) {
-            throw new AuthorizationException('غير مصرح لك بتنفيذ طلبات السحب.');
+            throw new AuthorizationException(__('غير مصرح لك بتنفيذ طلبات السحب.'));
         }
 
         if ($actor->hasTwoFactorEnabled()) {
             if (empty($twoFactorCode) || ! $actor->verifyTwoFactorCode($twoFactorCode)) {
                 throw ValidationException::withMessages([
-                    'two_factor_code' => ['رمز التحقق بخطوتين غير صحيح أو مفقود.'],
+                    'two_factor_code' => [__('رمز التحقق بخطوتين غير صحيح أو مفقود.')],
                 ]);
             }
         }
@@ -173,7 +173,7 @@ class PayoutService
         return DB::transaction(function () use ($request, $actor, $referenceNumber, $receiptPath) {
             $affiliate = $request->affiliate;
             if (! $affiliate instanceof Affiliate) {
-                throw new PayoutNotEligibleException('المسوق غير موجود');
+                throw new PayoutNotEligibleException(__('المسوق غير موجود'));
             }
             $lockedAccount = $this->accountResolver->getAffiliateLockedAccount($affiliate);
             $withdrawnAccount = $this->accountResolver->getAffiliateWithdrawnAccount($affiliate);
@@ -182,7 +182,7 @@ class PayoutService
             $this->ledger->post(new EntryData(
                 type: 'payout_executed',
                 idempotencyKey: "payout_exec_{$request->id}",
-                description: "تنفيذ تحويل أرباح طلب #{$request->id} برقم مرجعي {$referenceNumber}",
+                description: __('تنفيذ تحويل أرباح طلب #:id برقم مرجعي :reference_number', ['id' => $request->id, 'reference_number' => $referenceNumber]),
                 lines: [
                     new LedgerLineData(account: $lockedAccount, amountMinor: -$request->amount_minor),
                     new LedgerLineData(account: $withdrawnAccount, amountMinor: $request->amount_minor),
@@ -216,7 +216,7 @@ class PayoutService
         return DB::transaction(function () use ($request, $actor, $reason) {
             $affiliate = $request->affiliate;
             if (! $affiliate instanceof Affiliate) {
-                throw new PayoutNotEligibleException('المسوق غير موجود');
+                throw new PayoutNotEligibleException(__('المسوق غير موجود'));
             }
             $lockedAccount = $this->accountResolver->getAffiliateLockedAccount($affiliate);
             $availableAccount = $this->accountResolver->getAffiliateAvailableAccount($affiliate);
@@ -225,7 +225,7 @@ class PayoutService
             $this->ledger->post(new EntryData(
                 type: 'payout_rejected',
                 idempotencyKey: "payout_rej_{$request->id}",
-                description: "رفض طلب سحب أرباح #{$request->id}: {$reason}",
+                description: __('رفض طلب سحب أرباح #:id: :reason', ['id' => $request->id, 'reason' => $reason]),
                 lines: [
                     new LedgerLineData(account: $lockedAccount, amountMinor: -$request->amount_minor),
                     new LedgerLineData(account: $availableAccount, amountMinor: $request->amount_minor),
@@ -262,7 +262,7 @@ class PayoutService
         return DB::transaction(function () use ($request) {
             $affiliate = $request->affiliate;
             if (! $affiliate instanceof Affiliate) {
-                throw new PayoutNotEligibleException('المسوق غير موجود');
+                throw new PayoutNotEligibleException(__('المسوق غير موجود'));
             }
             $lockedAccount = $this->accountResolver->getAffiliateLockedAccount($affiliate);
             $availableAccount = $this->accountResolver->getAffiliateAvailableAccount($affiliate);
@@ -271,7 +271,7 @@ class PayoutService
             $this->ledger->post(new EntryData(
                 type: 'payout_cancelled',
                 idempotencyKey: "payout_can_{$request->id}",
-                description: "إلغاء المسوق لطلب سحب أرباح #{$request->id}",
+                description: __('إلغاء المسوق لطلب سحب أرباح #:id', ['id' => $request->id]),
                 lines: [
                     new LedgerLineData(account: $lockedAccount, amountMinor: -$request->amount_minor),
                     new LedgerLineData(account: $availableAccount, amountMinor: $request->amount_minor),

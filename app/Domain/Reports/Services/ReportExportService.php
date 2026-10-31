@@ -56,20 +56,20 @@ class ReportExportService
     protected function exportSales($handle, string $preset, ?string $from, ?string $to): void
     {
         fputcsv($handle, [
-            'التاريخ',
-            'إجمالي الطلبات',
-            'الطلبات المؤكدة',
-            'الطلبات المسلّمة',
-            'الطلبات المرتجعة',
-            'الطلبات الملغاة',
-            'إجمالي المبيعات ('.Money::symbol().')',
-            'عمولات المسوقين ('.Money::symbol().')',
-            'مصاريف الشحن ('.Money::symbol().')',
-            'تكلفة البضاعة المباعة ('.Money::symbol().')',
-            'الضرائب ('.Money::symbol().')',
-            'صافي الربح ('.Money::symbol().')',
-            'نسبة التسليم (%)',
-            'نسبة المرتجعات (%)',
+            __('التاريخ'),
+            __('إجمالي الطلبات'),
+            __('الطلبات المؤكدة'),
+            __('الطلبات المسلّمة'),
+            __('الطلبات المرتجعة'),
+            __('الطلبات الملغاة'),
+            __('إجمالي المبيعات (').Money::symbol().')',
+            __('عمولات المسوقين (').Money::symbol().')',
+            __('مصاريف الشحن (').Money::symbol().')',
+            __('تكلفة البضاعة المباعة (').Money::symbol().')',
+            __('الضرائب (').Money::symbol().')',
+            __('صافي الربح (').Money::symbol().')',
+            __('نسبة التسليم (%)'),
+            __('نسبة المرتجعات (%)'),
         ]);
 
         $overview = $this->analyticsService->getOverview($preset, $from, $to);
@@ -101,13 +101,13 @@ class ReportExportService
     protected function exportProducts($handle, string $preset, ?string $from, ?string $to): void
     {
         fputcsv($handle, [
-            'اسم المنتج',
-            'رمز المنتج (SKU)',
-            'إجمالي القطع المطلوبة',
-            'القطع المسلّمة',
-            'القطع المرتجعة',
-            'إجمالي المبيعات ('.Money::symbol().')',
-            'نسبة المرتجعات (%)',
+            __('اسم المنتج'),
+            __('رمز المنتج (SKU)'),
+            __('إجمالي القطع المطلوبة'),
+            __('القطع المسلّمة'),
+            __('القطع المرتجعة'),
+            __('إجمالي المبيعات (').Money::symbol().')',
+            __('نسبة المرتجعات (%)'),
         ]);
 
         $products = $this->analyticsService->getTopProducts($preset, 100, $from, $to);
@@ -130,14 +130,14 @@ class ReportExportService
     protected function exportAffiliates($handle, string $preset, ?string $from, ?string $to): void
     {
         fputcsv($handle, [
-            'اسم المسوق',
-            'كود المسوق',
-            'رقم الهاتف',
-            'إجمالي الطلبات',
-            'الطلبات المسلّمة',
-            'نسبة التسليم (%)',
-            'إجمالي مبيعات المسوق ('.Money::symbol().')',
-            'إجمالي عمولات المسوق ('.Money::symbol().')',
+            __('اسم المسوق'),
+            __('كود المسوق'),
+            __('رقم الهاتف'),
+            __('إجمالي الطلبات'),
+            __('الطلبات المسلّمة'),
+            __('نسبة التسليم (%)'),
+            __('إجمالي مبيعات المسوق (').Money::symbol().')',
+            __('إجمالي عمولات المسوق (').Money::symbol().')',
         ]);
 
         $affiliates = $this->analyticsService->getTopAffiliates($preset, 100, $from, $to);
@@ -161,13 +161,13 @@ class ReportExportService
     protected function exportGovernorates($handle, string $preset, ?string $from, ?string $to): void
     {
         fputcsv($handle, [
-            'المحافظة',
-            'إجمالي الطلبات',
-            'الطلبات المسلّمة',
-            'الطلبات المرتجعة',
-            'نسبة التسليم (%)',
-            'نسبة المرتجعات (%)',
-            'إجمالي المبيعات ('.Money::symbol().')',
+            __('المحافظة'),
+            __('إجمالي الطلبات'),
+            __('الطلبات المسلّمة'),
+            __('الطلبات المرتجعة'),
+            __('نسبة التسليم (%)'),
+            __('نسبة المرتجعات (%)'),
+            __('إجمالي المبيعات (').Money::symbol().')',
         ]);
 
         $govs = $this->analyticsService->getGovernoratesBreakdown($preset, $from, $to);
@@ -190,9 +190,9 @@ class ReportExportService
     protected function exportReturns($handle, string $preset, ?string $from, ?string $to): void
     {
         fputcsv($handle, [
-            'سبب الإرجاع / الفشل',
-            'عدد الحالات',
-            'النسبة المئوية من إجمالي المرتجعات (%)',
+            __('سبب الإرجاع / الفشل'),
+            __('عدد الحالات'),
+            __('النسبة المئوية من إجمالي المرتجعات (%)'),
         ]);
 
         $report = $this->analyticsService->getReturnsBreakdown($preset, $from, $to);

@@ -64,7 +64,7 @@ class DailyDeal extends Model
             if (empty($deal->title_ar)) {
                 /** @var Product|null $prod */
                 $prod = Product::find($deal->product_id);
-                $deal->title_ar = $prod ? (string) ($prod->translateAttribute('name') ?? 'صفقة اليوم') : 'صفقة اليوم';
+                $deal->title_ar = $prod ? (string) ($prod->translateAttribute('name') ?? __('صفقة اليوم')) : __('صفقة اليوم');
             }
         });
     }

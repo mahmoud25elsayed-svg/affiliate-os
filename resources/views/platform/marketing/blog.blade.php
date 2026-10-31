@@ -3,10 +3,10 @@
 @section('content')
 <section style="padding: 5rem 0 3rem; text-align: center;">
     <div class="container" style="max-width: 850px;">
-        <span class="badge">أفكار واستراتيجيات</span>
-        <h1 style="font-size: 2.75rem; font-weight: 900; margin-bottom: 1.25rem;">مدونة التجارة والتسويق بالعمولة</h1>
+        <span class="badge">{{ __('أفكار واستراتيجيات') }}</span>
+        <h1 style="font-size: 2.75rem; font-weight: 900; margin-bottom: 1.25rem;">{{ __('مدونة التجارة والتسويق بالعمولة') }}</h1>
         <p style="font-size: 1.15rem; color: var(--text-muted); line-height: 1.7;">
-            مقالات عملية، دراسات حالة، وأفضل الممارسات لتنمية مبيعاتك وإدارة شبكات المسوقين في مصر والشرق الأوسط.
+            {{ __('مقالات عملية، دراسات حالة، وأفضل الممارسات لتنمية مبيعاتك وإدارة شبكات المسوقين في الوطن العربي.') }}
         </p>
     </div>
 </section>
@@ -32,9 +32,9 @@
                     </div>
 
                     <div style="border-top: 1px solid var(--border); padding-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 0.85rem; color: var(--text-muted);">بواسطة: {{ $article['author'] }}</span>
+                        <span style="font-size: 0.85rem; color: var(--text-muted);">{{ __('بواسطة:') }} {{ $article['author'] }}</span>
                         <a href="{{ route('platform.marketing.blog.post', $article['slug']) }}" style="color: #818cf8; text-decoration: none; font-weight: 700; font-size: 0.9rem;">
-                            اقرأ المزيد ←
+                            {{ __('اقرأ المزيد ←') }}
                         </a>
                     </div>
                 </article>

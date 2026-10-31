@@ -13,6 +13,7 @@ use App\Support\Billing\Limits;
 use App\Support\Billing\Services\SubscriptionService;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Collection;
 use Livewire\WithFileUploads;
 
@@ -24,9 +25,17 @@ class ManagePlanAndUsage extends Page
 
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-credit-card';
 
-    protected static ?string $navigationLabel = 'الخطة والاستخدام';
+    public static function getNavigationLabel(): string
+    {
 
-    protected static ?string $title = 'الخطة والاستخدام';
+        return __('الخطة والاستخدام');
+
+    }
+
+    public function getTitle(): string|Htmlable
+    {
+        return __('الخطة والاستخدام');
+    }
 
     protected static ?int $navigationSort = 10;
 
@@ -98,11 +107,11 @@ class ManagePlanAndUsage extends Page
         }
 
         $limitsConfig = [
-            'products' => 'المنتجات',
-            'monthly_orders' => 'الطلبات الشهرية',
-            'affiliates' => 'المسوقين (الأفلييت)',
-            'staff' => 'فريق العمل (الموظفين)',
-            'storage_mb' => 'المساحة التخزينية (ميجابايت)',
+            'products' => __('المنتجات'),
+            'monthly_orders' => __('الطلبات الشهرية'),
+            'affiliates' => __('المسوقين (الأفلييت)'),
+            'staff' => __('فريق العمل (الموظفين)'),
+            'storage_mb' => __('المساحة التخزينية (ميجابايت)'),
         ];
 
         $this->usageStats = [];
@@ -120,14 +129,14 @@ class ManagePlanAndUsage extends Page
         }
 
         $featuresConfig = [
-            'affiliate' => 'نظام المسوقين والعمولات',
-            'call_center' => 'مركز الاتصال والتأكيد',
-            'courier' => 'ربط شركات الشحن والمزامنة',
-            'cod_reconciliation' => 'التسوية المالية لـ COD',
-            'multi_vendor' => 'متعدد التجار والموردين',
-            'custom_domain' => 'ربط النطاق المخصص',
-            'api' => 'واجهات برمجية API',
-            'ai' => 'مساعد الذكاء الاصطناعي الذكي',
+            'affiliate' => __('نظام المسوقين والعمولات'),
+            'call_center' => __('مركز الاتصال والتأكيد'),
+            'courier' => __('ربط شركات الشحن والمزامنة'),
+            'cod_reconciliation' => __('التسوية المالية لـ COD'),
+            'multi_vendor' => __('متعدد التجار والموردين'),
+            'custom_domain' => __('ربط النطاق المخصص'),
+            'api' => __('واجهات برمجية API'),
+            'ai' => __('مساعد الذكاء الاصطناعي الذكي'),
         ];
 
         $this->featureStats = [];
@@ -170,7 +179,7 @@ class ManagePlanAndUsage extends Page
         ]);
 
         if (! $this->subscription) {
-            Notification::make()->title('لا يوجد اشتراك متاح')->danger()->send();
+            Notification::make()->title(__('لا يوجد اشتراك متاح'))->danger()->send();
 
             return;
         }
@@ -205,8 +214,8 @@ class ManagePlanAndUsage extends Page
         $this->loadData();
 
         Notification::make()
-            ->title('تم إرسال طلب التجديد والإيصال بنجاح')
-            ->body('سيقوم فريق المنصة بمراجعة التحويل وتفعيل الاشتراك فورًا.')
+            ->title(__('تم إرسال طلب التجديد والإيصال بنجاح'))
+            ->body(__('سيقوم فريق المنصة بمراجعة التحويل وتفعيل الاشتراك فورًا.'))
             ->success()
             ->send();
     }

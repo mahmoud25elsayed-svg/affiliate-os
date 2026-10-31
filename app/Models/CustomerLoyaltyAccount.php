@@ -114,7 +114,7 @@ class CustomerLoyaltyAccount extends Model
 
             if ($account->points_balance < $points) {
                 throw new RuntimeException(sprintf(
-                    'رصيد نقاط الولاء غير كافٍ. الرصيد الحالي: %d نقطة، المطلوب استبداله: %d نقطة.',
+                    __('رصيد نقاط الولاء غير كافٍ. الرصيد الحالي: %d نقطة، المطلوب استبداله: %d نقطة.'),
                     $account->points_balance,
                     $points
                 ));

@@ -267,7 +267,7 @@ class NotificationManager
         }
 
         // Generic fallback
-        $fallback = "إشعار جديد: {$eventType}";
+        $fallback = __('إشعار جديد: :event_type', ['event_type' => $eventType]);
 
         return [
             'subject' => $fallback,

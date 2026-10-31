@@ -39,6 +39,6 @@ class AffiliatePixelController extends Controller
         ]);
 
         return redirect()->route('affiliate.pixels.show')
-            ->with('success', 'تم حفظ بكسلات التتبع الإعلاني بنجاح.');
+            ->with('success', __('تم حفظ بكسلات التتبع الإعلاني بنجاح.'));
     }
 }

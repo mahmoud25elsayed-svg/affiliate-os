@@ -10,6 +10,6 @@ class SsrfBlockedException extends Exception
 {
     public static function blocked(string $url, string $reason): self
     {
-        return new self("تم حظر الرابط لأسباب أمنية (SSRF): [{$reason}] - {$url}");
+        return new self(__('تم حظر الرابط لأسباب أمنية (SSRF): [:reason] - :url', ['reason' => $reason, 'url' => $url]));
     }
 }

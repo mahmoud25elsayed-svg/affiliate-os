@@ -27,42 +27,56 @@ class InventoryBalanceResource extends Resource
 
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-archive-box';
 
-    protected static ?string $navigationLabel = 'أرصدة المخزون';
+    public static function getNavigationLabel(): string
+    {
 
-    protected static ?string $modelLabel = 'رصيد مخزون';
+        return __('أرصدة المخزون');
 
-    protected static ?string $pluralModelLabel = 'أرصدة المخزون';
+    }
 
-    protected static \UnitEnum|string|null $navigationGroup = 'المخزون والمستودعات';
+    public static function getModelLabel(): string
+    {
+        return __('رصيد مخزون');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('أرصدة المخزون');
+    }
+
+    public static function getNavigationGroup(): string|\UnitEnum|null
+    {
+        return __('المخزون والمستودعات');
+    }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
                 TextColumn::make('warehouse.name')
-                    ->label('المستودع')
+                    ->label(__('المستودع'))
                     ->sortable()
                     ->searchable(),
 
                 TextColumn::make('variant.sku')
-                    ->label('كود المنتج (SKU)')
+                    ->label(__('كود المنتج (SKU)'))
                     ->weight('bold')
                     ->searchable()
                     ->sortable(),
 
                 TextColumn::make('on_hand')
-                    ->label('المتوفر الفعلي (On Hand)')
+                    ->label(__('المتوفر الفعلي (On Hand)'))
                     ->numeric()
                     ->sortable(),
 
                 TextColumn::make('reserved')
-                    ->label('المحجوز (Reserved)')
+                    ->label(__('المحجوز (Reserved)'))
                     ->numeric()
                     ->color('warning')
                     ->sortable(),
 
                 TextColumn::make('available')
-                    ->label('المتاح للبيع (Available)')
+                    ->label(__('المتاح للبيع (Available)'))
                     ->state(fn (InventoryBalance $record): int => $record->available)
                     ->numeric()
                     ->badge()
@@ -74,33 +88,33 @@ class InventoryBalanceResource extends Resource
                     ->sortable(),
 
                 TextColumn::make('low_stock_threshold')
-                    ->label('حد الطلب الأدنى')
+                    ->label(__('حد الطلب الأدنى'))
                     ->numeric(),
 
                 TextColumn::make('updated_at')
-                    ->label('آخر تحديث')
+                    ->label(__('آخر تحديث'))
                     ->dateTime('Y-m-d H:i')
                     ->sortable(),
             ])
             ->filters([
                 SelectFilter::make('warehouse_id')
-                    ->label('المستودع')
+                    ->label(__('المستودع'))
                     ->relationship('warehouse', 'name'),
             ])
             ->actions([
                 Action::make('adjust')
-                    ->label('تسوية جرد')
+                    ->label(__('تسوية جرد'))
                     ->icon('heroicon-o-adjustments-horizontal')
-                    ->modalHeading('تسوية الرصيد الفعلي بعد الجرد')
+                    ->modalHeading(__('تسوية الرصيد الفعلي بعد الجرد'))
                     ->schema([
                         TextInput::make('new_on_hand')
-                            ->label('الكمية الفعلية بعد الجرد')
+                            ->label(__('الكمية الفعلية بعد الجرد'))
                             ->integer()
                             ->minValue(fn (InventoryBalance $record): int => $record->reserved)
                             ->default(fn (InventoryBalance $record): int => $record->on_hand)
-                            ->helperText(fn (InventoryBalance $record): string => "لا يمكن أن تقل عن الكمية المحجوزة لطلبات قائمة ({$record->reserved}).")
+                            ->helperText(fn (InventoryBalance $record): string => __('لا يمكن أن تقل عن الكمية المحجوزة لطلبات قائمة (:reserved).', ['reserved' => $record->reserved]))
                             ->required(),
-                        Textarea::make('notes')->label('سبب التسوية')->required(),
+                        Textarea::make('notes')->label(__('سبب التسوية'))->required(),
                     ])
                     ->action(function (InventoryBalance $record, array $data): void {
                         app(AdjustStockAction::class)->execute(
@@ -111,7 +125,7 @@ class InventoryBalanceResource extends Resource
                             actorId: (string) auth()->id(),
                         );
 
-                        Notification::make()->title('تم تحديث رصيد المخزون')->success()->send();
+                        Notification::make()->title(__('تم تحديث رصيد المخزون'))->success()->send();
                     }),
             ]);
     }

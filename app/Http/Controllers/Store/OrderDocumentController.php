@@ -99,7 +99,7 @@ class OrderDocumentController extends Controller
         $tenantId = tenant('id') ? (string) tenant('id') : null;
 
         if (! $user instanceof User || ($tenantId && $user->tenant_id !== $tenantId && ! $user->is_platform_admin)) {
-            abort(403, 'غير مصرح بعرض بوليصة الشحن بدون تسجيل دخول كموظف للمتجر.');
+            abort(403, __('غير مصرح بعرض بوليصة الشحن بدون تسجيل دخول كموظف للمتجر.'));
         }
 
         if ($user->is_platform_admin) {
@@ -108,7 +108,7 @@ class OrderDocumentController extends Controller
 
         $allowedRoles = ['owner', 'manager', 'orders', 'call_center', 'support'];
         if (! $user->hasAnyRole($allowedRoles)) {
-            abort(403, 'ليس لديك صلاحية عرض بوالص الشحن.');
+            abort(403, __('ليس لديك صلاحية عرض بوالص الشحن.'));
         }
     }
 
@@ -133,6 +133,6 @@ class OrderDocumentController extends Controller
             return;
         }
 
-        abort(403, 'غير مصرح بعرض فاتورة هذا الطلب.');
+        abort(403, __('غير مصرح بعرض فاتورة هذا الطلب.'));
     }
 }

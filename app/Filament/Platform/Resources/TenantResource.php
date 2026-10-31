@@ -28,31 +28,42 @@ class TenantResource extends Resource
 
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-building-storefront';
 
-    protected static ?string $navigationLabel = 'المتاجر والمستأجرين';
+    public static function getNavigationLabel(): string
+    {
 
-    protected static ?string $modelLabel = 'متجر';
+        return __('المتاجر والمستأجرين');
 
-    protected static ?string $pluralModelLabel = 'المتاجر';
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('متجر');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('المتاجر');
+    }
 
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
             TextInput::make('id')
-                ->label('معرف المتجر / النطاق الفرعي')
+                ->label(__('معرف المتجر / النطاق الفرعي'))
                 ->required()
                 ->unique(ignoreRecord: true),
 
             TextInput::make('name')
-                ->label('اسم المتجر')
+                ->label(__('اسم المتجر'))
                 ->required(),
 
             Select::make('status')
-                ->label('الحالة')
+                ->label(__('الحالة'))
                 ->options([
-                    'active' => 'نشط',
-                    'provisioning' => 'قيد التجهيز',
-                    'suspended' => 'معلق / موقوف',
-                    'archived' => 'مؤرشف',
+                    'active' => __('نشط'),
+                    'provisioning' => __('قيد التجهيز'),
+                    'suspended' => __('معلق / موقوف'),
+                    'archived' => __('مؤرشف'),
                 ])
                 ->default('active')
                 ->required(),
@@ -64,17 +75,17 @@ class TenantResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('id')
-                    ->label('المعرف / النطاق')
+                    ->label(__('المعرف / النطاق'))
                     ->searchable()
                     ->sortable(),
 
                 TextColumn::make('name')
-                    ->label('اسم المتجر')
+                    ->label(__('اسم المتجر'))
                     ->searchable()
                     ->sortable(),
 
                 TextColumn::make('status')
-                    ->label('الحالة')
+                    ->label(__('الحالة'))
                     ->badge()
                     ->colors([
                         'success' => 'active',
@@ -83,32 +94,32 @@ class TenantResource extends Resource
                         'gray' => 'archived',
                     ])
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'active' => 'نشط',
-                        'provisioning' => 'قيد التجهيز',
-                        'suspended' => 'موقوف',
-                        'archived' => 'مؤرشف',
+                        'active' => __('نشط'),
+                        'provisioning' => __('قيد التجهيز'),
+                        'suspended' => __('موقوف'),
+                        'archived' => __('مؤرشف'),
                         default => $state,
                     }),
 
                 TextColumn::make('created_at')
-                    ->label('تاريخ الإنشاء')
+                    ->label(__('تاريخ الإنشاء'))
                     ->dateTime('Y-m-d H:i')
                     ->sortable(),
             ])
             ->actions([
                 Action::make('impersonate')
-                    ->label('دخول كتاجر')
+                    ->label(__('دخول كتاجر'))
                     ->icon('heroicon-o-arrow-right-end-on-rectangle')
                     ->color('warning')
                     ->requiresConfirmation()
-                    ->modalHeading('تأكيد الدخول كتاجر')
-                    ->modalDescription('سيتم تسجيل الدخول بصلاحيات مالك هذا المتجر لمدة 60 دقيقة وتوثيق العملية في سجل التدقيق.')
+                    ->modalHeading(__('تأكيد الدخول كتاجر'))
+                    ->modalDescription(__('سيتم تسجيل الدخول بصلاحيات مالك هذا المتجر لمدة 60 دقيقة وتوثيق العملية في سجل التدقيق.'))
                     ->action(function (Tenant $record) {
                         /** @var User|null $admin */
                         $admin = Auth::user();
                         if (! $admin || ! $admin->isPlatformAdmin()) {
                             Notification::make()
-                                ->title('غير مصرح لك بالدخول كتاجر')
+                                ->title(__('غير مصرح لك بالدخول كتاجر'))
                                 ->danger()
                                 ->send();
 
@@ -119,7 +130,7 @@ class TenantResource extends Resource
                         $service->impersonate($admin, $record);
 
                         Notification::make()
-                            ->title('تم بدء جلسة الدخول كتاجر بنجاح')
+                            ->title(__('تم بدء جلسة الدخول كتاجر بنجاح'))
                             ->success()
                             ->send();
 
@@ -127,7 +138,7 @@ class TenantResource extends Resource
                     }),
 
                 Action::make('toggle_status')
-                    ->label(fn (Tenant $record): string => $record->status === 'active' ? 'إيقاف المتجر' : 'تفعيل المتجر')
+                    ->label(fn (Tenant $record): string => $record->status === 'active' ? __('إيقاف المتجر') : __('تفعيل المتجر'))
                     ->icon(fn (Tenant $record): string => $record->status === 'active' ? 'heroicon-o-pause' : 'heroicon-o-play')
                     ->color(fn (Tenant $record): string => $record->status === 'active' ? 'danger' : 'success')
                     ->requiresConfirmation()
@@ -148,7 +159,7 @@ class TenantResource extends Resource
                         );
 
                         Notification::make()
-                            ->title("تم تحديث حالة المتجر إلى [{$newStatus}]")
+                            ->title(__('تم تحديث حالة المتجر إلى [:new_status]', ['new_status' => $newStatus]))
                             ->success()
                             ->send();
                     }),

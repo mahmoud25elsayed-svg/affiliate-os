@@ -20,7 +20,7 @@ class DatabaseInAppDriver implements NotificationDriverInterface
         try {
             $userType = (string) ($message->metadata['user_type'] ?? 'customer');
             $userId = (int) ($message->metadata['user_id'] ?? (is_numeric($message->recipient) ? $message->recipient : 0));
-            $title = $message->subject ?: 'إشعار جديد';
+            $title = $message->subject ?: __('إشعار جديد');
             $actionUrl = isset($message->metadata['action_url']) ? (string) $message->metadata['action_url'] : null;
 
             $record = InAppNotification::create([

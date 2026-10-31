@@ -39,11 +39,11 @@ class LedgerLine extends Model
     protected static function booted(): void
     {
         static::updating(function () {
-            throw new ImmutableFinancialRecordException('لا يمكن تعديل السطور الدفترية المالية.');
+            throw new ImmutableFinancialRecordException(__('لا يمكن تعديل السطور الدفترية المالية.'));
         });
 
         static::deleting(function () {
-            throw new ImmutableFinancialRecordException('لا يمكن حذف السطور الدفترية المالية.');
+            throw new ImmutableFinancialRecordException(__('لا يمكن حذف السطور الدفترية المالية.'));
         });
     }
 

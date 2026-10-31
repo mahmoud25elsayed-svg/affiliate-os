@@ -28,7 +28,7 @@ class AffiliateAuthController extends Controller
         $settings = AffiliateProgramSettings::load();
 
         return view('affiliate.auth.join', [
-            'storeName' => $tenant instanceof Tenant ? $tenant->name : 'متجرنا',
+            'storeName' => $tenant instanceof Tenant ? $tenant->name : __('متجرنا'),
             'referralCode' => $request->query('ref'),
             'settings' => $settings,
         ]);
@@ -43,11 +43,11 @@ class AffiliateAuthController extends Controller
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'referral_code' => ['nullable', 'string'],
         ], [
-            'name.required' => 'الاسم مطلوب',
-            'phone.required' => 'رقم الهاتف مطلوب',
-            'password.required' => 'كلمة المرور مطلوبة',
-            'password.min' => 'يجب ألا تقل كلمة المرور عن 8 أحرف',
-            'password.confirmed' => 'تأكيد كلمة المرور غير متطابق',
+            'name.required' => __('الاسم مطلوب'),
+            'phone.required' => __('رقم الهاتف مطلوب'),
+            'password.required' => __('كلمة المرور مطلوبة'),
+            'password.min' => __('يجب ألا تقل كلمة المرور عن 8 أحرف'),
+            'password.confirmed' => __('تأكيد كلمة المرور غير متطابق'),
         ]);
 
         try {
@@ -56,7 +56,7 @@ class AffiliateAuthController extends Controller
             session(['pending_affiliate_id' => $affiliate->id]);
 
             return redirect()->route('affiliate.verify-otp.show')
-                ->with('success', 'تم تسجيل حسابك بنجاح! يرجى إدخال رمز التحقق (OTP) المرسل إلى هاتفك.');
+                ->with('success', __('تم تسجيل حسابك بنجاح! يرجى إدخال رمز التحقق (OTP) المرسل إلى هاتفك.'));
         } catch (AffiliateLimitExceededException $e) {
             return back()->withInput()->with('error', $e->getMessage());
         } catch (InvalidArgumentException $e) {
@@ -69,7 +69,7 @@ class AffiliateAuthController extends Controller
         $tenant = function_exists('tenancy') && tenancy()->initialized ? tenancy()->tenant : null;
 
         return view('affiliate.auth.login', [
-            'storeName' => $tenant instanceof Tenant ? $tenant->name : 'متجرنا',
+            'storeName' => $tenant instanceof Tenant ? $tenant->name : __('متجرنا'),
         ]);
     }
 
@@ -79,8 +79,8 @@ class AffiliateAuthController extends Controller
             'login' => ['required', 'string'], // phone or email
             'password' => ['required', 'string'],
         ], [
-            'login.required' => 'يرجى إدخال رقم الهاتف أو البريد الإلكتروني',
-            'password.required' => 'كلمة المرور مطلوبة',
+            'login.required' => __('يرجى إدخال رقم الهاتف أو البريد الإلكتروني'),
+            'password.required' => __('كلمة المرور مطلوبة'),
         ]);
 
         $tenant = function_exists('tenancy') && tenancy()->initialized ? tenancy()->tenant : null;
@@ -106,20 +106,20 @@ class AffiliateAuthController extends Controller
         $affiliate = $query->first();
 
         if (! $affiliate || ! Auth::guard('affiliate')->attempt(['id' => $affiliate->id, 'password' => $credentials['password']], (bool) $request->boolean('remember'))) {
-            return back()->withInput()->with('error', 'بيانات الدخول غير صحيحة.');
+            return back()->withInput()->with('error', __('بيانات الدخول غير صحيحة.'));
         }
 
         // Check status
         if ($affiliate->isSuspended()) {
             Auth::guard('affiliate')->logout();
 
-            return back()->with('error', 'حسابك معلق حالياً: '.($affiliate->status_reason ?: 'يرجى التواصل مع إدارة المتجر.'));
+            return back()->with('error', __('حسابك معلق حالياً: ').($affiliate->status_reason ?: __('يرجى التواصل مع إدارة المتجر.')));
         }
 
         if ($affiliate->isRejected()) {
             Auth::guard('affiliate')->logout();
 
-            return back()->with('error', 'تم رفض طلب انضمامك للبرنامج: '.($affiliate->status_reason ?: 'غير مؤهل.'));
+            return back()->with('error', __('تم رفض طلب انضمامك للبرنامج: ').($affiliate->status_reason ?: __('غير مؤهل.')));
         }
 
         return redirect()->intended(route('affiliate.dashboard'));
@@ -141,8 +141,8 @@ class AffiliateAuthController extends Controller
         $request->validate([
             'code' => ['required', 'string', 'size:6'],
         ], [
-            'code.required' => 'رمز التحقق مطلوب',
-            'code.size' => 'رمز التحقق يتكون من 6 أرقام',
+            'code.required' => __('رمز التحقق مطلوب'),
+            'code.size' => __('رمز التحقق يتكون من 6 أرقام'),
         ]);
 
         $affiliateId = session('pending_affiliate_id') ?: Auth::guard('affiliate')->id();
@@ -150,12 +150,12 @@ class AffiliateAuthController extends Controller
         $affiliate = $affiliateId ? Affiliate::find($affiliateId) : null;
 
         if (! $affiliate) {
-            return redirect()->route('affiliate.login')->with('error', 'انتهت الجلسة، يرجى تسجيل الدخول أولاً.');
+            return redirect()->route('affiliate.login')->with('error', __('انتهت الجلسة، يرجى تسجيل الدخول أولاً.'));
         }
 
         $code = (string) $request->input('code');
         if (! $this->registrationService->verifyPhoneOtp($affiliate, $code)) {
-            return back()->with('error', 'رمز التحقق غير صحيح أو انتهت صلاحيته.');
+            return back()->with('error', __('رمز التحقق غير صحيح أو انتهت صلاحيته.'));
         }
 
         session()->forget('pending_affiliate_id');
@@ -163,17 +163,17 @@ class AffiliateAuthController extends Controller
 
         if ($affiliate->isPending()) {
             return redirect()->route('affiliate.dashboard')
-                ->with('info', 'تم تأكيد رقم هاتفك بنجاح! حسابك في انتظار موافقة إدارة المتجر لتفعيل حسابك.');
+                ->with('info', __('تم تأكيد رقم هاتفك بنجاح! حسابك في انتظار موافقة إدارة المتجر لتفعيل حسابك.'));
         }
 
         return redirect()->route('affiliate.dashboard')
-            ->with('success', 'تم تفعيل حسابك بنجاح! أهلاً بك في لوحة تحكم المسوق.');
+            ->with('success', __('تم تفعيل حسابك بنجاح! أهلاً بك في لوحة تحكم المسوق.'));
     }
 
     public function logout(): RedirectResponse
     {
         Auth::guard('affiliate')->logout();
 
-        return redirect()->route('affiliate.login')->with('success', 'تم تسجيل الخروج بنجاح.');
+        return redirect()->route('affiliate.login')->with('success', __('تم تسجيل الخروج بنجاح.'));
     }
 }

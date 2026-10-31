@@ -3,7 +3,7 @@
         <input
             type="text"
             wire:model.live.debounce.300ms="query"
-            placeholder="ابحث عن منتج، ماركة، أو كود..."
+            placeholder="{{ __('ابحث عن منتج، ماركة، أو كود...') }}"
             class="w-full rounded-full border border-gray-200 bg-gray-50/80 py-2.5 pr-11 pl-4 text-sm text-gray-900 focus:bg-white focus:border-brand-600 focus:ring-2 focus:ring-brand-600/20 transition-all placeholder:text-gray-400"
             autocomplete="off"
         >
@@ -32,7 +32,7 @@
                     </div>
                     <div class="flex-1 min-w-0">
                         <h4 class="text-xs font-bold text-gray-900 truncate">{{ $product->translateAttribute('name') }}</h4>
-                        <span class="text-[10px] text-gray-400">{{ $product->brand?->name ?? 'متجرنا' }}</span>
+                        <span class="text-[10px] text-gray-400">{{ $product->brand?->name ?? __('متجرنا') }}</span>
                     </div>
                     <span class="text-xs font-bold text-brand-600">
                         {{ $retailPrice ? \App\Support\Money::show($retailPrice->price) : '' }}
@@ -41,7 +41,7 @@
             @endforeach
             <div class="px-4 py-2 bg-gray-50 text-center">
                 <button type="button" wire:click="search" class="text-xs font-bold text-brand-600 hover:underline">
-                    عرض جميع نتائج البحث عن "{{ $query }}" &larr;
+                    {{ __('عرض جميع نتائج البحث عن "') }}{{ $query }}" &larr;
                 </button>
             </div>
         </div>

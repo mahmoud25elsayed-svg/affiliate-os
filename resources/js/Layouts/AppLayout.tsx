@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import type { AppSharedProps } from '../types/affiliate';
+import { getLocale, t } from '@/i18n';
 import {
     Home,
     ShoppingBag,
@@ -40,11 +41,11 @@ export default function AppLayout({ title, children }: Props) {
     const currentPath = typeof window !== 'undefined' ? window.location.pathname : (url ?? '');
 
     const navItems = [
-        { name: 'الرئيسية', href: '/partners/app', icon: Home, exact: true },
-        { name: 'الكتالوج', href: '/partners/app/catalog', icon: ShoppingBag },
-        { name: 'طلب سريع', href: '/partners/app/orders/create', icon: PlusCircle, isAction: true },
-        { name: 'الطلبات', href: '/partners/app/orders', icon: ClipboardList },
-        { name: 'المحفظة', href: '/partners/app/wallet', icon: Wallet },
+        { name: t('الرئيسية'), href: '/partners/app', icon: Home, exact: true },
+        { name: t('الكتالوج'), href: '/partners/app/catalog', icon: ShoppingBag },
+        { name: t('طلب سريع'), href: '/partners/app/orders/create', icon: PlusCircle, isAction: true },
+        { name: t('الطلبات'), href: '/partners/app/orders', icon: ClipboardList },
+        { name: t('المحفظة'), href: '/partners/app/wallet', icon: Wallet },
     ];
 
     const isCurrent = (item: typeof navItems[0]) => {
@@ -55,7 +56,7 @@ export default function AppLayout({ title, children }: Props) {
     };
 
     return (
-        <div dir="rtl" className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white">
+        <div dir={getLocale() === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white">
             {/* Top Bar */}
             <header className="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
                 <div className="max-w-md mx-auto px-4 h-14 flex items-center justify-between">
@@ -65,7 +66,7 @@ export default function AppLayout({ title, children }: Props) {
                                 {tenant?.name?.[0] || 'A'}
                             </span>
                             <span className="font-bold text-sm tracking-tight text-white line-clamp-1 max-w-[120px]">
-                                {tenant?.name || 'تطبيق المسوق'}
+                                {tenant?.name || t('تطبيق المسوق')}
                             </span>
                         </Link>
                     </div>
@@ -75,7 +76,7 @@ export default function AppLayout({ title, children }: Props) {
                             <button
                                 onClick={copyAffiliateCode}
                                 className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-800 border border-slate-700 hover:border-slate-600 text-xs text-slate-300 transition-colors"
-                                title="نسخ كود الأفلييت"
+                                title={t('نسخ كود الأفلييت')}
                             >
                                 <span className="font-mono text-indigo-400 font-semibold">{affiliate.code}</span>
                                 {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-slate-400" />}
@@ -95,7 +96,7 @@ export default function AppLayout({ title, children }: Props) {
                                     <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
                                     <div className="absolute left-0 mt-2 w-48 rounded-xl bg-slate-900 border border-slate-800 shadow-xl py-1.5 z-50 text-sm">
                                         <div className="px-3 py-1.5 border-b border-slate-800 text-xs text-slate-400">
-                                            {affiliate?.name || 'المسوق'}
+                                            {affiliate?.name || t('المسوق')}
                                         </div>
                                         <Link
                                             href="/partners/app/levels"
@@ -103,7 +104,7 @@ export default function AppLayout({ title, children }: Props) {
                                             className="flex items-center gap-2 px-3 py-2 text-slate-300 hover:bg-slate-800"
                                         >
                                             <Award className="w-4 h-4 text-amber-400" />
-                                            <span>المستويات والمكافآت</span>
+                                            <span>{t('المستويات والمكافآت')}</span>
                                         </Link>
                                         <Link
                                             href="/partners/app/links"
@@ -111,7 +112,7 @@ export default function AppLayout({ title, children }: Props) {
                                             className="flex items-center gap-2 px-3 py-2 text-slate-300 hover:bg-slate-800"
                                         >
                                             <Link2 className="w-4 h-4 text-indigo-400" />
-                                            <span>الروابط و QR</span>
+                                            <span>{t('الروابط و QR')}</span>
                                         </Link>
                                         <Link
                                             href="/partners/app/analytics"
@@ -119,7 +120,7 @@ export default function AppLayout({ title, children }: Props) {
                                             className="flex items-center gap-2 px-3 py-2 text-slate-300 hover:bg-slate-800"
                                         >
                                             <BarChart3 className="w-4 h-4 text-emerald-400" />
-                                            <span>التحليلات والمبيعات</span>
+                                            <span>{t('التحليلات والمبيعات')}</span>
                                         </Link>
                                         <Link
                                             href="/partners/app/profile"
@@ -127,8 +128,14 @@ export default function AppLayout({ title, children }: Props) {
                                             className="flex items-center gap-2 px-3 py-2 text-slate-300 hover:bg-slate-800"
                                         >
                                             <User className="w-4 h-4 text-amber-400" />
-                                            <span>الملف الشخصي و KYC</span>
+                                            <span>{t('الملف الشخصي و KYC')}</span>
                                         </Link>
+                                        <a
+                                            href={`?lang=${getLocale() === 'ar' ? 'en' : 'ar'}`}
+                                            className="w-full text-start flex items-center gap-2 px-3 py-2 text-slate-300 hover:bg-slate-800"
+                                        >
+                                            <span>{getLocale() === 'ar' ? 'English' : 'العربية'}</span>
+                                        </a>
                                         <div className="border-t border-slate-800 my-1" />
                                         <Link
                                             href="/partners/logout"
@@ -136,7 +143,7 @@ export default function AppLayout({ title, children }: Props) {
                                             as="button"
                                             className="w-full text-right flex items-center gap-2 px-3 py-2 text-rose-400 hover:bg-slate-800"
                                         >
-                                            <span>تسجيل الخروج</span>
+                                            <span>{t('تسجيل الخروج')}</span>
                                         </Link>
                                     </div>
                                 </>

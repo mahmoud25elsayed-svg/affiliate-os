@@ -1,7 +1,7 @@
 @extends('layouts.storefront')
 
-@section('title', ($general->platform_name ?? 'بوتيك') . ' - ' . ($theme->hero_headline ?? 'مجموعات فاخرة وتصاميم مميزة'))
-@section('meta_description', $theme->hero_subheadline ?? 'اكتشف أرقى التشكيلات والمنتجات العصرية مع تجربة تسوق فريدة وتوصيل حتى باب منزلك')
+@section('title', ($general->platform_name ?? __('بوتيك')) . ' - ' . (__($theme->hero_headline) ?: __('مجموعات فاخرة وتصاميم مميزة')))
+@section('meta_description', __($theme->hero_subheadline) ?: __('اكتشف أرقى التشكيلات والمنتجات العصرية مع تجربة تسوق فريدة وتوصيل حتى باب منزلك'))
 
 @section('schema')
     <script type="application/ld+json">
@@ -21,22 +21,22 @@
                 <div class="lg:col-span-7 space-y-6 text-center lg:text-right">
                     <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide bg-amber-500/10 text-amber-300 border border-amber-500/30">
                         <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
-                        تشكيلة الموسم الحصرية • بوتيك فاخر
+                        {{ __('تشكيلة الموسم الحصرية • بوتيك فاخر') }}
                     </span>
                     <h1 class="text-4xl sm:text-6xl font-black text-white tracking-tight leading-[1.2]">
-                        {{ $theme->hero_headline }}
+                        {{ __($theme->hero_headline) }}
                     </h1>
                     <p class="text-base sm:text-lg text-stone-300 max-w-xl mx-auto lg:mx-0 leading-relaxed font-light">
-                        {{ $theme->hero_subheadline }}
+                        {{ __($theme->hero_subheadline) }}
                     </p>
                     <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-4">
                         <a href="{{ url($theme->hero_button_url) }}"
                            class="px-8 py-4 bg-amber-600 hover:bg-amber-500 text-stone-950 font-black rounded-full shadow-lg shadow-amber-600/20 transition-all hover:-translate-y-0.5">
-                            {{ $theme->hero_button_text }}
+                            {{ __($theme->hero_button_text) }}
                         </a>
                         <a href="{{ url('/products') }}"
                            class="px-8 py-4 bg-stone-800/80 hover:bg-stone-700 text-white font-medium rounded-full border border-stone-700 transition-all">
-                            استكشف المجموعة الكاملة
+                            {{ __('استكشف المجموعة الكاملة') }}
                         </a>
                     </div>
                 </div>
@@ -45,7 +45,7 @@
                 <div class="lg:col-span-5 flex justify-center">
                     <div class="relative group">
                         <div class="absolute -inset-2 bg-gradient-to-r from-amber-500/20 to-stone-500/20 rounded-3xl blur-xl opacity-70 group-hover:opacity-100 transition duration-700"></div>
-                        <img src="{{ $theme->hero_image_url }}" alt="{{ $theme->hero_headline }}" class="relative rounded-3xl object-cover shadow-2xl max-h-[440px] w-auto border border-stone-700/50">
+                        <img src="{{ $theme->hero_image_url }}" alt="{{ __($theme->hero_headline) }}" class="relative rounded-3xl object-cover shadow-2xl max-h-[440px] w-auto border border-stone-700/50">
                     </div>
                 </div>
                 @endif
@@ -72,8 +72,8 @@
                     @endif
                 </div>
                 <div>
-                    <h4 class="text-sm font-bold text-stone-900">{{ $badge['title'] }}</h4>
-                    <p class="text-xs text-stone-500 mt-1 leading-relaxed">{{ $badge['subtitle'] }}</p>
+                    <h4 class="text-sm font-bold text-stone-900">{{ __($badge['title']) }}</h4>
+                    <p class="text-xs text-stone-500 mt-1 leading-relaxed">{{ __($badge['subtitle']) }}</p>
                 </div>
             </div>
             @endforeach
@@ -86,11 +86,11 @@
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         <div class="flex items-end justify-between border-b border-stone-200 pb-4">
             <div>
-                <span class="text-xs font-bold text-amber-700 uppercase tracking-widest">تصفح حسب الذوق</span>
-                <h3 class="text-2xl font-black text-stone-900 mt-1">المجموعات المختارة</h3>
+                <span class="text-xs font-bold text-amber-700 uppercase tracking-widest">{{ __('تصفح حسب الذوق') }}</span>
+                <h3 class="text-2xl font-black text-stone-900 mt-1">{{ __('المجموعات المختارة') }}</h3>
             </div>
             <a href="{{ url('/products') }}" class="text-xs font-bold text-stone-600 hover:text-stone-900 transition flex items-center gap-1">
-                <span>عرض الكل</span>
+                <span>{{ __('عرض الكل') }}</span>
                 <span>←</span>
             </a>
         </div>
@@ -105,7 +105,7 @@
                 <h4 class="text-xs font-bold text-stone-800 group-hover:text-amber-800 transition">
                     {{ $category->translateAttribute('name') }}
                 </h4>
-                <span class="text-[10px] text-stone-400 mt-1">{{ $category->products_count }} قطعة</span>
+                <span class="text-[10px] text-stone-400 mt-1">{{ $category->products_count }} {{ __('قطعة') }}</span>
             </a>
             @endforeach
         </div>
@@ -117,11 +117,11 @@
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         <div class="flex items-end justify-between border-b border-stone-200 pb-4">
             <div>
-                <span class="text-xs font-bold text-amber-700 uppercase tracking-widest">المختارات الفاخرة</span>
-                <h3 class="text-2xl font-black text-stone-900 mt-1">القطع الأكثر تميزًا</h3>
+                <span class="text-xs font-bold text-amber-700 uppercase tracking-widest">{{ __('المختارات الفاخرة') }}</span>
+                <h3 class="text-2xl font-black text-stone-900 mt-1">{{ __('القطع الأكثر تميزًا') }}</h3>
             </div>
             <a href="{{ url('/products') }}" class="text-xs font-bold text-stone-600 hover:text-stone-900 transition flex items-center gap-1">
-                <span>تصفح الكتالوج</span>
+                <span>{{ __('تصفح الكتالوج') }}</span>
                 <span>←</span>
             </a>
         </div>
@@ -143,7 +143,7 @@
                                 <div class="w-full h-full flex items-center justify-center text-stone-300 text-3xl">👗</div>
                             @endif
                             <span class="absolute top-2 right-2 px-2.5 py-1 rounded-full text-[10px] font-bold bg-white/90 backdrop-blur text-stone-800 shadow-sm">
-                                أصلي 100%
+                                {{ __('أصلي 100%') }}
                             </span>
                         </div>
 
@@ -161,7 +161,7 @@
                         </div>
                         <a href="{{ route('storefront.products.show', $product->id) }}"
                            class="p-2.5 rounded-xl bg-stone-900 hover:bg-amber-600 text-white transition text-xs font-bold">
-                            طلب الآن
+                            {{ __('طلب الآن') }}
                         </a>
                     </div>
                 </div>

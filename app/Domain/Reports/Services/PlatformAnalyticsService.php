@@ -8,6 +8,7 @@ use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\Tenant;
 use App\Models\TenantErrorLog;
+use App\Support\Translate;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -161,7 +162,7 @@ class PlatformAnalyticsService
 
             return [
                 'tenant_id' => $tenantId,
-                'tenant_name' => (string) ($tenant ? $tenant->name : ($tenantId ?: 'النظام المركزي')),
+                'tenant_name' => (string) ($tenant ? $tenant->name : ($tenantId ?: Translate::t('النظام المركزي'))),
                 'error_count' => (int) ($row->error_count ?? 0),
                 'last_error_at' => Carbon::parse($lastErrorAt),
             ];

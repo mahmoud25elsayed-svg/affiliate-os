@@ -23,15 +23,15 @@ class ListProducts extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make()->label('إضافة منتج جديد'),
+            CreateAction::make()->label(__('إضافة منتج جديد')),
 
             Action::make('import_csv')
-                ->label('استيراد CSV')
+                ->label(__('استيراد CSV'))
                 ->icon('heroicon-o-arrow-up-tray')
                 ->color('info')
                 ->schema([
                     FileUpload::make('csv_file')
-                        ->label('ملف المنتجات (CSV)')
+                        ->label(__('ملف المنتجات (CSV)'))
                         ->acceptedFileTypes(['text/csv', 'text/plain', 'application/csv'])
                         ->required()
                         ->disk('local')
@@ -49,7 +49,7 @@ class ListProducts extends ListRecords
                     }
 
                     if (! $tenant) {
-                        Notification::make()->title('لم يتم العثور على المتجر')->danger()->send();
+                        Notification::make()->title(__('لم يتم العثور على المتجر'))->danger()->send();
 
                         return;
                     }
@@ -58,7 +58,7 @@ class ListProducts extends ListRecords
                     $job = new ImportProductsJob($filePath, $tenant);
                     $report = app()->call([$job, 'handle']);
 
-                    $title = sprintf('تم استيراد %d منتج بنجاح (فشل %d)', $report['imported'], $report['failed']);
+                    $title = sprintf(__('تم استيراد %d منتج بنجاح (فشل %d)'), $report['imported'], $report['failed']);
 
                     $notification = Notification::make()->title($title);
                     if ($report['failed'] > 0) {
@@ -70,7 +70,7 @@ class ListProducts extends ListRecords
                 }),
 
             Action::make('export_csv')
-                ->label('تصدير CSV')
+                ->label(__('تصدير CSV'))
                 ->icon('heroicon-o-arrow-down-tray')
                 ->color('gray')
                 ->action(function (): StreamedResponse {

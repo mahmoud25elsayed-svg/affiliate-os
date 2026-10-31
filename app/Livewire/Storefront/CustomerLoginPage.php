@@ -48,10 +48,10 @@ class CustomerLoginPage extends Component
         try {
             $otpService->requestOtp($this->phone);
             $this->otpSent = true;
-            $this->successMessage = 'تم إرسال رمز التحقق في رسالة نصية. يرجى إدخال الرمز المكون من 6 أرقام.';
+            $this->successMessage = __('تم إرسال رمز التحقق في رسالة نصية. يرجى إدخال الرمز المكون من 6 أرقام.');
         } catch (ValidationException $e) {
             $err = $e->validator->errors()->first('phone');
-            $this->errorMessage = $err !== '' ? $err : 'حدث خطأ أثناء إرسال رمز التحقق.';
+            $this->errorMessage = $err !== '' ? $err : __('حدث خطأ أثناء إرسال رمز التحقق.');
         }
     }
 
@@ -63,12 +63,12 @@ class CustomerLoginPage extends Component
             $customer = $otpService->verifyOtp($this->phone, $this->otp);
             Auth::guard('customer')->login($customer, true);
 
-            session()->flash('success', 'مرحباً بك! تم تسجيل الدخول بنجاح.');
+            session()->flash('success', __('مرحباً بك! تم تسجيل الدخول بنجاح.'));
 
             return redirect()->intended(route('storefront.account.orders'));
         } catch (ValidationException $e) {
             $err = $e->validator->errors()->first('code');
-            $this->errorMessage = $err !== '' ? $err : 'رمز التحقق غير صحيح.';
+            $this->errorMessage = $err !== '' ? $err : __('رمز التحقق غير صحيح.');
 
             return null;
         }
@@ -82,9 +82,9 @@ class CustomerLoginPage extends Component
             'email' => 'required|email',
             'password' => 'required|string',
         ], [
-            'email.required' => 'يرجى إدخال البريد الإلكتروني.',
-            'email.email' => 'صيغة البريد الإلكتروني غير صالحة.',
-            'password.required' => 'يرجى إدخال كلمة المرور.',
+            'email.required' => __('يرجى إدخال البريد الإلكتروني.'),
+            'email.email' => __('صيغة البريد الإلكتروني غير صالحة.'),
+            'password.required' => __('يرجى إدخال كلمة المرور.'),
         ]);
 
         $tenantId = function_exists('tenancy') && tenancy()->initialized ? (string) tenant('id') : 'default';
@@ -96,20 +96,20 @@ class CustomerLoginPage extends Component
             ->first();
 
         if (! $customer || ! $customer->password || ! password_verify($this->password, $customer->password)) {
-            $this->errorMessage = 'البريد الإلكتروني أو كلمة المرور غير صحيحة.';
+            $this->errorMessage = __('البريد الإلكتروني أو كلمة المرور غير صحيحة.');
 
             return null;
         }
 
         if (! $customer->is_active) {
-            $this->errorMessage = 'تم تعطيل هذا الحساب. يرجى التواصل مع إدارة المتجر.';
+            $this->errorMessage = __('تم تعطيل هذا الحساب. يرجى التواصل مع إدارة المتجر.');
 
             return null;
         }
 
         Auth::guard('customer')->login($customer, true);
 
-        session()->flash('success', 'تم تسجيل الدخول بنجاح.');
+        session()->flash('success', __('تم تسجيل الدخول بنجاح.'));
 
         return redirect()->intended(route('storefront.account.orders'));
     }
@@ -117,7 +117,7 @@ class CustomerLoginPage extends Component
     public function render(): View
     {
         return view('livewire.storefront.customer-login-page', [
-            'pageTitle' => 'تسجيل الدخول',
+            'pageTitle' => __('تسجيل الدخول'),
         ]);
     }
 }

@@ -25,45 +25,56 @@ class StaffResource extends Resource
 
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-user-group';
 
-    protected static ?string $navigationLabel = 'فريق العمل والصلاحيات';
+    public static function getNavigationLabel(): string
+    {
 
-    protected static ?string $modelLabel = 'موظف';
+        return __('فريق العمل والصلاحيات');
 
-    protected static ?string $pluralModelLabel = 'الموظفون';
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('موظف');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('الموظفون');
+    }
 
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
             TextInput::make('name')
-                ->label('اسم الموظف')
+                ->label(__('اسم الموظف'))
                 ->required(),
 
             TextInput::make('email')
-                ->label('البريد الإلكتروني')
+                ->label(__('البريد الإلكتروني'))
                 ->email()
                 ->required()
                 ->unique(ignoreRecord: true),
 
             TextInput::make('phone')
-                ->label('رقم الهاتف'),
+                ->label(__('رقم الهاتف')),
 
             TextInput::make('password')
-                ->label('كلمة المرور')
+                ->label(__('كلمة المرور'))
                 ->password()
                 ->dehydrateStateUsing(fn ($state) => ! empty($state) ? Hash::make($state) : null)
                 ->dehydrated(fn ($state) => filled($state))
                 ->required(fn (string $operation): bool => $operation === 'create'),
 
             Select::make('role')
-                ->label('الدور الوظيفي')
+                ->label(__('الدور الوظيفي'))
                 ->options([
-                    TenantPermissionMatrix::ROLE_OWNER => 'مالك المتجر (Owner)',
-                    TenantPermissionMatrix::ROLE_MANAGER => 'مدير المتجر (Manager)',
-                    TenantPermissionMatrix::ROLE_CATALOG => 'مسؤول الكتالوج (Catalog)',
-                    TenantPermissionMatrix::ROLE_ORDERS => 'مسؤول الطلبات (Orders)',
-                    TenantPermissionMatrix::ROLE_FINANCE => 'مسؤول المالية (Finance)',
-                    TenantPermissionMatrix::ROLE_SUPPORT => 'خدمة العملاء (Support)',
-                    TenantPermissionMatrix::ROLE_CALL_AGENT => 'كول سنتر (Call Agent)',
+                    TenantPermissionMatrix::ROLE_OWNER => __('مالك المتجر (Owner)'),
+                    TenantPermissionMatrix::ROLE_MANAGER => __('مدير المتجر (Manager)'),
+                    TenantPermissionMatrix::ROLE_CATALOG => __('مسؤول الكتالوج (Catalog)'),
+                    TenantPermissionMatrix::ROLE_ORDERS => __('مسؤول الطلبات (Orders)'),
+                    TenantPermissionMatrix::ROLE_FINANCE => __('مسؤول المالية (Finance)'),
+                    TenantPermissionMatrix::ROLE_SUPPORT => __('خدمة العملاء (Support)'),
+                    TenantPermissionMatrix::ROLE_CALL_AGENT => __('كول سنتر (Call Agent)'),
                 ])
                 ->default(TenantPermissionMatrix::ROLE_MANAGER)
                 ->required(),
@@ -75,32 +86,32 @@ class StaffResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->label('الاسم')
+                    ->label(__('الاسم'))
                     ->searchable(),
 
                 TextColumn::make('email')
-                    ->label('البريد')
+                    ->label(__('البريد'))
                     ->searchable(),
 
                 TextColumn::make('phone')
-                    ->label('الهاتف'),
+                    ->label(__('الهاتف')),
 
                 TextColumn::make('roles.name')
-                    ->label('الدور')
+                    ->label(__('الدور'))
                     ->badge()
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'owner' => 'مالك المتجر',
-                        'manager' => 'مدير',
-                        'catalog' => 'كتالوج',
-                        'orders' => 'طلبات',
-                        'finance' => 'مالية',
-                        'support' => 'دعم فني',
-                        'call_agent' => 'كول سنتر',
+                        'owner' => __('مالك المتجر'),
+                        'manager' => __('مدير'),
+                        'catalog' => __('كتالوج'),
+                        'orders' => __('طلبات'),
+                        'finance' => __('مالية'),
+                        'support' => __('دعم فني'),
+                        'call_agent' => __('كول سنتر'),
                         default => $state,
                     }),
 
                 TextColumn::make('created_at')
-                    ->label('تاريخ الإضافة')
+                    ->label(__('تاريخ الإضافة'))
                     ->dateTime('Y-m-d')
                     ->sortable(),
             ]);

@@ -41,7 +41,7 @@ class AppLinksController extends Controller
                     'code' => $link->code,
                     'title' => $link->title,
                     'product_id' => $link->product_id,
-                    'product_name' => $link->product?->translateAttribute('name') ?? 'رابط المتجر العام',
+                    'product_name' => $link->product?->translateAttribute('name') ?? __('رابط المتجر العام'),
                     'custom_price_minor' => $link->custom_selling_price_minor,
                     'clicks_count' => (int) $link->clicks_count,
                     'orders_count' => (int) $link->orders_count,
@@ -59,7 +59,7 @@ class AppLinksController extends Controller
             ->get()
             ->map(fn ($p) => [
                 'id' => $p->id,
-                'name' => $p->translateAttribute('name') ?? "منتج #{$p->id}",
+                'name' => $p->translateAttribute('name') ?? __('منتج #:id', ['id' => $p->id]),
             ]);
 
         $defaultStorefrontUrl = url("/storefront?ref={$affiliate->code}");
@@ -88,7 +88,7 @@ class AppLinksController extends Controller
             'custom_selling_price' => TrackingLinkPriceValidator::INPUT_RULE,
             'custom_code' => 'nullable|string|alpha_dash|max:32',
         ], [
-            'custom_code.alpha_dash' => 'كود الرابط المخصص يجب أن يحتوي على أحرف وأرقام وشرطات فقط.',
+            'custom_code.alpha_dash' => __('كود الرابط المخصص يجب أن يحتوي على أحرف وأرقام وشرطات فقط.'),
         ]);
 
         $productId = ! empty($validated['product_id']) ? (int) $validated['product_id'] : null;
@@ -115,7 +115,7 @@ class AppLinksController extends Controller
             $code = strtoupper(trim((string) $validated['custom_code']));
             if (TrackingLink::where('code', $code)->exists()) {
                 throw ValidationException::withMessages([
-                    'custom_code' => ['هذا الكود مستخدم بالفعل، يرجى اختيار كود آخر.'],
+                    'custom_code' => [__('هذا الكود مستخدم بالفعل، يرجى اختيار كود آخر.')],
                 ]);
             }
         } else {
@@ -132,13 +132,13 @@ class AppLinksController extends Controller
             'product_id' => $productId,
             'product_variant_id' => $productVariantId,
             'code' => $code,
-            'title' => $validated['title'] ?? ($productId ? "رابط تتبع لمنتج #{$productId}" : 'رابط إحالة المتجر الرئيسي'),
+            'title' => $validated['title'] ?? ($productId ? __('رابط تتبع لمنتج #:product_id', ['product_id' => $productId]) : __('رابط إحالة المتجر الرئيسي')),
             'custom_selling_price_minor' => $customSellingPriceMinor,
             'commission_rate_percent' => $settings->default_commission_rate,
             'is_active' => true,
         ]);
 
-        return redirect()->route('affiliate.app.links.index')->with('success', 'تم إنشاء رابط التتبع بنجاح.');
+        return redirect()->route('affiliate.app.links.index')->with('success', __('تم إنشاء رابط التتبع بنجاح.'));
     }
 
     public function destroy(int $id): RedirectResponse
@@ -150,6 +150,6 @@ class AppLinksController extends Controller
         $link = TrackingLink::where('affiliate_id', $affiliate->id)->findOrFail($id);
         $link->delete();
 
-        return redirect()->route('affiliate.app.links.index')->with('success', 'تم حذف رابط التتبع بنجاح.');
+        return redirect()->route('affiliate.app.links.index')->with('success', __('تم حذف رابط التتبع بنجاح.'));
     }
 }

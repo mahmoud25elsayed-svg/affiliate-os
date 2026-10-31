@@ -42,7 +42,7 @@ class AffiliatePayoutAccountService
                 data: [
                     'customer_name' => $affiliate->name,
                     'otp_code' => $otp,
-                    'store_name' => $tenant instanceof Tenant ? $tenant->name : 'متجرنا',
+                    'store_name' => $tenant instanceof Tenant ? $tenant->name : __('متجرنا'),
                 ],
                 notifiable: $affiliate
             );
@@ -62,11 +62,11 @@ class AffiliatePayoutAccountService
     ): void {
         // Validate OTP
         if ($affiliate->otp_code === null || $affiliate->otp_expires_at === null) {
-            throw new InvalidArgumentException('لم يتم طلب رمز تحقق لتحديث بيانات الدفع.');
+            throw new InvalidArgumentException(__('لم يتم طلب رمز تحقق لتحديث بيانات الدفع.'));
         }
 
         if ($affiliate->otp_expires_at->isPast()) {
-            throw new InvalidArgumentException('انتهت صلاحية رمز التحقق المدخل. يرجى طلب رمز جديد.');
+            throw new InvalidArgumentException(__('انتهت صلاحية رمز التحقق المدخل. يرجى طلب رمز جديد.'));
         }
 
         if (! hash_equals(trim($affiliate->otp_code), trim($otpCode))) {
@@ -78,10 +78,10 @@ class AffiliatePayoutAccountService
                 $affiliate->updateQuietly(['otp_code' => null, 'otp_expires_at' => null]);
                 Cache::forget($attemptsKey);
 
-                throw new InvalidArgumentException('تم إلغاء رمز التحقق بسبب تكرار الإدخال الخاطئ. يرجى طلب رمز جديد.');
+                throw new InvalidArgumentException(__('تم إلغاء رمز التحقق بسبب تكرار الإدخال الخاطئ. يرجى طلب رمز جديد.'));
             }
 
-            throw new InvalidArgumentException('رمز التحقق غير صحيح.');
+            throw new InvalidArgumentException(__('رمز التحقق غير صحيح.'));
         }
 
         Cache::forget("affiliate_payout_otp_failures:{$affiliate->getKey()}");
@@ -94,7 +94,7 @@ class AffiliatePayoutAccountService
         ];
 
         if (! in_array($method, $validMethods, true)) {
-            throw new InvalidArgumentException("طريقة الدفع المختارة [{$method}] غير مدعومة.");
+            throw new InvalidArgumentException(__('طريقة الدفع المختارة [:method] غير مدعومة.', ['method' => $method]));
         }
 
         $settings = AffiliateProgramSettings::load();

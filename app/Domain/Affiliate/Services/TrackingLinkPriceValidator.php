@@ -52,7 +52,7 @@ class TrackingLinkPriceValidator
             $maxFormatted = Money::fromMinor($maxAllowed)->toDecimalString();
 
             throw ValidationException::withMessages([
-                'custom_selling_price' => ["سعر البيع يجب أن يكون بين {$minFormatted} و {$maxFormatted} ".Money::symbol()],
+                'custom_selling_price' => [__('سعر البيع يجب أن يكون بين :min_formatted و :max_formatted ', ['min_formatted' => $minFormatted, 'max_formatted' => $maxFormatted]).Money::symbol()],
             ]);
         }
 

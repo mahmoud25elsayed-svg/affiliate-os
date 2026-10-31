@@ -61,7 +61,7 @@ class DispatchOrderNotification
             $customerName = trim(($customer->first_name ?? '').' '.($customer->last_name ?? ''));
         }
         if (empty($customerName)) {
-            $customerName = 'عميلنا العزيز';
+            $customerName = __('عميلنا العزيز');
         }
 
         /** @var mixed $rawTotal */
@@ -70,7 +70,7 @@ class DispatchOrderNotification
         $totalFormatted = Money::fromMinor($totalMinor)->format();
 
         $tenant = function_exists('tenancy') && tenancy()->initialized ? tenancy()->tenant : null;
-        $storeName = $tenant instanceof Tenant ? $tenant->name : 'متجرنا';
+        $storeName = $tenant instanceof Tenant ? $tenant->name : __('متجرنا');
 
         $meta = $event->meta;
 
@@ -79,10 +79,10 @@ class DispatchOrderNotification
             'customer_name' => $customerName,
             'order_total' => $totalFormatted,
             'store_name' => $storeName,
-            'courier_name' => (string) ($meta['courier_name'] ?? 'مندوب الشحن'),
+            'courier_name' => (string) ($meta['courier_name'] ?? __('مندوب الشحن')),
             'tracking_number' => (string) ($meta['tracking_number'] ?? ($order->reference ?: $order->id)),
             'tracking_url' => (string) ($meta['tracking_url'] ?? url("/account/orders/{$order->id}")),
-            'reason' => $event->reasonCode ? $event->reasonCode->label() : 'تحديث الطلب',
+            'reason' => $event->reasonCode ? $event->reasonCode->label() : __('تحديث الطلب'),
         ];
 
         // Send SMS/WhatsApp if phone available (Non-blocking: inside try/catch)

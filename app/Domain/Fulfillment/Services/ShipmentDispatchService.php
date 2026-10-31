@@ -34,17 +34,17 @@ class ShipmentDispatchService
         // 1. Resolve Courier Account
         $account = $courierAccount ?? $this->selectionService->selectCourier($order);
         if (! $account instanceof CourierAccount) {
-            throw new DomainException('لم يتم العثور على حساب شركة شحن نشط لإسناد هذا الطلب.');
+            throw new DomainException(__('لم يتم العثور على حساب شركة شحن نشط لإسناد هذا الطلب.'));
         }
 
         // 2. Resolve Shipping Address & Recipient
         /** @var OrderAddress|null $shippingAddress */
         $shippingAddress = $order->shippingAddress()->first();
 
-        $recipientName = 'العميل';
+        $recipientName = __('العميل');
         $recipientPhone = '01000000000';
-        $deliveryCity = 'القاهرة';
-        $deliveryAddress = 'عنوان التسليم';
+        $deliveryCity = __('القاهرة');
+        $deliveryAddress = __('عنوان التسليم');
 
         if ($shippingAddress instanceof OrderAddress) {
             $fullName = trim((string) ($shippingAddress->first_name ?? '').' '.(string) ($shippingAddress->last_name ?? ''));
@@ -79,8 +79,8 @@ class ShipmentDispatchService
             codAmountMinor: $codAmountMinor,
             declaredValueMinor: $codAmountMinor,
             itemsCount: $itemsCount,
-            description: "طلب #{$order->reference}",
-            notes: (string) ($order->notes ?? 'يرجى الاتصال قبل التسليم')
+            description: __('طلب #:reference', ['reference' => $order->reference]),
+            notes: (string) ($order->notes ?? __('يرجى الاتصال قبل التسليم'))
         );
 
         // 4. Create Shipment via driver
@@ -88,7 +88,7 @@ class ShipmentDispatchService
         $result = $driver->createShipment($creationData);
 
         if (! $result->success) {
-            throw new DomainException("فشل إصدار الشحنة من شركة الشحن: {$result->errorMessage}");
+            throw new DomainException(__('فشل إصدار الشحنة من شركة الشحن: :error_message', ['error_message' => $result->errorMessage]));
         }
 
         $now = Carbon::now();
@@ -113,7 +113,7 @@ class ShipmentDispatchService
                 [
                     'status' => ShipmentStatus::CREATED->value,
                     'timestamp' => $now->toIso8601String(),
-                    'note' => "تم تسليم بيانات الشحنة لشركة {$account->name}",
+                    'note' => __('تم تسليم بيانات الشحنة لشركة :name', ['name' => $account->name]),
                 ],
             ],
             'dispatched_at' => $now,
@@ -148,7 +148,7 @@ class ShipmentDispatchService
                     'courier' => $account->name,
                     'waybill_url' => $result->waybillUrl,
                 ],
-                note: "تم تسليم الشحنة لشركة {$account->name} برقم تتبع {$result->trackingNumber}."
+                note: __('تم تسليم الشحنة لشركة :name برقم تتبع :tracking_number.', ['name' => $account->name, 'tracking_number' => $result->trackingNumber])
             );
         }
 

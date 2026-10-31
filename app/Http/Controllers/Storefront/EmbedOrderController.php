@@ -192,7 +192,7 @@ class EmbedOrderController extends Controller
                     'success' => true,
                     'reference' => $order->reference,
                     'event_id' => $eventId,
-                    'message' => 'تم استلام طلبك بنجاح!',
+                    'message' => __('تم استلام طلبك بنجاح!'),
                 ], 201);
             }
 

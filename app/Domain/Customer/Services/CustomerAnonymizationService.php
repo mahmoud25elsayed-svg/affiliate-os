@@ -42,11 +42,11 @@ class CustomerAnonymizationService
                 OrderAddress::query()
                     ->where('order_id', $order->id)
                     ->update([
-                        'first_name' => 'عميل',
-                        'last_name' => 'محذوف',
+                        'first_name' => __('عميل'),
+                        'last_name' => __('محذوف'),
                         'contact_phone' => null,
                         'contact_email' => null,
-                        'line_one' => 'عنوان محذوف لخصوصية العميل',
+                        'line_one' => __('عنوان محذوف لخصوصية العميل'),
                         'line_two' => null,
                         'line_three' => null,
                     ]);
@@ -54,7 +54,7 @@ class CustomerAnonymizationService
 
             // 3. Scrub Customer Record
             $customer->update([
-                'first_name' => 'عميل محذوف',
+                'first_name' => __('عميل محذوف'),
                 'last_name' => null,
                 'email' => null,
                 'phone_e164' => null,

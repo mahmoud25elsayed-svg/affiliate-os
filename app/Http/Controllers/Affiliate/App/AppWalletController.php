@@ -44,7 +44,7 @@ class AppWalletController extends Controller
             ->paginate(15)
             ->through(fn ($line) => [
                 'id' => $line->id,
-                'account_name' => $line->account ? $line->account->name : 'حساب',
+                'account_name' => $line->account ? $line->account->name : __('حساب'),
                 'description' => $line->journalEntry?->description ?: $line->journalEntry?->type,
                 'amount_minor' => $line->amount_minor,
                 'created_at' => $line->created_at->format('Y-m-d H:i'),
@@ -106,7 +106,7 @@ class AppWalletController extends Controller
             );
 
             return redirect()->route('affiliate.app.wallet')
-                ->with('success', 'تم تقديم طلب السحب بنجاح وحجز الرصيد بالدفتر المالي.');
+                ->with('success', __('تم تقديم طلب السحب بنجاح وحجز الرصيد بالدفتر المالي.'));
         } catch (InsufficientAffiliateBalanceException|PayoutNotEligibleException $e) {
             return back()->with('error', $e->getMessage());
         }

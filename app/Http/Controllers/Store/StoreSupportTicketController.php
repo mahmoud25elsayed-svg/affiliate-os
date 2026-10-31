@@ -118,7 +118,7 @@ class StoreSupportTicketController extends Controller
             isInternalNote: $isInternalNote
         );
 
-        $msg = $isInternalNote ? 'تم إضافة الملاحظة الداخلية بنجاح.' : 'تم إرسال الرد بنجاح.';
+        $msg = $isInternalNote ? __('تم إضافة الملاحظة الداخلية بنجاح.') : __('تم إرسال الرد بنجاح.');
 
         return redirect()->route('store.support.show', $ticket->id)->with('success', $msg);
     }
@@ -138,7 +138,7 @@ class StoreSupportTicketController extends Controller
         $this->ticketService->updateStatus($ticket, $validated['status']);
 
         return redirect()->route('store.support.show', $ticket->id)
-            ->with('success', "تم تحديث حالة التذكرة إلى [{$validated['status']}].");
+            ->with('success', __('تم تحديث حالة التذكرة إلى [:status].', ['status' => $validated['status']]));
     }
 
     public function assign(Request $request, int $id): RedirectResponse
@@ -159,7 +159,7 @@ class StoreSupportTicketController extends Controller
         $this->ticketService->assign($ticket, $agent);
 
         return redirect()->route('store.support.show', $ticket->id)
-            ->with('success', "تم تعيين التذكرة للموظف [{$agent->name}].");
+            ->with('success', __('تم تعيين التذكرة للموظف [:name].', ['name' => $agent->name]));
     }
 
     public function createPlatformTicket(Request $request): RedirectResponse
@@ -184,6 +184,6 @@ class StoreSupportTicketController extends Controller
         );
 
         return redirect()->route('store.support.show', $ticket->id)
-            ->with('success', 'تم فتح تذكرة دعم مع إدارة المنصة بنجاح.');
+            ->with('success', __('تم فتح تذكرة دعم مع إدارة المنصة بنجاح.'));
     }
 }

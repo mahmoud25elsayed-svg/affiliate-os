@@ -53,7 +53,7 @@ class AppDashboardController extends Controller
                     'id' => $order->id,
                     'reference' => $order->reference ?? (string) $order->id,
                     'status' => $order->status,
-                    'customer_city' => $snapshot['customer_city'] ?? 'غير محدد',
+                    'customer_city' => $snapshot['customer_city'] ?? __('غير محدد'),
                     'profit_minor' => (int) ($snapshot['affiliate_profit_minor'] ?? 0),
                     'total_minor' => Money::minorOf($order->total),
                     'created_at' => $order->created_at?->format('Y-m-d H:i') ?? '',
@@ -70,7 +70,7 @@ class AppDashboardController extends Controller
 
                 return [
                     'id' => $p->id,
-                    'name' => $p->translateAttribute('name') ?? "منتج #{$p->id}",
+                    'name' => $p->translateAttribute('name') ?? __('منتج #:id', ['id' => $p->id]),
                     'stock' => $stock,
                     'is_low' => $stock <= 5,
                 ];

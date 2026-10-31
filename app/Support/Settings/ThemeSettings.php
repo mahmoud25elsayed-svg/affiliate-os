@@ -24,7 +24,7 @@ class ThemeSettings extends Settings
 
     public string $hero_headline = 'أفضل المنتجات العصرية بأعلى جودة';
 
-    public string $hero_subheadline = 'تسوق بسهولة وسرعة مع ضمان أفضل الأسعار وتوصيل لجميع المحافظات';
+    public string $hero_subheadline = 'تسوق بسهولة وسرعة مع ضمان أفضل الأسعار وتوصيل لجميع المناطق';
 
     public ?string $hero_image_url = null;
 
@@ -81,7 +81,7 @@ class ThemeSettings extends Settings
      * @var array<array{icon: string, title: string, subtitle: string}>
      */
     public array $features_badges = [
-        ['icon' => 'truck', 'title' => 'شحن سريع وموثوق', 'subtitle' => 'توصيل لجميع محافظات مصر خلال 2-4 أيام عمل'],
+        ['icon' => 'truck', 'title' => 'شحن سريع وموثوق', 'subtitle' => 'توصيل لجميع المناطق خلال 2-4 أيام عمل'],
         ['icon' => 'shield', 'title' => 'معاينة قبل الاستلام', 'subtitle' => 'حق فحص المنتج والدفع نقدًا عند الاستلام'],
         ['icon' => 'refresh', 'title' => 'استبدال واسترجاع سهل', 'subtitle' => 'ضمان استرجاع مجاني خلال 14 يومًا من الشراء'],
         ['icon' => 'headset', 'title' => 'خدمة عملاء مميزة', 'subtitle' => 'فريق متخصص لمساعدتك ومتابعة طلبك خطوة بخطوة'],
@@ -91,11 +91,11 @@ class ThemeSettings extends Settings
 
     public string $about_us = 'متجرنا يقدم لك تشكيلة مميزة من المنتجات العالية الجودة بأفضل الأسعار وخدمة عملاء على مدار الساعة.';
 
-    public string $terms_and_conditions = 'تطبق الشروط والأحكام القياسية على كافة المشتريات والطلبات داخل جمهورية مصر العربية.';
+    public string $terms_and_conditions = 'تطبق الشروط والأحكام القياسية على كافة المشتريات والطلبات من متجرنا.';
 
     public string $privacy_policy = 'نلتزم بحماية خصوصية بياناتك ومعلوماتك الشخصية ولن يتم مشاركتها مع أي طرف خارجي غير معني بتنفيذ طلبك.';
 
-    public string $shipping_and_returns = 'يتم الشحن لكافة محافظات مصر خلال 2-4 أيام عمل، مع إمكانية المعاينة عند الاستلام والاسترجاع خلال 14 يومًا.';
+    public string $shipping_and_returns = 'يتم الشحن لجميع المناطق خلال 2-4 أيام عمل، مع إمكانية المعاينة عند الاستلام والاسترجاع خلال 14 يومًا.';
 
     public static function group(): string
     {

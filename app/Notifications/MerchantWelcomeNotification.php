@@ -30,12 +30,12 @@ class MerchantWelcomeNotification extends Notification
         $storeUrl = url("/store/{$this->tenant->id}");
 
         return (new MailMessage)
-            ->subject("مرحباً بك في AffiliateOS - متجرك جاهز الآن! ({$this->tenant->name})")
-            ->greeting("أهلاً بك، {$this->tenant->name}")
-            ->line('تم إنشاء وتجهيز متجرك الإلكتروني وبرنامج الأفلييت الخاص بك بنجاح.')
-            ->line("معرف المتجر: {$this->tenant->id}")
-            ->action('الدخول إلى لوحة تحكم التاجر', $storeUrl)
-            ->line('نتمنى لك تجارة رابحة وتوسعاً مستمراً في مبيعاتك!')
-            ->salutation('فريق عمل AffiliateOS');
+            ->subject(__('مرحباً بك في AffiliateOS - متجرك جاهز الآن! (:name)', ['name' => $this->tenant->name]))
+            ->greeting(__('أهلاً بك، :name', ['name' => $this->tenant->name]))
+            ->line(__('تم إنشاء وتجهيز متجرك الإلكتروني وبرنامج الأفلييت الخاص بك بنجاح.'))
+            ->line(__('معرف المتجر: :id', ['id' => $this->tenant->id]))
+            ->action(__('الدخول إلى لوحة تحكم التاجر'), $storeUrl)
+            ->line(__('نتمنى لك تجارة رابحة وتوسعاً مستمراً في مبيعاتك!'))
+            ->salutation(__('فريق عمل AffiliateOS'));
     }
 }

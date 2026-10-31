@@ -1,13 +1,13 @@
 @extends('layouts.storefront')
 
-@section('title', $title . ' - ' . ($general->platform_name ?? 'متجرنا'))
+@section('title', $title . ' - ' . ($general->platform_name ?? __('متجرنا')))
 
 @section('content')
 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
 
     <!-- Breadcrumb -->
     <nav class="flex items-center gap-2 text-xs text-gray-500 font-medium">
-        <a href="{{ url('/') }}" class="hover:text-brand-600 transition-colors">الرئيسية</a>
+        <a href="{{ url('/') }}" class="hover:text-brand-600 transition-colors">{{ __('الرئيسية') }}</a>
         <span>/</span>
         <span class="text-gray-900 font-bold">{{ $title }}</span>
     </nav>

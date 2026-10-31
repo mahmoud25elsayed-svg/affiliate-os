@@ -44,38 +44,38 @@ class TemplateEngine
     {
         return [
             'order_confirmed' => [
-                'subject' => 'تأكيد طلبك رقم #{order_number}',
-                'content' => 'مرحباً {customer_name}، تم تأكيد طلبك رقم #{order_number} بنجاح بقيمة {order_total}. سنقوم بتجهيزه وشحنه قريباً. شكراً لتسوقك من {store_name}!',
+                'subject' => __('تأكيد طلبك رقم #{order_number}'),
+                'content' => __('مرحباً {customer_name}، تم تأكيد طلبك رقم #{order_number} بنجاح بقيمة {order_total}. سنقوم بتجهيزه وشحنه قريباً. شكراً لتسوقك من {store_name}!'),
                 'variables' => ['customer_name', 'order_number', 'order_total', 'store_name', 'items_count'],
             ],
             'order_shipped' => [
-                'subject' => 'تم شحن طلبك رقم #{order_number}',
-                'content' => 'أهلاً {customer_name}، طلبك رقم #{order_number} في الطريق إليك مع شركة الشحن {courier_name}. رقم التتبع: {tracking_number}. رابط التتبع: {tracking_url}',
+                'subject' => __('تم شحن طلبك رقم #{order_number}'),
+                'content' => __('أهلاً {customer_name}، طلبك رقم #{order_number} في الطريق إليك مع شركة الشحن {courier_name}. رقم التتبع: {tracking_number}. رابط التتبع: {tracking_url}'),
                 'variables' => ['customer_name', 'order_number', 'courier_name', 'tracking_number', 'tracking_url', 'store_name'],
             ],
             'order_delivered' => [
-                'subject' => 'تم تسليم طلبك رقم #{order_number}',
-                'content' => 'عزيزي {customer_name}، نأمل أن تكون راضياً عن مشترياتك في الطلب #{order_number}. يمكنك مشاركة تقييمك للمنتجات عبر متجرنا {store_name}.',
+                'subject' => __('تم تسليم طلبك رقم #{order_number}'),
+                'content' => __('عزيزي {customer_name}، نأمل أن تكون راضياً عن مشترياتك في الطلب #{order_number}. يمكنك مشاركة تقييمك للمنتجات عبر متجرنا {store_name}.'),
                 'variables' => ['customer_name', 'order_number', 'store_name', 'review_url'],
             ],
             'order_cancelled' => [
-                'subject' => 'إلغاء الطلب رقم #{order_number}',
-                'content' => 'مرحباً {customer_name}، تم إلغاء الطلب رقم #{order_number}. سبب الإلغاء: {reason}. للاستفسار يرجى التواصل مع خدمة عملاء {store_name}.',
+                'subject' => __('إلغاء الطلب رقم #{order_number}'),
+                'content' => __('مرحباً {customer_name}، تم إلغاء الطلب رقم #{order_number}. سبب الإلغاء: {reason}. للاستفسار يرجى التواصل مع خدمة عملاء {store_name}.'),
                 'variables' => ['customer_name', 'order_number', 'reason', 'store_name'],
             ],
             'cart_abandoned' => [
-                'subject' => 'هل نسيت سلتك في {store_name}؟',
-                'content' => 'مرحباً {customer_name}، لاحظنا أنك تركت بعض المنتجات في سلتك! أكمل طلبك الآن قبل نفاد الكمية عبر الرابط: {recovery_url}',
+                'subject' => __('هل نسيت سلتك في {store_name}؟'),
+                'content' => __('مرحباً {customer_name}، لاحظنا أنك تركت بعض المنتجات في سلتك! أكمل طلبك الآن قبل نفاد الكمية عبر الرابط: {recovery_url}'),
                 'variables' => ['customer_name', 'recovery_url', 'store_name', 'items_count', 'cart_total'],
             ],
             'otp_verification' => [
-                'subject' => 'رمز التحقق الخاص بك',
-                'content' => 'رمز التحقق لتسجيل الدخول في {store_name} هو: {otp_code}. صالح لمدة 10 دقائق. لا تشارك هذا الرمز مع أحد.',
+                'subject' => __('رمز التحقق الخاص بك'),
+                'content' => __('رمز التحقق لتسجيل الدخول في {store_name} هو: {otp_code}. صالح لمدة 10 دقائق. لا تشارك هذا الرمز مع أحد.'),
                 'variables' => ['otp_code', 'store_name'],
             ],
             'welcome' => [
-                'subject' => 'مرحباً بك في {store_name}',
-                'content' => 'أهلاً بك {customer_name} في {store_name}! يسعدنا انضمامك إلينا، نتمنى لك تجربة تسوق ممتعة.',
+                'subject' => __('مرحباً بك في {store_name}'),
+                'content' => __('أهلاً بك {customer_name} في {store_name}! يسعدنا انضمامك إلينا، نتمنى لك تجربة تسوق ممتعة.'),
                 'variables' => ['customer_name', 'store_name', 'store_url'],
             ],
         ];

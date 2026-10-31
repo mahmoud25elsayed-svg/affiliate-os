@@ -61,14 +61,14 @@ class OrderModificationService
         } elseif ($firstLine && $firstLine->purchasable instanceof ProductVariant) {
             $variant = $firstLine->purchasable;
         } else {
-            throw new DomainException('تعذر تحديد متغير المنتج للطلب.');
+            throw new DomainException(__('تعذر تحديد متغير المنتج للطلب.'));
         }
 
         // 2. Resolve quantity and selling price (AF-04: preserve original line unit price, avoid hardcoded 20000 fallback)
         $firstLineQty = $firstLine instanceof OrderLine ? (int) $firstLine->quantity : 1;
         $quantity = isset($data['quantity']) ? (int) $data['quantity'] : (int) ($snapshot['quantity'] ?? $firstLineQty);
         if ($quantity <= 0) {
-            throw new DomainException('الكمية يجب أن تكون قطعة واحدة على الأقل.');
+            throw new DomainException(__('الكمية يجب أن تكون قطعة واحدة على الأقل.'));
         }
 
         $unitPrice = $firstLine instanceof OrderLine ? $firstLine->getAttribute('unit_price') : null;
@@ -162,7 +162,7 @@ class OrderModificationService
             'actor_type' => User::class,
             'actor_id' => (string) $agent->id,
             'actor_name' => $agent->name,
-            'note' => "تعديل الطلب أثناء مكالمة التأكيد: الكمية={$quantity}، المتغير={$variant->sku}. أرباح المسوق: {$oldProfitMinor} -> {$newProfitMinor} ({$diffSign} قرشاً)",
+            'note' => __('تعديل الطلب أثناء مكالمة التأكيد: الكمية=:quantity، المتغير=:sku. أرباح المسوق: :old_profit_minor -> :new_profit_minor (:diff_sign قرشاً)', ['quantity' => $quantity, 'sku' => $variant->sku, 'old_profit_minor' => $oldProfitMinor, 'new_profit_minor' => $newProfitMinor, 'diff_sign' => $diffSign]),
         ]);
 
         return [

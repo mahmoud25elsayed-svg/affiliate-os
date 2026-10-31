@@ -1,6 +1,6 @@
 @extends('layouts.affiliate')
 
-@section('title', 'تأكيد رقم الهاتف - OTP')
+@section('title', __('تأكيد رقم الهاتف - OTP'))
 
 @section('content')
 <div class="max-w-md mx-auto py-12">
@@ -9,17 +9,17 @@
             📱
         </div>
 
-        <h1 class="text-2xl font-extrabold text-slate-900 mb-2">تأكيد رقم الهاتف</h1>
+        <h1 class="text-2xl font-extrabold text-slate-900 mb-2">{{ __('تأكيد رقم الهاتف') }}</h1>
         <p class="text-xs text-slate-500 mb-6">
-            تم إرسال رمز تحقق مكون من 6 أرقام في رسالة نصية قصيرة (SMS) إلى هاتفك:
-            <span class="font-bold text-slate-800 font-mono block mt-1" dir="ltr">{{ $affiliate?->phone ?? 'هاتفك المسجل' }}</span>
+            {{ __('تم إرسال رمز تحقق مكون من 6 أرقام في رسالة نصية قصيرة (SMS) إلى هاتفك:') }}
+            <span class="font-bold text-slate-800 font-mono block mt-1" dir="ltr">{{ $affiliate?->phone ?? __('هاتفك المسجل') }}</span>
         </p>
 
         <form method="POST" action="{{ route('affiliate.verify-otp.submit') }}" class="space-y-6">
             @csrf
 
             <div>
-                <label for="code" class="block text-sm font-semibold text-slate-700 mb-2">أدخل رمز التحقق (OTP)</label>
+                <label for="code" class="block text-sm font-semibold text-slate-700 mb-2">{{ __('أدخل رمز التحقق (OTP)') }}</label>
                 <input type="text" name="code" id="code" maxlength="6" autofocus required dir="ltr"
                        class="w-48 mx-auto text-center tracking-widest text-2xl font-mono px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                        placeholder="123456">
@@ -27,7 +27,7 @@
             </div>
 
             <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition duration-200">
-                تأكيد وتفعيل الحساب
+                {{ __('تأكيد وتفعيل الحساب') }}
             </button>
         </form>
     </div>

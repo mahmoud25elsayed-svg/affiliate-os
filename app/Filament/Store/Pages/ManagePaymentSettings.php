@@ -7,6 +7,7 @@ namespace App\Filament\Store\Pages;
 use App\Models\TenantPaymentGateway;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Illuminate\Contracts\Support\Htmlable;
 
 class ManagePaymentSettings extends Page
 {
@@ -14,9 +15,17 @@ class ManagePaymentSettings extends Page
 
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-credit-card';
 
-    protected static ?string $navigationLabel = 'بوابات الدفع الإلكتروني';
+    public static function getNavigationLabel(): string
+    {
 
-    protected static ?string $title = 'إعدادات بوابات الدفع الإلكتروني';
+        return __('بوابات الدفع الإلكتروني');
+
+    }
+
+    public function getTitle(): string|Htmlable
+    {
+        return __('إعدادات بوابات الدفع الإلكتروني');
+    }
 
     // Paymob
     public bool $paymob_enabled = false;
@@ -164,7 +173,7 @@ class ManagePaymentSettings extends Page
         );
 
         Notification::make()
-            ->title('تم حفظ إعدادات بوابات الدفع وتشفير المفاتيح بنجاح')
+            ->title(__('تم حفظ إعدادات بوابات الدفع وتشفير المفاتيح بنجاح'))
             ->success()
             ->send();
     }

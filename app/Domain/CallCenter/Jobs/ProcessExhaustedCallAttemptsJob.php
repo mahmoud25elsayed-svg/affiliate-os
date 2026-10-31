@@ -44,7 +44,7 @@ class ProcessExhaustedCallAttemptsJob implements ShouldQueue
                 reason: ReasonCode::CUSTOMER_UNREACHABLE,
                 actor: $actor,
                 meta: ['attempts' => $order->call_attempts_count],
-                note: "تعذر الوصول للعميل تلقائياً بعد استنفاد الحد الأقصى للمحاولات ({$maxAttempts})."
+                note: __('تعذر الوصول للعميل تلقائياً بعد استنفاد الحد الأقصى للمحاولات (:max_attempts).', ['max_attempts' => $maxAttempts])
             );
 
             $order->update([

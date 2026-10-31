@@ -8,6 +8,7 @@ use App\Support\Location\Country;
 use App\Support\Settings\GeneralSettings;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Validation\Rule;
 use Lunar\Models\Currency;
 
@@ -17,9 +18,17 @@ class ManageStoreSettings extends Page
 
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-cog-6-tooth';
 
-    protected static ?string $navigationLabel = 'إعدادات المتجر';
+    public static function getNavigationLabel(): string
+    {
 
-    protected static ?string $title = 'إعدادات المتجر';
+        return __('إعدادات المتجر');
+
+    }
+
+    public function getTitle(): string|Htmlable
+    {
+        return __('إعدادات المتجر');
+    }
 
     public ?string $platform_name = '';
 
@@ -116,7 +125,7 @@ class ManageStoreSettings extends Page
         }
 
         Notification::make()
-            ->title('تم حفظ إعدادات المتجر بنجاح')
+            ->title(__('تم حفظ إعدادات المتجر بنجاح'))
             ->success()
             ->send();
     }

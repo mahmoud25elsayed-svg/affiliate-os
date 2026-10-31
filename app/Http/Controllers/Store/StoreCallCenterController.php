@@ -72,11 +72,11 @@ class StoreCallCenterController extends Controller
 
         if (! $order instanceof Order) {
             return redirect()->route('store.call-center.index')
-                ->with('info', 'لا توجد طلبات بانتظار التأكيد حالياً في طابور الاتصال.');
+                ->with('info', __('لا توجد طلبات بانتظار التأكيد حالياً في طابور الاتصال.'));
         }
 
         return redirect()->route('store.call-center.index')
-            ->with('success', "تم سحب الطلب #{$order->id} للاتصال وتأكيده بنجاح.");
+            ->with('success', __('تم سحب الطلب #:id للاتصال وتأكيده بنجاح.', ['id' => $order->id]));
     }
 
     public function release(Request $request, Order $order, CallCenterQueueService $queueService): RedirectResponse
@@ -87,7 +87,7 @@ class StoreCallCenterController extends Controller
         $queueService->releaseOrder($order, $user);
 
         return redirect()->route('store.call-center.index')
-            ->with('info', "تم إلغاء حجز الطلب #{$order->id} وإعادته إلى طابور التأكيد.");
+            ->with('info', __('تم إلغاء حجز الطلب #:id وإعادته إلى طابور التأكيد.', ['id' => $order->id]));
     }
 
     public function attempt(Request $request, Order $order, CallAttemptService $attemptService): RedirectResponse
@@ -110,7 +110,7 @@ class StoreCallCenterController extends Controller
         $outcomeLabel = $outcomeEnum instanceof CallOutcome ? $outcomeEnum->label() : $attempt->outcome;
 
         return redirect()->route('store.call-center.index')
-            ->with('success', "تم تسجيل نتيجة المكالمة: {$outcomeLabel} بنجاح.");
+            ->with('success', __('تم تسجيل نتيجة المكالمة: :outcome_label بنجاح.', ['outcome_label' => $outcomeLabel]));
     }
 
     public function modify(Request $request, Order $order, OrderModificationService $modificationService): RedirectResponse
@@ -134,7 +134,7 @@ class StoreCallCenterController extends Controller
         $newProfitPounds = number_format($result['new_profit_minor'] / 100, 2);
 
         return redirect()->back()
-            ->with('success', "تم تعديل بيانات الطلب وتحديث الحسابات. عمولة المسوق المحدثة: {$newProfitPounds} ".Money::symbol());
+            ->with('success', __('تم تعديل بيانات الطلب وتحديث الحسابات. عمولة المسوق المحدثة: :new_profit_pounds ', ['new_profit_pounds' => $newProfitPounds]).Money::symbol());
     }
 
     public function performance(Request $request): View

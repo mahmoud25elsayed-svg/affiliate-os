@@ -188,7 +188,7 @@ class SubscriptionService
             $newLimit = $targetPlan->getLimit($limitKey);
 
             if ($newLimit !== -1 && $currentUsage > $newLimit) {
-                $reasons[] = "الاستهلاك الحالي لـ [{$limitKey}] هو {$currentUsage}، ويتجاوز الحد الأقصى في باقة [{$targetPlan->name}] ({$newLimit}).";
+                $reasons[] = __('الاستهلاك الحالي لـ [:limit_key] هو :current_usage، ويتجاوز الحد الأقصى في باقة [:name] (:new_limit).', ['limit_key' => $limitKey, 'current_usage' => $currentUsage, 'name' => $targetPlan->name, 'new_limit' => $newLimit]);
             }
         }
 

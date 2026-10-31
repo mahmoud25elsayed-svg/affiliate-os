@@ -35,13 +35,27 @@ class OrderResource extends Resource
 
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-shopping-bag';
 
-    protected static ?string $navigationLabel = 'الطلبات';
+    public static function getNavigationLabel(): string
+    {
 
-    protected static ?string $modelLabel = 'طلب';
+        return __('الطلبات');
 
-    protected static ?string $pluralModelLabel = 'الطلبات';
+    }
 
-    protected static \UnitEnum|string|null $navigationGroup = 'إدارة الطلبات';
+    public static function getModelLabel(): string
+    {
+        return __('طلب');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('الطلبات');
+    }
+
+    public static function getNavigationGroup(): string|\UnitEnum|null
+    {
+        return __('إدارة الطلبات');
+    }
 
     protected static ?int $navigationSort = 1;
 
@@ -55,13 +69,13 @@ class OrderResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('reference')
-                    ->label('رقم الطلب')
+                    ->label(__('رقم الطلب'))
                     ->searchable()
                     ->copyable()
                     ->weight('bold'),
 
                 TextColumn::make('customer_name')
-                    ->label('العميل')
+                    ->label(__('العميل'))
                     ->state(function (Order $record): string {
                         /** @var OrderAddress|null $addr */
                         $addr = $record->shippingAddress;
@@ -72,12 +86,12 @@ class OrderResource extends Resource
                             }
                         }
 
-                        return 'عميل زائر';
+                        return __('عميل زائر');
                     })
                     ->searchable(),
 
                 TextColumn::make('customer_phone_e164')
-                    ->label('الهاتف')
+                    ->label(__('الهاتف'))
                     ->state(function (Order $record): string {
                         /** @var OrderAddress|null $addr */
                         $addr = $record->shippingAddress;
@@ -89,24 +103,24 @@ class OrderResource extends Resource
                     ->searchable(),
 
                 TextColumn::make('shippingAddress.city')
-                    ->label('المحافظة / المدينة')
+                    ->label(__('المحافظة / المدينة'))
                     ->default('-'),
 
                 TextColumn::make('affiliate.name')
-                    ->label('المسوق')
-                    ->default('مباشر من المتجر')
+                    ->label(__('المسوق'))
+                    ->default(__('مباشر من المتجر'))
                     ->badge()
-                    ->color(fn ($state) => $state === 'مباشر من المتجر' ? 'gray' : 'primary')
+                    ->color(fn ($state) => $state === __('مباشر من المتجر') ? 'gray' : 'primary')
                     ->searchable(),
 
                 TextColumn::make('quality_result')
-                    ->label('فحص الجودة')
+                    ->label(__('فحص الجودة'))
                     ->badge()
                     ->formatStateUsing(fn (?string $state) => match ($state) {
-                        'pass' => 'سليم (Pass)',
-                        'review' => 'مراجعة (Review)',
-                        'reject' => 'مرفوض (Reject)',
-                        default => 'غير محدد',
+                        'pass' => __('سليم (Pass)'),
+                        'review' => __('مراجعة (Review)'),
+                        'reject' => __('مرفوض (Reject)'),
+                        default => __('غير محدد'),
                     })
                     ->color(fn (?string $state) => match ($state) {
                         'pass' => 'success',
@@ -116,13 +130,13 @@ class OrderResource extends Resource
                     }),
 
                 TextColumn::make('status')
-                    ->label('الحالة')
+                    ->label(__('الحالة'))
                     ->badge()
                     ->formatStateUsing(fn (string $state) => OrderStatus::tryFrom($state)?->label() ?? $state)
                     ->color(fn (string $state) => OrderStatus::tryFrom($state)?->color() ?? 'gray'),
 
                 TextColumn::make('total')
-                    ->label('الإجمالي')
+                    ->label(__('الإجمالي'))
                     ->formatStateUsing(function (Order $record): string {
                         /** @var mixed $total */
                         $total = $record->total;
@@ -133,67 +147,67 @@ class OrderResource extends Resource
                     ->sortable(),
 
                 TextColumn::make('payment_method')
-                    ->label('طريقة الدفع')
+                    ->label(__('طريقة الدفع'))
                     ->badge()
-                    ->formatStateUsing(fn (string $state) => $state === 'cod' ? 'الدفع عند الاستلام' : 'دفع إلكتروني')
+                    ->formatStateUsing(fn (string $state) => $state === 'cod' ? __('الدفع عند الاستلام') : __('دفع إلكتروني'))
                     ->color(fn (string $state) => $state === 'cod' ? 'warning' : 'success'),
 
                 TextColumn::make('created_at')
-                    ->label('تاريخ الطلب')
+                    ->label(__('تاريخ الطلب'))
                     ->dateTime('Y-m-d H:i')
                     ->sortable(),
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([
                 SelectFilter::make('status')
-                    ->label('تصفية حسب الحالة')
+                    ->label(__('تصفية حسب الحالة'))
                     ->options(collect(OrderStatus::cases())->mapWithKeys(fn (OrderStatus $s) => [$s->value => $s->label()])->all()),
 
                 SelectFilter::make('quality_result')
-                    ->label('طابور فحص الجودة')
+                    ->label(__('طابور فحص الجودة'))
                     ->options([
-                        'review' => 'طلبات قيد المراجعة (Review Queue)',
-                        'pass' => 'طلبات سليمة (Passed)',
-                        'reject' => 'طلبات مرفوضة (Rejected)',
+                        'review' => __('طلبات قيد المراجعة (Review Queue)'),
+                        'pass' => __('طلبات سليمة (Passed)'),
+                        'reject' => __('طلبات مرفوضة (Rejected)'),
                     ]),
 
                 SelectFilter::make('payment_method')
-                    ->label('طريقة الدفع')
+                    ->label(__('طريقة الدفع'))
                     ->options([
-                        'cod' => 'الدفع عند الاستلام (COD)',
-                        'card' => 'دفع إلكتروني',
+                        'cod' => __('الدفع عند الاستلام (COD)'),
+                        'card' => __('دفع إلكتروني'),
                     ]),
             ])
             ->actions([
                 Action::make('review_quality')
-                    ->label('مراجعة الجودة')
+                    ->label(__('مراجعة الجودة'))
                     ->icon('heroicon-o-shield-check')
                     ->color('warning')
                     ->visible(fn (Order $record) => $record->getAttribute('quality_result') === 'review' && $record->status === OrderStatus::PENDING_CONFIRMATION->value)
-                    ->modalHeading('مراجعة فحص جودة الطلب (Quality Gate)')
+                    ->modalHeading(__('مراجعة فحص جودة الطلب (Quality Gate)'))
                     ->form(function (Order $record) {
                         /** @var mixed $rawMeta */
                         $rawMeta = $record->meta;
                         $reasons = is_array($rawMeta) && isset($rawMeta['quality_reasons']) ? (array) $rawMeta['quality_reasons'] : [];
                         $reasonsHtml = empty($reasons)
-                            ? '<p class="text-gray-500">لا توجد ملاحظات مسجلة.</p>'
+                            ? __('<p class="text-gray-500">لا توجد ملاحظات مسجلة.</p>')
                             : '<ul class="list-disc pr-4 space-y-1 text-sm text-amber-700">'.implode('', array_map(fn ($r) => '<li>'.e((string) $r).'</li>', $reasons)).'</ul>';
 
                         return [
                             Placeholder::make('flags_info')
-                                ->label('أسباب تنبيه فحص الجودة')
+                                ->label(__('أسباب تنبيه فحص الجودة'))
                                 ->content(new HtmlString($reasonsHtml)),
 
                             Select::make('decision')
-                                ->label('قرار التاجر')
+                                ->label(__('قرار التاجر'))
                                 ->options([
-                                    'confirm' => 'اعتماد وتأكيد الطلب (Confirmed)',
-                                    'reject' => 'رفض الطلب لعدم صلاحية الجودة (Quality Rejected)',
+                                    'confirm' => __('اعتماد وتأكيد الطلب (Confirmed)'),
+                                    'reject' => __('رفض الطلب لعدم صلاحية الجودة (Quality Rejected)'),
                                 ])
                                 ->required(),
 
                             Textarea::make('notes')
-                                ->label('ملاحظات القرار'),
+                                ->label(__('ملاحظات القرار')),
                         ];
                     })
                     ->action(function (Order $record, array $data, OrderTransitionService $transitionService): void {
@@ -211,34 +225,34 @@ class OrderResource extends Resource
                                 order: $record,
                                 to: OrderStatus::CONFIRMED,
                                 actor: $actor,
-                                note: $data['notes'] ?? 'تم تأكيد واعتماد الطلب من طابور مراجعة الجودة'
+                                note: $data['notes'] ?? __('تم تأكيد واعتماد الطلب من طابور مراجعة الجودة')
                             );
-                            Notification::make()->title('تم اعتماد وتأكيد الطلب بنجاح')->success()->send();
+                            Notification::make()->title(__('تم اعتماد وتأكيد الطلب بنجاح'))->success()->send();
                         } else {
                             $transitionService->transition(
                                 order: $record,
                                 to: OrderStatus::REJECTED_QUALITY,
                                 reason: ReasonCode::SUSPECTED_FRAUD,
                                 actor: $actor,
-                                note: $data['notes'] ?? 'تم رفض الطلب بناءً على نتائج فحص الجودة'
+                                note: $data['notes'] ?? __('تم رفض الطلب بناءً على نتائج فحص الجودة')
                             );
-                            Notification::make()->title('تم رفض الطلب وإلغاؤه')->warning()->send();
+                            Notification::make()->title(__('تم رفض الطلب وإلغاؤه'))->warning()->send();
                         }
                     }),
 
                 Action::make('view')
-                    ->label('عرض')
+                    ->label(__('عرض'))
                     ->icon('heroicon-o-eye')
                     ->url(fn (Order $record) => static::getUrl('view', ['record' => $record])),
 
                 Action::make('print_invoice')
-                    ->label('فاتورة')
+                    ->label(__('فاتورة'))
                     ->icon('heroicon-o-document-text')
                     ->color('gray')
                     ->url(fn (Order $record) => route('store.orders.invoice', ['reference' => $record->reference]), shouldOpenInNewTab: true),
 
                 Action::make('print_waybill')
-                    ->label('بوليصة')
+                    ->label(__('بوليصة'))
                     ->icon('heroicon-o-truck')
                     ->color('gray')
                     ->url(fn (Order $record) => route('store.orders.waybill', ['reference' => $record->reference]), shouldOpenInNewTab: true),

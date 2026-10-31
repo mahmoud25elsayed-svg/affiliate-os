@@ -8,6 +8,7 @@ use App\Domain\Orders\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Affiliate;
 use App\Support\Location\Governorate;
+use App\Support\Translate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -63,7 +64,7 @@ class AppAnalyticsController extends Controller
                 if (! isset($productsMap[$pId])) {
                     $productsMap[$pId] = [
                         'product_id' => $pId,
-                        'product_name' => $item['product_name'] ?? "منتج #{$pId}",
+                        'product_name' => $item['product_name'] ?? __('منتج #:p_id', ['p_id' => $pId]),
                         'orders_count' => 0,
                         'delivered_count' => 0,
                         'returned_count' => 0,
@@ -91,7 +92,7 @@ class AppAnalyticsController extends Controller
         $govMap = [];
         foreach ($allOrders as $order) {
             $snapshot = is_array($order->price_snapshot) ? $order->price_snapshot : json_decode($order->price_snapshot ?? '[]', true);
-            $city = (string) ($snapshot['customer_city'] ?? 'غير محدد');
+            $city = (string) ($snapshot['customer_city'] ?? __('غير محدد'));
 
             if (! isset($govMap[$city])) {
                 $govMap[$city] = [
@@ -117,7 +118,7 @@ class AppAnalyticsController extends Controller
 
         // Breakdown by Source / Channel
         $sourceMap = [
-            'Direct / لوحة التحكم' => ['source' => 'Direct / لوحة التحكم', 'orders_count' => 0, 'delivered_count' => 0],
+            'Direct / لوحة التحكم' => ['source' => Translate::t('Direct / لوحة التحكم'), 'orders_count' => 0, 'delivered_count' => 0],
             'Facebook' => ['source' => 'Facebook', 'orders_count' => 0, 'delivered_count' => 0],
             'TikTok' => ['source' => 'TikTok', 'orders_count' => 0, 'delivered_count' => 0],
             'Instagram' => ['source' => 'Instagram', 'orders_count' => 0, 'delivered_count' => 0],

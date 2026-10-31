@@ -79,7 +79,7 @@ class Warehouse extends Model
         if ($warehouse === null) {
             /** @var self $warehouse */
             $warehouse = self::query()->create([
-                'name' => 'المستودع الرئيسي',
+                'name' => __('المستودع الرئيسي'),
                 'code' => 'MAIN',
                 'type' => 'own',
                 'is_default' => true,

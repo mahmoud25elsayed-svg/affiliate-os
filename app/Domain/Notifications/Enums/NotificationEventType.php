@@ -17,13 +17,13 @@ enum NotificationEventType: string
     public function getLabel(): string
     {
         return match ($this) {
-            self::ORDER_CONFIRMED => 'تأكيد الطلب',
-            self::ORDER_SHIPPED => 'شحن الطلب',
-            self::ORDER_DELIVERED => 'تسليم الطلب',
-            self::ORDER_CANCELLED => 'إلغاء الطلب',
-            self::CART_ABANDONED => 'سلة متروكة',
-            self::OTP_VERIFICATION => 'رمز التحقق (OTP)',
-            self::WELCOME => 'رسالة الترحيب / الاشتراك',
+            self::ORDER_CONFIRMED => __('تأكيد الطلب'),
+            self::ORDER_SHIPPED => __('شحن الطلب'),
+            self::ORDER_DELIVERED => __('تسليم الطلب'),
+            self::ORDER_CANCELLED => __('إلغاء الطلب'),
+            self::CART_ABANDONED => __('سلة متروكة'),
+            self::OTP_VERIFICATION => __('رمز التحقق (OTP)'),
+            self::WELCOME => __('رسالة الترحيب / الاشتراك'),
         };
     }
 }

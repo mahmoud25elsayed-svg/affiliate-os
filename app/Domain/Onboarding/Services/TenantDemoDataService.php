@@ -98,11 +98,11 @@ class TenantDemoDataService
 
                 // 1. Seed 5 Sample Products
                 $demoProductsData = [
-                    ['name' => 'سماعات بلوتوث عازلة للضوضاء برو', 'sku' => 'DEMO-EARPHONES-01', 'price' => 59900, 'wholesale' => 38000, 'commission' => 12000],
-                    ['name' => 'ساعة ذكية رياضية ببطارية 14 يوماً', 'sku' => 'DEMO-SMARTWATCH-02', 'price' => 89900, 'wholesale' => 58000, 'commission' => 18000],
-                    ['name' => 'شاحن مغناطيسي سريع 3 في 1 للمكتب', 'sku' => 'DEMO-CHARGER-03', 'price' => 34900, 'wholesale' => 21000, 'commission' => 7000],
-                    ['name' => 'حقيبة ظهر للأعمال واللابتوب مقاومة للماء', 'sku' => 'DEMO-BACKPACK-04', 'price' => 49900, 'wholesale' => 31000, 'commission' => 10000],
-                    ['name' => 'مصباح مكتبي ذكي بحساس إضاءة وحامل هاتف', 'sku' => 'DEMO-SMARTLAMP-05', 'price' => 27900, 'wholesale' => 16000, 'commission' => 6000],
+                    ['name' => __('سماعات بلوتوث عازلة للضوضاء برو'), 'sku' => 'DEMO-EARPHONES-01', 'price' => 59900, 'wholesale' => 38000, 'commission' => 12000],
+                    ['name' => __('ساعة ذكية رياضية ببطارية 14 يوماً'), 'sku' => 'DEMO-SMARTWATCH-02', 'price' => 89900, 'wholesale' => 58000, 'commission' => 18000],
+                    ['name' => __('شاحن مغناطيسي سريع 3 في 1 للمكتب'), 'sku' => 'DEMO-CHARGER-03', 'price' => 34900, 'wholesale' => 21000, 'commission' => 7000],
+                    ['name' => __('حقيبة ظهر للأعمال واللابتوب مقاومة للماء'), 'sku' => 'DEMO-BACKPACK-04', 'price' => 49900, 'wholesale' => 31000, 'commission' => 10000],
+                    ['name' => __('مصباح مكتبي ذكي بحساس إضاءة وحامل هاتف'), 'sku' => 'DEMO-SMARTLAMP-05', 'price' => 27900, 'wholesale' => 16000, 'commission' => 6000],
                 ];
 
                 $createdVariants = [];
@@ -148,8 +148,8 @@ class TenantDemoDataService
 
                 // 2. Seed 2 Sample Affiliates & Tracking Links
                 $affiliatesData = [
-                    ['name' => 'محمد سمير (مسوق تجريبي)', 'code' => 'DEMO-AFF-01', 'phone' => '+201099112233'],
-                    ['name' => 'نورهان عادل (مسوقة تجريبية)', 'code' => 'DEMO-AFF-02', 'phone' => '+201188223344'],
+                    ['name' => __('محمد سمير (مسوق تجريبي)'), 'code' => 'DEMO-AFF-01', 'phone' => '+201099112233'],
+                    ['name' => __('نورهان عادل (مسوقة تجريبية)'), 'code' => 'DEMO-AFF-02', 'phone' => '+201188223344'],
                 ];
 
                 $createdAffiliates = [];
@@ -182,8 +182,8 @@ class TenantDemoDataService
                 /** @var Customer $customer */
                 $customer = Customer::create([
                     'tenant_id' => $tenantId,
-                    'first_name' => 'عميل',
-                    'last_name' => 'تجريبي',
+                    'first_name' => __('عميل'),
+                    'last_name' => __('تجريبي'),
                     'email' => "demo-cust-{$tenantId}@example.test",
                     'phone' => '01012345678',
                     'is_active' => true,
@@ -195,11 +195,11 @@ class TenantDemoDataService
                 CustomerAddress::create([
                     'tenant_id' => $tenantId,
                     'customer_id' => $customer->id,
-                    'name' => 'عميل تجريبي',
+                    'name' => __('عميل تجريبي'),
                     'phone' => '01012345678',
                     'governorate_id' => $govId,
-                    'city' => 'المعادي',
-                    'address_line' => 'شارع 9 عمارة 12 الدور 3',
+                    'city' => __('المعادي'),
+                    'address_line' => __('شارع 9 عمارة 12 الدور 3'),
                     'is_default' => true,
                 ]);
 
@@ -241,7 +241,7 @@ class TenantDemoDataService
                         'purchasable_type' => $oVariant->getMorphClass(),
                         'purchasable_id' => $oVariant->id,
                         'type' => 'physical',
-                        'description' => 'منتج تجريبي',
+                        'description' => __('منتج تجريبي'),
                         'identifier' => $oVariant->sku,
                         'quantity' => 1,
                         'unit_price' => $unitPrice,
@@ -255,12 +255,12 @@ class TenantDemoDataService
                     OrderAddress::create([
                         'tenant_id' => $tenantId,
                         'order_id' => $order->id,
-                        'first_name' => 'عميل',
-                        'last_name' => 'تجريبي',
+                        'first_name' => __('عميل'),
+                        'last_name' => __('تجريبي'),
                         'contact_phone' => '01012345678',
                         'contact_email' => "demo-cust-{$tenantId}@example.test",
-                        'line_one' => 'شارع 9 عمارة 12',
-                        'city' => 'المعادي',
+                        'line_one' => __('شارع 9 عمارة 12'),
+                        'city' => __('المعادي'),
                         'country_id' => $country->id,
                         'type' => 'shipping',
                     ]);

@@ -187,7 +187,7 @@ class PaymentWebhookController extends Controller
                     null,
                     $actor,
                     ['gateway' => $gateway, 'txn' => $transactionRef],
-                    'الدفع الإلكتروني قيد المراجعة'
+                    __('الدفع الإلكتروني قيد المراجعة')
                 );
                 $currentStatus = OrderStatus::PENDING_CONFIRMATION;
             }
@@ -199,7 +199,7 @@ class PaymentWebhookController extends Controller
                     null,
                     $actor,
                     ['gateway' => $gateway, 'txn' => $transactionRef],
-                    "تم تأكيد الدفع الإلكتروني بنجاح عبر {$gateway}"
+                    __('تم تأكيد الدفع الإلكتروني بنجاح عبر :gateway', ['gateway' => $gateway])
                 );
             }
         } catch (\Throwable $e) {

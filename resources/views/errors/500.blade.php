@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html dir="rtl" lang="ar">
+<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>حدث خطأ غير متوقع - 500</title>
+    <title>{{ __('حدث خطأ غير متوقع - 500') }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -15,11 +15,11 @@
         <span class="text-7xl block">⚠️</span>
         <div class="space-y-2">
             <h1 class="text-6xl font-black text-rose-500">500</h1>
-            <h2 class="text-2xl font-bold text-white">حدث خطأ في النظام</h2>
-            <p class="text-sm text-gray-400">نعتذر عن هذا الخطأ الفني، فريقنا يعمل على معالجته فوراً. يرجى المحاولة بعد قليل.</p>
+            <h2 class="text-2xl font-bold text-white">{{ __('حدث خطأ في النظام') }}</h2>
+            <p class="text-sm text-gray-400">{{ __('نعتذر عن هذا الخطأ الفني، فريقنا يعمل على معالجته فوراً. يرجى المحاولة بعد قليل.') }}</p>
         </div>
         <a href="/" class="inline-block px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-indigo-600/30 text-sm">
-            العودة للرئيسية
+            {{ __('العودة للرئيسية') }}
         </a>
     </div>
 </body>

@@ -20,8 +20,8 @@ class CategoryController extends Controller
         $general = GeneralSettings::load();
 
         $breadcrumbs = [
-            ['name' => 'الرئيسية', 'url' => url('/')],
-            ['name' => 'كافة المنتجات', 'url' => url('/products')],
+            ['name' => __('الرئيسية'), 'url' => url('/')],
+            ['name' => __('كافة المنتجات'), 'url' => url('/products')],
         ];
 
         $breadcrumbSchema = $seoService->breadcrumbSchema($breadcrumbs);
@@ -43,8 +43,8 @@ class CategoryController extends Controller
         $general = GeneralSettings::load();
 
         $breadcrumbs = [
-            ['name' => 'الرئيسية', 'url' => url('/')],
-            ['name' => (string) ($category->translateAttribute('name') ?? 'فئة'), 'url' => url('/categories/'.$category->id)],
+            ['name' => __('الرئيسية'), 'url' => url('/')],
+            ['name' => (string) ($category->translateAttribute('name') ?? __('فئة')), 'url' => url('/categories/'.$category->id)],
         ];
 
         $breadcrumbSchema = $seoService->breadcrumbSchema($breadcrumbs);

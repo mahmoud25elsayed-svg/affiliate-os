@@ -69,13 +69,13 @@ class StorePayoutManagementController extends Controller
         $actor = $request->user();
 
         if ($actor->hasRole('call_center') || $actor->hasRole('orders')) {
-            abort(403, 'غير مصرح لك باعتماد طلبات السحب.');
+            abort(403, __('غير مصرح لك باعتماد طلبات السحب.'));
         }
 
         try {
             $this->payoutService->approvePayout($payoutRequest, $actor);
 
-            return back()->with('success', "تم اعتماد طلب السحب رقم #{$payoutRequest->id} بنجاح.");
+            return back()->with('success', __('تم اعتماد طلب السحب رقم #:id بنجاح.', ['id' => $payoutRequest->id]));
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
@@ -87,7 +87,7 @@ class StorePayoutManagementController extends Controller
         $actor = $request->user();
 
         if ($actor->hasRole('call_center') || $actor->hasRole('orders')) {
-            abort(403, 'غير مصرح لك بتنفيذ طلبات السحب.');
+            abort(403, __('غير مصرح لك بتنفيذ طلبات السحب.'));
         }
 
         $rules = [
@@ -100,8 +100,8 @@ class StorePayoutManagementController extends Controller
         }
 
         $request->validate($rules, [
-            'reference_number.required' => 'الرقم المرجعي للتحويل مطلوب',
-            'two_factor_code.required' => 'رمز التحقق بخطوتين مطلوب لتنفيذ عملية الصرف.',
+            'reference_number.required' => __('الرقم المرجعي للتحويل مطلوب'),
+            'two_factor_code.required' => __('رمز التحقق بخطوتين مطلوب لتنفيذ عملية الصرف.'),
         ]);
 
         $referenceNumber = (string) $request->input('reference_number');
@@ -122,7 +122,7 @@ class StorePayoutManagementController extends Controller
                 twoFactorCode: $twoFactorCode
             );
 
-            return back()->with('success', "تم تنفيذ تحويل طلب السحب رقم #{$payoutRequest->id} بنجاح وقيد العملية بالدفتر المالي.");
+            return back()->with('success', __('تم تنفيذ تحويل طلب السحب رقم #:id بنجاح وقيد العملية بالدفتر المالي.', ['id' => $payoutRequest->id]));
         } catch (MakerCheckerViolationException $e) {
             return back()->with('error', $e->getMessage());
         } catch (\Exception $e) {
@@ -138,7 +138,7 @@ class StorePayoutManagementController extends Controller
         $request->validate([
             'reason' => ['required', 'string', 'max:255'],
         ], [
-            'reason.required' => 'سبب الرفض مطلوب لإشعار المسوق وإعادة الرصيد',
+            'reason.required' => __('سبب الرفض مطلوب لإشعار المسوق وإعادة الرصيد'),
         ]);
 
         try {
@@ -148,7 +148,7 @@ class StorePayoutManagementController extends Controller
                 reason: (string) $request->input('reason')
             );
 
-            return back()->with('success', "تم رفض طلب السحب رقم #{$payoutRequest->id} وإعادة المبلغ إلى الرصيد المتاح للمسوق.");
+            return back()->with('success', __('تم رفض طلب السحب رقم #:id وإعادة المبلغ إلى الرصيد المتاح للمسوق.', ['id' => $payoutRequest->id]));
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
@@ -174,7 +174,7 @@ class StorePayoutManagementController extends Controller
                 creator: $actor
             );
 
-            return back()->with('success', "تم إنشاء دفعة السحب {$batch->batch_reference} بنجاح.");
+            return back()->with('success', __('تم إنشاء دفعة السحب :batch_reference بنجاح.', ['batch_reference' => $batch->batch_reference]));
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
@@ -215,7 +215,7 @@ class StorePayoutManagementController extends Controller
                 receiptPath: $receiptPath
             );
 
-            return back()->with('success', "تم تنفيذ دفعة السحب بالكامل برقم مرجعي: {$request->input('batch_reference_number')}");
+            return back()->with('success', __('تم تنفيذ دفعة السحب بالكامل برقم مرجعي: :batch_reference_number', ['batch_reference_number' => $request->input('batch_reference_number')]));
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }

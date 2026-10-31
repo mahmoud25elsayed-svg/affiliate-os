@@ -30,83 +30,97 @@ class ProductBundleResource extends Resource
 
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-gift';
 
-    protected static ?string $navigationLabel = 'عروض الباقات (Buy X Get Y)';
+    public static function getNavigationLabel(): string
+    {
 
-    protected static ?string $modelLabel = 'باقة / عرض مجمع';
+        return __('عروض الباقات (Buy X Get Y)');
 
-    protected static ?string $pluralModelLabel = 'عروض الباقات والـ Bundles';
+    }
 
-    protected static \UnitEnum|string|null $navigationGroup = 'التسويق والمبيعات';
+    public static function getModelLabel(): string
+    {
+        return __('باقة / عرض مجمع');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('عروض الباقات والـ Bundles');
+    }
+
+    public static function getNavigationGroup(): string|\UnitEnum|null
+    {
+        return __('التسويق والمبيعات');
+    }
 
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('معلومات الباقة والعرض المجمع')->schema([
+            Section::make(__('معلومات الباقة والعرض المجمع'))->schema([
                 Grid::make(2)->schema([
                     TextInput::make('name')
-                        ->label('اسم العرض')
-                        ->placeholder('مثال: اشترِ 2 واحصل على 1 مجاناً')
+                        ->label(__('اسم العرض'))
+                        ->placeholder(__('مثال: اشترِ 2 واحصل على 1 مجاناً'))
                         ->required()
                         ->maxLength(255),
 
                     Select::make('bundle_type')
-                        ->label('نوع الباقة')
+                        ->label(__('نوع الباقة'))
                         ->options([
-                            'buy_x_get_y' => 'اشترِ X واحصل على Y (Buy X Get Y)',
-                            'combo_discount' => 'تخفيض كومبو مجمع (Combo Discount)',
+                            'buy_x_get_y' => __('اشترِ X واحصل على Y (Buy X Get Y)'),
+                            'combo_discount' => __('تخفيض كومبو مجمع (Combo Discount)'),
                         ])
                         ->required()
                         ->default('buy_x_get_y'),
 
                     Select::make('primary_product_id')
-                        ->label('المنتج الأساسي المطلوب شراؤه')
+                        ->label(__('المنتج الأساسي المطلوب شراؤه'))
                         ->options(function () {
                             return Product::all()->mapWithKeys(function (Product $prod) {
-                                return [$prod->id => (string) ($prod->translateAttribute('name') ?? "منتج #{$prod->id}")];
+                                return [$prod->id => (string) ($prod->translateAttribute('name') ?? __('منتج #:id', ['id' => $prod->id]))];
                             });
                         })
                         ->searchable()
                         ->required(),
 
                     TextInput::make('required_quantity')
-                        ->label('الكمية المطلوبة من المنتج الأساسي (X)')
+                        ->label(__('الكمية المطلوبة من المنتج الأساسي (X)'))
                         ->numeric()
                         ->default(2)
                         ->required(),
 
                     Select::make('reward_product_id')
-                        ->label('منتج الهدية أو العرض (Y) - اتركه فارغاً إذا كان نفس المنتج')
+                        ->label(__('منتج الهدية أو العرض (Y) - اتركه فارغاً إذا كان نفس المنتج'))
                         ->options(function () {
                             return Product::all()->mapWithKeys(function (Product $prod) {
-                                return [$prod->id => (string) ($prod->translateAttribute('name') ?? "منتج #{$prod->id}")];
+                                return [$prod->id => (string) ($prod->translateAttribute('name') ?? __('منتج #:id', ['id' => $prod->id]))];
                             });
                         })
                         ->searchable()
                         ->nullable(),
 
                     TextInput::make('reward_quantity')
-                        ->label('كمية الهدية / العرض (Y)')
+                        ->label(__('كمية الهدية / العرض (Y)'))
                         ->numeric()
                         ->default(1)
                         ->required(),
 
                     TextInput::make('reward_discount_percent')
-                        ->label('نسبة خصم منتج الهدية (%)')
-                        ->helperText('100 تعني مجاناً تماماً، 50 تعني خصم نصف السعر على القطعة الإضافية')
+                        ->label(__('نسبة خصم منتج الهدية (%)'))
+                        ->helperText(__('100 تعني مجاناً تماماً، 50 تعني خصم نصف السعر على القطعة الإضافية'))
                         ->numeric()
                         ->default(100)
                         ->required(),
 
                     Toggle::make('is_active')
-                        ->label('مفعل')
+                        ->label(__('مفعل'))
                         ->default(true),
 
                     DateTimePicker::make('starts_at')
-                        ->label('تاريخ البدء (اختياري)')
+                        ->label(__('تاريخ البدء (اختياري)'))
                         ->nullable(),
 
                     DateTimePicker::make('ends_at')
-                        ->label('تاريخ الانتهاء (اختياري)')
+                        ->label(__('تاريخ الانتهاء (اختياري)'))
                         ->nullable(),
                 ]),
             ]),
@@ -118,12 +132,12 @@ class ProductBundleResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->label('اسم العرض')
+                    ->label(__('اسم العرض'))
                     ->searchable()
                     ->weight('bold'),
 
                 TextColumn::make('bundle_type')
-                    ->label('نوع العرض')
+                    ->label(__('نوع العرض'))
                     ->badge()
                     ->formatStateUsing(fn (string $state): string => match ($state) {
                         'buy_x_get_y' => 'Buy X Get Y',
@@ -133,23 +147,23 @@ class ProductBundleResource extends Resource
                     ->color('info'),
 
                 TextColumn::make('rule')
-                    ->label('قاعدة العرض')
+                    ->label(__('قاعدة العرض'))
                     ->state(function (ProductBundle $record): string {
                         $buyQty = $record->required_quantity;
                         $buyProd = $record->primary_product_id ? Product::find($record->primary_product_id) : null;
-                        $primary = $buyProd instanceof Product ? (string) ($buyProd->translateAttribute('name') ?? "منتج #{$record->primary_product_id}") : "منتج #{$record->primary_product_id}";
+                        $primary = $buyProd instanceof Product ? (string) ($buyProd->translateAttribute('name') ?? __('منتج #:primary_product_id', ['primary_product_id' => $record->primary_product_id])) : __('منتج #:primary_product_id', ['primary_product_id' => $record->primary_product_id]);
 
                         $getQty = $record->reward_quantity;
                         $getProd = $record->reward_product_id ? Product::find($record->reward_product_id) : null;
-                        $reward = $getProd instanceof Product ? (string) ($getProd->translateAttribute('name') ?? "منتج #{$record->reward_product_id}") : ($record->reward_product_id ? "منتج #{$record->reward_product_id}" : 'نفس المنتج');
+                        $reward = $getProd instanceof Product ? (string) ($getProd->translateAttribute('name') ?? __('منتج #:reward_product_id', ['reward_product_id' => $record->reward_product_id])) : ($record->reward_product_id ? __('منتج #:reward_product_id', ['reward_product_id' => $record->reward_product_id]) : __('نفس المنتج'));
 
                         $pct = $record->reward_discount_percent;
 
-                        return "اشترِ {$buyQty} من [{$primary}] واحصل على {$getQty} من [{$reward}] بخصم {$pct}%";
+                        return __('اشترِ :buy_qty من [:primary] واحصل على :get_qty من [:reward] بخصم :pct%', ['buy_qty' => $buyQty, 'primary' => $primary, 'get_qty' => $getQty, 'reward' => $reward, 'pct' => $pct]);
                     }),
 
                 IconColumn::make('is_active')
-                    ->label('مفعل')
+                    ->label(__('مفعل'))
                     ->boolean(),
             ])
             ->defaultSort('created_at', 'desc');

@@ -56,7 +56,7 @@ class SubmitAffiliateOrderAction
     {
         // 1. Verify Affiliate Account Status
         if (! $affiliate->isActive()) {
-            throw new DomainException('حساب المسوق غير نشط حالياً ولا يمكنك إنشاء طلبات جديدة.');
+            throw new DomainException(__('حساب المسوق غير نشط حالياً ولا يمكنك إنشاء طلبات جديدة.'));
         }
 
         // 2. Check Daily Order Quota Limit
@@ -70,7 +70,7 @@ class SubmitAffiliateOrderAction
             ->count();
 
         if ($todayOrdersCount >= $dailyLimit) {
-            throw new DomainException("عذراً، لقد استنفدت الحد الأقصى للطلبات اليومية المسموح به لحسابك ({$dailyLimit} طلب يومياً).");
+            throw new DomainException(__('عذراً، لقد استنفدت الحد الأقصى للطلبات اليومية المسموح به لحسابك (:daily_limit طلب يومياً).', ['daily_limit' => $dailyLimit]));
         }
 
         // 3. Idempotency Check
@@ -91,11 +91,11 @@ class SubmitAffiliateOrderAction
         // 4. Validate & Normalize Phone
         $phone = PhoneNumber::tryParse($payload['customer_phone']);
         if ($phone === null) {
-            throw new DomainException('رقم الهاتف غير صالح. يرجى إدخال رقم هاتف محمول مصري صحيح.');
+            throw new DomainException(PhoneNumber::invalidMessage());
         }
 
         if (empty($payload['items'])) {
-            throw new DomainException('يجب إضافة منتج واحد على الأقل في الطلب.');
+            throw new DomainException(__('يجب إضافة منتج واحد على الأقل في الطلب.'));
         }
 
         // 5. Calculate Server-side Quotes for all items
@@ -109,7 +109,7 @@ class SubmitAffiliateOrderAction
             /** @var ProductVariant|null $variant */
             $variant = ProductVariant::with(['wholesalePrice', 'product'])->find($itemData['variant_id']);
             if (! $variant instanceof ProductVariant) {
-                throw new DomainException("المنتج المحدد (ID: {$itemData['variant_id']}) غير موجود.");
+                throw new DomainException(__('المنتج المحدد (ID: :variant_id) غير موجود.', ['variant_id' => $itemData['variant_id']]));
             }
 
             $quote = $this->priceQuoteAction->execute(

@@ -24,7 +24,7 @@ class CancelAffiliateOrderAction
     public function execute(Affiliate $affiliate, Order $order, ?string $reason = null): Order
     {
         if ((int) $order->getAttribute('affiliate_id') !== $affiliate->id) {
-            throw new DomainException('هذا الطلب غير مرتبط بحسابك ولا يمكنك إلغاؤه.');
+            throw new DomainException(__('هذا الطلب غير مرتبط بحسابك ولا يمكنك إلغاؤه.'));
         }
 
         // Check if order is already packed or in a subsequent delivery state
@@ -42,11 +42,11 @@ class CancelAffiliateOrderAction
         ];
 
         if (in_array($order->status, $disallowedStatuses, true)) {
-            throw new DomainException('لا يمكن إلغاء الطلب بعد تجهيزه وتعبئته في المخزن أو تسليمه لشركة الشحن.');
+            throw new DomainException(__('لا يمكن إلغاء الطلب بعد تجهيزه وتعبئته في المخزن أو تسليمه لشركة الشحن.'));
         }
 
         $actor = OrderActor::affiliate($affiliate->id, $affiliate->name);
-        $note = ! empty($reason) ? "تم الإلغاء بواسطة المسوق: {$reason}" : 'تم إلغاء الطلب من لوحة تحكم المسوق قبل التجهيز.';
+        $note = ! empty($reason) ? __('تم الإلغاء بواسطة المسوق: :reason', ['reason' => $reason]) : __('تم إلغاء الطلب من لوحة تحكم المسوق قبل التجهيز.');
 
         return $this->orderTransitionService->transition(
             order: $order,

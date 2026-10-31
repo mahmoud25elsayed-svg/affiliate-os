@@ -15,7 +15,7 @@ class ListProductBundles extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make()->label('إضافة باقة جديدة'),
+            CreateAction::make()->label(__('إضافة باقة جديدة')),
         ];
     }
 }

@@ -136,7 +136,7 @@ class CustomerLoyaltyService
                 points: $points,
                 type: 'earn_order',
                 orderId: (int) $order->id,
-                notes: "نقاط ولاء مكتسبة عن الطلب #{$order->reference}"
+                notes: __('نقاط ولاء مكتسبة عن الطلب #:reference', ['reference' => $order->reference])
             );
 
             // Post financial ledger entry
@@ -148,7 +148,7 @@ class CustomerLoyaltyService
                 $entryData = new EntryData(
                     type: 'loyalty_points_earned',
                     idempotencyKey: "loyalty_points_order_{$order->id}",
-                    description: "استحقاق نقاط ولاء العميل للطلب #{$order->reference} ({$points} نقطة)",
+                    description: __('استحقاق نقاط ولاء العميل للطلب #:reference (:points نقطة)', ['reference' => $order->reference, 'points' => $points]),
                     lines: [
                         new LedgerLineData(account: $loyaltyAccount, amountMinor: $discountMinor),
                         new LedgerLineData(account: $expenseAccount, amountMinor: -$discountMinor),
@@ -173,13 +173,13 @@ class CustomerLoyaltyService
     public function redeemPointsToWallet(AppCustomer|LunarCustomer|int $customer, int $points, ?string $notes = null): array
     {
         if ($points <= 0) {
-            throw new InvalidArgumentException('عدد النقاط المستبدلة يجب أن يكون أكبر من الصفر.');
+            throw new InvalidArgumentException(__('عدد النقاط المستبدلة يجب أن يكون أكبر من الصفر.'));
         }
 
         $account = $this->getAccount($customer);
         if ($account->points_balance < $points) {
             throw new DomainException(sprintf(
-                'رصيد النقاط غير كافٍ. المتاح: %d، المطلوب: %d',
+                __('رصيد النقاط غير كافٍ. المتاح: %d، المطلوب: %d'),
                 $account->points_balance,
                 $points
             ));
@@ -192,7 +192,7 @@ class CustomerLoyaltyService
                 points: $points,
                 type: 'redeem_to_wallet',
                 orderId: null,
-                notes: $notes ?? "تحويل {$points} نقطة ولاء إلى رصيد بالمحفظة"
+                notes: $notes ?? __('تحويل :points نقطة ولاء إلى رصيد بالمحفظة', ['points' => $points])
             );
 
             $walletTx = $this->walletService->credit(
@@ -200,7 +200,7 @@ class CustomerLoyaltyService
                 amountMinor: $amountMinor,
                 type: CustomerWalletTransaction::TYPE_REWARD,
                 referenceId: "loyalty_tx_{$transaction->id}",
-                notes: $notes ?? "رصيد ناتج عن استبدال {$points} نقطة ولاء"
+                notes: $notes ?? __('رصيد ناتج عن استبدال :points نقطة ولاء', ['points' => $points])
             );
 
             $customerId = is_int($customer) ? $customer : (int) $customer->id;
@@ -213,7 +213,7 @@ class CustomerLoyaltyService
                 $entryData = new EntryData(
                     type: 'loyalty_redeemed_to_wallet',
                     idempotencyKey: "loyalty_redeem_{$transaction->id}",
-                    description: "تحويل نقاط ولاء إلى رصيد محفظة ({$points} نقطة = ".number_format($amountMinor / 100, 2).' '.Money::symbol().')',
+                    description: __('تحويل نقاط ولاء إلى رصيد محفظة (:points نقطة = ', ['points' => $points]).number_format($amountMinor / 100, 2).' '.Money::symbol().')',
                     lines: [
                         new LedgerLineData(account: $walletAccount, amountMinor: $amountMinor),
                         new LedgerLineData(account: $loyaltyAccount, amountMinor: -$amountMinor),

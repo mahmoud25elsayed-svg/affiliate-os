@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'بوابة المسوقين') - {{ $storeName ?? 'AffiliateOS' }}</title>
+    <title>@yield('title', __('بوابة المسوقين')) - {{ $storeName ?? 'AffiliateOS' }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -24,7 +24,7 @@
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
-                    <span>برنامج المسوقين | {{ $storeName ?? 'المتجر' }}</span>
+                    <span>{{ __('برنامج المسوقين |') }} {{ $storeName ?? __('المتجر') }}</span>
                 </a>
             </div>
 
@@ -32,14 +32,14 @@
                 @if(Auth::guard('affiliate')->check())
                     @php $aff = Auth::guard('affiliate')->user(); @endphp
                     <nav class="hidden md:flex items-center space-x-2 space-x-reverse text-sm font-semibold">
-                        <a href="{{ route('affiliate.dashboard') }}" class="text-slate-700 hover:text-indigo-600 px-2 py-2 rounded-lg">الرئيسية</a>
-                        <a href="{{ route('affiliate.catalog.index') }}" class="text-slate-700 hover:text-indigo-600 px-2 py-2 rounded-lg">الكتالوج</a>
-                        <a href="{{ route('affiliate.links.index') }}" class="text-slate-700 hover:text-indigo-600 px-2 py-2 rounded-lg">روابط التتبع</a>
-                        <a href="{{ route('affiliate.orders.index') }}" class="text-slate-700 hover:text-indigo-600 px-2 py-2 rounded-lg">طلباتي</a>
-                        <a href="{{ route('affiliate.orders.create') }}" class="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 px-3 py-1.5 rounded-lg font-bold">طلب جديد +</a>
-                        <a href="{{ route('affiliate.wallet.index') }}" class="text-slate-700 hover:text-indigo-600 px-2 py-2 rounded-lg">المحفظة</a>
-                        <a href="{{ route('affiliate.payouts.index') }}" class="text-slate-700 hover:text-indigo-600 px-2 py-2 rounded-lg">سحب الأرباح</a>
-                        <a href="{{ route('affiliate.payout-settings.show') }}" class="text-slate-700 hover:text-indigo-600 px-2 py-2 rounded-lg">بيانات الدفع</a>
+                        <a href="{{ route('affiliate.dashboard') }}" class="text-slate-700 hover:text-indigo-600 px-2 py-2 rounded-lg">{{ __('الرئيسية') }}</a>
+                        <a href="{{ route('affiliate.catalog.index') }}" class="text-slate-700 hover:text-indigo-600 px-2 py-2 rounded-lg">{{ __('الكتالوج') }}</a>
+                        <a href="{{ route('affiliate.links.index') }}" class="text-slate-700 hover:text-indigo-600 px-2 py-2 rounded-lg">{{ __('روابط التتبع') }}</a>
+                        <a href="{{ route('affiliate.orders.index') }}" class="text-slate-700 hover:text-indigo-600 px-2 py-2 rounded-lg">{{ __('طلباتي') }}</a>
+                        <a href="{{ route('affiliate.orders.create') }}" class="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 px-3 py-1.5 rounded-lg font-bold">{{ __('طلب جديد +') }}</a>
+                        <a href="{{ route('affiliate.wallet.index') }}" class="text-slate-700 hover:text-indigo-600 px-2 py-2 rounded-lg">{{ __('المحفظة') }}</a>
+                        <a href="{{ route('affiliate.payouts.index') }}" class="text-slate-700 hover:text-indigo-600 px-2 py-2 rounded-lg">{{ __('سحب الأرباح') }}</a>
+                        <a href="{{ route('affiliate.payout-settings.show') }}" class="text-slate-700 hover:text-indigo-600 px-2 py-2 rounded-lg">{{ __('بيانات الدفع') }}</a>
                         <a href="{{ route('affiliate.kyc.show') }}" class="text-slate-700 hover:text-indigo-600 px-2 py-2 rounded-lg">KYC</a>
                     </nav>
 
@@ -48,16 +48,17 @@
                             <span class="block text-xs font-bold text-slate-900">{{ $aff->name }}</span>
                             <span class="inline-block px-2 py-0.5 text-xs rounded bg-indigo-100 text-indigo-700 font-mono">{{ $aff->code }}</span>
                         </div>
+                        <a href="?lang={{ app()->getLocale() === 'ar' ? 'en' : 'ar' }}" class="text-xs text-slate-600 hover:text-slate-900 font-semibold px-2 py-1 rounded border border-slate-200">{{ app()->getLocale() === 'ar' ? 'English' : 'العربية' }}</a>
                         <form method="POST" action="{{ route('affiliate.logout') }}">
                             @csrf
                             <button type="submit" class="text-xs text-rose-600 hover:text-rose-800 font-semibold px-2 py-1 rounded border border-rose-200 hover:bg-rose-50">
-                                خروج
+                                {{ __('خروج') }}
                             </button>
                         </form>
                     </div>
                 @else
-                    <a href="{{ route('affiliate.login') }}" class="text-sm font-semibold text-slate-700 hover:text-indigo-600">تسجيل الدخول</a>
-                    <a href="{{ route('affiliate.join') }}" class="text-sm font-bold bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 shadow-sm">انضم إلينا كمسوق</a>
+                    <a href="{{ route('affiliate.login') }}" class="text-sm font-semibold text-slate-700 hover:text-indigo-600">{{ __('تسجيل الدخول') }}</a>
+                    <a href="{{ route('affiliate.join') }}" class="text-sm font-bold bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 shadow-sm">{{ __('انضم إلينا كمسوق') }}</a>
                 @endif
             </div>
         </div>
@@ -100,7 +101,7 @@
 
     <!-- Footer -->
     <footer class="bg-white border-t border-slate-200 py-6 mt-12 text-center text-xs text-slate-500">
-        <p>© {{ date('Y') }} {{ $storeName ?? 'AffiliateOS' }} - جميع الحقوق محفوظة لبرنامج المسوقين بالعمولة.</p>
+        <p>© {{ date('Y') }} {{ $storeName ?? 'AffiliateOS' }} {{ __('- جميع الحقوق محفوظة لبرنامج المسوقين بالعمولة.') }}</p>
     </footer>
 
 </body>

@@ -21,7 +21,7 @@ class CourierWebhookController extends Controller
         $trackingNumber = (string) ($payload['trackingNumber'] ?? $payload['tracking_number'] ?? $payload['_id'] ?? '');
 
         if (empty($trackingNumber)) {
-            return response()->json(['error' => 'رقم التتبع مفقود في بيانات الإشعار'], 422);
+            return response()->json(['error' => __('رقم التتبع مفقود في بيانات الإشعار')], 422);
         }
 
         /** @var Shipment|null $shipment */
@@ -31,20 +31,20 @@ class CourierWebhookController extends Controller
             ->first();
 
         if (! $shipment instanceof Shipment) {
-            return response()->json(['error' => 'لم يتم العثور على شحنة مطابقة لهذا الرقم'], 404);
+            return response()->json(['error' => __('لم يتم العثور على شحنة مطابقة لهذا الرقم')], 404);
         }
 
         // 2. Authenticate the courier (SEC-08: constant-time HMAC check). Fail closed: without a configured
         // secret anyone who knows a tracking number could mark the order delivered and trigger commission.
         $account = $shipment->courierAccount;
         if (! $account || empty($account->webhook_secret)) {
-            throw new UnauthorizedHttpException('Signature', 'لم يتم ضبط المفتاح السري للـ Webhook على حساب شركة الشحن.');
+            throw new UnauthorizedHttpException('Signature', __('لم يتم ضبط المفتاح السري للـ Webhook على حساب شركة الشحن.'));
         }
 
         $incomingSignature = (string) ($request->header('X-Webhook-Signature') ?? $request->header('X-Bosta-Signature') ?? '');
 
         if (empty($incomingSignature)) {
-            throw new UnauthorizedHttpException('Signature', 'توقيع الـ Webhook مفقود في الترويسات.');
+            throw new UnauthorizedHttpException('Signature', __('توقيع الـ Webhook مفقود في الترويسات.'));
         }
 
         $expectedHmac = hash_hmac('sha256', (string) $request->getContent(), (string) $account->webhook_secret);
@@ -52,13 +52,13 @@ class CourierWebhookController extends Controller
             || hash_equals($expectedHmac, $incomingSignature);
 
         if (! $isValid) {
-            throw new UnauthorizedHttpException('Signature', 'توقيع الإشعار غير متطابق مع مفتاح الحساب السري.');
+            throw new UnauthorizedHttpException('Signature', __('توقيع الإشعار غير متطابق مع مفتاح الحساب السري.'));
         }
 
         // 3. Map status based on driver / payload
         $rawState = (string) ($payload['state'] ?? $payload['status'] ?? $payload['event'] ?? '');
         $newStatus = $this->resolveStatus($driver, $rawState, $payload);
-        $note = (string) ($payload['note'] ?? $payload['message'] ?? $payload['reason'] ?? 'تحديث تلقائي عبر Webhook');
+        $note = (string) ($payload['note'] ?? $payload['message'] ?? $payload['reason'] ?? __('تحديث تلقائي عبر Webhook'));
 
         // 4. Sync status with shipment & cascade to order state machine
         $syncService->syncStatus($shipment, $newStatus, $note);

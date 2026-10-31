@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تم استلام طلبك بنجاح</title>
+    <title>{{ __('تم استلام طلبك بنجاح') }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,31 +21,31 @@
 
         <div>
             <span class="inline-block px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full text-xs font-bold mb-2">
-                طلبك مؤكد ومسجل بنجاح
+                {{ __('طلبك مؤكد ومسجل بنجاح') }}
             </span>
-            <h1 class="text-xl font-black text-slate-900">شكراً لك، تم استلام طلبك!</h1>
+            <h1 class="text-xl font-black text-slate-900">{{ __('شكراً لك، تم استلام طلبك!') }}</h1>
             <p class="text-xs text-slate-500 mt-2 leading-relaxed">
-                رقم الطلب الخاص بك هو: <span class="font-mono font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">{{ $order->reference }}</span>
+                {{ __('رقم الطلب الخاص بك هو:') }} <span class="font-mono font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">{{ $order->reference }}</span>
             </p>
         </div>
 
         <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 text-xs text-slate-600 space-y-2 text-right">
             <div class="flex justify-between">
-                <span>اسم العميل:</span>
+                <span>{{ __('اسم العميل:') }}</span>
                 <span class="font-bold text-slate-900">{{ $order->shippingAddress?->first_name ?? $order->customer_name }}</span>
             </div>
             <div class="flex justify-between">
-                <span>المحافظة:</span>
-                <span class="font-bold text-slate-900">{{ $order->shippingAddress?->state ?? 'مصر' }}</span>
+                <span>{{ __('المحافظة:') }}</span>
+                <span class="font-bold text-slate-900">{{ $order->shippingAddress?->state ?? \App\Support\Location\Market::country()->name() }}</span>
             </div>
             <div class="flex justify-between border-t border-slate-200 pt-2 font-black text-slate-900">
-                <span>الإجمالي عند الاستلام:</span>
+                <span>{{ __('الإجمالي عند الاستلام:') }}</span>
                 <span class="text-emerald-700 font-black text-sm">{{ \App\Support\Money::show(((int) ($order->total->value ?? $order->total))) }}</span>
             </div>
         </div>
 
         <p class="text-[11px] text-slate-400">
-            سيقوم فريق خدمة العملاء بالتواصل معك هاتفياً لتأكيد موعد التسليم.
+            {{ __('سيقوم فريق خدمة العملاء بالتواصل معك هاتفياً لتأكيد موعد التسليم.') }}
         </p>
 
     </div>

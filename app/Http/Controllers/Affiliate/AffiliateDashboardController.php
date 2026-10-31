@@ -76,7 +76,7 @@ class AffiliateDashboardController extends Controller
 
         return view('affiliate.dashboard', [
             'affiliate' => $affiliate,
-            'storeName' => $tenant instanceof Tenant ? $tenant->name : 'متجرنا',
+            'storeName' => $tenant instanceof Tenant ? $tenant->name : __('متجرنا'),
             'settings' => $settings,
             'referralLink' => url('/partners/join?ref='.$affiliate->code),
             'availableBalance' => $availableBalance,

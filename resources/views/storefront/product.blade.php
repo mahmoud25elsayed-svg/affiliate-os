@@ -1,6 +1,6 @@
 @extends('layouts.storefront')
 
-@section('title', ($product->translateAttribute('name') ?? 'منتج') . ' - ' . ($general->platform_name ?? 'متجرنا'))
+@section('title', ($product->translateAttribute('name') ?? __('منتج')) . ' - ' . ($general->platform_name ?? __('متجرنا')))
 @section('meta_description', strip_tags((string) ($product->translateAttribute('description') ?? $product->translateAttribute('name'))))
 @section('og_type', 'product')
 @section('og_image', $product->thumbnail ? $product->thumbnail->getUrl() : '')
@@ -61,15 +61,15 @@
             <div class="space-y-4">
                 <div class="flex items-center justify-between gap-4">
                     <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">
-                        {{ $product->brand?->name ?? 'متجرنا' }}
+                        {{ $product->brand?->name ?? __('متجرنا') }}
                     </span>
                     <span class="px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-full border border-emerald-100">
-                        متوفر في المخزون
+                        {{ __('متوفر في المخزون') }}
                     </span>
                 </div>
 
                 <h1 class="text-2xl sm:text-4xl font-black text-gray-900 leading-tight">
-                    {{ $product->translateAttribute('name') ?? 'منتج' }}
+                    {{ $product->translateAttribute('name') ?? __('منتج') }}
                 </h1>
 
                 <!-- Livewire Variant Picker and Add to Cart -->
@@ -84,18 +84,18 @@
             <div class="grid grid-cols-3 gap-3 pt-6 border-t border-gray-100 text-center">
                 <div class="p-3 rounded-xl bg-gray-50 border border-gray-100 space-y-1">
                     <span class="text-xl">🚚</span>
-                    <h5 class="text-xs font-bold text-gray-800">شحن سريع</h5>
-                    <p class="text-[10px] text-gray-500">خلال 2 - 4 أيام</p>
+                    <h5 class="text-xs font-bold text-gray-800">{{ __('شحن سريع') }}</h5>
+                    <p class="text-[10px] text-gray-500">{{ __('خلال 2 - 4 أيام') }}</p>
                 </div>
                 <div class="p-3 rounded-xl bg-gray-50 border border-gray-100 space-y-1">
                     <span class="text-xl">🔍</span>
-                    <h5 class="text-xs font-bold text-gray-800">معاينة عند الاستلام</h5>
-                    <p class="text-[10px] text-gray-500">افتح الطلب وافحصه</p>
+                    <h5 class="text-xs font-bold text-gray-800">{{ __('معاينة عند الاستلام') }}</h5>
+                    <p class="text-[10px] text-gray-500">{{ __('افتح الطلب وافحصه') }}</p>
                 </div>
                 <div class="p-3 rounded-xl bg-gray-50 border border-gray-100 space-y-1">
                     <span class="text-xl">🔄</span>
-                    <h5 class="text-xs font-bold text-gray-800">استبدال واسترجاع</h5>
-                    <p class="text-[10px] text-gray-500">خلال 14 يوماً</p>
+                    <h5 class="text-xs font-bold text-gray-800">{{ __('استبدال واسترجاع') }}</h5>
+                    <p class="text-[10px] text-gray-500">{{ __('خلال 14 يوماً') }}</p>
                 </div>
             </div>
         </div>
@@ -103,12 +103,12 @@
 
     <!-- Product Details & Specifications Tabs -->
     <div class="bg-white rounded-3xl p-6 sm:p-10 border border-gray-100 shadow-sm space-y-6">
-        <h2 class="text-xl font-bold text-gray-900 border-b border-gray-100 pb-4">وصف المنتج ومواصفاته</h2>
+        <h2 class="text-xl font-bold text-gray-900 border-b border-gray-100 pb-4">{{ __('وصف المنتج ومواصفاته') }}</h2>
         <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed">
             @if($product->translateAttribute('description'))
                 {!! nl2br(e($product->translateAttribute('description'))) !!}
             @else
-                <p>منتج عالي الجودة تم اختياره بعناية ليلبي كافة تطلعاتك بأفضل سعر وتجربة استخدام مميزة.</p>
+                <p>{{ __('منتج عالي الجودة تم اختياره بعناية ليلبي كافة تطلعاتك بأفضل سعر وتجربة استخدام مميزة.') }}</p>
             @endif
         </div>
     </div>
@@ -119,7 +119,7 @@
     <!-- Related Products -->
     @if($relatedProducts->isNotEmpty())
     <div class="space-y-6">
-        <h2 class="text-2xl font-black text-gray-900">منتجات مشابهة قد تهمك</h2>
+        <h2 class="text-2xl font-black text-gray-900">{{ __('منتجات مشابهة قد تهمك') }}</h2>
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
             @foreach($relatedProducts as $related)
                 @php
@@ -140,7 +140,7 @@
                         </h4>
                         <div class="mt-3 flex items-center justify-between">
                             <span class="text-sm font-black text-brand-600">{{ \App\Support\Money::show($relPrice?->price) }}</span>
-                            <a href="{{ url('/products/'.$related->id) }}" class="text-xs text-brand-600 font-bold hover:underline">عرض</a>
+                            <a href="{{ url('/products/'.$related->id) }}" class="text-xs text-brand-600 font-bold hover:underline">{{ __('عرض') }}</a>
                         </div>
                     </div>
                 </div>

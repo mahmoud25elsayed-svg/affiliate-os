@@ -21,7 +21,7 @@ readonly class OrderActor
         return new self(
             type: 'system',
             id: 'system',
-            name: 'النظام الآلي'
+            name: __('النظام الآلي')
         );
     }
 
@@ -43,7 +43,7 @@ readonly class OrderActor
 
         if ($user instanceof Authenticatable) {
             $id = (string) $user->getAuthIdentifier();
-            $userName = $name ?? (isset($user->name) && is_string($user->name) ? $user->name : 'الموظف');
+            $userName = $name ?? (isset($user->name) && is_string($user->name) ? $user->name : __('الموظف'));
 
             return new self(
                 type: 'staff',
@@ -66,7 +66,7 @@ readonly class OrderActor
         return new self(
             type: 'customer',
             id: $id !== null ? (string) $id : null,
-            name: $name ?? 'العميل'
+            name: $name ?? __('العميل')
         );
     }
 
@@ -75,7 +75,7 @@ readonly class OrderActor
         return new self(
             type: 'affiliate',
             id: $id !== null ? (string) $id : null,
-            name: $name ?? 'المسوق'
+            name: $name ?? __('المسوق')
         );
     }
 

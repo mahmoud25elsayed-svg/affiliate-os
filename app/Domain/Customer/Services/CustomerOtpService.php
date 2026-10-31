@@ -49,7 +49,7 @@ class CustomerOtpService
             $remaining = Cache::get($lockKey);
 
             throw ValidationException::withMessages([
-                'phone' => ['تم قفل الحساب مؤقتاً لكثرة المحاولات الخاطئة. يرجى المحاولة بعد 15 دقيقة.'],
+                'phone' => [__('تم قفل الحساب مؤقتاً لكثرة المحاولات الخاطئة. يرجى المحاولة بعد 15 دقيقة.')],
             ]);
         }
 
@@ -58,7 +58,7 @@ class CustomerOtpService
         $requests = (int) Cache::get($rateLimitKey, 0);
         if ($requests >= self::MAX_REQUESTS_PER_WINDOW) {
             throw ValidationException::withMessages([
-                'phone' => ['تم تجاوز الحد الأقصى لطلب رمز التحقق (3 مرات كل 10 دقائق). يرجى الانتظار.'],
+                'phone' => [__('تم تجاوز الحد الأقصى لطلب رمز التحقق (3 مرات كل 10 دقائق). يرجى الانتظار.')],
             ]);
         }
 
@@ -78,7 +78,7 @@ class CustomerOtpService
                 eventType: 'otp_verification',
                 data: [
                     'otp_code' => $code,
-                    'store_name' => $tenant instanceof Tenant ? $tenant->name : 'متجرنا',
+                    'store_name' => $tenant instanceof Tenant ? $tenant->name : __('متجرنا'),
                 ],
             );
         } catch (\Throwable $e) {
@@ -106,7 +106,7 @@ class CustomerOtpService
         $lockKey = "customer_otp_lock_{$phoneHash}";
         if (Cache::has($lockKey)) {
             throw ValidationException::withMessages([
-                'code' => ['تم قفل الحساب مؤقتاً لكثرة المحاولات الخاطئة. يرجى المحاولة بعد 15 دقيقة.'],
+                'code' => [__('تم قفل الحساب مؤقتاً لكثرة المحاولات الخاطئة. يرجى المحاولة بعد 15 دقيقة.')],
             ]);
         }
 
@@ -123,12 +123,12 @@ class CustomerOtpService
                 Cache::forget($otpKey);
 
                 throw ValidationException::withMessages([
-                    'code' => ['تم قفل الحساب لمدة 15 دقيقة بسبب تكرار إدخال رمز التحقق بشكل خاطئ.'],
+                    'code' => [__('تم قفل الحساب لمدة 15 دقيقة بسبب تكرار إدخال رمز التحقق بشكل خاطئ.')],
                 ]);
             }
 
             throw ValidationException::withMessages([
-                'code' => ['رمز التحقق غير صحيح أو انتهت صلاحيته.'],
+                'code' => [__('رمز التحقق غير صحيح أو انتهت صلاحيته.')],
             ]);
         }
 

@@ -62,7 +62,7 @@ class StoreDomainController extends Controller
         $validated = $request->validate([
             'domain' => ['required', 'string', 'max:255'],
         ], [
-            'domain.required' => 'يرجى إدخال اسم النطاق.',
+            'domain.required' => __('يرجى إدخال اسم النطاق.'),
         ]);
 
         try {
@@ -70,7 +70,7 @@ class StoreDomainController extends Controller
 
             return redirect()
                 ->route('store.domains.index')
-                ->with('success', 'تمت إضافة النطاق المخصص بنجاح. يرجى إضافة سجلات DNS الموضحة أدناه ثم الضغط على زر التحقق.');
+                ->with('success', __('تمت إضافة النطاق المخصص بنجاح. يرجى إضافة سجلات DNS الموضحة أدناه ثم الضغط على زر التحقق.'));
         } catch (InvalidArgumentException $e) {
             return redirect()
                 ->back()
@@ -85,7 +85,7 @@ class StoreDomainController extends Controller
         $tenant = Tenant::findOrFail((string) tenant('id'));
 
         if ((string) $domain->tenant_id !== (string) $tenant->id) {
-            abort(403, 'غير مصرح لك بإدارة هذا النطاق.');
+            abort(403, __('غير مصرح لك بإدارة هذا النطاق.'));
         }
 
         $verified = $this->customDomainService->verifyDomain($domain);
@@ -93,12 +93,12 @@ class StoreDomainController extends Controller
         if ($verified) {
             return redirect()
                 ->route('store.domains.index')
-                ->with('success', "تم التحقق من النطاق {$domain->domain} بنجاح! تم تفعيل النطاق وجاري إصدار شهادة الأمان SSL.");
+                ->with('success', __('تم التحقق من النطاق :domain بنجاح! تم تفعيل النطاق وجاري إصدار شهادة الأمان SSL.', ['domain' => $domain->domain]));
         }
 
         return redirect()
             ->route('store.domains.index')
-            ->with('error', "تعذر التحقق من سجلات DNS للنطاق {$domain->domain}. يرجى التأكد من حفظ سجل TXT أو CNAME والانتظار حتى يكتمل انتشار DNS عالمياً.");
+            ->with('error', __('تعذر التحقق من سجلات DNS للنطاق :domain. يرجى التأكد من حفظ سجل TXT أو CNAME والانتظار حتى يكتمل انتشار DNS عالمياً.', ['domain' => $domain->domain]));
     }
 
     public function setPrimary(Domain $domain): RedirectResponse
@@ -111,7 +111,7 @@ class StoreDomainController extends Controller
 
             return redirect()
                 ->route('store.domains.index')
-                ->with('success', "تم تعيين النطاق {$domain->domain} كنطاق أساسي للمتجر بنجاح.");
+                ->with('success', __('تم تعيين النطاق :domain كنطاق أساسي للمتجر بنجاح.', ['domain' => $domain->domain]));
         } catch (InvalidArgumentException $e) {
             return redirect()
                 ->route('store.domains.index')
@@ -128,8 +128,8 @@ class StoreDomainController extends Controller
         $this->customDomainService->setSubdomainRedirection($tenant, $enable);
 
         $msg = $enable
-            ? 'تم تفعيل إعادة التوجيه التلقائي من النطاق الفرعي إلى النطاق الأساسي المخصص.'
-            : 'تم إيقاف إعادة التوجيه التلقائي من النطاق الفرعي.';
+            ? __('تم تفعيل إعادة التوجيه التلقائي من النطاق الفرعي إلى النطاق الأساسي المخصص.')
+            : __('تم إيقاف إعادة التوجيه التلقائي من النطاق الفرعي.');
 
         return redirect()
             ->route('store.domains.index')
@@ -146,7 +146,7 @@ class StoreDomainController extends Controller
 
             return redirect()
                 ->route('store.domains.index')
-                ->with('success', 'تم حذف النطاق المخصص بنجاح.');
+                ->with('success', __('تم حذف النطاق المخصص بنجاح.'));
         } catch (InvalidArgumentException $e) {
             return redirect()
                 ->route('store.domains.index')

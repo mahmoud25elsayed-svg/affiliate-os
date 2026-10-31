@@ -15,11 +15,11 @@ enum CodRemittanceStatus: string
     public function label(string $locale = 'ar'): string
     {
         return match ($this) {
-            self::DRAFT => $locale === 'ar' ? 'مسودة' : 'Draft',
-            self::RECONCILED => $locale === 'ar' ? 'مطابق وجاهز للتسوية' : 'Reconciled',
-            self::DISCREPANT => $locale === 'ar' ? 'يوجد فروقات' : 'Discrepant',
-            self::SETTLED => $locale === 'ar' ? 'تمت التسوية والتوريد' : 'Settled',
-            self::CANCELLED => $locale === 'ar' ? 'ملغي' : 'Cancelled',
+            self::DRAFT => $locale === 'ar' ? __('مسودة') : 'Draft',
+            self::RECONCILED => $locale === 'ar' ? __('مطابق وجاهز للتسوية') : 'Reconciled',
+            self::DISCREPANT => $locale === 'ar' ? __('يوجد فروقات') : 'Discrepant',
+            self::SETTLED => $locale === 'ar' ? __('تمت التسوية والتوريد') : 'Settled',
+            self::CANCELLED => $locale === 'ar' ? __('ملغي') : 'Cancelled',
         };
     }
 

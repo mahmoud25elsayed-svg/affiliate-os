@@ -30,72 +30,86 @@ class NotificationTemplateResource extends Resource
 
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-document-text';
 
-    protected static ?string $navigationLabel = 'قوالب الرسائل';
+    public static function getNavigationLabel(): string
+    {
 
-    protected static ?string $modelLabel = 'قالب رسالة';
+        return __('قوالب الرسائل');
 
-    protected static ?string $pluralModelLabel = 'قوالب الرسائل';
+    }
 
-    protected static \UnitEnum|string|null $navigationGroup = 'الإشعارات والرسائل';
+    public static function getModelLabel(): string
+    {
+        return __('قالب رسالة');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('قوالب الرسائل');
+    }
+
+    public static function getNavigationGroup(): string|\UnitEnum|null
+    {
+        return __('الإشعارات والرسائل');
+    }
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->components([
-                Section::make('إعدادات القالب')
+                Section::make(__('إعدادات القالب'))
                     ->columns(3)
                     ->schema([
                         Select::make('event_type')
-                            ->label('الحدث المرتبط')
+                            ->label(__('الحدث المرتبط'))
                             ->options([
-                                EventTypeEnum::ORDER_CONFIRMED->value => 'تأكيد الطلب',
-                                EventTypeEnum::ORDER_SHIPPED->value => 'شحن الطلب',
-                                EventTypeEnum::ORDER_DELIVERED->value => 'تسليم الطلب',
-                                EventTypeEnum::ORDER_CANCELLED->value => 'إلغاء الطلب',
-                                EventTypeEnum::CART_ABANDONED->value => 'سلة متروكة',
-                                EventTypeEnum::OTP_VERIFICATION->value => 'رمز التحقق (OTP)',
-                                EventTypeEnum::WELCOME->value => 'ترحيب / اشتراك',
+                                EventTypeEnum::ORDER_CONFIRMED->value => __('تأكيد الطلب'),
+                                EventTypeEnum::ORDER_SHIPPED->value => __('شحن الطلب'),
+                                EventTypeEnum::ORDER_DELIVERED->value => __('تسليم الطلب'),
+                                EventTypeEnum::ORDER_CANCELLED->value => __('إلغاء الطلب'),
+                                EventTypeEnum::CART_ABANDONED->value => __('سلة متروكة'),
+                                EventTypeEnum::OTP_VERIFICATION->value => __('رمز التحقق (OTP)'),
+                                EventTypeEnum::WELCOME->value => __('ترحيب / اشتراك'),
                             ])
                             ->required(),
 
                         Select::make('channel')
-                            ->label('القناة')
+                            ->label(__('القناة'))
                             ->options([
-                                ChannelEnum::SMS->value => 'رسائل قصيرة (SMS)',
-                                ChannelEnum::WHATSAPP->value => 'واتساب (WhatsApp)',
-                                ChannelEnum::EMAIL->value => 'بريد إلكتروني (Email)',
-                                ChannelEnum::IN_APP->value => 'إشعار داخلي (In-App)',
+                                ChannelEnum::SMS->value => __('رسائل قصيرة (SMS)'),
+                                ChannelEnum::WHATSAPP->value => __('واتساب (WhatsApp)'),
+                                ChannelEnum::EMAIL->value => __('بريد إلكتروني (Email)'),
+                                ChannelEnum::IN_APP->value => __('إشعار داخلي (In-App)'),
                             ])
                             ->required(),
 
                         Select::make('locale')
-                            ->label('اللغة')
+                            ->label(__('اللغة'))
                             ->options([
-                                'ar' => 'العربية (Arabic)',
-                                'en' => 'الإنجليزية (English)',
+                                'ar' => __('العربية (Arabic)'),
+                                'en' => __('الإنجليزية (English)'),
                             ])
                             ->default('ar')
                             ->required(),
                     ]),
 
-                Section::make('محتوى الرسالة')
+                Section::make(__('محتوى الرسالة'))
                     ->schema([
                         TextInput::make('title')
-                            ->label('عنوان القالب التعريفي')
-                            ->placeholder('مثال: رسالة شحن الطلب السريعة'),
+                            ->label(__('عنوان القالب التعريفي'))
+                            ->placeholder(__('مثال: رسالة شحن الطلب السريعة')),
 
                         TextInput::make('subject')
-                            ->label('عنوان الموضوع (للبريد الإلكتروني والإشعارات الداخلية)')
-                            ->placeholder('تم شحن طلبك #{order_number}'),
+                            ->label(__('عنوان الموضوع (للبريد الإلكتروني والإشعارات الداخلية)'))
+                            ->placeholder(__('تم شحن طلبك #{order_number}')),
 
                         Textarea::make('content')
-                            ->label('نص الرسالة (المتغيرات المتاحة)')
+                            ->label(__('نص الرسالة (المتغيرات المتاحة)'))
                             ->required()
                             ->rows(5)
-                            ->helperText('المتغيرات المتاحة للاستبدال: {customer_name}, {order_number}, {order_total}, {store_name}, {courier_name}, {tracking_number}, {tracking_url}, {recovery_url}, {otp_code}'),
+                            ->helperText(__('المتغيرات المتاحة للاستبدال: {customer_name}, {order_number}, {order_total}, {store_name}, {courier_name}, {tracking_number}, {tracking_url}, {recovery_url}, {otp_code}')),
 
                         Toggle::make('is_active')
-                            ->label('مفعل')
+                            ->label(__('مفعل'))
                             ->default(true),
                     ]),
             ]);
@@ -106,40 +120,40 @@ class NotificationTemplateResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('event_type')
-                    ->label('الحدث')
+                    ->label(__('الحدث'))
                     ->badge()
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'order_confirmed' => 'تأكيد طلب',
-                        'order_shipped' => 'شحن طلب',
-                        'order_delivered' => 'تسليم طلب',
-                        'order_cancelled' => 'إلغاء طلب',
-                        'cart_abandoned' => 'سلة متروكة',
+                        'order_confirmed' => __('تأكيد طلب'),
+                        'order_shipped' => __('شحن طلب'),
+                        'order_delivered' => __('تسليم طلب'),
+                        'order_cancelled' => __('إلغاء طلب'),
+                        'cart_abandoned' => __('سلة متروكة'),
                         'otp_verification' => 'OTP',
-                        'welcome' => 'ترحيب',
+                        'welcome' => __('ترحيب'),
                         default => $state,
                     })
                     ->color('primary'),
 
                 TextColumn::make('channel')
-                    ->label('القناة')
+                    ->label(__('القناة'))
                     ->badge()
                     ->color('info'),
 
                 TextColumn::make('locale')
-                    ->label('اللغة')
+                    ->label(__('اللغة'))
                     ->badge(),
 
                 TextColumn::make('title')
-                    ->label('العنوان')
+                    ->label(__('العنوان'))
                     ->default('-')
                     ->weight('bold'),
 
                 TextColumn::make('content')
-                    ->label('مقتطف النص')
+                    ->label(__('مقتطف النص'))
                     ->limit(50),
 
                 IconColumn::make('is_active')
-                    ->label('مفعل')
+                    ->label(__('مفعل'))
                     ->boolean(),
             ]);
     }

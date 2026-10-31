@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تحليلات المنصة المركزية (Platform Metrics & MRR)</title>
+    <title>{{ __('تحليلات المنصة المركزية (Platform Metrics & MRR)') }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,15 +20,15 @@
             <div>
                 <h1 class="text-2xl font-black text-white flex items-center gap-2">
                     <span>⚡</span>
-                    <span>تحليلات المنصة المركزية ومؤشرات الـ SaaS</span>
+                    <span>{{ __('تحليلات المنصة المركزية ومؤشرات الـ SaaS') }}</span>
                 </h1>
                 <p class="text-xs text-slate-400 mt-1">
-                    متابعة الإيراد الشهري المتكرر (MRR)، التجار النشطين، معدل الانقطاع، وتوزيع الاشتراكات
+                    {{ __('متابعة الإيراد الشهري المتكرر (MRR)، التجار النشطين، معدل الانقطاع، وتوزيع الاشتراكات') }}
                 </p>
             </div>
             <div>
                 <a href="/platform" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-xs font-bold rounded-xl border border-slate-700 transition">
-                    العودة إلى لوحة الإدارة
+                    {{ __('العودة إلى لوحة الإدارة') }}
                 </a>
             </div>
         </div>
@@ -37,34 +37,34 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <!-- MRR -->
             <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700/60 shadow-lg">
-                <span class="text-xs font-bold text-slate-400 block">الإيراد الشهري المتكرر (MRR)</span>
+                <span class="text-xs font-bold text-slate-400 block">{{ __('الإيراد الشهري المتكرر (MRR)') }}</span>
                 <span class="text-2xl font-black text-emerald-400 mt-2 block">
                     {{ number_format($mrrMinor / 100, 2) }} <span class="text-xs text-slate-300">{{ \App\Support\Money::symbol() }}</span>
                 </span>
-                <span class="text-[11px] text-slate-400 mt-1 block">محسوب لجميع الاشتراكات النشطة والتجريبية</span>
+                <span class="text-[11px] text-slate-400 mt-1 block">{{ __('محسوب لجميع الاشتراكات النشطة والتجريبية') }}</span>
             </div>
 
             <!-- Active Merchants -->
             <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700/60 shadow-lg">
-                <span class="text-xs font-bold text-slate-400 block">التجار النشطون (Active Merchants)</span>
+                <span class="text-xs font-bold text-slate-400 block">{{ __('التجار النشطون (Active Merchants)') }}</span>
                 <span class="text-2xl font-black text-indigo-400 mt-2 block">{{ $activeMerchants }}</span>
-                <span class="text-[11px] text-slate-400 mt-1 block">متاجر مفعلة أو باشتراكات سارية</span>
+                <span class="text-[11px] text-slate-400 mt-1 block">{{ __('متاجر مفعلة أو باشتراكات سارية') }}</span>
             </div>
 
             <!-- Churn Rate -->
             <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700/60 shadow-lg">
-                <span class="text-xs font-bold text-slate-400 block">معدل الانقطاع (Churn Rate)</span>
+                <span class="text-xs font-bold text-slate-400 block">{{ __('معدل الانقطاع (Churn Rate)') }}</span>
                 <span class="text-2xl font-black {{ $churnRate > 5 ? 'text-amber-400' : 'text-emerald-400' }} mt-2 block">
                     {{ $churnRate }}%
                 </span>
-                <span class="text-[11px] text-slate-400 mt-1 block">خلال الـ 30 يوماً الماضية</span>
+                <span class="text-[11px] text-slate-400 mt-1 block">{{ __('خلال الـ 30 يوماً الماضية') }}</span>
             </div>
 
             <!-- Tenant Errors -->
             <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700/60 shadow-lg">
-                <span class="text-xs font-bold text-slate-400 block">سجلات الأخطاء المسجلة</span>
+                <span class="text-xs font-bold text-slate-400 block">{{ __('سجلات الأخطاء المسجلة') }}</span>
                 <span class="text-2xl font-black text-rose-400 mt-2 block">{{ count($recentLogs) }}</span>
-                <span class="text-[11px] text-slate-400 mt-1 block">أحدث أخطاء تم رصدها بالمستأجرين</span>
+                <span class="text-[11px] text-slate-400 mt-1 block">{{ __('أحدث أخطاء تم رصدها بالمستأجرين') }}</span>
             </div>
         </div>
 
@@ -75,25 +75,25 @@
             <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700/60 shadow-lg">
                 <h2 class="text-sm font-black text-white flex items-center gap-2 pb-3 border-b border-slate-700">
                     <span>💎</span>
-                    <span>توزيع الاشتراكات وحصة الخطط (Plan Usage)</span>
+                    <span>{{ __('توزيع الاشتراكات وحصة الخطط (Plan Usage)') }}</span>
                 </h2>
                 <div class="mt-4 space-y-4">
                     @forelse($planBreakdown as $planSlug => $pData)
                         <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800">
                             <div class="flex justify-between items-center text-xs font-bold mb-1.5">
                                 <span class="text-white">{{ $pData['name'] }}</span>
-                                <span class="text-slate-400">{{ $pData['count'] }} متجر ({{ $pData['percentage'] }}%)</span>
+                                <span class="text-slate-400">{{ $pData['count'] }} {{ __('متجر (') }}{{ $pData['percentage'] }}%)</span>
                             </div>
                             <div class="w-full bg-slate-800 rounded-full h-2 mb-2">
                                 <div class="bg-indigo-500 h-2 rounded-full" style="width: {{ min(100, $pData['percentage']) }}%"></div>
                             </div>
                             <div class="flex justify-between text-[11px] text-slate-400 font-semibold">
-                                <span>عائد الخطة الشهري:</span>
+                                <span>{{ __('عائد الخطة الشهري:') }}</span>
                                 <span class="text-emerald-400 font-bold">{{ \App\Support\Money::show($pData['mrr_minor']) }}</span>
                             </div>
                         </div>
                     @empty
-                        <p class="text-xs text-slate-500 py-4 text-center">لا توجد اشتراكات مسجلة حالياً</p>
+                        <p class="text-xs text-slate-500 py-4 text-center">{{ __('لا توجد اشتراكات مسجلة حالياً') }}</p>
                     @endforelse
                 </div>
             </div>
@@ -102,15 +102,15 @@
             <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700/60 shadow-lg">
                 <h2 class="text-sm font-black text-white flex items-center gap-2 pb-3 border-b border-slate-700">
                     <span>⚠️</span>
-                    <span>الأخطاء المرصودة لكل مستأجر (Errors Per Tenant)</span>
+                    <span>{{ __('الأخطاء المرصودة لكل مستأجر (Errors Per Tenant)') }}</span>
                 </h2>
                 <div class="mt-4 overflow-x-auto">
                     <table class="w-full text-right text-xs">
                         <thead>
                             <tr class="text-slate-400 border-b border-slate-700 pb-2">
-                                <th class="pb-2">المتجر / المستأجر</th>
-                                <th class="pb-2 text-center">عدد الأخطاء</th>
-                                <th class="pb-2 text-left">آخر خطأ</th>
+                                <th class="pb-2">{{ __('المتجر / المستأجر') }}</th>
+                                <th class="pb-2 text-center">{{ __('عدد الأخطاء') }}</th>
+                                <th class="pb-2 text-left">{{ __('آخر خطأ') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-800">
@@ -127,7 +127,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="3" class="py-6 text-center text-slate-500">لا توجد أخطاء مسجلة بالمستأجرين. جميع الأنظمة مستقرة تماماً!</td>
+                                    <td colspan="3" class="py-6 text-center text-slate-500">{{ __('لا توجد أخطاء مسجلة بالمستأجرين. جميع الأنظمة مستقرة تماماً!') }}</td>
                                 </tr>
                             @endforelse
                         </tbody>

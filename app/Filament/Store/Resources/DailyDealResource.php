@@ -32,61 +32,75 @@ class DailyDealResource extends Resource
 
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-sparkles';
 
-    protected static ?string $navigationLabel = 'صفقة اليوم';
+    public static function getNavigationLabel(): string
+    {
 
-    protected static ?string $modelLabel = 'صفقة يومية';
+        return __('صفقة اليوم');
 
-    protected static ?string $pluralModelLabel = 'صفقات اليوم';
+    }
 
-    protected static \UnitEnum|string|null $navigationGroup = 'التسويق والمبيعات';
+    public static function getModelLabel(): string
+    {
+        return __('صفقة يومية');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('صفقات اليوم');
+    }
+
+    public static function getNavigationGroup(): string|\UnitEnum|null
+    {
+        return __('التسويق والمبيعات');
+    }
 
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('معلومات صفقة اليوم')->schema([
+            Section::make(__('معلومات صفقة اليوم'))->schema([
                 Grid::make(2)->schema([
                     Select::make('product_id')
-                        ->label('المنتج')
+                        ->label(__('المنتج'))
                         ->options(function () {
                             return Product::all()->mapWithKeys(function (Product $prod) {
-                                return [$prod->id => (string) ($prod->translateAttribute('name') ?? "منتج #{$prod->id}")];
+                                return [$prod->id => (string) ($prod->translateAttribute('name') ?? __('منتج #:id', ['id' => $prod->id]))];
                             });
                         })
                         ->searchable()
                         ->required(),
 
                     DatePicker::make('deal_date')
-                        ->label('تاريخ تطبيق الصفقة')
+                        ->label(__('تاريخ تطبيق الصفقة'))
                         ->required()
                         ->default(now()),
 
                     Select::make('discount_type')
-                        ->label('نوع الخصم')
+                        ->label(__('نوع الخصم'))
                         ->options([
-                            'percentage' => 'نسبة مئوية (%)',
-                            'fixed' => 'مبلغ ثابت (بالقروش - Minor Units)',
+                            'percentage' => __('نسبة مئوية (%)'),
+                            'fixed' => __('مبلغ ثابت (بالقروش - Minor Units)'),
                         ])
                         ->required()
                         ->default('percentage'),
 
                     TextInput::make('discount_value')
-                        ->label('قيمة الخصم')
-                        ->helperText('إذا كانت النسبة 20% ضع 20، وإذا كان مبلغ ثابت بالقروش مثل 5000 ضع 5000')
+                        ->label(__('قيمة الخصم'))
+                        ->helperText(__('إذا كانت النسبة 20% ضع 20، وإذا كان مبلغ ثابت بالقروش مثل 5000 ضع 5000'))
                         ->numeric()
                         ->required(),
 
                     TextInput::make('banner_title')
-                        ->label('عنوان البانر الإعلاني (اختياري)')
+                        ->label(__('عنوان البانر الإعلاني (اختياري)'))
                         ->maxLength(255)
-                        ->placeholder('مثال: صفقة اليوم الحصرية على أفضل سماعة بلوتوث!'),
+                        ->placeholder(__('مثال: صفقة اليوم الحصرية على أفضل سماعة بلوتوث!')),
 
                     TextInput::make('badge_text')
-                        ->label('نص الشارة الترويجية')
+                        ->label(__('نص الشارة الترويجية'))
                         ->maxLength(50)
-                        ->default('صفقة اليوم'),
+                        ->default(__('صفقة اليوم')),
 
                     Toggle::make('is_active')
-                        ->label('مفعل')
+                        ->label(__('مفعل'))
                         ->default(true),
                 ]),
             ]),
@@ -98,20 +112,20 @@ class DailyDealResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('product.id')
-                    ->label('المنتج')
+                    ->label(__('المنتج'))
                     ->formatStateUsing(function (DailyDeal $record): string {
-                        return (string) ($record->product?->translateAttribute('name') ?? "منتج #{$record->product_id}");
+                        return (string) ($record->product?->translateAttribute('name') ?? __('منتج #:product_id', ['product_id' => $record->product_id]));
                     })
                     ->searchable()
                     ->weight('bold'),
 
                 TextColumn::make('deal_date')
-                    ->label('تاريخ الصفقة')
+                    ->label(__('تاريخ الصفقة'))
                     ->date('d/m/Y')
                     ->sortable(),
 
                 TextColumn::make('discount')
-                    ->label('قيمة الخصم')
+                    ->label(__('قيمة الخصم'))
                     ->state(function (DailyDeal $record): string {
                         if ($record->discount_type === 'percentage') {
                             return "{$record->discount_value}%";
@@ -123,26 +137,26 @@ class DailyDealResource extends Resource
                     ->color('warning'),
 
                 IconColumn::make('is_active')
-                    ->label('مفعل')
+                    ->label(__('مفعل'))
                     ->boolean(),
 
                 TextColumn::make('status')
-                    ->label('الحالة')
+                    ->label(__('الحالة'))
                     ->state(function (DailyDeal $record): string {
                         $today = now()->toDateString();
                         $dealDate = $record->deal_date->toDateString();
 
                         if (! $record->is_active) {
-                            return 'معطل';
+                            return __('معطل');
                         }
                         if ($dealDate === $today) {
-                            return 'متاح اليوم ⭐';
+                            return __('متاح اليوم ⭐');
                         }
                         if ($dealDate > $today) {
-                            return 'مجدول مستقبلاً';
+                            return __('مجدول مستقبلاً');
                         }
 
-                        return 'منتهي';
+                        return __('منتهي');
                     })
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {

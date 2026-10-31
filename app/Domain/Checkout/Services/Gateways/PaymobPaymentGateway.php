@@ -24,7 +24,7 @@ class PaymobPaymentGateway implements OnlinePaymentGatewayInterface
 
     public function getNameAr(): string
     {
-        return 'باي موب (Paymob — كروت ومحافظ إلكترونية)';
+        return __('باي موب (Paymob — كروت ومحافظ إلكترونية)');
     }
 
     public function process(Order $order, array $paymentData = []): PaymentResult

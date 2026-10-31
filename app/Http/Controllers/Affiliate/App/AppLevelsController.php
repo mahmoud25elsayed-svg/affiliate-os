@@ -45,7 +45,7 @@ class AppLevelsController extends Controller
             ->get()
             ->map(fn (AffiliateLevel $l) => [
                 'id' => $l->id,
-                'name' => $l->name_ar,
+                'name' => app()->getLocale() === 'en' && $l->name_en ? $l->name_en : $l->name_ar,
                 'slug' => $l->slug,
                 'tier_order' => $l->tier_order,
                 'badge_color' => $l->badge_color,
@@ -73,7 +73,7 @@ class AppLevelsController extends Controller
             $remainingOrders = max(0, $nextLevel->min_delivered_orders - $affiliate->total_delivered_orders);
             $nextLevelData = [
                 'id' => $nextLevel->id,
-                'name' => $nextLevel->name_ar,
+                'name' => app()->getLocale() === 'en' && $nextLevel->name_en ? $nextLevel->name_en : $nextLevel->name_ar,
                 'badge_color' => $nextLevel->badge_color,
                 'remaining_orders' => $remainingOrders,
                 'target_delivered_orders' => $nextLevel->min_delivered_orders,
@@ -124,7 +124,7 @@ class AppLevelsController extends Controller
         return Inertia::render('App/Levels', [
             'currentLevel' => [
                 'id' => $currentLevel->id,
-                'name' => $currentLevel->name_ar,
+                'name' => app()->getLocale() === 'en' && $currentLevel->name_en ? $currentLevel->name_en : $currentLevel->name_ar,
                 'slug' => $currentLevel->slug,
                 'badge_color' => $currentLevel->badge_color,
                 'tier_order' => $currentLevel->tier_order,

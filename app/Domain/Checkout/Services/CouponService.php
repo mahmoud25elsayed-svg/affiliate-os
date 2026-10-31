@@ -27,7 +27,7 @@ class CouponService
         $normalizedCode = trim(strtoupper($code));
 
         if ($normalizedCode === '') {
-            return CouponResult::failure('يرجى إدخال رمز الكوبون');
+            return CouponResult::failure(__('يرجى إدخال رمز الكوبون'));
         }
 
         /** @var Coupon|null $coupon */
@@ -36,39 +36,39 @@ class CouponService
             ->first();
 
         if ($coupon === null || ! $coupon->is_active) {
-            return CouponResult::failure('رمز الكوبون غير صالح أو غير موجود');
+            return CouponResult::failure(__('رمز الكوبون غير صالح أو غير موجود'));
         }
 
         if (! $coupon->hasStarted()) {
-            return CouponResult::failure('هذا الكوبون لم يبدأ العمل به بعد');
+            return CouponResult::failure(__('هذا الكوبون لم يبدأ العمل به بعد'));
         }
 
         if ($coupon->isExpired()) {
-            return CouponResult::failure('انتهت صلاحية هذا الكوبون');
+            return CouponResult::failure(__('انتهت صلاحية هذا الكوبون'));
         }
 
         if ($coupon->isUsageLimitReached()) {
-            return CouponResult::failure('تم استنفاد الحد الأقصى لاستخدام هذا الكوبون');
+            return CouponResult::failure(__('تم استنفاد الحد الأقصى لاستخدام هذا الكوبون'));
         }
 
         if ($customerPhoneE164 !== null) {
             $phoneHash = hash('sha256', $customerPhoneE164);
             if ($coupon->isCustomerUsageLimitReached($phoneHash)) {
-                return CouponResult::failure('لقد استنفدت الحد المسموح لك لاستخدام هذا الكوبون');
+                return CouponResult::failure(__('لقد استنفدت الحد المسموح لك لاستخدام هذا الكوبون'));
             }
         }
 
         if ($coupon->min_order_value_minor !== null && $subtotalMinor < $coupon->min_order_value_minor) {
             $minEgp = number_format($coupon->min_order_value_minor / 100, 2);
 
-            return CouponResult::failure("الحد الأدنى للطلب لتفعيل هذا الكوبون هو {$minEgp} ".Money::symbol());
+            return CouponResult::failure(__('الحد الأدنى للطلب لتفعيل هذا الكوبون هو :min_egp ', ['min_egp' => $minEgp]).Money::symbol());
         }
 
         // Check restricted categories
         if (! empty($coupon->restricted_categories)) {
             $matchingCategories = array_intersect($coupon->restricted_categories, $categoryIds);
             if (empty($matchingCategories)) {
-                return CouponResult::failure('هذا الكوبون غير متاح للأقسام الموجودة في سلتك');
+                return CouponResult::failure(__('هذا الكوبون غير متاح للأقسام الموجودة في سلتك'));
             }
         }
 
@@ -76,13 +76,13 @@ class CouponService
         if (! empty($coupon->restricted_products)) {
             $matchingProducts = array_intersect($coupon->restricted_products, $itemIds);
             if (empty($matchingProducts)) {
-                return CouponResult::failure('هذا الكوبون غير متاح للمنتجات المحددة في سلتك');
+                return CouponResult::failure(__('هذا الكوبون غير متاح للمنتجات المحددة في سلتك'));
             }
         }
 
         // Calculate discount
         if ($applicableSubtotal <= 0 && $coupon->type !== Coupon::TYPE_FREE_SHIPPING) {
-            return CouponResult::failure('هذا الكوبون لا يسري على المنتجات المشمولة بعروض التخفيض الفوري (الفلاش سيل)');
+            return CouponResult::failure(__('هذا الكوبون لا يسري على المنتجات المشمولة بعروض التخفيض الفوري (الفلاش سيل)'));
         }
 
         if ($coupon->type === Coupon::TYPE_PERCENTAGE) {
@@ -105,7 +105,7 @@ class CouponService
             return CouponResult::success($coupon, 0, true);
         }
 
-        return CouponResult::failure('نوع الكوبون غير مدعوم');
+        return CouponResult::failure(__('نوع الكوبون غير مدعوم'));
     }
 
     public function recordRedemption(Coupon $coupon, ?int $orderId, string $customerPhoneE164, int $discountMinor): CouponRedemption

@@ -59,7 +59,7 @@ class OrderConfirmedStockListener
                     'requested' => $e->requestedQuantity,
                     'available' => $e->availableQuantity,
                 ],
-                note: sprintf('فشل حجز المخزون للمتغير #%d: المطلوب %d، المتاح %d.', $e->variantId, $e->requestedQuantity, $e->availableQuantity)
+                note: sprintf(__('فشل حجز المخزون للمتغير #%d: المطلوب %d، المتاح %d.'), $e->variantId, $e->requestedQuantity, $e->availableQuantity)
             );
         }
     }

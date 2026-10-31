@@ -10,6 +10,7 @@ use App\Models\DailyStoreMetric;
 use App\Models\InventoryBalance;
 use App\Models\OrderEvent;
 use App\Support\Enums\ReasonCode;
+use App\Support\Translate;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Lunar\DataTypes\Price;
@@ -156,7 +157,7 @@ class MerchantAnalyticsService
 
         foreach ($lines as $line) {
             $productId = null;
-            $productName = $line->description ?? 'منتج غير معروف';
+            $productName = $line->description ?? Translate::t('منتج غير معروف');
 
             if ($line->purchasable_type === ProductVariant::class && $line->purchasable_id) {
                 /** @var ProductVariant|null $variant */
@@ -265,7 +266,7 @@ class MerchantAnalyticsService
 
             $results[] = [
                 'affiliate_id' => $affiliateId,
-                'name' => $affiliate ? $affiliate->name : "مسوق #{$affiliateId}",
+                'name' => $affiliate ? $affiliate->name : Translate::t('مسوق #:affiliate_id', ['affiliate_id' => $affiliateId]),
                 'phone' => $affiliate ? $affiliate->phone : '',
                 'code' => $affiliate ? $affiliate->code : '',
                 'orders_count' => $totalOrders,
@@ -313,7 +314,7 @@ class MerchantAnalyticsService
         foreach ($orders as $order) {
             /** @var OrderAddress|null $addr */
             $addr = $addresses->get($order->id);
-            $governorate = $addr ? ($addr->state ?: $addr->city ?: 'أخرى') : 'أخرى';
+            $governorate = $addr ? ($addr->state ?: $addr->city ?: Translate::t('أخرى')) : Translate::t('أخرى');
             $governorate = trim($governorate);
 
             if (! isset($govStats[$governorate])) {
@@ -397,14 +398,14 @@ class MerchantAnalyticsService
         $events = $eventsQuery->get();
 
         $reasonLabels = [
-            'refused_at_doorstep' => 'رفض الاستلام عند الباب',
-            'customer_unreachable' => 'العميل لا يجيب الهاتف / مغلق',
-            'long_delivery_time' => 'تأخر مفرط في التوصيل من شركة الشحن',
-            'wrong_item_sent' => 'استلام منتج أو مقاس غير مطابق',
-            'defective_product' => 'عيب صناعة أو تلف أثناء الشحن',
-            'not_as_described' => 'المنتج غير مطابق للوصف والصور',
-            'customer_changed_mind' => 'تراجع العميل عن الشراء',
-            'other' => 'أسباب أخرى عامة',
+            'refused_at_doorstep' => Translate::t('رفض الاستلام عند الباب'),
+            'customer_unreachable' => Translate::t('العميل لا يجيب الهاتف / مغلق'),
+            'long_delivery_time' => Translate::t('تأخر مفرط في التوصيل من شركة الشحن'),
+            'wrong_item_sent' => Translate::t('استلام منتج أو مقاس غير مطابق'),
+            'defective_product' => Translate::t('عيب صناعة أو تلف أثناء الشحن'),
+            'not_as_described' => Translate::t('المنتج غير مطابق للوصف والصور'),
+            'customer_changed_mind' => Translate::t('تراجع العميل عن الشراء'),
+            'other' => Translate::t('أسباب أخرى عامة'),
         ];
 
         $reasonsCounts = [];

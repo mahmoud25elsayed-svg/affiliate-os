@@ -77,7 +77,7 @@ class AffiliateReferralRewardService
         $bonusExpense = $this->accountResolver->getStoreBonusExpenseAccount();
 
         $idempotencyKey = "aff_referral_reward_{$referrer->id}_{$referredAffiliate->id}_{$threshold}";
-        $description = "مكافأة إحالة المسوق #{$referredAffiliate->id} ({$referredAffiliate->name}) بعد إكمال {$threshold} طلبات مسلّمة";
+        $description = __('مكافأة إحالة المسوق #:id (:name) بعد إكمال :threshold طلبات مسلّمة', ['id' => $referredAffiliate->id, 'name' => $referredAffiliate->name, 'threshold' => $threshold]);
 
         $entryData = new EntryData(
             type: 'referral_reward',

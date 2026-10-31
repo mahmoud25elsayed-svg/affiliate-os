@@ -1,6 +1,6 @@
 <div>
     <!-- Cart trigger button in header -->
-    <button wire:click="toggle" type="button" class="relative p-2.5 rounded-full text-slate-700 hover:text-emerald-600 hover:bg-slate-100 transition focus:outline-none" aria-label="سلة المشتريات">
+    <button wire:click="toggle" type="button" class="relative p-2.5 rounded-full text-slate-700 hover:text-emerald-600 hover:bg-slate-100 transition focus:outline-none" aria-label="{{ __('سلة المشتريات') }}">
         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
         </svg>
@@ -22,9 +22,9 @@
                     <!-- Drawer Header -->
                     <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
                         <div class="flex items-center space-x-3 space-x-reverse">
-                            <h2 class="text-lg font-bold text-slate-900" id="slide-over-title">سلة المشتريات</h2>
+                            <h2 class="text-lg font-bold text-slate-900" id="slide-over-title">{{ __('سلة المشتريات') }}</h2>
                             <span class="bg-emerald-50 text-emerald-700 text-xs px-2.5 py-0.5 rounded-full font-semibold">
-                                {{ $count }} منتج
+                                {{ $count }} {{ __('منتج') }}
                             </span>
                         </div>
                         <button wire:click="close" type="button" class="text-slate-400 hover:text-slate-600 transition p-1 rounded-lg">
@@ -62,7 +62,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <button wire:click="removeItem({{ $item['variant_id'] }})" type="button" class="text-slate-300 hover:text-red-500 transition p-1" title="حذف">
+                                <button wire:click="removeItem({{ $item['variant_id'] }})" type="button" class="text-slate-300 hover:text-red-500 transition p-1" title="{{ __('حذف') }}">
                                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                     </svg>
@@ -75,8 +75,8 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                                     </svg>
                                 </div>
-                                <h3 class="text-base font-bold text-slate-800">سلتك فارغة حالياً</h3>
-                                <p class="text-sm text-slate-500 mt-1">تصفح منتجاتنا وأضف ما يعجبك إلى سلتك!</p>
+                                <h3 class="text-base font-bold text-slate-800">{{ __('سلتك فارغة حالياً') }}</h3>
+                                <p class="text-sm text-slate-500 mt-1">{{ __('تصفح منتجاتنا وأضف ما يعجبك إلى سلتك!') }}</p>
                             </div>
                         @endforelse
                     </div>
@@ -85,16 +85,16 @@
                     @if($count > 0)
                         <div class="p-6 border-t border-slate-100 bg-slate-50 space-y-4">
                             <div class="flex items-center justify-between text-base font-bold text-slate-900">
-                                <span>المجموع الفرعي:</span>
+                                <span>{{ __('المجموع الفرعي:') }}</span>
                                 <span class="text-lg text-emerald-600">{{ $subtotalDecimal }} {{ \App\Support\Money::symbol() }}</span>
                             </div>
-                            <p class="text-xs text-slate-500">الشحن والخصومات يتم حسابها بدقة عند إتمام الطلب.</p>
+                            <p class="text-xs text-slate-500">{{ __('الشحن والخصومات يتم حسابها بدقة عند إتمام الطلب.') }}</p>
                             <div class="grid grid-cols-2 gap-3">
                                 <a href="{{ route('storefront.cart') }}" class="w-full text-center py-3 px-4 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 bg-white hover:bg-slate-100 transition shadow-sm">
-                                    عرض السلة
+                                    {{ __('عرض السلة') }}
                                 </a>
                                 <a href="{{ route('storefront.checkout') }}" class="w-full text-center py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-bold transition shadow-lg shadow-emerald-600/20">
-                                    إتمام الطلب
+                                    {{ __('إتمام الطلب') }}
                                 </a>
                             </div>
                         </div>

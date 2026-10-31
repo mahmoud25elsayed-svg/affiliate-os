@@ -30,6 +30,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - All PHPStan level 8 errors (44), Pint violations and TypeScript `any` warnings.
 
 ### Added
+- **Full English interface:** every panel (merchant, platform, partners app, affiliate portal, storefront, onboarding, marketing site) is available in English via `?lang=en` or the language switch in each header. `SetLocale` middleware resolves query → session → store default locale; `lang/en.json` holds 3,300+ strings and the React app uses `t()` from `resources/js/i18n`. Layouts switch `lang`/`dir` (LTR for English); level, region and plan names use their English variants.
+- **Multi-country stores:** stores can operate in Arab countries and major foreign markets with their own currency, phone format, regions and decimals (`config/countries.php`, `config/currencies.php`).
 - **SETUP-Bootstrap (P02):**
   - Production Laravel 12 project structure with Clean-room architecture.
   - Multi-tenancy setup with `stancl/tenancy` v3.10 and Lunar v1.5 headless ecommerce engine.

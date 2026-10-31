@@ -18,7 +18,7 @@ class SystemMailDriver implements NotificationDriverInterface
      */
     public function send(NotificationMessage $message, array $config = []): NotificationResult
     {
-        $subject = $message->subject ?: 'إشعار من المتجر';
+        $subject = $message->subject ?: __('إشعار من المتجر');
         $fromAddress = (string) ($config['from_address'] ?? config('mail.from.address', 'noreply@affiliate-os.com'));
         $fromName = (string) ($config['from_name'] ?? $message->senderId ?? config('mail.from.name', 'AffiliateOS'));
 

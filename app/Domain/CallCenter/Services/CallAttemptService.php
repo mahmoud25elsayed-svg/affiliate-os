@@ -38,7 +38,7 @@ class CallAttemptService
     {
         $outcomeEnum = CallOutcome::tryFrom($data['outcome']);
         if (! $outcomeEnum) {
-            throw new InvalidArgumentException("نتيجة المكالمة غير صالحة: {$data['outcome']}");
+            throw new InvalidArgumentException(__('نتيجة المكالمة غير صالحة: :outcome', ['outcome' => $data['outcome']]));
         }
 
         $settings = CallCenterSettings::load();
@@ -91,7 +91,7 @@ class CallAttemptService
                     reason: null,
                     actor: $actor,
                     meta: ['call_attempt_id' => $attempt->id],
-                    note: "تم تأكيد الطلب بنجاح عبر مكالمة هاتفية بواسطة الموظف {$agent->name}."
+                    note: __('تم تأكيد الطلب بنجاح عبر مكالمة هاتفية بواسطة الموظف :name.', ['name' => $agent->name])
                 );
                 break;
 
@@ -102,7 +102,7 @@ class CallAttemptService
                     reason: ReasonCode::CUSTOMER_CHANGED_MIND,
                     actor: $actor,
                     meta: ['call_attempt_id' => $attempt->id],
-                    note: "إلغاء الطلب بناءً على رغبة العميل أثناء المكالمة. ملاحظات: {$notes}"
+                    note: __('إلغاء الطلب بناءً على رغبة العميل أثناء المكالمة. ملاحظات: :notes', ['notes' => $notes])
                 );
                 break;
 
@@ -113,7 +113,7 @@ class CallAttemptService
                     reason: ReasonCode::INVALID_PHONE,
                     actor: $actor,
                     meta: ['call_attempt_id' => $attempt->id],
-                    note: "إلغاء الطلب: الرقم المسجل خاطئ أو لا يخص العميل. ملاحظات: {$notes}"
+                    note: __('إلغاء الطلب: الرقم المسجل خاطئ أو لا يخص العميل. ملاحظات: :notes', ['notes' => $notes])
                 );
                 break;
 
@@ -125,7 +125,7 @@ class CallAttemptService
                     'actor_type' => User::class,
                     'actor_id' => (string) $agent->id,
                     'actor_name' => $agent->name,
-                    'note' => "طلب العميل تأجيل المكالمة ومعاودة الاتصال في {$nextAttemptAt->format('Y-m-d H:i')}. ملاحظات: {$notes}",
+                    'note' => __('طلب العميل تأجيل المكالمة ومعاودة الاتصال في :i. ملاحظات: :notes', ['i' => $nextAttemptAt->format('Y-m-d H:i'), 'notes' => $notes]),
                 ]);
                 break;
 
@@ -139,7 +139,7 @@ class CallAttemptService
                         reason: ReasonCode::CUSTOMER_UNREACHABLE,
                         actor: $actor,
                         meta: ['call_attempt_id' => $attempt->id],
-                        note: "تعذر الوصول للعميل بعد استنفاد {$maxAttempts} محاولات اتصال ({$outcomeEnum->label()})."
+                        note: __('تعذر الوصول للعميل بعد استنفاد :max_attempts محاولات اتصال (:label).', ['max_attempts' => $maxAttempts, 'label' => $outcomeEnum->label()])
                     );
                 } else {
                     OrderEvent::create([
@@ -149,7 +149,7 @@ class CallAttemptService
                         'actor_type' => User::class,
                         'actor_id' => (string) $agent->id,
                         'actor_name' => $agent->name,
-                        'note' => "لم يرد العميل — المحاولة {$attemptNumber} من {$maxAttempts} ({$outcomeEnum->label()}). تمت جدولة المحاولة التالية في {$nextAttemptAt?->format('Y-m-d H:i')}.",
+                        'note' => __('لم يرد العميل — المحاولة :attempt_number من :max_attempts (:label). تمت جدولة المحاولة التالية في :i.', ['attempt_number' => $attemptNumber, 'max_attempts' => $maxAttempts, 'label' => $outcomeEnum->label(), 'i' => $nextAttemptAt?->format('Y-m-d H:i')]),
                     ]);
                 }
                 break;

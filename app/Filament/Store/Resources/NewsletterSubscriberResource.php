@@ -26,40 +26,54 @@ class NewsletterSubscriberResource extends Resource
 
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-envelope';
 
-    protected static ?string $navigationLabel = 'المشتركون في النشرة';
+    public static function getNavigationLabel(): string
+    {
 
-    protected static ?string $modelLabel = 'مشترك في النشرة';
+        return __('المشتركون في النشرة');
 
-    protected static ?string $pluralModelLabel = 'المشتركون في النشرة البريدية';
+    }
 
-    protected static \UnitEnum|string|null $navigationGroup = 'التسويق والمبيعات';
+    public static function getModelLabel(): string
+    {
+        return __('مشترك في النشرة');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('المشتركون في النشرة البريدية');
+    }
+
+    public static function getNavigationGroup(): string|\UnitEnum|null
+    {
+        return __('التسويق والمبيعات');
+    }
 
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('بيانات المشترك')->schema([
+            Section::make(__('بيانات المشترك'))->schema([
                 Grid::make(2)->schema([
                     TextInput::make('email')
-                        ->label('البريد الإلكتروني')
+                        ->label(__('البريد الإلكتروني'))
                         ->email()
                         ->required()
                         ->maxLength(255),
 
                     TextInput::make('name')
-                        ->label('الاسم (اختياري)')
+                        ->label(__('الاسم (اختياري)'))
                         ->maxLength(100),
 
                     Select::make('source')
-                        ->label('مصدر الاشتراك')
+                        ->label(__('مصدر الاشتراك'))
                         ->options([
-                            'storefront_footer' => 'تذييل المتجر',
-                            'popup' => 'نافذة منبثقة',
-                            'checkout' => 'أثناء الدفع',
+                            'storefront_footer' => __('تذييل المتجر'),
+                            'popup' => __('نافذة منبثقة'),
+                            'checkout' => __('أثناء الدفع'),
                         ])
                         ->default('storefront_footer'),
 
                     Toggle::make('is_active')
-                        ->label('نشط ومفعل')
+                        ->label(__('نشط ومفعل'))
                         ->default(true),
                 ]),
             ]),
@@ -71,27 +85,27 @@ class NewsletterSubscriberResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('email')
-                    ->label('البريد الإلكتروني')
+                    ->label(__('البريد الإلكتروني'))
                     ->searchable()
                     ->copyable()
                     ->weight('bold'),
 
                 TextColumn::make('name')
-                    ->label('الاسم')
+                    ->label(__('الاسم'))
                     ->searchable()
                     ->default('-'),
 
                 TextColumn::make('source')
-                    ->label('المصدر')
+                    ->label(__('المصدر'))
                     ->badge()
                     ->color('gray'),
 
                 IconColumn::make('is_active')
-                    ->label('الحالة')
+                    ->label(__('الحالة'))
                     ->boolean(),
 
                 TextColumn::make('subscribed_at')
-                    ->label('تاريخ الاشتراك')
+                    ->label(__('تاريخ الاشتراك'))
                     ->dateTime('d/m/Y H:i')
                     ->sortable(),
             ])

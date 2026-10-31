@@ -72,7 +72,7 @@ class StorePixelTrackingController extends Controller
         $settings->save();
 
         return redirect()->route('store.pixels.index')
-            ->with('success', 'تم حفظ إعدادات بكسلات التتبع والـ Conversions API بنجاح.');
+            ->with('success', __('تم حفظ إعدادات بكسلات التتبع والـ Conversions API بنجاح.'));
     }
 
     public function test(Request $request): RedirectResponse
@@ -88,8 +88,8 @@ class StorePixelTrackingController extends Controller
         $sampleUserData = [
             'email' => 'test-customer@example.com',
             'phone' => '+201012345678',
-            'first_name' => 'تجربة',
-            'city' => 'القاهرة',
+            'first_name' => __('تجربة'),
+            'city' => __('القاهرة'),
             'client_ip_address' => $request->ip(),
             'client_user_agent' => $request->userAgent(),
         ];
@@ -103,7 +103,7 @@ class StorePixelTrackingController extends Controller
         if ($validated['platform'] === 'meta') {
             if (! $settings->isMetaCapiActive()) {
                 return redirect()->route('store.pixels.index')
-                    ->with('error', 'يرجى تفعيل Meta Pixel وإدخال Access Token أولاً.');
+                    ->with('error', __('يرجى تفعيل Meta Pixel وإدخال Access Token أولاً.'));
             }
 
             app(MetaConversionsApiService::class)->sendEvent(
@@ -119,7 +119,7 @@ class StorePixelTrackingController extends Controller
         } elseif ($validated['platform'] === 'tiktok') {
             if (! $settings->isTikTokApiActive()) {
                 return redirect()->route('store.pixels.index')
-                    ->with('error', 'يرجى تفعيل TikTok Pixel وإدخال Access Token أولاً.');
+                    ->with('error', __('يرجى تفعيل TikTok Pixel وإدخال Access Token أولاً.'));
             }
 
             app(TikTokEventsApiService::class)->sendEvent(
@@ -135,6 +135,6 @@ class StorePixelTrackingController extends Controller
         }
 
         return redirect()->route('store.pixels.index')
-            ->with('success', "تم إرسال حدث اختباري بنجاح لمنصة {$validated['platform']}. راجع جدول التشخيص بالأسفل.");
+            ->with('success', __('تم إرسال حدث اختباري بنجاح لمنصة :platform. راجع جدول التشخيص بالأسفل.', ['platform' => $validated['platform']]));
     }
 }

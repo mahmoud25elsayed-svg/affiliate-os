@@ -252,10 +252,10 @@ class Affiliate extends Authenticatable
         $score = $this->quality_score;
 
         return match (true) {
-            $score >= 85 => 'ممتاز',
-            $score >= 70 => 'جيد جداً',
-            $score >= 50 => 'جيد',
-            default => 'يحتاج تحسين',
+            $score >= 85 => __('ممتاز'),
+            $score >= 70 => __('جيد جداً'),
+            $score >= 50 => __('جيد'),
+            default => __('يحتاج تحسين'),
         };
     }
 

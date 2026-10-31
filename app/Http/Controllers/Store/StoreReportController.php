@@ -56,7 +56,7 @@ class StoreReportController extends Controller
     {
         $allowedTypes = ['sales', 'products', 'affiliates', 'governorates', 'returns'];
         if (! in_array($type, $allowedTypes, true)) {
-            abort(404, 'نوع التقرير غير مدعوم');
+            abort(404, __('نوع التقرير غير مدعوم'));
         }
 
         $preset = (string) $request->input('preset', 'last_30_days');

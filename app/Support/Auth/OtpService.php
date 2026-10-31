@@ -47,7 +47,7 @@ class OtpService
             if ($ipAttempts >= self::MAX_ATTEMPTS_PER_IP_HOUR) {
                 return [
                     'success' => false,
-                    'message' => 'تم تجاوز الحد الأقصى للطلبات من هذا العنوان. الرجاء المحاولة لاحقاً.',
+                    'message' => __('تم تجاوز الحد الأقصى للطلبات من هذا العنوان. الرجاء المحاولة لاحقاً.'),
                 ];
             }
             Cache::put($ipKey, $ipAttempts + 1, 3600);
@@ -59,7 +59,7 @@ class OtpService
         if ($dailyAttempts >= self::MAX_ATTEMPTS_PER_DAY) {
             return [
                 'success' => false,
-                'message' => 'تم تجاوز الحد الأقصى اليومي لرموز التحقق لهذا الرقم.',
+                'message' => __('تم تجاوز الحد الأقصى اليومي لرموز التحقق لهذا الرقم.'),
             ];
         }
         Cache::put($dailyKey, $dailyAttempts + 1, 86400);
@@ -70,7 +70,7 @@ class OtpService
         if ($attempts >= self::MAX_ATTEMPTS_PER_MINUTE) {
             return [
                 'success' => false,
-                'message' => 'تجاوزت الحد المسموح لإرسال الرموز. الرجاء الانتظار دقيقة واحدة.',
+                'message' => __('تجاوزت الحد المسموح لإرسال الرموز. الرجاء الانتظار دقيقة واحدة.'),
             ];
         }
         Cache::put($rateKey, $attempts + 1, 60);
@@ -89,7 +89,7 @@ class OtpService
             $result = app(SmsMisrDriver::class)->send(new NotificationMessage(
                 channel: NotificationChannel::SMS,
                 recipient: $normalized,
-                content: "رمز التحقق الخاص بك في AffiliateOS هو: {$code}. صالح لمدة 5 دقائق.",
+                content: __('رمز التحقق الخاص بك في AffiliateOS هو: :code. صالح لمدة 5 دقائق.', ['code' => $code]),
                 eventType: 'otp',
                 senderId: 'AffiliateOS'
             ));

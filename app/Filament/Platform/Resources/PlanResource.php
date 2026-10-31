@@ -25,65 +25,79 @@ class PlanResource extends Resource
 
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationLabel = 'باقات الاشتراك';
+    public static function getNavigationLabel(): string
+    {
 
-    protected static ?string $modelLabel = 'باقة اشتراك';
+        return __('باقات الاشتراك');
 
-    protected static ?string $pluralModelLabel = 'باقات الاشتراك';
+    }
 
-    protected static \UnitEnum|string|null $navigationGroup = 'الفوترة والاشتراكات';
+    public static function getModelLabel(): string
+    {
+        return __('باقة اشتراك');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('باقات الاشتراك');
+    }
+
+    public static function getNavigationGroup(): string|\UnitEnum|null
+    {
+        return __('الفوترة والاشتراكات');
+    }
 
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('البيانات الأساسية')->schema([
+            Section::make(__('البيانات الأساسية'))->schema([
                 TextInput::make('slug')
-                    ->label('المعرّف الفريد')
+                    ->label(__('المعرّف الفريد'))
                     ->required()
                     ->unique(ignoreRecord: true),
 
                 TextInput::make('name_ar')
-                    ->label('الاسم بالعربية')
+                    ->label(__('الاسم بالعربية'))
                     ->required(),
 
                 TextInput::make('name_en')
-                    ->label('الاسم بالإنجليزية')
+                    ->label(__('الاسم بالإنجليزية'))
                     ->required(),
 
                 TextInput::make('price_monthly')
-                    ->label('السعر الشهري (بالقروش)')
+                    ->label(__('السعر الشهري (بالقروش)'))
                     ->numeric()
                     ->required(),
 
                 TextInput::make('price_yearly')
-                    ->label('السعر السنوي (بالقروش)')
+                    ->label(__('السعر السنوي (بالقروش)'))
                     ->numeric()
                     ->required(),
 
                 TextInput::make('trial_days')
-                    ->label('أيام الفترة التجريبية')
+                    ->label(__('أيام الفترة التجريبية'))
                     ->numeric()
                     ->default(14)
                     ->required(),
 
                 Toggle::make('is_active')
-                    ->label('مفعلة')
+                    ->label(__('مفعلة'))
                     ->default(true),
             ])->columns(2),
 
-            Section::make('حدود الموارد (Limits)')->schema([
+            Section::make(__('حدود الموارد (Limits)'))->schema([
                 KeyValue::make('limits')
-                    ->label('الحدود (-1 لغير المحدود)')
-                    ->keyLabel('المورد')
-                    ->valueLabel('الحد الأقصى')
+                    ->label(__('الحدود (-1 لغير المحدود)'))
+                    ->keyLabel(__('المورد'))
+                    ->valueLabel(__('الحد الأقصى'))
                     ->reorderable(),
             ]),
 
-            Section::make('الميزات المفعلة (Feature Flags)')->schema([
+            Section::make(__('الميزات المفعلة (Feature Flags)'))->schema([
                 KeyValue::make('features')
-                    ->label('الميزات')
-                    ->keyLabel('الميزة')
-                    ->valueLabel('مفعلة (1/0)')
+                    ->label(__('الميزات'))
+                    ->keyLabel(__('الميزة'))
+                    ->valueLabel(__('مفعلة (1/0)'))
                     ->reorderable(),
             ]),
         ]);
@@ -94,28 +108,28 @@ class PlanResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name_ar')
-                    ->label('اسم الباقة')
+                    ->label(__('اسم الباقة'))
                     ->searchable()
                     ->sortable(),
 
                 TextColumn::make('slug')
-                    ->label('المعرف')
+                    ->label(__('المعرف'))
                     ->badge(),
 
                 TextColumn::make('price_monthly')
-                    ->label('السعر الشهري')
+                    ->label(__('السعر الشهري'))
                     ->formatStateUsing(fn (Plan $record) => $record->priceMonthlyMoney()->format()),
 
                 TextColumn::make('price_yearly')
-                    ->label('السعر السنوي')
+                    ->label(__('السعر السنوي'))
                     ->formatStateUsing(fn (Plan $record) => $record->priceYearlyMoney()->format()),
 
                 TextColumn::make('trial_days')
-                    ->label('أيام التجربة')
-                    ->suffix(' يوم'),
+                    ->label(__('أيام التجربة'))
+                    ->suffix(__(' يوم')),
 
                 IconColumn::make('is_active')
-                    ->label('الحالة')
+                    ->label(__('الحالة'))
                     ->boolean(),
             ])
             ->defaultSort('sort_order', 'asc');

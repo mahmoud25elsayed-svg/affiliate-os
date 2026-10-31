@@ -20,7 +20,7 @@ class FakePaymentGateway implements OnlinePaymentGatewayInterface
 
     public function getNameAr(): string
     {
-        return 'بوابة دفع تجريبية (Fake Gateway)';
+        return __('بوابة دفع تجريبية (Fake Gateway)');
     }
 
     public function process(Order $order, array $paymentData = []): PaymentResult

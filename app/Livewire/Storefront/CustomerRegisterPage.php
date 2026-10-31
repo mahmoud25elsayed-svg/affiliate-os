@@ -40,13 +40,13 @@ class CustomerRegisterPage extends Component
             'email' => 'required|email|max:255',
             'password' => 'required|string|min:8|confirmed',
         ], [
-            'first_name.required' => 'يرجى إدخال الاسم الأول.',
-            'phone.required' => 'يرجى إدخال رقم الهاتف.',
-            'email.required' => 'يرجى إدخال البريد الإلكتروني.',
-            'email.email' => 'البريد الإلكتروني غير صالح.',
-            'password.required' => 'يرجى إدخال كلمة المرور.',
-            'password.min' => 'يجب ألا تقل كلمة المرور عن 8 أحرف.',
-            'password.confirmed' => 'تأكيد كلمة المرور غير متطابق.',
+            'first_name.required' => __('يرجى إدخال الاسم الأول.'),
+            'phone.required' => __('يرجى إدخال رقم الهاتف.'),
+            'email.required' => __('يرجى إدخال البريد الإلكتروني.'),
+            'email.email' => __('البريد الإلكتروني غير صالح.'),
+            'password.required' => __('يرجى إدخال كلمة المرور.'),
+            'password.min' => __('يجب ألا تقل كلمة المرور عن 8 أحرف.'),
+            'password.confirmed' => __('تأكيد كلمة المرور غير متطابق.'),
         ]);
 
         $parsedPhone = PhoneNumber::tryParse($this->phone);
@@ -65,7 +65,7 @@ class CustomerRegisterPage extends Component
             ->exists();
 
         if ($existingEmail) {
-            $this->addError('email', 'البريد الإلكتروني مسجل مسبقاً في هذا المتجر.');
+            $this->addError('email', __('البريد الإلكتروني مسجل مسبقاً في هذا المتجر.'));
 
             return null;
         }
@@ -76,7 +76,7 @@ class CustomerRegisterPage extends Component
             ->exists();
 
         if ($existingPhone) {
-            $this->addError('phone', 'رقم الهاتف مسجل مسبقاً في هذا المتجر.');
+            $this->addError('phone', __('رقم الهاتف مسجل مسبقاً في هذا المتجر.'));
 
             return null;
         }
@@ -95,7 +95,7 @@ class CustomerRegisterPage extends Component
 
         Auth::guard('customer')->login($customer, true);
 
-        session()->flash('success', 'تم إنشاء الحساب بنجاح. أهلاً بك!');
+        session()->flash('success', __('تم إنشاء الحساب بنجاح. أهلاً بك!'));
 
         return redirect()->route('storefront.account.orders');
     }
@@ -103,7 +103,7 @@ class CustomerRegisterPage extends Component
     public function render(): View
     {
         return view('livewire.storefront.customer-register-page', [
-            'pageTitle' => 'إنشاء حساب جديد',
+            'pageTitle' => __('إنشاء حساب جديد'),
         ]);
     }
 }

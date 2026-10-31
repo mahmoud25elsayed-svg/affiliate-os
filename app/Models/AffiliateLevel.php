@@ -93,7 +93,7 @@ class AffiliateLevel extends Model
     {
         $defaults = [
             [
-                'name_ar' => 'برونزي',
+                'name_ar' => __('برونزي'),
                 'name_en' => 'Bronze',
                 'slug' => self::SLUG_BRONZE,
                 'tier_order' => 1,
@@ -107,7 +107,7 @@ class AffiliateLevel extends Model
                 'is_active' => true,
             ],
             [
-                'name_ar' => 'فضي',
+                'name_ar' => __('فضي'),
                 'name_en' => 'Silver',
                 'slug' => self::SLUG_SILVER,
                 'tier_order' => 2,
@@ -121,7 +121,7 @@ class AffiliateLevel extends Model
                 'is_active' => true,
             ],
             [
-                'name_ar' => 'ذهبي',
+                'name_ar' => __('ذهبي'),
                 'name_en' => 'Gold',
                 'slug' => self::SLUG_GOLD,
                 'tier_order' => 3,
@@ -135,7 +135,7 @@ class AffiliateLevel extends Model
                 'is_active' => true,
             ],
             [
-                'name_ar' => 'بلاتيني',
+                'name_ar' => __('بلاتيني'),
                 'name_en' => 'Platinum',
                 'slug' => self::SLUG_PLATINUM,
                 'tier_order' => 4,

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html dir="rtl" lang="ar">
+<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>{{ __('فاتورة رقم') }} {{ $invoice->invoice_number }}</title>
@@ -176,7 +176,7 @@
                         </tr>
                         <tr>
                             <td style="color: #64748b;">{{ __('فترة الاشتراك:') }}</td>
-                            <td style="font-weight: 600; text-align: left;">{{ $invoice->billing_period_starts_at->format('Y-m-d') }} إلى {{ $invoice->billing_period_ends_at->format('Y-m-d') }}</td>
+                            <td style="font-weight: 600; text-align: left;">{{ $invoice->billing_period_starts_at->format('Y-m-d') }} {{ __('إلى') }} {{ $invoice->billing_period_ends_at->format('Y-m-d') }}</td>
                         </tr>
                         @if($invoice->paid_at)
                         <tr>

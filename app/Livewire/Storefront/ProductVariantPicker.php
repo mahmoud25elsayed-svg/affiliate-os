@@ -58,7 +58,7 @@ class ProductVariantPicker extends Component
         ]);
 
         $this->dispatch('notify', [
-            'message' => 'تمت إضافة المنتج إلى السلة بنجاح!',
+            'message' => __('تمت إضافة المنتج إلى السلة بنجاح!'),
             'type' => 'success',
         ]);
     }

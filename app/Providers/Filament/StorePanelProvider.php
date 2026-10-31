@@ -3,8 +3,10 @@
 namespace App\Providers\Filament;
 
 use App\Http\Middleware\InitializeTenancyForFilament;
+use App\Http\Middleware\SetLocale;
 use App\Models\Tenant;
 use App\Support\Billing\Features;
+use Filament\Actions\Action;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -36,7 +38,15 @@ class StorePanelProvider extends PanelProvider
             ->tenant(Tenant::class, slugAttribute: 'id')
             ->tenantMiddleware([
                 InitializeTenancyForFilament::class,
+                SetLocale::class,
             ], isPersistent: true)
+            ->userMenuItems([
+                // Relative link: reloads the current page in the other language (SetLocale stores it).
+                Action::make('switch_language')
+                    ->label(fn (): string => app()->getLocale() === 'ar' ? 'English' : __('العربية'))
+                    ->icon('heroicon-o-language')
+                    ->url(fn (): string => '?lang='.(app()->getLocale() === 'ar' ? 'en' : 'ar')),
+            ])
             ->colors([
                 'primary' => Color::Emerald,
             ])
@@ -64,6 +74,7 @@ class StorePanelProvider extends PanelProvider
                 StartSession::class,
                 AuthenticateSession::class,
                 ShareErrorsFromSession::class,
+                SetLocale::class,
                 VerifyCsrfToken::class,
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
@@ -101,11 +112,12 @@ class StorePanelProvider extends PanelProvider
         ];
 
         return array_map(
-            fn (array $p): NavigationItem => NavigationItem::make($p[0])
+            // Labels are translated per request: the panel is built once at boot, before SetLocale runs.
+            fn (array $p): NavigationItem => NavigationItem::make(fn (): string => __($p[0]))
                 ->url(fn (): string => route($p[1]))
                 ->isActiveWhen(fn (): bool => request()->routeIs($p[1].'*'))
                 ->icon($p[2])
-                ->group($p[3])
+                ->group(fn (): string => __($p[3]))
                 ->sort($p[4])
                 ->visible(fn (): bool => $p[5] === null || Features::enabled($p[5])),
             $pages,

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import AppLayout from '../../Layouts/AppLayout';
 import { formatCurrency, currencySymbol } from '../../utils/format';
+import { t } from '@/i18n';
 import {
     PlusCircle,
     User,
@@ -123,18 +124,18 @@ export default function CreateOrder({ products, governorates, selectedVariantId,
     };
 
     return (
-        <AppLayout title="إنشاء طلب سريع">
-            <Head title="إنشاء طلب سريع - تطبيق المسوق" />
+        <AppLayout title={t('إنشاء طلب سريع')}>
+            <Head title={t('إنشاء طلب سريع - تطبيق المسوق')} />
 
             <div className="space-y-4">
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-base font-bold text-white flex items-center gap-1.5">
                             <PlusCircle className="w-5 h-5 text-indigo-400" />
-                            <span>إنشاء طلب سريع للعميل</span>
+                            <span>{t('إنشاء طلب سريع للعميل')}</span>
                         </h1>
                         <p className="text-xs text-slate-400">
-                            أدخل بيانات العميل وحدد سعر البيع لمشاهدة ربحك فوراً.
+                            {t('أدخل بيانات العميل وحدد سعر البيع لمشاهدة ربحك فوراً.')}
                         </p>
                     </div>
                 </div>
@@ -142,10 +143,10 @@ export default function CreateOrder({ products, governorates, selectedVariantId,
                 <form onSubmit={handleSubmit} className="space-y-4">
                     {/* Product & Variant Selection */}
                     <div className="p-4 rounded-3xl bg-slate-900 border border-slate-800 space-y-3">
-                        <h2 className="text-xs font-bold text-slate-200">1. اختيار المنتج والكمية</h2>
+                        <h2 className="text-xs font-bold text-slate-200">{t('1. اختيار المنتج والكمية')}</h2>
 
                         <div>
-                            <label className="block text-[11px] text-slate-400 mb-1">المنتج والموديل</label>
+                            <label className="block text-[11px] text-slate-400 mb-1">{t('المنتج والموديل')}</label>
                             <select
                                 value={data.variant_id}
                                 onChange={(e) => {
@@ -163,7 +164,7 @@ export default function CreateOrder({ products, governorates, selectedVariantId,
                                     <optgroup key={p.id} label={p.name}>
                                         {p.variants.map((v) => (
                                             <option key={v.id} value={v.id}>
-                                                {p.name} ({v.sku}) - متبقي {v.stock}
+                                                {p.name} ({v.sku}{t(') - متبقي')} {v.stock}
                                             </option>
                                         ))}
                                     </optgroup>
@@ -177,7 +178,7 @@ export default function CreateOrder({ products, governorates, selectedVariantId,
                         {/* Quantity and Selling Price */}
                         <div className="grid grid-cols-2 gap-3">
                             <div>
-                                <label className="block text-[11px] text-slate-400 mb-1">الكمية</label>
+                                <label className="block text-[11px] text-slate-400 mb-1">{t('الكمية')}</label>
                                 <div className="flex items-center h-11 rounded-2xl bg-slate-800 border border-slate-700 px-2 justify-between">
                                     <button
                                         type="button"
@@ -198,7 +199,7 @@ export default function CreateOrder({ products, governorates, selectedVariantId,
                             </div>
 
                             <div>
-                                <label className="block text-[11px] text-slate-400 mb-1">سعر البيع للقطعة ({currencySymbol()})</label>
+                                <label className="block text-[11px] text-slate-400 mb-1">{t('سعر البيع للقطعة (')}{currencySymbol()})</label>
                                 <input
                                     type="number"
                                     min={minSellingPounds}
@@ -212,8 +213,8 @@ export default function CreateOrder({ products, governorates, selectedVariantId,
 
                         {/* Bounds info */}
                         <div className="flex justify-between text-[10px] text-slate-500 font-mono">
-                            <span>جملة: {currentVariant ? formatCurrency(currentVariant.wholesale_minor) : ''}</span>
-                            <span>نطاق البيع: {minSellingPounds} إلى {maxSellingPounds} {currencySymbol()}</span>
+                            <span>{t('جملة:')} {currentVariant ? formatCurrency(currentVariant.wholesale_minor) : ''}</span>
+                            <span>{t('نطاق البيع:')} {minSellingPounds} {t('إلى')} {maxSellingPounds} {currencySymbol()}</span>
                         </div>
                         {errors.selling_price_minor && (
                             <p className="text-[10px] text-rose-400">{errors.selling_price_minor}</p>
@@ -222,17 +223,17 @@ export default function CreateOrder({ products, governorates, selectedVariantId,
 
                     {/* Customer Information */}
                     <div className="p-4 rounded-3xl bg-slate-900 border border-slate-800 space-y-3">
-                        <h2 className="text-xs font-bold text-slate-200">2. بيانات العميل والتوصيل</h2>
+                        <h2 className="text-xs font-bold text-slate-200">{t('2. بيانات العميل والتوصيل')}</h2>
 
                         <div>
-                            <label className="block text-[11px] text-slate-400 mb-1">اسم العميل ثلاثي</label>
+                            <label className="block text-[11px] text-slate-400 mb-1">{t('اسم العميل ثلاثي')}</label>
                             <div className="relative">
                                 <input
                                     type="text"
                                     required
                                     value={data.customer_name}
                                     onChange={(e) => setData('customer_name', e.target.value)}
-                                    placeholder="مثال: أحمد محمد علي"
+                                    placeholder={t('مثال: أحمد محمد علي')}
                                     className="w-full h-11 pl-3 pr-9 rounded-2xl bg-slate-800 border border-slate-700 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
                                 />
                                 <User className="w-4 h-4 text-slate-400 absolute right-3 top-3.5" />
@@ -243,7 +244,7 @@ export default function CreateOrder({ products, governorates, selectedVariantId,
                         </div>
 
                         <div>
-                            <label className="block text-[11px] text-slate-400 mb-1">رقم الهاتف (مصري: 010 / 011 / 012 / 015)</label>
+                            <label className="block text-[11px] text-slate-400 mb-1">{t('رقم موبايل العميل')}</label>
                             <div className="relative">
                                 <input
                                     type="tel"
@@ -264,7 +265,7 @@ export default function CreateOrder({ products, governorates, selectedVariantId,
                         {/* Governorate and City */}
                         <div className="grid grid-cols-2 gap-3">
                             <div>
-                                <label className="block text-[11px] text-slate-400 mb-1">المحافظة</label>
+                                <label className="block text-[11px] text-slate-400 mb-1">{t('المحافظة')}</label>
                                 <select
                                     value={data.governorate_id}
                                     onChange={(e) => {
@@ -285,13 +286,13 @@ export default function CreateOrder({ products, governorates, selectedVariantId,
                             </div>
 
                             <div>
-                                <label className="block text-[11px] text-slate-400 mb-1">المركز / الحي (اختياري)</label>
+                                <label className="block text-[11px] text-slate-400 mb-1">{t('المركز / الحي (اختياري)')}</label>
                                 <select
                                     value={data.city_id}
                                     onChange={(e) => setData('city_id', e.target.value)}
                                     className="w-full h-11 rounded-2xl bg-slate-800 border border-slate-700 px-3 text-xs text-white focus:outline-none focus:border-indigo-500"
                                 >
-                                    <option value="">اختر الحي / المدينة</option>
+                                    <option value="">{t('اختر الحي / المدينة')}</option>
                                     {currentGov?.cities.map((c) => (
                                         <option key={c.id} value={c.id}>
                                             {c.name}
@@ -302,14 +303,14 @@ export default function CreateOrder({ products, governorates, selectedVariantId,
                         </div>
 
                         <div>
-                            <label className="block text-[11px] text-slate-400 mb-1">العنوان التفصيلي واسم الشارع والعمارة</label>
+                            <label className="block text-[11px] text-slate-400 mb-1">{t('العنوان التفصيلي واسم الشارع والعمارة')}</label>
                             <div className="relative">
                                 <input
                                     type="text"
                                     required
                                     value={data.address}
                                     onChange={(e) => setData('address', e.target.value)}
-                                    placeholder="اسم الشارع، رقم العقار، الدور، الشقة، علامة مميزة"
+                                    placeholder={t('اسم الشارع، رقم العقار، الدور، الشقة، علامة مميزة')}
                                     className="w-full h-11 pl-3 pr-9 rounded-2xl bg-slate-800 border border-slate-700 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
                                 />
                                 <MapPin className="w-4 h-4 text-slate-400 absolute right-3 top-3.5" />
@@ -320,12 +321,12 @@ export default function CreateOrder({ products, governorates, selectedVariantId,
                         </div>
 
                         <div>
-                            <label className="block text-[11px] text-slate-400 mb-1">ملاحظات لشركة الشحن (اختياري)</label>
+                            <label className="block text-[11px] text-slate-400 mb-1">{t('ملاحظات لشركة الشحن (اختياري)')}</label>
                             <input
                                 type="text"
                                 value={data.notes}
                                 onChange={(e) => setData('notes', e.target.value)}
-                                placeholder="مثال: يرجى الاتصال قبل الوصول بنصف ساعة"
+                                placeholder={t('مثال: يرجى الاتصال قبل الوصول بنصف ساعة')}
                                 className="w-full h-11 px-3 rounded-2xl bg-slate-800 border border-slate-700 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
                             />
                         </div>
@@ -337,22 +338,22 @@ export default function CreateOrder({ products, governorates, selectedVariantId,
                             <div className="flex items-center justify-between text-xs text-slate-300 font-bold">
                                 <span className="flex items-center gap-1.5 text-indigo-400">
                                     <Calculator className="w-4 h-4" />
-                                    معاينة الفاتورة والأرباح المباشرة
+                                    {t('معاينة الفاتورة والأرباح المباشرة')}
                                 </span>
-                                {isQuoting && <span className="text-[10px] text-slate-400 animate-pulse">جاري الحساب...</span>}
+                                {isQuoting && <span className="text-[10px] text-slate-400 animate-pulse">{t('جاري الحساب...')}</span>}
                             </div>
 
                             <div className="space-y-1.5 text-xs text-slate-400 pt-1">
                                 <div className="flex justify-between">
-                                    <span>إجمالي سعر المنتجات:</span>
+                                    <span>{t('إجمالي سعر المنتجات:')}</span>
                                     <span className="font-mono text-slate-200">{formatCurrency(quote.customer_total_minor - quote.shipping_cost_minor)}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span>تكلفة الشحن:</span>
+                                    <span>{t('تكلفة الشحن:')}</span>
                                     <span className="font-mono text-slate-200">{formatCurrency(quote.shipping_cost_minor)}</span>
                                 </div>
                                 <div className="flex justify-between font-bold text-white pt-1 border-t border-slate-800">
-                                    <span>المبلغ المطلوب من العميل:</span>
+                                    <span>{t('المبلغ المطلوب من العميل:')}</span>
                                     <span className="font-mono text-indigo-300">{formatCurrency(quote.customer_total_minor)}</span>
                                 </div>
                             </div>
@@ -360,7 +361,7 @@ export default function CreateOrder({ products, governorates, selectedVariantId,
                             {/* Profit Highlight */}
                             <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-between">
                                 <div>
-                                    <span className="text-[11px] text-emerald-400 block font-bold">صافي عمولتك بعد التسليم:</span>
+                                    <span className="text-[11px] text-emerald-400 block font-bold">{t('صافي عمولتك بعد التسليم:')}</span>
                                     <span className="text-lg font-black text-emerald-300 font-mono">
                                         +{formatCurrency(quote.affiliate_profit_minor)}
                                     </span>
@@ -388,11 +389,11 @@ export default function CreateOrder({ products, governorates, selectedVariantId,
                         className="w-full h-12 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-sm shadow-xl shadow-indigo-600/30 flex items-center justify-center gap-2 disabled:opacity-50 transition-all active:scale-[0.98]"
                     >
                         {processing ? (
-                            <span>جاري تسجيل الطلب وفحص الجودة...</span>
+                            <span>{t('جاري تسجيل الطلب وفحص الجودة...')}</span>
                         ) : (
                             <>
                                 <PlusCircle className="w-4 h-4" />
-                                <span>تأكيد وإرسال الطلب فوراً</span>
+                                <span>{t('تأكيد وإرسال الطلب فوراً')}</span>
                             </>
                         )}
                     </button>

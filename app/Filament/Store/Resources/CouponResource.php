@@ -28,77 +28,91 @@ class CouponResource extends Resource
 
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-ticket';
 
-    protected static ?string $navigationLabel = 'الكوبونات والخصومات';
+    public static function getNavigationLabel(): string
+    {
 
-    protected static ?string $modelLabel = 'كوبون';
+        return __('الكوبونات والخصومات');
 
-    protected static ?string $pluralModelLabel = 'الكوبونات';
+    }
 
-    protected static \UnitEnum|string|null $navigationGroup = 'التسويق والمبيعات';
+    public static function getModelLabel(): string
+    {
+        return __('كوبون');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('الكوبونات');
+    }
+
+    public static function getNavigationGroup(): string|\UnitEnum|null
+    {
+        return __('التسويق والمبيعات');
+    }
 
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('معلومات الكوبون')->schema([
+            Section::make(__('معلومات الكوبون'))->schema([
                 Grid::make(2)->schema([
                     TextInput::make('code')
-                        ->label('كود الكوبون')
+                        ->label(__('كود الكوبون'))
                         ->required()
                         ->unique(ignoreRecord: true)
                         ->maxLength(50)
                         ->extraInputAttributes(['style' => 'text-transform: uppercase']),
 
                     TextInput::make('name')
-                        ->label('اسم الكوبون / الحملة')
+                        ->label(__('اسم الكوبون / الحملة'))
                         ->required()
                         ->maxLength(255),
 
                     Select::make('type')
-                        ->label('نوع الخصم')
+                        ->label(__('نوع الخصم'))
                         ->options([
-                            Coupon::TYPE_PERCENTAGE => 'نسبة مئوية (%)',
-                            Coupon::TYPE_FIXED => 'مبلغ ثابت (بالقروش)',
-                            Coupon::TYPE_FREE_SHIPPING => 'شحن مجاني',
+                            Coupon::TYPE_PERCENTAGE => __('نسبة مئوية (%)'),
+                            Coupon::TYPE_FIXED => __('مبلغ ثابت (بالقروش)'),
+                            Coupon::TYPE_FREE_SHIPPING => __('شحن مجاني'),
                         ])
                         ->required(),
 
                     TextInput::make('value_minor')
-                        ->label('قيمة الخصم (نسبة % أو قروش)')
+                        ->label(__('قيمة الخصم (نسبة % أو قروش)'))
                         ->numeric()
                         ->default(0)
                         ->required(),
 
                     TextInput::make('min_order_value_minor')
-                        ->label('الحد الأدنى للطلب (بالقروش)')
+                        ->label(__('الحد الأدنى للطلب (بالقروش)'))
                         ->numeric()
                         ->nullable(),
 
                     TextInput::make('max_discount_minor')
-                        ->label('الحد الأقصى للخصم (بالقروش للنسبة)')
+                        ->label(__('الحد الأقصى للخصم (بالقروش للنسبة)'))
                         ->numeric()
                         ->nullable(),
 
                     TextInput::make('max_uses')
-                        ->label('الحد الأقصى الإجمالي للاستخدام')
+                        ->label(__('الحد الأقصى الإجمالي للاستخدام'))
                         ->numeric()
                         ->nullable(),
 
                     TextInput::make('max_uses_per_customer')
-                        ->label('الحد الأقصى لكل عميل')
+                        ->label(__('الحد الأقصى لكل عميل'))
                         ->numeric()
                         ->default(1)
                         ->required(),
 
                     DateTimePicker::make('starts_at')
-                        ->label('تاريخ بدء السريان')
+                        ->label(__('تاريخ بدء السريان'))
                         ->nullable(),
 
                     DateTimePicker::make('expires_at')
-                        ->label('تاريخ انتهاء الصلاحية')
+                        ->label(__('تاريخ انتهاء الصلاحية'))
                         ->nullable(),
 
                     Toggle::make('is_active')
-                        ->label('الكوبون نشط')
+                        ->label(__('الكوبون نشط'))
                         ->default(true),
                 ]),
             ]),
@@ -110,52 +124,52 @@ class CouponResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('code')
-                    ->label('الكود')
+                    ->label(__('الكود'))
                     ->badge()
                     ->color('primary')
                     ->searchable()
                     ->sortable(),
 
                 TextColumn::make('name')
-                    ->label('الاسم')
+                    ->label(__('الاسم'))
                     ->searchable(),
 
                 TextColumn::make('type')
-                    ->label('النوع')
+                    ->label(__('النوع'))
                     ->badge()
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        Coupon::TYPE_PERCENTAGE => 'نسبة مئوية',
-                        Coupon::TYPE_FIXED => 'مبلغ ثابت',
-                        Coupon::TYPE_FREE_SHIPPING => 'شحن مجاني',
+                        Coupon::TYPE_PERCENTAGE => __('نسبة مئوية'),
+                        Coupon::TYPE_FIXED => __('مبلغ ثابت'),
+                        Coupon::TYPE_FREE_SHIPPING => __('شحن مجاني'),
                         default => $state,
                     }),
 
                 TextColumn::make('value_minor')
-                    ->label('القيمة')
+                    ->label(__('القيمة'))
                     ->formatStateUsing(function (Coupon $record): string {
                         if ($record->type === Coupon::TYPE_PERCENTAGE) {
                             return "{$record->value_minor}%";
                         }
                         if ($record->type === Coupon::TYPE_FREE_SHIPPING) {
-                            return 'شحن مجاني';
+                            return __('شحن مجاني');
                         }
 
                         return Money::show($record->value_minor);
                     }),
 
                 TextColumn::make('uses_count')
-                    ->label('مرات الاستخدام')
+                    ->label(__('مرات الاستخدام'))
                     ->formatStateUsing(fn (Coupon $record): string => "{$record->uses_count}".($record->max_uses ? " / {$record->max_uses}" : ''))
                     ->badge(),
 
                 TextColumn::make('expires_at')
-                    ->label('تاريخ الانتهاء')
+                    ->label(__('تاريخ الانتهاء'))
                     ->dateTime('Y-m-d H:i')
-                    ->placeholder('غير محدد')
+                    ->placeholder(__('غير محدد'))
                     ->sortable(),
 
                 IconColumn::make('is_active')
-                    ->label('نشط')
+                    ->label(__('نشط'))
                     ->boolean(),
             ]);
     }

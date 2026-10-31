@@ -42,7 +42,7 @@ class OrderDeliveredLedgerListener
             $codEntry = new EntryData(
                 type: 'order_delivered_cod',
                 idempotencyKey: "order_delivered_cod_{$order->id}",
-                description: "مستحقات تحصيل COD وإيراد مبيعات للطلب #{$order->reference}",
+                description: __('مستحقات تحصيل COD وإيراد مبيعات للطلب #:reference', ['reference' => $order->reference]),
                 lines: [
                     new LedgerLineData(account: $codReceivableAccount, amountMinor: $orderTotalMinor),
                     new LedgerLineData(account: $storeRevenueAccount, amountMinor: -$orderTotalMinor),
@@ -79,7 +79,7 @@ class OrderDeliveredLedgerListener
         $entryData = new EntryData(
             type: 'order_delivered',
             idempotencyKey: "order_delivered_{$order->id}",
-            description: "استحقاق عمولة معلقة للطلب #{$order->reference}",
+            description: __('استحقاق عمولة معلقة للطلب #:reference', ['reference' => $order->reference]),
             lines: [
                 new LedgerLineData(account: $pendingAccount, amountMinor: $profitMinor),
                 new LedgerLineData(account: $expenseAccount, amountMinor: -$profitMinor),
@@ -99,7 +99,7 @@ class OrderDeliveredLedgerListener
             $bonusEntry = new EntryData(
                 type: 'tier_bonus',
                 idempotencyKey: "order_tier_bonus_{$order->id}_{$affiliate->id}",
-                description: "بونص مستوى {$affiliate->level->name_ar} للطلب #{$order->reference}",
+                description: __('بونص مستوى :name_ar للطلب #:reference', ['name_ar' => $affiliate->level->name_ar, 'reference' => $order->reference]),
                 lines: [
                     new LedgerLineData(account: $pendingAccount, amountMinor: $bonusMinor),
                     new LedgerLineData(account: $bonusExpenseAccount, amountMinor: -$bonusMinor),

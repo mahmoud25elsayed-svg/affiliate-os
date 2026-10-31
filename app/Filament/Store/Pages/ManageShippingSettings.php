@@ -9,6 +9,7 @@ use App\Support\Location\Governorate;
 use App\Support\Settings\ShippingSettings;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Illuminate\Contracts\Support\Htmlable;
 
 class ManageShippingSettings extends Page
 {
@@ -16,9 +17,17 @@ class ManageShippingSettings extends Page
 
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-truck';
 
-    protected static ?string $navigationLabel = 'إعدادات الشحن';
+    public static function getNavigationLabel(): string
+    {
 
-    protected static ?string $title = 'إعدادات الشحن والتوصيل';
+        return __('إعدادات الشحن');
+
+    }
+
+    public function getTitle(): string|Htmlable
+    {
+        return __('إعدادات الشحن والتوصيل');
+    }
 
     public float $default_rate_egp = 50.0;
 
@@ -89,7 +98,7 @@ class ManageShippingSettings extends Page
         }
 
         Notification::make()
-            ->title('تم حفظ إعدادات الشحن بنجاح')
+            ->title(__('تم حفظ إعدادات الشحن بنجاح'))
             ->success()
             ->send();
     }

@@ -29,7 +29,7 @@ class AffiliateKycController extends Controller
 
         return view('affiliate.kyc', [
             'affiliate' => $affiliate,
-            'storeName' => $tenant instanceof Tenant ? $tenant->name : 'متجرنا',
+            'storeName' => $tenant instanceof Tenant ? $tenant->name : __('متجرنا'),
         ]);
     }
 
@@ -43,13 +43,13 @@ class AffiliateKycController extends Controller
             'id_card_front' => ['required', 'file', 'mimes:jpeg,png,jpg,webp,pdf', 'max:5120'], // 5MB max, strict whitelist (no SVG/HTML)
             'id_card_back' => ['required', 'file', 'mimes:jpeg,png,jpg,webp,pdf', 'max:5120'],
         ], [
-            'national_id_number.required' => 'الرقم القومي مطلوب',
-            'id_card_front.required' => 'صورة وجه البطاقة مطلوبة',
-            'id_card_front.mimes' => 'يجب أن يكون الملف صورة أو مستند صالح (JPEG, PNG, WEBP, PDF)',
-            'id_card_front.max' => 'الحد الأقصى لحجم الملف هو 5 ميجابايت',
-            'id_card_back.required' => 'صورة ظهر البطاقة مطلوبة',
-            'id_card_back.mimes' => 'يجب أن يكون الملف صورة أو مستند صالح (JPEG, PNG, WEBP, PDF)',
-            'id_card_back.max' => 'الحد الأقصى لحجم الملف هو 5 ميجابايت',
+            'national_id_number.required' => __('الرقم القومي مطلوب'),
+            'id_card_front.required' => __('صورة وجه البطاقة مطلوبة'),
+            'id_card_front.mimes' => __('يجب أن يكون الملف صورة أو مستند صالح (JPEG, PNG, WEBP, PDF)'),
+            'id_card_front.max' => __('الحد الأقصى لحجم الملف هو 5 ميجابايت'),
+            'id_card_back.required' => __('صورة ظهر البطاقة مطلوبة'),
+            'id_card_back.mimes' => __('يجب أن يكون الملف صورة أو مستند صالح (JPEG, PNG, WEBP, PDF)'),
+            'id_card_back.max' => __('الحد الأقصى لحجم الملف هو 5 ميجابايت'),
         ]);
 
         /** @var UploadedFile $front */
@@ -66,7 +66,7 @@ class AffiliateKycController extends Controller
             );
 
             return redirect()->route('affiliate.kyc.show')
-                ->with('success', 'تم رفع وثائق الهوية بنجاح! جاري مراجعتها من قِبل إدارة المتجر.');
+                ->with('success', __('تم رفع وثائق الهوية بنجاح! جاري مراجعتها من قِبل إدارة المتجر.'));
         } catch (InvalidArgumentException $e) {
             return back()->withInput()->with('error', $e->getMessage());
         }

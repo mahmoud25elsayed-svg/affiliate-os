@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $pageTitle ?? 'AffiliateOS — نظام التجارة والتسويق بالعمولة' }}</title>
-    <meta name="description" content="{{ $metaDescription ?? 'منصة التجارة الإلكترونية وإدارة شبكات المسوقين بالعمولة للتجار في مصر.' }}">
+    <title>{{ $pageTitle ?? __('AffiliateOS — نظام التجارة والتسويق بالعمولة') }}</title>
+    <meta name="description" content="{{ $metaDescription ?? 'منصة التجارة الإلكترونية وإدارة شبكات المسوقين بالعمولة للتجار في الوطن العربي والعالم.' }}">
     <link rel="canonical" href="{{ url()->current() }}">
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%234f46e5'/%3E%3Cpath d='M30 70 L50 25 L70 70 L55 70 L50 55 L45 70 Z' fill='%23ffffff'/%3E%3C/svg%3E">
@@ -36,7 +36,7 @@
         "price": "499",
         "priceCurrency": "EGP"
       },
-      "description": "نظام تشغيل متكامل لإدارة المتاجر الإلكترونية وشبكات التسويق بالعمولة بنظام الدفع عند الاستلام في مصر."
+      "description": @js(__('نظام تشغيل متكامل لإدارة المتاجر الإلكترونية وشبكات التسويق بالعمولة بنظام الدفع عند الاستلام في الوطن العربي.'))
     }
     </script>
 
@@ -217,16 +217,17 @@
                 <span>AffiliateOS</span>
             </a>
             <ul class="nav-links">
-                <li><a href="{{ route('platform.marketing.home') }}" class="{{ request()->routeIs('platform.marketing.home') ? 'active' : '' }}">الرئيسية</a></li>
-                <li><a href="{{ route('platform.marketing.features') }}" class="{{ request()->routeIs('platform.marketing.features') ? 'active' : '' }}">الميزات</a></li>
-                <li><a href="{{ route('platform.marketing.pricing') }}" class="{{ request()->routeIs('platform.marketing.pricing') ? 'active' : '' }}">الأسعار</a></li>
-                <li><a href="{{ route('platform.marketing.faq') }}" class="{{ request()->routeIs('platform.marketing.faq') ? 'active' : '' }}">الأسئلة الشائعة</a></li>
-                <li><a href="{{ route('platform.marketing.blog') }}" class="{{ request()->routeIs('platform.marketing.blog*') ? 'active' : '' }}">المدونة</a></li>
-                <li><a href="{{ route('platform.marketing.contact') }}" class="{{ request()->routeIs('platform.marketing.contact') ? 'active' : '' }}">تواصل معنا</a></li>
+                <li><a href="{{ route('platform.marketing.home') }}" class="{{ request()->routeIs('platform.marketing.home') ? 'active' : '' }}">{{ __('الرئيسية') }}</a></li>
+                <li><a href="{{ route('platform.marketing.features') }}" class="{{ request()->routeIs('platform.marketing.features') ? 'active' : '' }}">{{ __('الميزات') }}</a></li>
+                <li><a href="{{ route('platform.marketing.pricing') }}" class="{{ request()->routeIs('platform.marketing.pricing') ? 'active' : '' }}">{{ __('الأسعار') }}</a></li>
+                <li><a href="{{ route('platform.marketing.faq') }}" class="{{ request()->routeIs('platform.marketing.faq') ? 'active' : '' }}">{{ __('الأسئلة الشائعة') }}</a></li>
+                <li><a href="{{ route('platform.marketing.blog') }}" class="{{ request()->routeIs('platform.marketing.blog*') ? 'active' : '' }}">{{ __('المدونة') }}</a></li>
+                <li><a href="{{ route('platform.marketing.contact') }}" class="{{ request()->routeIs('platform.marketing.contact') ? 'active' : '' }}">{{ __('تواصل معنا') }}</a></li>
             </ul>
             <div class="nav-actions">
-                <a href="/login" class="btn btn-secondary">تسجيل الدخول</a>
-                <a href="{{ route('onboarding.register') }}" class="btn btn-primary">ابدأ مجاناً</a>
+                <a href="?lang={{ app()->getLocale() === 'ar' ? 'en' : 'ar' }}" class="btn btn-secondary">{{ app()->getLocale() === 'ar' ? 'English' : 'العربية' }}</a>
+                <a href="/login" class="btn btn-secondary">{{ __('تسجيل الدخول') }}</a>
+                <a href="{{ route('onboarding.register') }}" class="btn btn-primary">{{ __('ابدأ مجاناً') }}</a>
             </div>
         </div>
     </header>
@@ -249,41 +250,41 @@
                 <div class="footer-col">
                     <a href="{{ route('platform.marketing.home') }}" class="logo" style="margin-bottom: 1rem;">AffiliateOS</a>
                     <p style="color: var(--text-muted); font-size: 0.95rem; max-width: 380px;">
-                        نظام تشغيل متكامل للتجارة الإلكترونية والتسويق بالعمولة. مصمم خصيصاً لمواجهة تحديات الدفع عند الاستلام، وتنسيق شركات الشحن، وضمان عدالة تسوية العمولات في السوق المصري.
+                        {{ __('نظام تشغيل متكامل للتجارة الإلكترونية والتسويق بالعمولة. مصمم خصيصاً لمواجهة تحديات الدفع عند الاستلام، وتنسيق شركات الشحن، وضمان عدالة تسوية العمولات في السوق المصري.') }}
                     </p>
                 </div>
                 <div class="footer-col">
-                    <h4>المنصة</h4>
+                    <h4>{{ __('المنصة') }}</h4>
                     <ul>
-                        <li><a href="{{ route('platform.marketing.features') }}">الميزات والقدرات</a></li>
-                        <li><a href="{{ route('platform.marketing.pricing') }}">خطط الأسعار</a></li>
-                        <li><a href="{{ route('onboarding.register') }}">إنشاء متجر جديد</a></li>
-                        <li><a href="{{ route('health.check') }}">حالة النظام والجاهزية</a></li>
+                        <li><a href="{{ route('platform.marketing.features') }}">{{ __('الميزات والقدرات') }}</a></li>
+                        <li><a href="{{ route('platform.marketing.pricing') }}">{{ __('خطط الأسعار') }}</a></li>
+                        <li><a href="{{ route('onboarding.register') }}">{{ __('إنشاء متجر جديد') }}</a></li>
+                        <li><a href="{{ route('health.check') }}">{{ __('حالة النظام والجاهزية') }}</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
-                    <h4>المصادر والدعم</h4>
+                    <h4>{{ __('المصادر والدعم') }}</h4>
                     <ul>
-                        <li><a href="{{ route('platform.marketing.blog') }}">المدونة والمقالات</a></li>
-                        <li><a href="{{ route('platform.marketing.faq') }}">الأسئلة الشائعة</a></li>
-                        <li><a href="{{ route('platform.marketing.contact') }}">فريق المبيعات والدعم</a></li>
+                        <li><a href="{{ route('platform.marketing.blog') }}">{{ __('المدونة والمقالات') }}</a></li>
+                        <li><a href="{{ route('platform.marketing.faq') }}">{{ __('الأسئلة الشائعة') }}</a></li>
+                        <li><a href="{{ route('platform.marketing.contact') }}">{{ __('فريق المبيعات والدعم') }}</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
-                    <h4>الامتثال والشروط</h4>
+                    <h4>{{ __('الامتثال والشروط') }}</h4>
                     <ul>
-                        <li><a href="{{ route('legal.terms') }}">شروط الخدمة للتجار</a></li>
-                        <li><a href="{{ route('legal.dpa') }}">اتفاقية معالجة البيانات (DPA)</a></li>
-                        <li><a href="{{ route('legal.affiliate-terms') }}">شروط برنامج الأفلييت</a></li>
-                        <li><a href="{{ route('legal.privacy') }}">سياسة الخصوصية</a></li>
+                        <li><a href="{{ route('legal.terms') }}">{{ __('شروط الخدمة للتجار') }}</a></li>
+                        <li><a href="{{ route('legal.dpa') }}">{{ __('اتفاقية معالجة البيانات (DPA)') }}</a></li>
+                        <li><a href="{{ route('legal.affiliate-terms') }}">{{ __('شروط برنامج الأفلييت') }}</a></li>
+                        <li><a href="{{ route('legal.privacy') }}">{{ __('سياسة الخصوصية') }}</a></li>
                     </ul>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2026 AffiliateOS. جميع الحقوق محفوظة. صُمم وفق المعايير والتشريعات المصرية.</p>
+                <p>{{ __('© 2026 AffiliateOS. جميع الحقوق محفوظة. يدعم 22 دولة عربية وأهم الأسواق العالمية.') }}</p>
                 <p style="display: flex; gap: 1rem;">
-                    <span>🛡️ عزل تام لبيانات المستأجرين</span>
-                    <span>⚡ بنية تحتية سريعة</span>
+                    <span>{{ __('🛡️ عزل تام لبيانات المستأجرين') }}</span>
+                    <span>{{ __('⚡ بنية تحتية سريعة') }}</span>
                 </p>
             </div>
         </div>

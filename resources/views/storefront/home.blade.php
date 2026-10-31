@@ -1,7 +1,7 @@
 @extends('layouts.storefront')
 
-@section('title', ($general->platform_name ?? 'متجرنا') . ' - ' . ($theme->hero_headline ?? 'تسوق الآن'))
-@section('meta_description', $theme->hero_subheadline ?? 'أفضل المنتجات والعروض مع توصيل سريع لجميع المحافظات والدفع عند الاستلام')
+@section('title', ($general->platform_name ?? __('متجرنا')) . ' - ' . (__($theme->hero_headline) ?: __('تسوق الآن')))
+@section('meta_description', __($theme->hero_subheadline) ?: __('أفضل المنتجات والعروض مع توصيل سريع لجميع المحافظات والدفع عند الاستلام'))
 
 @section('schema')
     <script type="application/ld+json">
@@ -19,34 +19,34 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
                 <div class="space-y-6 text-center lg:text-right">
                     <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-brand-600/30 text-brand-600 border border-brand-600/40">
-                        ⚡ عروض وتخفيضات حصرية لفترة محدودة
+                        {{ __('⚡ عروض وتخفيضات حصرية لفترة محدودة') }}
                     </span>
                     <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight">
-                        {{ $theme->hero_headline }}
+                        {{ __($theme->hero_headline) }}
                     </h1>
                     <p class="text-base sm:text-lg text-gray-300 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                        {{ $theme->hero_subheadline }}
+                        {{ __($theme->hero_subheadline) }}
                     </p>
                     <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
                         <a href="{{ url($theme->hero_button_url) }}" class="px-8 py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-lg shadow-brand-600/30 transition-all hover:-translate-y-0.5">
-                            {{ $theme->hero_button_text }}
+                            {{ __($theme->hero_button_text) }}
                         </a>
                         <a href="{{ url('/products') }}" class="px-6 py-3.5 bg-gray-800 hover:bg-gray-700 text-gray-200 font-semibold rounded-xl border border-gray-700 transition-colors">
-                            استكشف الكتالوج
+                            {{ __('استكشف الكتالوج') }}
                         </a>
                     </div>
                 </div>
 
                 @if(!empty($theme->hero_image_url))
                 <div class="relative flex justify-center">
-                    <img src="{{ $theme->hero_image_url }}" alt="{{ $theme->hero_headline }}" class="rounded-2xl shadow-2xl max-h-[420px] object-cover border border-gray-700" loading="lazy">
+                    <img src="{{ $theme->hero_image_url }}" alt="{{ __($theme->hero_headline) }}" class="rounded-2xl shadow-2xl max-h-[420px] object-cover border border-gray-700" loading="lazy">
                 </div>
                 @else
                 <div class="relative flex justify-center">
                     <div class="w-full max-w-md h-80 rounded-2xl bg-gradient-to-tr from-brand-600/20 to-cyan-500/20 border border-gray-700/60 backdrop-blur-md flex flex-col items-center justify-center p-8 text-center shadow-2xl">
                         <span class="text-5xl mb-4">🛍️</span>
-                        <h3 class="text-xl font-bold text-white mb-2">جودة وضمان حقيقي</h3>
-                        <p class="text-sm text-gray-400">معاينة الطلب عند الاستلام قبل الدفع لضمان الرضا الكامل.</p>
+                        <h3 class="text-xl font-bold text-white mb-2">{{ __('جودة وضمان حقيقي') }}</h3>
+                        <p class="text-sm text-gray-400">{{ __('معاينة الطلب عند الاستلام قبل الدفع لضمان الرضا الكامل.') }}</p>
                     </div>
                 </div>
                 @endif
@@ -68,13 +68,13 @@
             <div class="relative z-10 grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
                 <div class="md:col-span-8 space-y-4">
                     <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-black tracking-wide uppercase">
-                        <span>⭐ {{ $activeDailyDeal->badge_text ?? 'صفقة اليوم الحصرية' }}</span>
+                        <span>⭐ {{ $activeDailyDeal->badge_text ?? __('صفقة اليوم الحصرية') }}</span>
                     </div>
                     <h2 class="text-2xl sm:text-4xl font-black leading-tight">
                         {{ $activeDailyDeal->banner_title ?? $dealProduct->translateAttribute('name') }}
                     </h2>
                     <p class="text-sm sm:text-base text-white/90 line-clamp-2">
-                        {{ $dealProduct->translateAttribute('description') ?? 'عرض خاص متاح لليوم فقط بخصم استثنائي، سارع بالحجز قبل نفاد الكمية!' }}
+                        {{ $dealProduct->translateAttribute('description') ?? __('عرض خاص متاح لليوم فقط بخصم استثنائي، سارع بالحجز قبل نفاد الكمية!') }}
                     </p>
                     <div class="flex flex-wrap items-baseline gap-3 pt-2">
                         <span class="text-3xl sm:text-4xl font-black text-yellow-300">
@@ -85,13 +85,13 @@
                                 {{ \App\Support\Money::fromMinor($dealStdPrice)->format() }}
                             </span>
                             <span class="px-2.5 py-1 bg-yellow-400 text-gray-900 rounded-lg text-xs font-black">
-                                خصم {{ $activeDailyDeal->discount_type === 'percentage' ? $activeDailyDeal->discount_value.'%' : \App\Support\Money::fromMinor($activeDailyDeal->discount_value)->format() }}
+                                {{ __('خصم') }} {{ $activeDailyDeal->discount_type === 'percentage' ? $activeDailyDeal->discount_value.'%' : \App\Support\Money::fromMinor($activeDailyDeal->discount_value)->format() }}
                             </span>
                         @endif
                     </div>
                     <div class="pt-2">
                         <a href="{{ url('/products/'.$dealProduct->id) }}" class="inline-flex items-center gap-2 px-8 py-3.5 bg-white text-rose-600 hover:bg-gray-100 font-extrabold rounded-2xl shadow-lg transition-transform hover:scale-105">
-                            <span>اغتنم الفرصة واشترِ الآن</span>
+                            <span>{{ __('اغتنم الفرصة واشترِ الآن') }}</span>
                             <span>&larr;</span>
                         </a>
                     </div>
@@ -126,9 +126,9 @@
                     <div>
                         <div class="flex items-center gap-2">
                             <h2 class="text-xl sm:text-2xl font-black text-white">{{ $activeFlashSale->name }}</h2>
-                            <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-red-600 text-white">فلاش سيل</span>
+                            <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-red-600 text-white">{{ __('فلاش سيل') }}</span>
                         </div>
-                        <p class="text-xs text-gray-400 mt-1">تخفيضات نارية سريعة تنتهي قريباً مع كميات محدودة جداً</p>
+                        <p class="text-xs text-gray-400 mt-1">{{ __('تخفيضات نارية سريعة تنتهي قريباً مع كميات محدودة جداً') }}</p>
                     </div>
                 </div>
 
@@ -136,22 +136,22 @@
                 <div class="flex items-center gap-2 text-center select-none" dir="ltr">
                     <div class="bg-gray-800/90 border border-gray-700 rounded-xl px-3 py-2 min-w-[54px]">
                         <span class="block text-lg sm:text-xl font-black text-red-500 font-mono" x-text="days">00</span>
-                        <span class="block text-[9px] uppercase tracking-wider text-gray-400 font-semibold">أيام</span>
+                        <span class="block text-[9px] uppercase tracking-wider text-gray-400 font-semibold">{{ __('أيام') }}</span>
                     </div>
                     <span class="text-red-500 font-bold text-lg">:</span>
                     <div class="bg-gray-800/90 border border-gray-700 rounded-xl px-3 py-2 min-w-[54px]">
                         <span class="block text-lg sm:text-xl font-black text-red-500 font-mono" x-text="hours">00</span>
-                        <span class="block text-[9px] uppercase tracking-wider text-gray-400 font-semibold">ساعات</span>
+                        <span class="block text-[9px] uppercase tracking-wider text-gray-400 font-semibold">{{ __('ساعات') }}</span>
                     </div>
                     <span class="text-red-500 font-bold text-lg">:</span>
                     <div class="bg-gray-800/90 border border-gray-700 rounded-xl px-3 py-2 min-w-[54px]">
                         <span class="block text-lg sm:text-xl font-black text-red-500 font-mono" x-text="minutes">00</span>
-                        <span class="block text-[9px] uppercase tracking-wider text-gray-400 font-semibold">دقائق</span>
+                        <span class="block text-[9px] uppercase tracking-wider text-gray-400 font-semibold">{{ __('دقائق') }}</span>
                     </div>
                     <span class="text-red-500 font-bold text-lg">:</span>
                     <div class="bg-gray-800/90 border border-gray-700 rounded-xl px-3 py-2 min-w-[54px]">
                         <span class="block text-lg sm:text-xl font-black text-red-500 font-mono" x-text="seconds">00</span>
-                        <span class="block text-[9px] uppercase tracking-wider text-gray-400 font-semibold">ثواني</span>
+                        <span class="block text-[9px] uppercase tracking-wider text-gray-400 font-semibold">{{ __('ثواني') }}</span>
                     </div>
                 </div>
             </div>
@@ -178,7 +178,7 @@
                                     <div class="w-full h-full flex items-center justify-center text-4xl text-gray-600">⚡</div>
                                 @endif
                                 <span class="absolute top-2 right-2 px-2 py-0.5 bg-red-600 text-white font-black text-[10px] rounded-md shadow">
-                                    خصم مباشر
+                                    {{ __('خصم مباشر') }}
                                 </span>
                             </div>
 
@@ -203,15 +203,15 @@
                         <!-- Progress Bar & Stock Notice -->
                         <div class="mt-4 pt-3 border-t border-gray-700/60">
                             <div class="flex justify-between items-center text-[11px] mb-1.5">
-                                <span class="text-gray-400">تم حجز: {{ $percentClaimed }}%</span>
-                                <span class="text-red-400 font-semibold">متبقي {{ $remaining }}</span>
+                                <span class="text-gray-400">{{ __('تم حجز:') }} {{ $percentClaimed }}%</span>
+                                <span class="text-red-400 font-semibold">{{ __('متبقي') }} {{ $remaining }}</span>
                             </div>
                             <div class="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
                                 <div class="bg-gradient-to-r from-red-500 to-amber-500 h-2 rounded-full transition-all duration-500" style="width: {{ $percentClaimed }}%"></div>
                             </div>
                             <div class="mt-3">
                                 <a href="{{ url('/products/'.$prod->id) }}" class="block w-full text-center py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl text-xs transition-colors shadow">
-                                    اطلب الآن
+                                    {{ __('اطلب الآن') }}
                                 </a>
                             </div>
                         </div>
@@ -279,8 +279,8 @@
                     @endif
                 </div>
                 <div>
-                    <h4 class="text-sm font-bold text-gray-900">{{ $badge['title'] }}</h4>
-                    <p class="text-xs text-gray-500 mt-1 leading-relaxed">{{ $badge['subtitle'] }}</p>
+                    <h4 class="text-sm font-bold text-gray-900">{{ __($badge['title']) }}</h4>
+                    <p class="text-xs text-gray-500 mt-1 leading-relaxed">{{ __($badge['subtitle']) }}</p>
                 </div>
             </div>
             @endforeach
@@ -293,11 +293,11 @@
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
         <div class="flex items-center justify-between mb-6">
             <div>
-                <h2 class="text-2xl font-black text-gray-900 tracking-tight">تصفح حسب الفئات</h2>
-                <p class="text-sm text-gray-500">اختر الفئة المفضلة للوصول السريع لمنتجاتك</p>
+                <h2 class="text-2xl font-black text-gray-900 tracking-tight">{{ __('تصفح حسب الفئات') }}</h2>
+                <p class="text-sm text-gray-500">{{ __('اختر الفئة المفضلة للوصول السريع لمنتجاتك') }}</p>
             </div>
             <a href="{{ url('/products') }}" class="text-sm font-semibold text-brand-600 hover:underline">
-                عرض الكل &larr;
+                {{ __('عرض الكل ←') }}
             </a>
         </div>
 
@@ -308,10 +308,10 @@
                         📁
                     </div>
                     <span class="text-xs font-bold text-gray-800 group-hover:text-brand-600 line-clamp-1 transition-colors">
-                        {{ $category->translateAttribute('name') ?? 'فئة' }}
+                        {{ $category->translateAttribute('name') ?? __('فئة') }}
                     </span>
                     <span class="text-[10px] text-gray-400 mt-1">
-                        {{ $category->products_count }} منتج
+                        {{ $category->products_count }} {{ __('منتج') }}
                     </span>
                 </a>
             @endforeach
@@ -324,11 +324,11 @@
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between mb-6">
             <div>
-                <h2 class="text-2xl font-black text-gray-900 tracking-tight">المنتجات الأكثر طلباً</h2>
-                <p class="text-sm text-gray-500">تشكيلة مختارة من أفضل المنتجات المضمونة</p>
+                <h2 class="text-2xl font-black text-gray-900 tracking-tight">{{ __('المنتجات الأكثر طلباً') }}</h2>
+                <p class="text-sm text-gray-500">{{ __('تشكيلة مختارة من أفضل المنتجات المضمونة') }}</p>
             </div>
             <a href="{{ url('/products') }}" class="text-sm font-semibold text-brand-600 hover:underline">
-                مشاهدة الجميع &larr;
+                {{ __('مشاهدة الجميع ←') }}
             </a>
         </div>
 
@@ -352,7 +352,7 @@
 
                         @if($comparePrice && $retailPrice && $comparePrice->amount > $retailPrice->price->value)
                             <span class="absolute top-2.5 right-2.5 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow">
-                                خصم مميز
+                                {{ __('خصم مميز') }}
                             </span>
                         @endif
                     </a>
@@ -360,11 +360,11 @@
                     <div class="p-4 flex-1 flex flex-col justify-between">
                         <div>
                             <span class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider block mb-1">
-                                {{ $product->brand?->name ?? 'متجرنا' }}
+                                {{ $product->brand?->name ?? __('متجرنا') }}
                             </span>
                             <h3 class="font-bold text-gray-900 text-sm group-hover:text-brand-600 line-clamp-2 transition-colors">
                                 <a href="{{ url('/products/'.$product->id) }}">
-                                    {{ $product->translateAttribute('name') ?? 'منتج' }}
+                                    {{ $product->translateAttribute('name') ?? __('منتج') }}
                                 </a>
                             </h3>
                         </div>
@@ -381,7 +381,7 @@
                                 @endif
                             </div>
 
-                            <a href="{{ url('/products/'.$product->id) }}" class="p-2 rounded-lg bg-brand-50 text-brand-600 hover:bg-brand-600 hover:text-white transition-colors" title="عرض التفاصيل">
+                            <a href="{{ url('/products/'.$product->id) }}" class="p-2 rounded-lg bg-brand-50 text-brand-600 hover:bg-brand-600 hover:text-white transition-colors" title="{{ __('عرض التفاصيل') }}">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                             </a>
                         </div>
@@ -397,12 +397,12 @@
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="rounded-3xl bg-gradient-to-r from-amber-500 to-orange-600 p-8 sm:p-12 text-white shadow-xl relative overflow-hidden flex flex-col sm:flex-row items-center justify-between gap-6">
             <div class="space-y-2 text-center sm:text-right relative z-10">
-                <span class="text-xs font-black uppercase tracking-wider bg-black/20 px-3 py-1 rounded-full">عرض اليوم</span>
-                <h3 class="text-2xl sm:text-4xl font-black">معاينة الطلب عند الاستلام مجاناً</h3>
-                <p class="text-sm sm:text-base text-amber-100 max-w-lg">تسوق بكل ثقة مع ضمان استرجاع مجاني وسداد عند الاستلام في جميع المحافظات.</p>
+                <span class="text-xs font-black uppercase tracking-wider bg-black/20 px-3 py-1 rounded-full">{{ __('عرض اليوم') }}</span>
+                <h3 class="text-2xl sm:text-4xl font-black">{{ __('معاينة الطلب عند الاستلام مجاناً') }}</h3>
+                <p class="text-sm sm:text-base text-amber-100 max-w-lg">{{ __('تسوق بكل ثقة مع ضمان استرجاع مجاني وسداد عند الاستلام في جميع المحافظات.') }}</p>
             </div>
             <a href="{{ url('/products') }}" class="px-8 py-3.5 bg-white text-gray-900 font-bold rounded-xl shadow hover:bg-gray-100 transition-colors whitespace-nowrap relative z-10">
-                تسوق العروض الآن
+                {{ __('تسوق العروض الآن') }}
             </a>
         </div>
     </section>
@@ -413,11 +413,11 @@
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between mb-6">
             <div>
-                <h2 class="text-2xl font-black text-gray-900 tracking-tight">أحدث الإضافات</h2>
-                <p class="text-sm text-gray-500">منتجات وصلت حديثاً إلى المتجر</p>
+                <h2 class="text-2xl font-black text-gray-900 tracking-tight">{{ __('أحدث الإضافات') }}</h2>
+                <p class="text-sm text-gray-500">{{ __('منتجات وصلت حديثاً إلى المتجر') }}</p>
             </div>
             <a href="{{ url('/products') }}" class="text-sm font-semibold text-brand-600 hover:underline">
-                استعراض المزيد &larr;
+                {{ __('استعراض المزيد ←') }}
             </a>
         </div>
 
@@ -441,11 +441,11 @@
                     <div class="p-4 flex-1 flex flex-col justify-between">
                         <div>
                             <span class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider block mb-1">
-                                {{ $product->brand?->name ?? 'متجرنا' }}
+                                {{ $product->brand?->name ?? __('متجرنا') }}
                             </span>
                             <h3 class="font-bold text-gray-900 text-sm group-hover:text-brand-600 line-clamp-2 transition-colors">
                                 <a href="{{ url('/products/'.$product->id) }}">
-                                    {{ $product->translateAttribute('name') ?? 'منتج' }}
+                                    {{ $product->translateAttribute('name') ?? __('منتج') }}
                                 </a>
                             </h3>
                         </div>
@@ -455,7 +455,7 @@
                                 {{ \App\Support\Money::show($retailPrice?->price) }}
                             </span>
 
-                            <a href="{{ url('/products/'.$product->id) }}" class="p-2 rounded-lg bg-brand-50 text-brand-600 hover:bg-brand-600 hover:text-white transition-colors" title="عرض التفاصيل">
+                            <a href="{{ url('/products/'.$product->id) }}" class="p-2 rounded-lg bg-brand-50 text-brand-600 hover:bg-brand-600 hover:text-white transition-colors" title="{{ __('عرض التفاصيل') }}">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                             </a>
                         </div>

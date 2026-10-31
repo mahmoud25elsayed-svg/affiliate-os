@@ -7,6 +7,7 @@ namespace App\Filament\Store\Pages;
 use App\Support\Settings\ThemeSettings;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Illuminate\Contracts\Support\Htmlable;
 
 class ManageThemeSettings extends Page
 {
@@ -14,9 +15,17 @@ class ManageThemeSettings extends Page
 
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-paint-brush';
 
-    protected static ?string $navigationLabel = 'تخصيص الواجهة والثيم';
+    public static function getNavigationLabel(): string
+    {
 
-    protected static ?string $title = 'تخصيص واجهة المتجر والثيم';
+        return __('تخصيص الواجهة والثيم');
+
+    }
+
+    public function getTitle(): string|Htmlable
+    {
+        return __('تخصيص واجهة المتجر والثيم');
+    }
 
     public string $primary_color = '#4f46e5';
 
@@ -130,7 +139,7 @@ class ManageThemeSettings extends Page
         $settings->save();
 
         Notification::make()
-            ->title('تم حفظ إعدادات المظهر والثيم بنجاح')
+            ->title(__('تم حفظ إعدادات المظهر والثيم بنجاح'))
             ->success()
             ->send();
     }

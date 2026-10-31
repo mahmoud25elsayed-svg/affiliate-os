@@ -49,23 +49,23 @@ class PayoutTurnaroundCalculator
         $seconds = $this->getAverageTurnaroundSeconds();
 
         if ($seconds === null || $seconds <= 0) {
-            return 'خلال 24 إلى 48 ساعة';
+            return __('خلال 24 إلى 48 ساعة');
         }
 
         $hours = $seconds / 3600;
 
         if ($hours < 1) {
-            return 'أقل من ساعة واحدة';
+            return __('أقل من ساعة واحدة');
         }
 
         if ($hours < 24) {
             $roundedHours = (int) round($hours);
 
-            return "حوالي {$roundedHours} ساعة";
+            return __('حوالي :rounded_hours ساعة', ['rounded_hours' => $roundedHours]);
         }
 
         $days = round($hours / 24, 1);
 
-        return "حوالي {$days} يوم";
+        return __('حوالي :days يوم', ['days' => $days]);
     }
 }

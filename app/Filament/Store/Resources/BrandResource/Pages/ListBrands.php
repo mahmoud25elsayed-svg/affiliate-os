@@ -15,7 +15,7 @@ class ListBrands extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make()->label('إضافة علامة تجارية جديدة'),
+            CreateAction::make()->label(__('إضافة علامة تجارية جديدة')),
         ];
     }
 }

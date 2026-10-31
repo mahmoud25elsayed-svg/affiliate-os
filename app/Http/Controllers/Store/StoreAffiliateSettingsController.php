@@ -55,6 +55,6 @@ class StoreAffiliateSettingsController extends Controller
         $settings->save();
 
         return redirect()->route('store.affiliates.settings.show')
-            ->with('success', 'تم حفظ وتحديث إعدادات برنامج المسوقين وحدود العمولات بنجاح.');
+            ->with('success', __('تم حفظ وتحديث إعدادات برنامج المسوقين وحدود العمولات بنجاح.'));
     }
 }

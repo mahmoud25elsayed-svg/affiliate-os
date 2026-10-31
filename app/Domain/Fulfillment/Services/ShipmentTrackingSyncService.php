@@ -53,7 +53,7 @@ class ShipmentTrackingSyncService
                         reason: null,
                         actor: $actor,
                         meta: ['tracking_number' => $shipment->tracking_number],
-                        note: 'الشحنة خرجت للتسليم مع مندوب الشحن.'
+                        note: __('الشحنة خرجت للتسليم مع مندوب الشحن.')
                     );
                 }
                 break;
@@ -74,7 +74,7 @@ class ShipmentTrackingSyncService
                             'tracking_number' => $shipment->tracking_number,
                             'delivered_at' => (string) $shipment->delivered_at,
                         ],
-                        note: 'تم تسليم الشحنة للعميل بنجاح وتحصيل المبلغ المطلوب ('.number_format($shipment->cod_amount_minor / 100, 2).' '.Money::symbol().').'
+                        note: __('تم تسليم الشحنة للعميل بنجاح وتحصيل المبلغ المطلوب (').number_format($shipment->cod_amount_minor / 100, 2).' '.Money::symbol().').'
                     );
                 }
                 break;
@@ -87,7 +87,7 @@ class ShipmentTrackingSyncService
                         reason: ReasonCode::CUSTOMER_UNREACHABLE,
                         actor: $actor,
                         meta: ['tracking_number' => $shipment->tracking_number],
-                        note: 'فشل محاولة تسليم الشحنة: '.($note ?? 'العميل لم يستجب للمندوب')
+                        note: __('فشل محاولة تسليم الشحنة: ').($note ?? __('العميل لم يستجب للمندوب'))
                     );
                 }
                 break;
@@ -100,7 +100,7 @@ class ShipmentTrackingSyncService
                         reason: ReasonCode::REFUSED_AT_DOORSTEP,
                         actor: $actor,
                         meta: ['tracking_number' => $shipment->tracking_number],
-                        note: 'الشحنة قيد الإرجاع للمتجر: '.($note ?? 'رفض العميل الاستلام عند الباب')
+                        note: __('الشحنة قيد الإرجاع للمتجر: ').($note ?? __('رفض العميل الاستلام عند الباب'))
                     );
                 }
                 break;
@@ -113,7 +113,7 @@ class ShipmentTrackingSyncService
                         reason: null,
                         actor: $actor,
                         meta: ['tracking_number' => $shipment->tracking_number],
-                        note: 'تم استلام الشحنة المرتجعة في المخزن والتحقق من سلامة المنتجات.'
+                        note: __('تم استلام الشحنة المرتجعة في المخزن والتحقق من سلامة المنتجات.')
                     );
                 }
                 break;
@@ -121,7 +121,7 @@ class ShipmentTrackingSyncService
             default:
                 // Other statuses like PICKED_UP, IN_TRANSIT: Log timeline info event if order is already shipped
                 $courierAccount = $shipment->courierAccount;
-                $courierName = $courierAccount instanceof CourierAccount ? $courierAccount->name : 'شركة الشحن';
+                $courierName = $courierAccount instanceof CourierAccount ? $courierAccount->name : __('شركة الشحن');
 
                 $tenantId = tenant('id');
                 $tenantIdString = is_string($tenantId) ? $tenantId : (string) ($order->getAttribute('tenant_id') ?? 'default');
@@ -133,7 +133,7 @@ class ShipmentTrackingSyncService
                     'to_status' => (string) $order->status,
                     'actor_type' => 'system',
                     'actor_name' => $courierName,
-                    'note' => "تحديث مسار الشحنة ({$shipment->tracking_number}): {$newStatus->label()}. ".($note ?? ''),
+                    'note' => __('تحديث مسار الشحنة (:tracking_number): :label. ', ['tracking_number' => $shipment->tracking_number, 'label' => $newStatus->label()]).($note ?? ''),
                     'created_at' => now(),
                 ]);
                 break;

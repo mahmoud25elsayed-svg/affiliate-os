@@ -97,7 +97,7 @@ class AffiliateAiToolsController extends Controller
         } catch (Throwable $e) {
             return response()->json([
                 'success' => false,
-                'error' => 'حدث خطأ أثناء كتابة نصوص الإعلانات: '.$e->getMessage(),
+                'error' => __('حدث خطأ أثناء كتابة نصوص الإعلانات: ').$e->getMessage(),
             ], 500);
         }
     }
@@ -141,7 +141,7 @@ class AffiliateAiToolsController extends Controller
         } catch (Throwable $e) {
             return response()->json([
                 'success' => false,
-                'error' => 'فشل توليد زوايا التسويق: '.$e->getMessage(),
+                'error' => __('فشل توليد زوايا التسويق: ').$e->getMessage(),
             ], 500);
         }
     }
@@ -183,7 +183,7 @@ class AffiliateAiToolsController extends Controller
         } catch (Throwable $e) {
             return response()->json([
                 'success' => false,
-                'error' => 'فحص السياسات غير متاح مؤقتاً: '.$e->getMessage(),
+                'error' => __('فحص السياسات غير متاح مؤقتاً: ').$e->getMessage(),
             ], 500);
         }
     }

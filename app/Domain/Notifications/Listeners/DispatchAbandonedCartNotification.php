@@ -22,9 +22,9 @@ class DispatchAbandonedCartNotification
         $cart = $event->abandonedCart;
         $recipientPhone = $cart->phone_e164 ?: $cart->customer?->phone;
         $recipientEmail = $cart->email ?: $cart->customer?->email;
-        $customerName = $cart->customer_name ?: 'عميلنا العزيز';
+        $customerName = $cart->customer_name ?: __('عميلنا العزيز');
         $tenant = function_exists('tenancy') && tenancy()->initialized ? tenancy()->tenant : null;
-        $storeName = $tenant instanceof Tenant ? $tenant->name : 'متجرنا';
+        $storeName = $tenant instanceof Tenant ? $tenant->name : __('متجرنا');
         $recoveryUrl = url("/cart/recover/{$cart->recovery_token}");
         $totalFormatted = Money::fromMinor($cart->subtotal_minor)->format();
 

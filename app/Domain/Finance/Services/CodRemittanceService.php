@@ -32,7 +32,7 @@ class CodRemittanceService
         ?string $notes = null
     ): CodRemittance {
         if (empty($rows)) {
-            throw new DomainException('لا يمكن إنشاء كشف تسوية بدون أسطر شحنات.');
+            throw new DomainException(__('لا يمكن إنشاء كشف تسوية بدون أسطر شحنات.'));
         }
 
         $tenantId = $courierAccount->tenant_id ?? (tenant('id') ? (string) tenant('id') : 'default');
@@ -86,11 +86,11 @@ class CodRemittanceService
                     $matchStatus = RemittanceItemMatchStatus::NOT_FOUND;
                     $discrepancyOrdersCount++;
                     $discrepancyAmountMinor += $row->reportedCodMinor;
-                    $itemNote = $itemNote ?: 'رقم التتبع غير مسجل بالنظام';
+                    $itemNote = $itemNote ?: __('رقم التتبع غير مسجل بالنظام');
                 } elseif ($order instanceof Order && (string) $order->status === OrderStatus::SETTLED->value) {
                     $matchStatus = RemittanceItemMatchStatus::ALREADY_SETTLED;
                     $discrepancyOrdersCount++;
-                    $itemNote = $itemNote ?: 'الطلب تمت تسويته مسبقاً في كشف سابق';
+                    $itemNote = $itemNote ?: __('الطلب تمت تسويته مسبقاً في كشف سابق');
                 } else {
                     $totalCollectedMinor += $row->reportedCodMinor;
                     $totalShippingFeesMinor += $row->shippingFeeMinor;
@@ -105,12 +105,12 @@ class CodRemittanceService
                         $matchStatus = RemittanceItemMatchStatus::AMOUNT_MISMATCH;
                         $discrepancyOrdersCount++;
                         $discrepancyAmountMinor += abs($codDiff);
-                        $itemNote = $itemNote ?: "فارق تحصيل: المبلغ المحصل ({$row->reportedCodMinor}) يختلف عن المتوقع ({$expectedCodMinor})";
+                        $itemNote = $itemNote ?: __('فارق تحصيل: المبلغ المحصل (:reported_cod_minor) يختلف عن المتوقع (:expected_cod_minor)', ['reported_cod_minor' => $row->reportedCodMinor, 'expected_cod_minor' => $expectedCodMinor]);
                     } elseif ($feeDiff !== 0) {
                         $matchStatus = RemittanceItemMatchStatus::FEE_MISMATCH;
                         $discrepancyOrdersCount++;
                         $discrepancyAmountMinor += abs($feeDiff);
-                        $itemNote = $itemNote ?: "فارق مصاريف: المصاريف المفوترة ({$row->shippingFeeMinor}) تختلف عن المسجلة ({$expectedFeeMinor})";
+                        $itemNote = $itemNote ?: __('فارق مصاريف: المصاريف المفوترة (:shipping_fee_minor) تختلف عن المسجلة (:expected_fee_minor)', ['shipping_fee_minor' => $row->shippingFeeMinor, 'expected_fee_minor' => $expectedFeeMinor]);
                     } else {
                         $matchedOrdersCount++;
                     }

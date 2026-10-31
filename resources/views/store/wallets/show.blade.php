@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محفظة العميل #{{ $wallet->customer_id }} - لوحة المتجر</title>
+    <title>{{ __('محفظة العميل #') }}{{ $wallet->customer_id }} {{ __('- لوحة المتجر') }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,15 +20,15 @@
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div class="flex items-center gap-3">
                 <a href="{{ route('store.wallets.index') }}" class="p-2.5 bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 rounded-xl transition shadow-sm text-sm">
-                    ← العودة لقائمة المحافظ
+                    {{ __('← العودة لقائمة المحافظ') }}
                 </a>
                 <div>
                     <h1 class="text-xl font-black text-slate-900">
-                        {{ $wallet->customer ? trim($wallet->customer->first_name . ' ' . $wallet->customer->last_name) : "العميل #{$wallet->customer_id}" }}
+                        {{ $wallet->customer ? trim($wallet->customer->first_name . ' ' . $wallet->customer->last_name) : __('العميل #:customer_id', ['customer_id' => $wallet->customer_id]) }}
                     </h1>
                     <p class="text-xs text-slate-500 mt-0.5">
-                        الهاتف: <span class="font-mono text-slate-700 font-bold">{{ $wallet->customer?->phone ?? '-' }}</span>
-                        • البريد: <span class="font-mono text-slate-700 font-bold">{{ $wallet->customer?->email ?? '-' }}</span>
+                        {{ __('الهاتف:') }} <span class="font-mono text-slate-700 font-bold">{{ $wallet->customer?->phone ?? '-' }}</span>
+                        {{ __('• البريد:') }} <span class="font-mono text-slate-700 font-bold">{{ $wallet->customer?->email ?? '-' }}</span>
                     </p>
                 </div>
             </div>
@@ -59,23 +59,23 @@
             <!-- Wallet Balance -->
             <div class="bg-gradient-to-br from-emerald-500 to-teal-700 text-white p-6 rounded-3xl shadow-sm relative overflow-hidden">
                 <div class="relative z-10">
-                    <span class="text-xs font-bold text-emerald-100 uppercase tracking-wider block mb-1">رصيد محفظة العميل (Store Credit)</span>
+                    <span class="text-xs font-bold text-emerald-100 uppercase tracking-wider block mb-1">{{ __('رصيد محفظة العميل (Store Credit)') }}</span>
                     <div class="text-3xl font-black mb-1">
                         {{ number_format($wallet->balance_minor / 100, 2) }} <span class="text-base font-normal">{{ \App\Support\Money::symbol() }}</span>
                     </div>
-                    <p class="text-xs text-emerald-100">رصيد متاح للاستخدام في عمليات الشراء المباشرة أو الدفع الجزئي</p>
+                    <p class="text-xs text-emerald-100">{{ __('رصيد متاح للاستخدام في عمليات الشراء المباشرة أو الدفع الجزئي') }}</p>
                 </div>
             </div>
 
             <!-- Loyalty Points -->
             <div class="bg-gradient-to-br from-violet-600 to-indigo-800 text-white p-6 rounded-3xl shadow-sm relative overflow-hidden">
                 <div class="relative z-10">
-                    <span class="text-xs font-bold text-violet-200 uppercase tracking-wider block mb-1">نقاط الولاء والمكافآت (Loyalty Points)</span>
+                    <span class="text-xs font-bold text-violet-200 uppercase tracking-wider block mb-1">{{ __('نقاط الولاء والمكافآت (Loyalty Points)') }}</span>
                     <div class="text-3xl font-black mb-1">
-                        {{ number_format($loyaltyAccount?->points_balance ?? 0) }} <span class="text-base font-normal">نقطة</span>
+                        {{ number_format($loyaltyAccount?->points_balance ?? 0) }} <span class="text-base font-normal">{{ __('نقطة') }}</span>
                     </div>
                     <p class="text-xs text-violet-200">
-                        تعادل قيمة خصم نقدي: <span class="font-bold underline">{{ \App\Support\Money::show((($loyaltyAccount?->points_balance ?? 0) * 10)) }}</span>
+                        {{ __('تعادل قيمة خصم نقدي:') }} <span class="font-bold underline">{{ \App\Support\Money::show((($loyaltyAccount?->points_balance ?? 0) * 10)) }}</span>
                     </p>
                 </div>
             </div>
@@ -87,29 +87,29 @@
             <div class="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-sm space-y-4">
                 <h3 class="font-black text-slate-900 text-sm flex items-center gap-2">
                     <span>💵</span>
-                    <span>تعديل يدوي لرصيد المحفظة</span>
+                    <span>{{ __('تعديل يدوي لرصيد المحفظة') }}</span>
                 </h3>
                 <form action="{{ route('store.wallets.adjust-wallet', $wallet) }}" method="POST" class="space-y-3">
                     @csrf
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-xs font-bold text-slate-600 mb-1">نوع الحركة</label>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">{{ __('نوع الحركة') }}</label>
                             <select name="action" required class="w-full text-xs font-bold px-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-white">
-                                <option value="credit">إضافة رصيد (+)</option>
-                                <option value="debit">خصم رصيد (-)</option>
+                                <option value="credit">{{ __('إضافة رصيد (+)') }}</option>
+                                <option value="debit">{{ __('خصم رصيد (-)') }}</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-600 mb-1">المبلغ ({{ \App\Support\Money::symbol() }})</label>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">{{ __('المبلغ (') }}{{ \App\Support\Money::symbol() }})</label>
                             <input type="number" step="0.01" min="0.01" name="amount" required placeholder="50.00" class="w-full text-xs font-bold px-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-600 mb-1">سبب التعديل / ملاحظات</label>
-                        <input type="text" name="notes" required placeholder="مثال: رصيد تعويضي عن تأخير شحنة" class="w-full text-xs px-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                        <label class="block text-xs font-bold text-slate-600 mb-1">{{ __('سبب التعديل / ملاحظات') }}</label>
+                        <input type="text" name="notes" required placeholder="{{ __('مثال: رصيد تعويضي عن تأخير شحنة') }}" class="w-full text-xs px-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                     </div>
                     <button type="submit" class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition shadow-sm">
-                        تنفيذ تعديل المحفظة
+                        {{ __('تنفيذ تعديل المحفظة') }}
                     </button>
                 </form>
             </div>
@@ -118,29 +118,29 @@
             <div class="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-sm space-y-4">
                 <h3 class="font-black text-slate-900 text-sm flex items-center gap-2">
                     <span>⭐</span>
-                    <span>تعديل يدوي لنقاط الولاء</span>
+                    <span>{{ __('تعديل يدوي لنقاط الولاء') }}</span>
                 </h3>
                 <form action="{{ route('store.wallets.adjust-loyalty', $wallet) }}" method="POST" class="space-y-3">
                     @csrf
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-xs font-bold text-slate-600 mb-1">نوع الحركة</label>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">{{ __('نوع الحركة') }}</label>
                             <select name="action" required class="w-full text-xs font-bold px-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:outline-none bg-white">
-                                <option value="award">منح نقاط (+)</option>
-                                <option value="deduct">خصم نقاط (-)</option>
+                                <option value="award">{{ __('منح نقاط (+)') }}</option>
+                                <option value="deduct">{{ __('خصم نقاط (-)') }}</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-600 mb-1">عدد النقاط</label>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">{{ __('عدد النقاط') }}</label>
                             <input type="number" min="1" name="points" required placeholder="100" class="w-full text-xs font-bold px-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:outline-none">
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-600 mb-1">سبب التعديل / ملاحظات</label>
-                        <input type="text" name="notes" required placeholder="مثال: بونص ترحيبي أو تصحيح نقاط" class="w-full text-xs px-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:outline-none">
+                        <label class="block text-xs font-bold text-slate-600 mb-1">{{ __('سبب التعديل / ملاحظات') }}</label>
+                        <input type="text" name="notes" required placeholder="{{ __('مثال: بونص ترحيبي أو تصحيح نقاط') }}" class="w-full text-xs px-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:outline-none">
                     </div>
                     <button type="submit" class="w-full py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-xl text-xs font-bold transition shadow-sm">
-                        تنفيذ تعديل النقاط
+                        {{ __('تنفيذ تعديل النقاط') }}
                     </button>
                 </form>
             </div>
@@ -149,17 +149,17 @@
         <!-- Wallet Transactions History -->
         <div class="bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-hidden">
             <div class="p-4 border-b border-slate-100">
-                <h3 class="font-black text-slate-900 text-xs">سجل حركات محفظة الرصيد ({{ $wallet->transactions->count() }})</h3>
+                <h3 class="font-black text-slate-900 text-xs">{{ __('سجل حركات محفظة الرصيد (') }}{{ $wallet->transactions->count() }})</h3>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-right text-xs">
                     <thead class="bg-slate-50 text-slate-500 font-bold">
                         <tr>
-                            <th class="px-4 py-3">المبلغ</th>
-                            <th class="px-4 py-3">النوع</th>
-                            <th class="px-4 py-3">المرجع</th>
-                            <th class="px-4 py-3">الملاحظات</th>
-                            <th class="px-4 py-3">التاريخ</th>
+                            <th class="px-4 py-3">{{ __('المبلغ') }}</th>
+                            <th class="px-4 py-3">{{ __('النوع') }}</th>
+                            <th class="px-4 py-3">{{ __('المرجع') }}</th>
+                            <th class="px-4 py-3">{{ __('الملاحظات') }}</th>
+                            <th class="px-4 py-3">{{ __('التاريخ') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
@@ -186,7 +186,7 @@
                         @empty
                             <tr>
                                 <td colspan="5" class="px-4 py-6 text-center text-slate-400 font-semibold">
-                                    لا توجد حركات مسجلة بالمحفظة بعد.
+                                    {{ __('لا توجد حركات مسجلة بالمحفظة بعد.') }}
                                 </td>
                             </tr>
                         @endforelse
@@ -199,25 +199,25 @@
         @if($loyaltyAccount)
             <div class="bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-hidden">
                 <div class="p-4 border-b border-slate-100">
-                    <h3 class="font-black text-slate-900 text-xs">سجل حركات نقاط الولاء ({{ $loyaltyAccount->transactions->count() }})</h3>
+                    <h3 class="font-black text-slate-900 text-xs">{{ __('سجل حركات نقاط الولاء (') }}{{ $loyaltyAccount->transactions->count() }})</h3>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-right text-xs">
                         <thead class="bg-slate-50 text-slate-500 font-bold">
                             <tr>
-                                <th class="px-4 py-3">النقاط</th>
-                                <th class="px-4 py-3">الرصيد بعد الحركة</th>
-                                <th class="px-4 py-3">النوع</th>
-                                <th class="px-4 py-3">الطلب</th>
-                                <th class="px-4 py-3">الملاحظات</th>
-                                <th class="px-4 py-3">التاريخ</th>
+                                <th class="px-4 py-3">{{ __('النقاط') }}</th>
+                                <th class="px-4 py-3">{{ __('الرصيد بعد الحركة') }}</th>
+                                <th class="px-4 py-3">{{ __('النوع') }}</th>
+                                <th class="px-4 py-3">{{ __('الطلب') }}</th>
+                                <th class="px-4 py-3">{{ __('الملاحظات') }}</th>
+                                <th class="px-4 py-3">{{ __('التاريخ') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
                             @forelse($loyaltyAccount->transactions as $ltx)
                                 <tr class="hover:bg-slate-50/60 transition">
                                     <td class="px-4 py-3 font-black {{ $ltx->points > 0 ? 'text-violet-600' : 'text-rose-600' }}">
-                                        {{ ($ltx->points > 0 ? '+' : '') . number_format($ltx->points) }} نقطة
+                                        {{ ($ltx->points > 0 ? '+' : '') . number_format($ltx->points) }} {{ __('نقطة') }}
                                     </td>
                                     <td class="px-4 py-3 font-bold text-slate-800">
                                         {{ number_format($ltx->balance_after) }}
@@ -240,7 +240,7 @@
                             @empty
                                 <tr>
                                     <td colspan="6" class="px-4 py-6 text-center text-slate-400 font-semibold">
-                                        لا توجد حركات نقاط ولاء بعد.
+                                        {{ __('لا توجد حركات نقاط ولاء بعد.') }}
                                     </td>
                                 </tr>
                             @endforelse

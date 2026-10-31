@@ -60,6 +60,7 @@ use App\Http\Middleware\EnsureAffiliateAuthenticated;
 use App\Http\Middleware\EnsureCustomerAuthenticated;
 use App\Http\Middleware\EnsureStorefrontActive;
 use App\Http\Middleware\RedirectSubdomainToCustomDomain;
+use App\Http\Middleware\SetLocale;
 use App\Livewire\Storefront\CartPage;
 use App\Livewire\Storefront\CheckoutPage;
 use App\Livewire\Storefront\CustomerAddressesPage;
@@ -81,6 +82,8 @@ Route::middleware([
     PreventAccessFromCentralDomains::class,
     EnsureStorefrontActive::class,
     RedirectSubdomainToCustomDomain::class,
+    // Again after tenancy, so the store's default language applies.
+    SetLocale::class,
 ])->group(function () {
     // Storefront Public Routes
     Route::get('/ref/{code}', AffiliateReferralController::class)->name('storefront.ref');

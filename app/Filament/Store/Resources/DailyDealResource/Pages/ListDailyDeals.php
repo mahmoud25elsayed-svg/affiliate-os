@@ -15,7 +15,7 @@ class ListDailyDeals extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make()->label('إضافة صفقة يومية جديدة'),
+            CreateAction::make()->label(__('إضافة صفقة يومية جديدة')),
         ];
     }
 }

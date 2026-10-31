@@ -72,11 +72,11 @@ class CustomerAddressesPage extends Component
             'address_line' => 'required|string|max:500',
             'notes' => 'nullable|string|max:500',
         ], [
-            'name.required' => 'يرجى إدخال اسم المستلم.',
-            'phone.required' => 'يرجى إدخال رقم الهاتف.',
-            'governorate_id.required' => 'يرجى اختيار المحافظة.',
-            'city.required' => 'يرجى إدخال المدينة / المنطقة.',
-            'address_line.required' => 'يرجى إدخال العنوان بالتفصيل.',
+            'name.required' => __('يرجى إدخال اسم المستلم.'),
+            'phone.required' => __('يرجى إدخال رقم الهاتف.'),
+            'governorate_id.required' => __('يرجى اختيار المحافظة.'),
+            'city.required' => __('يرجى إدخال المدينة / المنطقة.'),
+            'address_line.required' => __('يرجى إدخال العنوان بالتفصيل.'),
         ]);
 
         $tenantId = function_exists('tenancy') && tenancy()->initialized ? (string) tenant('id') : 'default';
@@ -103,7 +103,7 @@ class CustomerAddressesPage extends Component
         ]);
 
         $this->reset(['name', 'phone', 'governorate_id', 'city', 'address_line', 'notes', 'is_default', 'showAddModal']);
-        $this->successMessage = 'تمت إضافة العنوان بنجاح.';
+        $this->successMessage = __('تمت إضافة العنوان بنجاح.');
     }
 
     public function setAsDefault(int $addressId): void
@@ -122,7 +122,7 @@ class CustomerAddressesPage extends Component
 
         if ($address) {
             $address->setAsDefault();
-            $this->successMessage = 'تم تعيين العنوان الافتراضي بنجاح.';
+            $this->successMessage = __('تم تعيين العنوان الافتراضي بنجاح.');
         }
     }
 
@@ -139,7 +139,7 @@ class CustomerAddressesPage extends Component
             ->where('id', $addressId)
             ->delete();
 
-        $this->successMessage = 'تم حذف العنوان بنجاح.';
+        $this->successMessage = __('تم حذف العنوان بنجاح.');
     }
 
     public function render(): View
@@ -147,7 +147,7 @@ class CustomerAddressesPage extends Component
         return view('livewire.storefront.customer-addresses-page', [
             'addresses' => $this->getAddressesProperty(),
             'governorates' => $this->getGovernoratesProperty(),
-            'pageTitle' => 'عناويني',
+            'pageTitle' => __('عناويني'),
         ]);
     }
 }

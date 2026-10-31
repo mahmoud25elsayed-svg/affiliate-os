@@ -18,7 +18,7 @@ class ListNewsletterSubscribers extends ListRecords
     {
         return [
             Action::make('export_csv')
-                ->label('تصدير المشتركين (CSV)')
+                ->label(__('تصدير المشتركين (CSV)'))
                 ->icon('heroicon-o-arrow-down-tray')
                 ->color('success')
                 ->action(function (): StreamedResponse {
@@ -35,7 +35,7 @@ class ListNewsletterSubscribers extends ListRecords
 
                         // UTF-8 BOM for Arabic support in Excel
                         fwrite($handle, "\xEF\xBB\xBF");
-                        fputcsv($handle, ['البريد الإلكتروني', 'الاسم', 'المصدر', 'تاريخ الاشتراك']);
+                        fputcsv($handle, [__('البريد الإلكتروني'), __('الاسم'), __('المصدر'), __('تاريخ الاشتراك')]);
 
                         NewsletterSubscriber::query()
                             ->where('is_active', true)

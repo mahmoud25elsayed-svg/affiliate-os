@@ -15,11 +15,11 @@ enum RemittanceItemMatchStatus: string
     public function label(string $locale = 'ar'): string
     {
         return match ($this) {
-            self::MATCHED => $locale === 'ar' ? 'مطابق تماماً' : 'Matched',
-            self::AMOUNT_MISMATCH => $locale === 'ar' ? 'اختلاف مبلغ التحصيل' : 'Amount Mismatch',
-            self::FEE_MISMATCH => $locale === 'ar' ? 'اختلاف مصاريف الشحن' : 'Fee Mismatch',
-            self::NOT_FOUND => $locale === 'ar' ? 'شحنة غير معروفة' : 'Not Found',
-            self::ALREADY_SETTLED => $locale === 'ar' ? 'تمت تسويتها مسبقاً' : 'Already Settled',
+            self::MATCHED => $locale === 'ar' ? __('مطابق تماماً') : 'Matched',
+            self::AMOUNT_MISMATCH => $locale === 'ar' ? __('اختلاف مبلغ التحصيل') : 'Amount Mismatch',
+            self::FEE_MISMATCH => $locale === 'ar' ? __('اختلاف مصاريف الشحن') : 'Fee Mismatch',
+            self::NOT_FOUND => $locale === 'ar' ? __('شحنة غير معروفة') : 'Not Found',
+            self::ALREADY_SETTLED => $locale === 'ar' ? __('تمت تسويتها مسبقاً') : 'Already Settled',
         };
     }
 

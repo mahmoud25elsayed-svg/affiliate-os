@@ -14,10 +14,10 @@ enum NotificationStatus: string
     public function getLabel(): string
     {
         return match ($this) {
-            self::PENDING => 'قيد الإرسال',
-            self::SENT => 'تم الإرسال',
-            self::DELIVERED => 'تم التسليم',
-            self::FAILED => 'فشل الإرسال',
+            self::PENDING => __('قيد الإرسال'),
+            self::SENT => __('تم الإرسال'),
+            self::DELIVERED => __('تم التسليم'),
+            self::FAILED => __('فشل الإرسال'),
         };
     }
 }

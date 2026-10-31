@@ -24,36 +24,50 @@ class CollectionResource extends Resource
 
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-folder';
 
-    protected static ?string $navigationLabel = 'الفئات والتصنيفات';
+    public static function getNavigationLabel(): string
+    {
 
-    protected static ?string $modelLabel = 'فئة';
+        return __('الفئات والتصنيفات');
 
-    protected static ?string $pluralModelLabel = 'الفئات والتصنيفات';
+    }
 
-    protected static \UnitEnum|string|null $navigationGroup = 'إدارة الكتالوج';
+    public static function getModelLabel(): string
+    {
+        return __('فئة');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('الفئات والتصنيفات');
+    }
+
+    public static function getNavigationGroup(): string|\UnitEnum|null
+    {
+        return __('إدارة الكتالوج');
+    }
 
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('بيانات الفئة')->schema([
+            Section::make(__('بيانات الفئة'))->schema([
                 TextInput::make('name_ar')
-                    ->label('اسم الفئة (بالعربية)')
+                    ->label(__('اسم الفئة (بالعربية)'))
                     ->required(),
 
                 TextInput::make('name_en')
-                    ->label('اسم الفئة (بالإنجليزية)'),
+                    ->label(__('اسم الفئة (بالإنجليزية)')),
 
                 Select::make('collection_group_id')
-                    ->label('مجموعة الفئات')
+                    ->label(__('مجموعة الفئات'))
                     ->options(fn () => CollectionGroup::pluck('name', 'id'))
                     ->default(fn () => CollectionGroup::first()?->id)
                     ->required(),
 
                 Select::make('parent_id')
-                    ->label('الفئة الأب (إن وجدت)')
+                    ->label(__('الفئة الأب (إن وجدت)'))
                     ->options(fn () => Collection::all()->mapWithKeys(function ($c) {
                         /** @var Collection $c */
-                        return [$c->id => (string) ($c->translateAttribute('name') ?? 'فئة #'.$c->id)];
+                        return [$c->id => (string) ($c->translateAttribute('name') ?? __('فئة #').$c->id)];
                     }))
                     ->nullable()
                     ->searchable(),
@@ -66,23 +80,23 @@ class CollectionResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->label('اسم الفئة')
-                    ->getStateUsing(fn (Collection $record) => $record->translateAttribute('name') ?? 'فئة #'.$record->id)
+                    ->label(__('اسم الفئة'))
+                    ->getStateUsing(fn (Collection $record) => $record->translateAttribute('name') ?? __('فئة #').$record->id)
                     ->weight('bold')
                     ->searchable(),
 
                 TextColumn::make('parent.name')
-                    ->label('الفئة الأب')
+                    ->label(__('الفئة الأب'))
                     ->getStateUsing(fn (Collection $record) => $record->parent instanceof Collection ? $record->parent->translateAttribute('name') : '-')
                     ->badge(),
 
                 TextColumn::make('products_count')
-                    ->label('عدد المنتجات')
+                    ->label(__('عدد المنتجات'))
                     ->counts('products')
                     ->badge(),
 
                 TextColumn::make('created_at')
-                    ->label('تاريخ الإنشاء')
+                    ->label(__('تاريخ الإنشاء'))
                     ->dateTime('Y-m-d')
                     ->sortable(),
             ]);

@@ -25,25 +25,39 @@ class NotificationLogResource extends Resource
 
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-queue-list';
 
-    protected static ?string $navigationLabel = 'سجل الإرسال';
+    public static function getNavigationLabel(): string
+    {
 
-    protected static ?string $modelLabel = 'سجل إرسال';
+        return __('سجل الإرسال');
 
-    protected static ?string $pluralModelLabel = 'سجلات الإرسال';
+    }
 
-    protected static \UnitEnum|string|null $navigationGroup = 'الإشعارات والرسائل';
+    public static function getModelLabel(): string
+    {
+        return __('سجل إرسال');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('سجلات الإرسال');
+    }
+
+    public static function getNavigationGroup(): string|\UnitEnum|null
+    {
+        return __('الإشعارات والرسائل');
+    }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
                 TextColumn::make('recipient')
-                    ->label('المستقبل')
+                    ->label(__('المستقبل'))
                     ->searchable()
                     ->weight('bold'),
 
                 TextColumn::make('channel')
-                    ->label('القناة')
+                    ->label(__('القناة'))
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'sms' => 'primary',
@@ -53,11 +67,11 @@ class NotificationLogResource extends Resource
                     }),
 
                 TextColumn::make('event_type')
-                    ->label('الحدث')
+                    ->label(__('الحدث'))
                     ->badge(),
 
                 TextColumn::make('status')
-                    ->label('الحالة')
+                    ->label(__('الحالة'))
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'sent', 'delivered' => 'success',
@@ -65,30 +79,30 @@ class NotificationLogResource extends Resource
                         default => 'warning',
                     })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'sent' => 'تم الإرسال',
-                        'delivered' => 'تم التسليم',
-                        'failed' => 'فشل',
-                        'pending' => 'قيد الإرسال',
+                        'sent' => __('تم الإرسال'),
+                        'delivered' => __('تم التسليم'),
+                        'failed' => __('فشل'),
+                        'pending' => __('قيد الإرسال'),
                         default => $state,
                     }),
 
                 TextColumn::make('cost_minor')
-                    ->label('التكلفة')
+                    ->label(__('التكلفة'))
                     ->formatStateUsing(fn (int $state): string => Money::fromMinor($state)->format()),
 
                 TextColumn::make('error_message')
-                    ->label('ملاحظات الخطأ')
+                    ->label(__('ملاحظات الخطأ'))
                     ->limit(30)
                     ->tooltip(fn (NotificationLog $record): ?string => $record->error_message),
 
                 TextColumn::make('created_at')
-                    ->label('تاريخ الإرسال')
+                    ->label(__('تاريخ الإرسال'))
                     ->dateTime('d/m/Y H:i')
                     ->sortable(),
             ])
             ->filters([
                 SelectFilter::make('channel')
-                    ->label('القناة')
+                    ->label(__('القناة'))
                     ->options([
                         'sms' => 'SMS',
                         'whatsapp' => 'WhatsApp',
@@ -97,16 +111,16 @@ class NotificationLogResource extends Resource
                     ]),
 
                 SelectFilter::make('status')
-                    ->label('الحالة')
+                    ->label(__('الحالة'))
                     ->options([
-                        'sent' => 'تم الإرسال',
-                        'failed' => 'فشل',
-                        'pending' => 'قيد الإرسال',
+                        'sent' => __('تم الإرسال'),
+                        'failed' => __('فشل'),
+                        'pending' => __('قيد الإرسال'),
                     ]),
             ])
             ->actions([
                 Action::make('retry')
-                    ->label('إعادة الإرسال')
+                    ->label(__('إعادة الإرسال'))
                     ->icon('heroicon-o-arrow-path')
                     ->color('warning')
                     ->visible(fn (NotificationLog $record): bool => $record->status === 'failed')
@@ -119,7 +133,7 @@ class NotificationLogResource extends Resource
                         );
 
                         Notification::make()
-                            ->title('تمت إعادة إرسال الإشعار')
+                            ->title(__('تمت إعادة إرسال الإشعار'))
                             ->success()
                             ->send();
                     }),

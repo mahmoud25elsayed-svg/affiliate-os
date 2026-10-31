@@ -46,12 +46,12 @@ class MerchantOnboardingWizardController extends Controller
         if ($request->wantsJson()) {
             return response()->json([
                 'status' => 'success',
-                'message' => 'تم إنشاء البيانات التجريبية بنجاح.',
+                'message' => __('تم إنشاء البيانات التجريبية بنجاح.'),
                 'data' => $results,
             ]);
         }
 
-        return redirect()->back()->with('success', 'تم إنشاء البيانات التجريبية للمتجر بنجاح.');
+        return redirect()->back()->with('success', __('تم إنشاء البيانات التجريبية للمتجر بنجاح.'));
     }
 
     /**
@@ -67,11 +67,11 @@ class MerchantOnboardingWizardController extends Controller
         if ($request->wantsJson()) {
             return response()->json([
                 'status' => 'success',
-                'message' => 'تم حذف البيانات التجريبية بنجاح.',
+                'message' => __('تم حذف البيانات التجريبية بنجاح.'),
                 'data' => $results,
             ]);
         }
 
-        return redirect()->back()->with('success', 'تم تنظيف وحذف كافة البيانات التجريبية بنجاح.');
+        return redirect()->back()->with('success', __('تم تنظيف وحذف كافة البيانات التجريبية بنجاح.'));
     }
 }

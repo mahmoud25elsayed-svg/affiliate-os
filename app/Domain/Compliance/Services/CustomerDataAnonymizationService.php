@@ -33,9 +33,9 @@ class CustomerDataAnonymizationService
 
             // 1. Redact Customer Addresses
             $customer->addresses()->update([
-                'name' => 'مستهلك مجهول',
+                'name' => __('مستهلك مجهول'),
                 'phone' => $anonymizedPhone,
-                'address_line' => 'عنوان مجهول (تم الحذف بناءً على طلب صاحب البيانات)',
+                'address_line' => __('عنوان مجهول (تم الحذف بناءً على طلب صاحب البيانات)'),
                 'notes' => null,
                 'postal_code' => null,
             ]);
@@ -47,10 +47,10 @@ class CustomerDataAnonymizationService
 
             if ($orderIds->isNotEmpty()) {
                 OrderAddress::whereIn('order_id', $orderIds)->update([
-                    'first_name' => 'مستهلك',
-                    'last_name' => 'مجهول',
+                    'first_name' => __('مستهلك'),
+                    'last_name' => __('مجهول'),
                     'company_name' => null,
-                    'line_one' => 'تم الحذف بناءً على طلب الخصوصية',
+                    'line_one' => __('تم الحذف بناءً على طلب الخصوصية'),
                     'line_two' => null,
                     'line_three' => null,
                     'contact_phone' => $anonymizedPhone,
@@ -60,8 +60,8 @@ class CustomerDataAnonymizationService
             }
 
             // 3. Redact Profile and Mark as Anonymized
-            $customer->first_name = 'مستهلك';
-            $customer->last_name = 'مجهول';
+            $customer->first_name = __('مستهلك');
+            $customer->last_name = __('مجهول');
             $customer->email = $anonymizedEmail;
             $customer->phone_e164 = $anonymizedPhone;
             $customer->phone_hash = $anonymizedHash;

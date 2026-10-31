@@ -18,8 +18,8 @@ class PageController extends Controller
         $general = GeneralSettings::load();
 
         return view('storefront.page', [
-            'title' => 'عن المتجر',
-            'content' => $theme->about_us,
+            'title' => __('عن المتجر'),
+            'content' => __($theme->about_us),
             'theme' => $theme,
             'general' => $general,
         ]);
@@ -31,8 +31,8 @@ class PageController extends Controller
         $general = GeneralSettings::load();
 
         return view('storefront.page', [
-            'title' => 'الشروط والأحكام',
-            'content' => $theme->terms_and_conditions,
+            'title' => __('الشروط والأحكام'),
+            'content' => __($theme->terms_and_conditions),
             'theme' => $theme,
             'general' => $general,
         ]);
@@ -44,8 +44,8 @@ class PageController extends Controller
         $general = GeneralSettings::load();
 
         return view('storefront.page', [
-            'title' => 'سياسة الخصوصية',
-            'content' => $theme->privacy_policy,
+            'title' => __('سياسة الخصوصية'),
+            'content' => __($theme->privacy_policy),
             'theme' => $theme,
             'general' => $general,
         ]);
@@ -57,8 +57,8 @@ class PageController extends Controller
         $general = GeneralSettings::load();
 
         return view('storefront.page', [
-            'title' => 'الشحن والاسترجاع',
-            'content' => $theme->shipping_and_returns,
+            'title' => __('الشحن والاسترجاع'),
+            'content' => __($theme->shipping_and_returns),
             'theme' => $theme,
             'general' => $general,
         ]);

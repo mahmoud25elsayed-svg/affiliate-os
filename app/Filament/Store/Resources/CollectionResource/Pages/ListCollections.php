@@ -20,14 +20,14 @@ class ListCollections extends ListRecords
     {
         return [
             CreateAction::make()
-                ->label('إضافة فئة جديدة')
+                ->label(__('إضافة فئة جديدة'))
                 ->using(function (array $data): Collection {
                     /** @var CollectionGroup $group */
                     $group = isset($data['collection_group_id'])
                         ? CollectionGroup::findOrFail($data['collection_group_id'])
                         : (CollectionGroup::first() ?? CollectionGroup::create(['name' => 'Default', 'handle' => 'default']));
 
-                    $nameAr = $data['name_ar'] ?? 'فئة جديدة';
+                    $nameAr = $data['name_ar'] ?? __('فئة جديدة');
                     $nameEn = $data['name_en'] ?? $nameAr;
 
                     /** @var Collection $collection */

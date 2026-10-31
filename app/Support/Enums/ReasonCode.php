@@ -60,26 +60,26 @@ enum ReasonCode: string
     public function label(string $locale = 'ar'): string
     {
         return match ($this) {
-            self::CUSTOMER_CHANGED_MIND => $locale === 'ar' ? 'العميل غيّر رأيه' : 'Customer changed mind',
-            self::DUPLICATE_ORDER => $locale === 'ar' ? 'طلب مكرر' : 'Duplicate order',
-            self::HIGH_PRICE => $locale === 'ar' ? 'السعر مرتفع' : 'Price too high',
-            self::LONG_DELIVERY_TIME => $locale === 'ar' ? 'مدة التوصيل طويلة' : 'Delivery time too long',
-            self::OUT_OF_STOCK => $locale === 'ar' ? 'نفاد المخزون' : 'Out of stock',
+            self::CUSTOMER_CHANGED_MIND => $locale === 'ar' ? __('العميل غيّر رأيه') : 'Customer changed mind',
+            self::DUPLICATE_ORDER => $locale === 'ar' ? __('طلب مكرر') : 'Duplicate order',
+            self::HIGH_PRICE => $locale === 'ar' ? __('السعر مرتفع') : 'Price too high',
+            self::LONG_DELIVERY_TIME => $locale === 'ar' ? __('مدة التوصيل طويلة') : 'Delivery time too long',
+            self::OUT_OF_STOCK => $locale === 'ar' ? __('نفاد المخزون') : 'Out of stock',
 
-            self::INVALID_PHONE => $locale === 'ar' ? 'رقم هاتف غير صحيح' : 'Invalid phone number',
-            self::INCOMPLETE_ADDRESS => $locale === 'ar' ? 'عنوان غير مكتمل' : 'Incomplete address',
-            self::SUSPECTED_FRAUD => $locale === 'ar' ? 'اشتباه احتيال' : 'Suspected fraud',
-            self::HIGH_RISK_REPUTATION => $locale === 'ar' ? 'سجل رفض متكرر للعميل' : 'High risk customer reputation',
+            self::INVALID_PHONE => $locale === 'ar' ? __('رقم هاتف غير صحيح') : 'Invalid phone number',
+            self::INCOMPLETE_ADDRESS => $locale === 'ar' ? __('عنوان غير مكتمل') : 'Incomplete address',
+            self::SUSPECTED_FRAUD => $locale === 'ar' ? __('اشتباه احتيال') : 'Suspected fraud',
+            self::HIGH_RISK_REPUTATION => $locale === 'ar' ? __('سجل رفض متكرر للعميل') : 'High risk customer reputation',
 
-            self::CUSTOMER_UNREACHABLE => $locale === 'ar' ? 'العميل لا يجيب' : 'Customer unreachable',
-            self::INCORRECT_ADDRESS => $locale === 'ar' ? 'العنوان خاطئ' : 'Incorrect address',
-            self::REFUSED_AT_DOORSTEP => $locale === 'ar' ? 'رفض الاستلام عند الباب' : 'Refused at doorstep',
-            self::POSTPONED_EXCEEDED => $locale === 'ar' ? 'تأجيل متكرر تجاوز الحد' : 'Repeatedly postponed',
+            self::CUSTOMER_UNREACHABLE => $locale === 'ar' ? __('العميل لا يجيب') : 'Customer unreachable',
+            self::INCORRECT_ADDRESS => $locale === 'ar' ? __('العنوان خاطئ') : 'Incorrect address',
+            self::REFUSED_AT_DOORSTEP => $locale === 'ar' ? __('رفض الاستلام عند الباب') : 'Refused at doorstep',
+            self::POSTPONED_EXCEEDED => $locale === 'ar' ? __('تأجيل متكرر تجاوز الحد') : 'Repeatedly postponed',
 
-            self::DEFECTIVE_PRODUCT => $locale === 'ar' ? 'منتج معيب أو تالف' : 'Defective or damaged product',
-            self::WRONG_ITEM_SENT => $locale === 'ar' ? 'استلام منتج مختلف' : 'Wrong item sent',
-            self::NOT_AS_DESCRIBED => $locale === 'ar' ? 'المنتج لا يطابق الوصف' : 'Not as described',
-            self::SIZE_MISMATCH => $locale === 'ar' ? 'المقاس غير مناسب' : 'Size mismatch',
+            self::DEFECTIVE_PRODUCT => $locale === 'ar' ? __('منتج معيب أو تالف') : 'Defective or damaged product',
+            self::WRONG_ITEM_SENT => $locale === 'ar' ? __('استلام منتج مختلف') : 'Wrong item sent',
+            self::NOT_AS_DESCRIBED => $locale === 'ar' ? __('المنتج لا يطابق الوصف') : 'Not as described',
+            self::SIZE_MISMATCH => $locale === 'ar' ? __('المقاس غير مناسب') : 'Size mismatch',
         };
     }
 }

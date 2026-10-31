@@ -17,13 +17,13 @@ enum CallOutcome: string
     public function label(string $locale = 'ar'): string
     {
         return match ($this) {
-            self::CONFIRMED => $locale === 'ar' ? 'تم التأكيد' : 'Confirmed',
-            self::NO_ANSWER => $locale === 'ar' ? 'لم يرد' : 'No Answer',
-            self::BUSY => $locale === 'ar' ? 'مشغول / تعذر الاتصال' : 'Busy',
-            self::UNREACHABLE => $locale === 'ar' ? 'غير متاح / مغلق' : 'Unreachable',
-            self::CUSTOMER_CANCELLED => $locale === 'ar' ? 'العميل ألغى' : 'Cancelled by Customer',
-            self::POSTPONED => $locale === 'ar' ? 'طلب تأجيل / معاودة الاتصال' : 'Postponed',
-            self::WRONG_NUMBER => $locale === 'ar' ? 'رقم خاطئ' : 'Wrong Number',
+            self::CONFIRMED => $locale === 'ar' ? __('تم التأكيد') : 'Confirmed',
+            self::NO_ANSWER => $locale === 'ar' ? __('لم يرد') : 'No Answer',
+            self::BUSY => $locale === 'ar' ? __('مشغول / تعذر الاتصال') : 'Busy',
+            self::UNREACHABLE => $locale === 'ar' ? __('غير متاح / مغلق') : 'Unreachable',
+            self::CUSTOMER_CANCELLED => $locale === 'ar' ? __('العميل ألغى') : 'Cancelled by Customer',
+            self::POSTPONED => $locale === 'ar' ? __('طلب تأجيل / معاودة الاتصال') : 'Postponed',
+            self::WRONG_NUMBER => $locale === 'ar' ? __('رقم خاطئ') : 'Wrong Number',
         };
     }
 

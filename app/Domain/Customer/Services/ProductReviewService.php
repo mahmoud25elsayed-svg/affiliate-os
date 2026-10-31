@@ -67,19 +67,19 @@ class ProductReviewService
     ): ProductReview {
         if ($rating < 1 || $rating > 5) {
             throw ValidationException::withMessages([
-                'rating' => ['يجب أن يكون التقييم بين 1 و 5 نجوم.'],
+                'rating' => [__('يجب أن يكون التقييم بين 1 و 5 نجوم.')],
             ]);
         }
 
         if (trim($comment) === '') {
             throw ValidationException::withMessages([
-                'comment' => ['يرجى كتابة نص المراجعة.'],
+                'comment' => [__('يرجى كتابة نص المراجعة.')],
             ]);
         }
 
         if (! $this->canReviewProduct($customer, $productId)) {
             throw ValidationException::withMessages([
-                'rating' => ['التقييم متاح حصرياً للمشترين الفعليين لهذا المنتج.'],
+                'rating' => [__('التقييم متاح حصرياً للمشترين الفعليين لهذا المنتج.')],
             ]);
         }
 

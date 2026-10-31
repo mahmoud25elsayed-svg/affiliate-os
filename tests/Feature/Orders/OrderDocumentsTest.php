@@ -211,7 +211,7 @@ class OrderDocumentsTest extends TestCase
         $response->assertSee('بوليصة شحن وتوصيل داخلية');
         $response->assertSee('ORD-DOC-123456');
         $response->assertSee('المبلغ المطلوب تحصيله نقداً عند الاستلام');
-        $response->assertSee('300.00 جنيه مصري');
+        $response->assertSee('300.00 ج.م');
         $response->assertSee('شارع التحرير - الدقي');
         $response->assertSee('الجيزة');
     }

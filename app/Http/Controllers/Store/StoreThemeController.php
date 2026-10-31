@@ -27,15 +27,15 @@ class StoreThemeController extends Controller
         $availableThemes = [
             [
                 'id' => 'modern',
-                'name' => 'الثيم العصري (Modern)',
-                'description' => 'تصميم ديناميكي سريع ومتوافق مع كافة الأجهزة، يركز على المبيعات السريعة وتحويل الزوار.',
-                'preview_badge' => 'الافتراضي',
+                'name' => __('الثيم العصري (Modern)'),
+                'description' => __('تصميم ديناميكي سريع ومتوافق مع كافة الأجهزة، يركز على المبيعات السريعة وتحويل الزوار.'),
+                'preview_badge' => __('الافتراضي'),
             ],
             [
                 'id' => 'boutique',
-                'name' => 'بوتيك النخبة (Boutique Luxury)',
-                'description' => 'تصميم هادئ وفاخر بلمسات ذهبية وألوان دافئة، مثالي للملابس، المجوهرات، العطور والمنتجات الراقية.',
-                'preview_badge' => 'جديد',
+                'name' => __('بوتيك النخبة (Boutique Luxury)'),
+                'description' => __('تصميم هادئ وفاخر بلمسات ذهبية وألوان دافئة، مثالي للملابس، المجوهرات، العطور والمنتجات الراقية.'),
+                'preview_badge' => __('جديد'),
             ],
         ];
 
@@ -132,6 +132,6 @@ class StoreThemeController extends Controller
 
         return redirect()
             ->route('store.theme.edit')
-            ->with('success', 'تم حفظ تخصيصات المظهر والثيم بنجاح.');
+            ->with('success', __('تم حفظ تخصيصات المظهر والثيم بنجاح.'));
     }
 }

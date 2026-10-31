@@ -59,8 +59,8 @@ class CustomerProfilePage extends Component
             'last_name' => 'nullable|string|max:100',
             'email' => 'nullable|email|max:255',
         ], [
-            'first_name.required' => 'يرجى إدخال الاسم الأول.',
-            'email.email' => 'البريد الإلكتروني غير صالح.',
+            'first_name.required' => __('يرجى إدخال الاسم الأول.'),
+            'email.email' => __('البريد الإلكتروني غير صالح.'),
         ]);
 
         $customer->update([
@@ -69,7 +69,7 @@ class CustomerProfilePage extends Component
             'email' => trim($this->email) !== '' ? strtolower(trim($this->email)) : null,
         ]);
 
-        $this->successMessage = 'تم تحديث البيانات الشخصية بنجاح.';
+        $this->successMessage = __('تم تحديث البيانات الشخصية بنجاح.');
     }
 
     public function updatePassword(): void
@@ -84,14 +84,14 @@ class CustomerProfilePage extends Component
             'current_password' => 'required|string',
             'new_password' => 'required|string|min:8|confirmed',
         ], [
-            'current_password.required' => 'يرجى إدخال كلمة المرور الحالية.',
-            'new_password.required' => 'يرجى إدخال كلمة المرور الجديدة.',
-            'new_password.min' => 'يجب ألا تقل كلمة المرور عن 8 أحرف.',
-            'new_password.confirmed' => 'تأكيد كلمة المرور غير متطابق.',
+            'current_password.required' => __('يرجى إدخال كلمة المرور الحالية.'),
+            'new_password.required' => __('يرجى إدخال كلمة المرور الجديدة.'),
+            'new_password.min' => __('يجب ألا تقل كلمة المرور عن 8 أحرف.'),
+            'new_password.confirmed' => __('تأكيد كلمة المرور غير متطابق.'),
         ]);
 
         if ($customer->password && ! Hash::check($this->current_password, $customer->password)) {
-            $this->addError('current_password', 'كلمة المرور الحالية غير صحيحة.');
+            $this->addError('current_password', __('كلمة المرور الحالية غير صحيحة.'));
 
             return;
         }
@@ -101,7 +101,7 @@ class CustomerProfilePage extends Component
         ]);
 
         $this->reset(['current_password', 'new_password', 'new_password_confirmation']);
-        $this->passwordSuccessMessage = 'تم تغيير كلمة المرور بنجاح.';
+        $this->passwordSuccessMessage = __('تم تغيير كلمة المرور بنجاح.');
     }
 
     public function deleteAccount(CustomerAnonymizationService $anonymizationService): mixed
@@ -113,14 +113,14 @@ class CustomerProfilePage extends Component
         }
 
         if (! $this->confirmDelete) {
-            $this->errorMessage = 'يرجى تأكيد رغبتك في حذف الحساب عبر تحديد المربع.';
+            $this->errorMessage = __('يرجى تأكيد رغبتك في حذف الحساب عبر تحديد المربع.');
 
             return null;
         }
 
         $anonymizationService->anonymize($customer);
 
-        session()->flash('success', 'تم حذف حسابك وإخفاء بياناتك الشخصية بنجاح.');
+        session()->flash('success', __('تم حذف حسابك وإخفاء بياناتك الشخصية بنجاح.'));
 
         return redirect()->route('storefront.home');
     }
@@ -128,7 +128,7 @@ class CustomerProfilePage extends Component
     public function render(): View
     {
         return view('livewire.storefront.customer-profile-page', [
-            'pageTitle' => 'الملف الشخصي',
+            'pageTitle' => __('الملف الشخصي'),
         ]);
     }
 }

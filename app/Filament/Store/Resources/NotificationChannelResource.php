@@ -30,69 +30,83 @@ class NotificationChannelResource extends Resource
 
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
-    protected static ?string $navigationLabel = 'قنوات الإرسال';
+    public static function getNavigationLabel(): string
+    {
 
-    protected static ?string $modelLabel = 'قناة إرسال';
+        return __('قنوات الإرسال');
 
-    protected static ?string $pluralModelLabel = 'قنوات الإرسال';
+    }
 
-    protected static \UnitEnum|string|null $navigationGroup = 'الإشعارات والرسائل';
+    public static function getModelLabel(): string
+    {
+        return __('قناة إرسال');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('قنوات الإرسال');
+    }
+
+    public static function getNavigationGroup(): string|\UnitEnum|null
+    {
+        return __('الإشعارات والرسائل');
+    }
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->components([
-                Section::make('معلومات القناة والمزود')
+                Section::make(__('معلومات القناة والمزود'))
                     ->columns(2)
                     ->schema([
                         Select::make('channel')
-                            ->label('القناة')
+                            ->label(__('القناة'))
                             ->options([
-                                ChannelEnum::SMS->value => 'رسائل قصيرة (SMS)',
-                                ChannelEnum::WHATSAPP->value => 'واتساب (WhatsApp)',
-                                ChannelEnum::EMAIL->value => 'بريد إلكتروني (Email)',
-                                ChannelEnum::IN_APP->value => 'إشعار داخلي (In-App)',
+                                ChannelEnum::SMS->value => __('رسائل قصيرة (SMS)'),
+                                ChannelEnum::WHATSAPP->value => __('واتساب (WhatsApp)'),
+                                ChannelEnum::EMAIL->value => __('بريد إلكتروني (Email)'),
+                                ChannelEnum::IN_APP->value => __('إشعار داخلي (In-App)'),
                             ])
                             ->required(),
 
                         Select::make('provider')
-                            ->label('مزود الخدمة')
+                            ->label(__('مزود الخدمة'))
                             ->options([
-                                'sms_misr' => 'SMS Misr (مصر)',
+                                'sms_misr' => __('SMS Misr (مصر)'),
                                 'meta_whatsapp' => 'Meta WhatsApp Cloud API',
-                                'system_mail' => 'البريد الإلكتروني المباشر (SMTP)',
-                                'in_app' => 'قاعدة البيانات (In-App)',
-                                'fake' => 'مزود تجريبي (Fake Provider)',
+                                'system_mail' => __('البريد الإلكتروني المباشر (SMTP)'),
+                                'in_app' => __('قاعدة البيانات (In-App)'),
+                                'fake' => __('مزود تجريبي (Fake Provider)'),
                             ])
                             ->required(),
 
                         TextInput::make('sender_id')
-                            ->label('اسم المرسل (Sender ID)')
+                            ->label(__('اسم المرسل (Sender ID)'))
                             ->placeholder('AffiliateOS')
                             ->maxLength(64),
 
                         TextInput::make('daily_cost_limit_minor')
-                            ->label('الحد اليومي للإنفاق (بالقروش)')
+                            ->label(__('الحد اليومي للإنفاق (بالقروش)'))
                             ->numeric()
                             ->default(50000)
-                            ->helperText('50000 قرش = 500 جنيه مصري يومياً'),
+                            ->helperText(__('50000 = 500 بعملة المتجر يومياً')),
 
                         Toggle::make('is_active')
-                            ->label('مفعلة')
+                            ->label(__('مفعلة'))
                             ->default(true),
 
                         Toggle::make('is_default')
-                            ->label('القناة الافتراضية للنوع')
+                            ->label(__('القناة الافتراضية للنوع'))
                             ->default(false),
                     ]),
 
-                Section::make('بيانات الاتصال ومفاتيح API')
-                    ->description('تُخزن هذه البيانات مشفرة بالكامل في قاعدة البيانات')
+                Section::make(__('بيانات الاتصال ومفاتيح API'))
+                    ->description(__('تُخزن هذه البيانات مشفرة بالكامل في قاعدة البيانات'))
                     ->schema([
                         KeyValue::make('credentials')
-                            ->label('مفاتيح التكوين (Credentials)')
-                            ->keyLabel('المفتاح (Key: username, password, access_token, phone_number_id)')
-                            ->valueLabel('القيمة (Value)'),
+                            ->label(__('مفاتيح التكوين (Credentials)'))
+                            ->keyLabel(__('المفتاح (Key: username, password, access_token, phone_number_id)'))
+                            ->valueLabel(__('القيمة (Value)')),
                     ]),
             ]);
     }
@@ -102,7 +116,7 @@ class NotificationChannelResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('channel')
-                    ->label('القناة')
+                    ->label(__('القناة'))
                     ->badge()
                     ->formatStateUsing(fn (string $state): string => match ($state) {
                         'sms' => 'SMS',
@@ -114,27 +128,27 @@ class NotificationChannelResource extends Resource
                     ->color('primary'),
 
                 TextColumn::make('provider')
-                    ->label('المزود')
+                    ->label(__('المزود'))
                     ->weight('bold'),
 
                 TextColumn::make('sender_id')
-                    ->label('اسم المرسل')
+                    ->label(__('اسم المرسل'))
                     ->default('-'),
 
                 TextColumn::make('daily_cost_limit_minor')
-                    ->label('الحد اليومي')
+                    ->label(__('الحد اليومي'))
                     ->formatStateUsing(fn (int $state): string => Money::fromMinor($state)->format()),
 
                 TextColumn::make('current_day_cost_minor')
-                    ->label('استهلاك اليوم')
+                    ->label(__('استهلاك اليوم'))
                     ->formatStateUsing(fn (int $state): string => Money::fromMinor($state)->format()),
 
                 IconColumn::make('is_active')
-                    ->label('مفعلة')
+                    ->label(__('مفعلة'))
                     ->boolean(),
 
                 IconColumn::make('is_default')
-                    ->label('افتراضية')
+                    ->label(__('افتراضية'))
                     ->boolean(),
             ]);
     }

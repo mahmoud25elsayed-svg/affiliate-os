@@ -94,7 +94,7 @@ class LoyaltyPointsService
             points: $pointsToAward,
             type: CustomerLoyaltyTransaction::TYPE_EARN_ORDER,
             orderId: $order->id,
-            notes: "مكافأة نقاط ولاء عن تسليم الطلب رقم {$order->reference}"
+            notes: __('مكافأة نقاط ولاء عن تسليم الطلب رقم :reference', ['reference' => $order->reference])
         );
 
         Event::dispatch(new LoyaltyPointsEarned($account, $transaction, $order));
@@ -108,7 +108,7 @@ class LoyaltyPointsService
     public function redeem(Customer|Model|int $customer, int $points, ?Order $order = null): CustomerLoyaltyTransaction
     {
         $account = $this->getAccount($customer);
-        $notes = $order ? "استبدال نقاط ولاء في الطلب {$order->reference}" : 'استبدال نقاط ولاء كخصم مشتريات';
+        $notes = $order ? __('استبدال نقاط ولاء في الطلب :reference', ['reference' => $order->reference]) : __('استبدال نقاط ولاء كخصم مشتريات');
 
         $transaction = $account->redeem(
             points: $points,

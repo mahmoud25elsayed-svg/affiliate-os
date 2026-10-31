@@ -124,7 +124,7 @@ class StorefrontCartService
 
             /** @var Product|null $product */
             $product = $variant->product;
-            $name = $product instanceof Product ? ($product->translateAttribute('name') ?? 'منتج') : 'منتج';
+            $name = $product instanceof Product ? ($product->translateAttribute('name') ?? __('منتج')) : __('منتج');
             $sku = $variant->sku ?? 'SKU-'.$variant->id;
 
             $pricing = app(PromotionPricingService::class)->getEffectiveVariantPrice($variant);

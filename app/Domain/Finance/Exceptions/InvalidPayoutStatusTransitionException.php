@@ -10,6 +10,6 @@ class InvalidPayoutStatusTransitionException extends RuntimeException
 {
     public function __construct(string $from, string $to)
     {
-        parent::__construct("لا يمكن تحويل حالة طلب السحب من [{$from}] إلى [{$to}]");
+        parent::__construct(__('لا يمكن تحويل حالة طلب السحب من [:from] إلى [:to]', ['from' => $from, 'to' => $to]));
     }
 }

@@ -63,7 +63,7 @@ class AppCatalogController extends Controller
 
             return [
                 'id' => $product->id,
-                'name' => $product->translateAttribute('name') ?? "منتج #{$product->id}",
+                'name' => $product->translateAttribute('name') ?? __('منتج #:id', ['id' => $product->id]),
                 'sku' => $firstVariant ? $firstVariant->sku : "SKU-{$product->id}",
                 'wholesale_minor' => $wholesaleMinor,
                 'retail_minor' => $retailPriceMinor,
@@ -82,7 +82,7 @@ class AppCatalogController extends Controller
                 /** @var Collection $c */
                 return [
                     'id' => $c->id,
-                    'name' => $c->translateAttribute('name') ?? "قسم #{$c->id}",
+                    'name' => $c->translateAttribute('name') ?? __('قسم #:id', ['id' => $c->id]),
                 ];
             });
 
@@ -134,12 +134,21 @@ class AppCatalogController extends Controller
         }
 
         // Marketing materials
-        $name = $product->translateAttribute('name') ?? "منتج #{$product->id}";
-        $description = $product->translateAttribute('description') ?? 'أفضل جودة وضمان استبدال واسترجاع، مع شحن سريع ومعاينة قبل الاستلام.';
+        $name = $product->translateAttribute('name') ?? __('منتج #:id', ['id' => $product->id]);
+        $description = $product->translateAttribute('description') ?? __('أفضل جودة وضمان استبدال واسترجاع، مع شحن سريع ومعاينة قبل الاستلام.');
 
         $adCopies = [
-            "🔥 عرض خاص وحصري لفترة محدودة على {$name}!\n\n{$description}\n\n✔️ شحن سريع لجميع المحافظات\n✔️ دفع عند الاستلام مع إمكانية المعاينة قبل الدفع\n✔️ ضمان استبدال مجاني\n\nاطلب الآن قبل نفاد الكمية!",
-            "لكل المهتمين بأفضل جودة وسعر، وفرنا لكم {$name} بأفضل خامة وأسرع توصيل لباب البيت.\nاطلب الآن والدفع عند الاستلام!",
+            __('🔥 عرض خاص وحصري لفترة محدودة على :name!
+
+:description
+
+✔️ شحن سريع لجميع المحافظات
+✔️ دفع عند الاستلام مع إمكانية المعاينة قبل الدفع
+✔️ ضمان استبدال مجاني
+
+اطلب الآن قبل نفاد الكمية!', ['name' => $name, 'description' => $description]),
+            __('لكل المهتمين بأفضل جودة وسعر، وفرنا لكم :name بأفضل خامة وأسرع توصيل لباب البيت.
+اطلب الآن والدفع عند الاستلام!', ['name' => $name]),
         ];
 
         return Inertia::render('App/ProductDetail', [

@@ -75,7 +75,7 @@ class QualityGateService
             $blacklisted = $blacklistQuery->first();
             if ($blacklisted) {
                 $flags[] = ReasonCode::SUSPECTED_FRAUD->value;
-                $reasons[] = 'العميل مدرج في القائمة السوداء للمتجر: '.($blacklisted->reason ?? 'عميل محظور');
+                $reasons[] = __('العميل مدرج في القائمة السوداء للمتجر: ').($blacklisted->reason ?? __('عميل محظور'));
                 $riskScore += 100;
 
                 return new QualityGateResult(
@@ -94,7 +94,7 @@ class QualityGateService
 
         if (mb_strlen($trimmedAddress) < 10 || $wordCount < 2) {
             $flags[] = ReasonCode::INCOMPLETE_ADDRESS->value;
-            $reasons[] = 'العنوان غير مكتمل أو غامض (أقل من 10 أحرف أو يفتقر لتفاصيل الشارع ورقم العقار).';
+            $reasons[] = __('العنوان غير مكتمل أو غامض (أقل من 10 أحرف أو يفتقر لتفاصيل الشارع ورقم العقار).');
             $riskScore += 30;
             $status = QualityGateResult::STATUS_REVIEW;
         }
@@ -114,12 +114,12 @@ class QualityGateService
 
             if ($duplicateOrdersCount >= 2) {
                 $flags[] = ReasonCode::SUSPECTED_FRAUD->value;
-                $reasons[] = 'اشتباه احتيال: تم تقديم أكثر من طلب لنفس المنتج ونفس العميل خلال آخر 7 أيام.';
+                $reasons[] = __('اشتباه احتيال: تم تقديم أكثر من طلب لنفس المنتج ونفس العميل خلال آخر 7 أيام.');
                 $riskScore += 80;
                 $status = QualityGateResult::STATUS_REJECT;
             } elseif ($duplicateOrdersCount === 1) {
                 $flags[] = ReasonCode::DUPLICATE_ORDER->value;
-                $reasons[] = 'تنبيه تكرار: تم تقديم طلب سابق لنفس المنتج والعميل خلال آخر 7 أيام.';
+                $reasons[] = __('تنبيه تكرار: تم تقديم طلب سابق لنفس المنتج والعميل خلال آخر 7 أيام.');
                 $riskScore += 40;
                 $status = QualityGateResult::STATUS_REVIEW;
             }
@@ -143,12 +143,12 @@ class QualityGateService
 
                 if ($totalPast >= 3 && $returnRate >= 0.75) {
                     $flags[] = ReasonCode::HIGH_RISK_REPUTATION->value;
-                    $reasons[] = 'سمعة العميل عالية الخطورة: أكثر من 75% من طلبات العميل السابقة بالمتجر مرتجعة أو فاشلة التوصيل.';
+                    $reasons[] = __('سمعة العميل عالية الخطورة: أكثر من 75% من طلبات العميل السابقة بالمتجر مرتجعة أو فاشلة التوصيل.');
                     $riskScore += 80;
                     $status = QualityGateResult::STATUS_REJECT;
                 } elseif ($returnRate >= 0.50) {
                     $flags[] = ReasonCode::HIGH_RISK_REPUTATION->value;
-                    $reasons[] = 'تنبيه مخاطرة: 50% أو أكثر من طلبات العميل السابقة بالمتجر لم يتم استلامها.';
+                    $reasons[] = __('تنبيه مخاطرة: 50% أو أكثر من طلبات العميل السابقة بالمتجر لم يتم استلامها.');
                     $riskScore += 40;
                     if ($status !== QualityGateResult::STATUS_REJECT) {
                         $status = QualityGateResult::STATUS_REVIEW;
@@ -158,7 +158,7 @@ class QualityGateService
         }
 
         if (empty($flags)) {
-            $reasons[] = 'تم اجتياز فحص الجودة بنجاح.';
+            $reasons[] = __('تم اجتياز فحص الجودة بنجاح.');
         }
 
         return new QualityGateResult(

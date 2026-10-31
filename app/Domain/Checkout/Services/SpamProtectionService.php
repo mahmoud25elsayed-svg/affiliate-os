@@ -40,7 +40,7 @@ class SpamProtectionService
                 return SpamCheckResult::duplicate(
                     previousOrderId: $recentOrder->id,
                     flags: ['duplicate_phone_and_items_within_5_minutes'],
-                    reasonAr: 'طلب مكرر لنفس رقم الهاتف والمنتج خلال دقائق معدودة'
+                    reasonAr: __('طلب مكرر لنفس رقم الهاتف والمنتج خلال دقائق معدودة')
                 );
             }
         }

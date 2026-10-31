@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>فاتورة طلب {{ $order->reference }}</title>
+    <title>{{ __('فاتورة طلب') }} {{ $order->reference }}</title>
     <style>
         @page {
             size: A4;
@@ -144,37 +144,37 @@
 
     @if (! ($isPdf ?? false))
         <div class="action-bar no-print">
-            <button onclick="window.print()" class="btn">طباعة الفاتورة 🖨️</button>
-            <a href="?pdf=1" class="btn btn-secondary">تحميل كملف PDF 📄</a>
+            <button onclick="window.print()" class="btn">{{ __('طباعة الفاتورة 🖨️') }}</button>
+            <a href="?pdf=1" class="btn btn-secondary">{{ __('تحميل كملف PDF 📄') }}</a>
         </div>
     @endif
 
     <div class="header">
         <div class="brand">
-            <h1>{{ $settings->platform_name ?? 'متجر إلكتروني' }}</h1>
-            <p>خدمة العملاء: {{ $settings->support_phone ?? '' }} | {{ $settings->support_email ?? '' }}</p>
+            <h1>{{ $settings->platform_name ?? __('متجر إلكتروني') }}</h1>
+            <p>{{ __('خدمة العملاء:') }} {{ $settings->support_phone ?? '' }} | {{ $settings->support_email ?? '' }}</p>
         </div>
         <div class="invoice-title">
-            <h2>فاتورة مبيعات</h2>
-            <p>رقم الفاتورة: <strong>{{ $order->reference }}</strong></p>
-            <p>تاريخ الطلب: {{ $order->created_at?->format('Y-m-d H:i') }}</p>
+            <h2>{{ __('فاتورة مبيعات') }}</h2>
+            <p>{{ __('رقم الفاتورة:') }} <strong>{{ $order->reference }}</strong></p>
+            <p>{{ __('تاريخ الطلب:') }} {{ $order->created_at?->format('Y-m-d H:i') }}</p>
         </div>
     </div>
 
     <div class="meta-grid">
         <div class="meta-box">
-            <h3>بيانات العميل والتوصيل</h3>
-            <p><strong>الاسم:</strong> {{ $order->shippingAddress?->first_name ?? 'عميل' }} {{ $order->shippingAddress?->last_name ?? '' }}</p>
-            <p><strong>الهاتف:</strong> {{ $order->shippingAddress?->contact_phone ?? $order->customer_phone_e164 }}</p>
-            <p><strong>المحافظة:</strong> {{ $order->shippingAddress?->city ?? 'جمهورية مصر العربية' }}</p>
-            <p><strong>العنوان:</strong> {{ $order->shippingAddress?->line_one ?? '' }}</p>
+            <h3>{{ __('بيانات العميل والتوصيل') }}</h3>
+            <p><strong>{{ __('الاسم:') }}</strong> {{ $order->shippingAddress?->first_name ?? __('عميل') }} {{ $order->shippingAddress?->last_name ?? '' }}</p>
+            <p><strong>{{ __('الهاتف:') }}</strong> {{ $order->shippingAddress?->contact_phone ?? $order->customer_phone_e164 }}</p>
+            <p><strong>{{ __('المحافظة:') }}</strong> {{ $order->shippingAddress?->city ?? __('جمهورية مصر العربية') }}</p>
+            <p><strong>{{ __('العنوان:') }}</strong> {{ $order->shippingAddress?->line_one ?? '' }}</p>
         </div>
         <div class="meta-box">
-            <h3>تفاصيل الطلب والدفع</h3>
-            <p><strong>طريقة الدفع:</strong> {{ $order->payment_method === 'cod' ? 'الدفع عند الاستلام (COD)' : 'دفع إلكتروني' }}</p>
-            <p><strong>حالة الطلب:</strong> {{ \App\Domain\Orders\Enums\OrderStatus::tryFrom($order->status)?->label() ?? $order->status }}</p>
+            <h3>{{ __('تفاصيل الطلب والدفع') }}</h3>
+            <p><strong>{{ __('طريقة الدفع:') }}</strong> {{ $order->payment_method === 'cod' ? __('الدفع عند الاستلام (COD)') : __('دفع إلكتروني') }}</p>
+            <p><strong>{{ __('حالة الطلب:') }}</strong> {{ \App\Domain\Orders\Enums\OrderStatus::tryFrom($order->status)?->label() ?? $order->status }}</p>
             @if ($order->notes)
-                <p><strong>ملاحظات العميل:</strong> {{ $order->notes }}</p>
+                <p><strong>{{ __('ملاحظات العميل:') }}</strong> {{ $order->notes }}</p>
             @endif
         </div>
     </div>
@@ -183,11 +183,11 @@
         <thead>
             <tr>
                 <th style="width: 40px; text-align: center;">#</th>
-                <th>اسم المنتج / الصنف</th>
-                <th style="width: 120px;">كود الصنف (SKU)</th>
-                <th style="width: 60px; text-align: center;">الكمية</th>
-                <th style="width: 100px; text-align: left;">سعر الوحدة</th>
-                <th style="width: 110px; text-align: left;">المجموع</th>
+                <th>{{ __('اسم المنتج / الصنف') }}</th>
+                <th style="width: 120px;">{{ __('كود الصنف (SKU)') }}</th>
+                <th style="width: 60px; text-align: center;">{{ __('الكمية') }}</th>
+                <th style="width: 100px; text-align: left;">{{ __('سعر الوحدة') }}</th>
+                <th style="width: 110px; text-align: left;">{{ __('المجموع') }}</th>
             </tr>
         </thead>
         <tbody>
@@ -208,34 +208,34 @@
 
     <table class="totals-table">
         <tr>
-            <td>المجموع الفرعي:</td>
+            <td>{{ __('المجموع الفرعي:') }}</td>
             <td style="text-align: left; font-weight: bold;">{{ \App\Support\Money::show(($order->sub_total->value ?? 0)) }}</td>
         </tr>
         @if (($order->discount_total->value ?? 0) > 0)
             <tr style="color: #059669;">
-                <td>خصم الكوبون:</td>
+                <td>{{ __('خصم الكوبون:') }}</td>
                 <td style="text-align: left; font-weight: bold;">-{{ \App\Support\Money::show(($order->discount_total->value ?? 0)) }}</td>
             </tr>
         @endif
         <tr>
-            <td>تكلفة الشحن:</td>
+            <td>{{ __('تكلفة الشحن:') }}</td>
             <td style="text-align: left;">{{ \App\Support\Money::show(($order->shipping_total->value ?? 0)) }}</td>
         </tr>
         @if ($order->cod_fee_minor > 0)
             <tr>
-                <td>رسوم الدفع عند الاستلام:</td>
+                <td>{{ __('رسوم الدفع عند الاستلام:') }}</td>
                 <td style="text-align: left;">{{ \App\Support\Money::show($order->cod_fee_minor) }}</td>
             </tr>
         @endif
         <tr class="grand-total">
-            <td>الإجمالي المطلوب سداده:</td>
+            <td>{{ __('الإجمالي المطلوب سداده:') }}</td>
             <td style="text-align: left;">{{ \App\Support\Money::show(($order->total->value ?? 0)) }}</td>
         </tr>
     </table>
 
     <div class="footer-note">
-        <p>شكراً لطلبكم من متجرنا. يحق للعميل استبدال أو استرجاع المنتج خلال 14 يوماً وفق قانون حماية المستهلك المصري رقم 181 لسنة 2018.</p>
-        <p>تم استخراج هذه الفاتورة آلياً بواسطة المنصة.</p>
+        <p>{{ __('شكراً لطلبكم من متجرنا. يحق للعميل استبدال أو استرجاع المنتج خلال 14 يوماً وفق قوانين حماية المستهلك المعمول بها.') }}</p>
+        <p>{{ __('تم استخراج هذه الفاتورة آلياً بواسطة المنصة.') }}</p>
     </div>
 
 </body>

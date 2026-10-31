@@ -50,7 +50,7 @@ class MerchantOnboardingController extends Controller
         if (RateLimiter::tooManyAttempts('check_subdomain:'.$ip, 30)) {
             return response()->json([
                 'available' => false,
-                'message' => 'تجاوزت الحد المسموح للاستعلام عن النطاقات. يرجى الانتظار دقيقة واحدة.',
+                'message' => __('تجاوزت الحد المسموح للاستعلام عن النطاقات. يرجى الانتظار دقيقة واحدة.'),
             ], 429);
         }
         RateLimiter::hit('check_subdomain:'.$ip, 60);
@@ -68,27 +68,27 @@ class MerchantOnboardingController extends Controller
         ) {
             return response()->json([
                 'available' => false,
-                'message' => 'يجب أن يتكون اسم النطاق من 3 إلى 30 حرفاً أو رقماً إنجليزياً، وألا يبدأ أو ينتهي بشرطة ولا يحتوي على رموز خاصة أو شرطات سفلية.',
+                'message' => __('يجب أن يتكون اسم النطاق من 3 إلى 30 حرفاً أو رقماً إنجليزياً، وألا يبدأ أو ينتهي بشرطة ولا يحتوي على رموز خاصة أو شرطات سفلية.'),
             ]);
         }
 
         if (ReservedSubdomains::isReserved($subdomain)) {
             return response()->json([
                 'available' => false,
-                'message' => 'هذا الاسم محجوز لنظام المنصة، يرجى اختيار اسم آخر.',
+                'message' => __('هذا الاسم محجوز لنظام المنصة، يرجى اختيار اسم آخر.'),
             ]);
         }
 
         if (Tenant::where('id', $subdomain)->exists()) {
             return response()->json([
                 'available' => false,
-                'message' => 'هذا النطاق مستخدم بالفعل، يرجى اختيار اسم آخر.',
+                'message' => __('هذا النطاق مستخدم بالفعل، يرجى اختيار اسم آخر.'),
             ]);
         }
 
         return response()->json([
             'available' => true,
-            'message' => 'النطاق متاح للتسجيل!',
+            'message' => __('النطاق متاح للتسجيل!'),
         ]);
     }
 
@@ -118,7 +118,7 @@ class MerchantOnboardingController extends Controller
             $seconds = RateLimiter::availableIn($rateKey);
 
             throw ValidationException::withMessages([
-                'email' => ["تم تجاوز الحد المسموح للتسجيل. يرجى المحاولة بعد {$seconds} ثانية."],
+                'email' => [__('تم تجاوز الحد المسموح للتسجيل. يرجى المحاولة بعد :seconds ثانية.', ['seconds' => $seconds])],
             ]);
         }
 
@@ -145,14 +145,14 @@ class MerchantOnboardingController extends Controller
         // Check reserved words
         if (ReservedSubdomains::isReserved($subdomain)) {
             throw ValidationException::withMessages([
-                'subdomain' => ['هذا النطاق محجوز لنظام المنصة وغير متاح للاستخدام.'],
+                'subdomain' => [__('هذا النطاق محجوز لنظام المنصة وغير متاح للاستخدام.')],
             ]);
         }
 
         // Check tenant uniqueness
         if (Tenant::where('id', $subdomain)->exists()) {
             throw ValidationException::withMessages([
-                'subdomain' => ['هذا النطاق مستخدم بالفعل من قبل تاجر آخر.'],
+                'subdomain' => [__('هذا النطاق مستخدم بالفعل من قبل تاجر آخر.')],
             ]);
         }
 
@@ -170,7 +170,7 @@ class MerchantOnboardingController extends Controller
         // Verify OTP
         if (! $this->otpService->verifyOtp($normalizedPhone, $validated['otp'])) {
             throw ValidationException::withMessages([
-                'otp' => ['رمز التحقق غير صحيح أو منتهي الصلاحية.'],
+                'otp' => [__('رمز التحقق غير صحيح أو منتهي الصلاحية.')],
             ]);
         }
 
@@ -243,7 +243,7 @@ class MerchantOnboardingController extends Controller
         $tenant = Tenant::find($tenantId);
 
         if (! $tenant) {
-            abort(404, 'المتجر غير موجود.');
+            abort(404, __('المتجر غير موجود.'));
         }
 
         $storeUrl = url("/store/{$tenant->id}");

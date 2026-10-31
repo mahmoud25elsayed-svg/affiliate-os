@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $article->question }} - {{ $tenant->name ?? 'المتجر' }}</title>
+    <title>{{ $article->question }} - {{ $tenant->name ?? __('المتجر') }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,7 +17,7 @@
 
         <div class="flex items-center justify-between">
             <a href="{{ route('storefront.help.index') }}" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 transition">
-                ← العودة لمركز المساعدة
+                {{ __('← العودة لمركز المساعدة') }}
             </a>
             <span class="text-xs font-bold px-2.5 py-1 rounded-md bg-indigo-50 text-indigo-700">{{ $article->category }}</span>
         </div>

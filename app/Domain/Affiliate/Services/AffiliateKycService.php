@@ -23,7 +23,7 @@ class AffiliateKycService
     ): void {
         $nationalId = trim($nationalId);
         if (strlen($nationalId) < 10) {
-            throw new InvalidArgumentException('الرقم القومي المدخل غير صحيح. يجب أن يتكون من 14 رقم للبطاقة المصرية.');
+            throw new InvalidArgumentException(__('الرقم القومي المدخل غير صحيح. يجب أن يتكون من 14 رقم للبطاقة المصرية.'));
         }
 
         $tenantId = $affiliate->tenant_id;
@@ -53,13 +53,13 @@ class AffiliateKycService
     ): string {
         // Enforce kyc.view permission check
         if (! $this->canViewKyc($viewer)) {
-            throw new AuthorizationException('ليس لديك الصلاحية المطلوبة (kyc.view) لعرض وثائق الهوية الشخصية للمسوق.');
+            throw new AuthorizationException(__('ليس لديك الصلاحية المطلوبة (kyc.view) لعرض وثائق الهوية الشخصية للمسوق.'));
         }
 
         $path = $side === 'front' ? $affiliate->id_card_front_path : $affiliate->id_card_back_path;
 
         if (empty($path) || ! Storage::disk('local')->exists($path)) {
-            throw new InvalidArgumentException("مستند الهوية المطلوب ({$side}) غير متوفر أو تم حذفه.");
+            throw new InvalidArgumentException(__('مستند الهوية المطلوب (:side) غير متوفر أو تم حذفه.', ['side' => $side]));
         }
 
         // Record Mandatory Audit Trail
