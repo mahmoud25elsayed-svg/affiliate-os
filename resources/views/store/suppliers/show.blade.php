@@ -59,7 +59,7 @@
                     <span class="text-2xl font-black font-mono {{ $payableBalanceMinor < 0 ? 'text-rose-600' : 'text-slate-900' }}">
                         {{ number_format(abs($payableBalanceMinor) / 100, 2) }}
                     </span>
-                    <span class="text-xs font-bold text-slate-400">ج.م (دائن)</span>
+                    <span class="text-xs font-bold text-slate-400">{{ \App\Support\Money::symbol() }} (دائن)</span>
                 </div>
                 <span class="text-[11px] text-slate-400 mt-2 block pt-2 border-t border-slate-100">
                     الحساب المالي: <code class="font-mono text-indigo-600">supplier:{{ $supplier->id }}:payable</code>
@@ -114,7 +114,7 @@
                     </div>
 
                     <div>
-                        <label class="block font-bold text-slate-700 mb-1">تكلفة الوحدة من المورد (ج.م) *</label>
+                        <label class="block font-bold text-slate-700 mb-1">تكلفة الوحدة من المورد ({{ \App\Support\Money::symbol() }}) *</label>
                         <input type="number" step="0.01" name="unit_cost" min="0.01" required class="w-full rounded-xl border border-slate-200 p-2.5 bg-slate-50 font-mono" placeholder="120.00">
                     </div>
 
@@ -164,8 +164,8 @@
                                         <span class="text-[10px] text-slate-400 font-mono">{{ $batch->variant?->sku }}</span>
                                     </td>
                                     <td class="p-4 text-center font-bold font-mono text-indigo-600">+{{ $batch->quantity_supplied }}</td>
-                                    <td class="p-4 text-center font-mono">{{ number_format($batch->unit_cost_minor / 100, 2) }} ج.م</td>
-                                    <td class="p-4 text-center font-mono font-bold text-slate-900">{{ number_format($batch->total_cost_minor / 100, 2) }} ج.م</td>
+                                    <td class="p-4 text-center font-mono">{{ \App\Support\Money::show($batch->unit_cost_minor) }}</td>
+                                    <td class="p-4 text-center font-mono font-bold text-slate-900">{{ \App\Support\Money::show($batch->total_cost_minor) }}</td>
                                     <td class="p-4 text-center font-mono text-slate-500">{{ $batch->received_at?->format('Y-m-d H:i') ?? $batch->created_at?->format('Y-m-d') }}</td>
                                 </tr>
                             @empty

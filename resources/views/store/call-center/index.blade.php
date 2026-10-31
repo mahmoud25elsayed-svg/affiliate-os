@@ -173,7 +173,7 @@
                                             </span>
                                         </div>
                                         <div class="font-black text-slate-900">
-                                            {{ number_format(($line->sub_total?->value ?? (int)$line->sub_total) / 100, 2) }} ج.م
+                                            {{ \App\Support\Money::show(($line->sub_total?->value ?? (int)$line->sub_total)) }}
                                         </div>
                                     </div>
                                 @endforeach
@@ -184,12 +184,12 @@
                                 <div>
                                     <span class="text-slate-500">إجمالي المطلوب تحصيله (COD):</span>
                                     <span class="text-base font-black text-emerald-700 mr-1">
-                                        {{ number_format(($activeOrder->total?->value ?? (int)$activeOrder->total) / 100, 2) }} ج.م
+                                        {{ \App\Support\Money::show(($activeOrder->total?->value ?? (int)$activeOrder->total)) }}
                                     </span>
                                 </div>
                                 @if(isset($snapshot['affiliate_profit_minor']))
                                     <div class="text-indigo-900 font-bold bg-indigo-50 px-3 py-1 rounded-lg border border-indigo-100">
-                                        عمولة المسوق: {{ number_format(((int)$snapshot['affiliate_profit_minor']) / 100, 2) }} ج.م
+                                        عمولة المسوق: {{ \App\Support\Money::show(((int)$snapshot['affiliate_profit_minor'])) }}
                                     </div>
                                 @endif
                             </div>
@@ -334,7 +334,7 @@
                             <select name="governorate_id" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-indigo-500">
                                 @foreach($governorates as $gov)
                                     <option value="{{ $gov->id }}" {{ ($snapshot['governorate_id'] ?? null) == $gov->id ? 'selected' : '' }}>
-                                        {{ $gov->name_ar }}
+                                        {{ $gov->label() }}
                                     </option>
                                 @endforeach
                             </select>

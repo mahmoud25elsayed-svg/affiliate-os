@@ -8,7 +8,10 @@ use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\Tenant;
 use App\Models\User;
+use App\Support\Location\Country;
+use App\Support\Location\Market;
 use App\Support\Settings\GeneralSettings;
+use App\Support\Settings\ShippingSettings;
 use App\Support\Tenancy\Permissions\TenantPermissionMatrix;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -29,12 +32,14 @@ class ProvisionTenant implements ShouldQueue
 
     /**
      * @param  array{user_id?: int, name?: string, email?: string, password?: string, phone?: string}  $ownerData
+     * @param  string  $country  ISO code of the store's home country (config/countries.php)
      */
     public function __construct(
         public string $tenantId,
         public string $name,
         public string $domain,
-        public array $ownerData = []
+        public array $ownerData = [],
+        public string $country = Market::DEFAULT_COUNTRY,
     ) {}
 
     public function handle(): Tenant
@@ -90,11 +95,12 @@ class ProvisionTenant implements ShouldQueue
             // Seed RBAC matrix for this tenant
             TenantPermissionMatrix::seedForTenant((string) $tenant->id);
 
-            // Default Currency: EGP
+            // Store currency follows its home country (amounts are kept in hundredths, see Money)
+            $country = Country::find($this->country) ?? Country::get(Market::DEFAULT_COUNTRY);
             Currency::firstOrCreate(
-                ['code' => 'EGP'],
+                ['code' => $country->currency],
                 [
-                    'name' => 'Egyptian Pound',
+                    'name' => (string) config("currencies.{$country->currency}.name_en", $country->currency),
                     'exchange_rate' => 1.0,
                     'decimal_places' => 2,
                     'enabled' => true,
@@ -149,7 +155,21 @@ class ProvisionTenant implements ShouldQueue
             // Seed initial General Settings
             $settings = GeneralSettings::load();
             $settings->platform_name = $this->name;
+            $settings->country_code = $country->code;
+            $settings->default_currency = $country->currency;
+            $settings->default_locale = $country->arab ? 'ar' : 'en';
             $settings->save();
+
+            // Starting shipping fees sized for the store's currency (whole units -> hundredths).
+            /** @var array{0: int, 1: int, 2: int}|null $shippingDefaults */
+            $shippingDefaults = config("currencies.{$country->currency}.shipping");
+            if (is_array($shippingDefaults)) {
+                $shipping = ShippingSettings::load();
+                $shipping->default_rate_minor = $shippingDefaults[0] * 100;
+                $shipping->cod_fee_minor = $shippingDefaults[1] * 100;
+                $shipping->free_shipping_threshold_minor = $shippingDefaults[2] * 100;
+                $shipping->save();
+            }
 
             // Create or update Owner User
             if (! empty($this->ownerData['email']) || ! empty($this->ownerData['user_id'])) {

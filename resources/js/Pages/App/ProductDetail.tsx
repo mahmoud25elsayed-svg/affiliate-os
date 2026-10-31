@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import AppLayout from '../../Layouts/AppLayout';
-import { formatCurrency } from '../../utils/format';
+import { formatCurrency, currencySymbol } from '../../utils/format';
 import {
     Calculator,
     CheckCircle2,
@@ -164,7 +164,7 @@ export default function ProductDetail({ product, settings }: Props) {
 
                         <div>
                             <label className="block text-[11px] text-slate-400 mb-1">
-                                سعر البيع للقطعة (ج.م)
+                                سعر البيع للقطعة ({currencySymbol()})
                             </label>
                             <input
                                 type="number"
@@ -189,8 +189,8 @@ export default function ProductDetail({ product, settings }: Props) {
                             className="w-full accent-indigo-500 cursor-pointer"
                         />
                         <div className="flex justify-between text-[10px] text-slate-500 font-mono">
-                            <span>الحد الأدنى: {minSellingPounds} ج.م</span>
-                            <span>الحد الأقصى: {maxSellingPounds} ج.م</span>
+                            <span>الحد الأدنى: {minSellingPounds} {currencySymbol()}</span>
+                            <span>الحد الأقصى: {maxSellingPounds} {currencySymbol()}</span>
                         </div>
                     </div>
 
@@ -204,7 +204,7 @@ export default function ProductDetail({ product, settings }: Props) {
                                 onClick={() => applyMarkupPreset(preset)}
                                 className="px-2.5 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-[11px] font-bold text-slate-200 border border-slate-700 shrink-0"
                             >
-                                +{preset} ج.م
+                                +{preset} {currencySymbol()}
                             </button>
                         ))}
                     </div>
@@ -218,7 +218,7 @@ export default function ProductDetail({ product, settings }: Props) {
                                 <span>لو سُلّم الطلب</span>
                             </div>
                             <div className="text-xl font-extrabold text-emerald-300 font-mono">
-                                +{totalNetProfitPounds} ج.م
+                                +{totalNetProfitPounds} {currencySymbol()}
                             </div>
                             <span className="text-[10px] text-emerald-500 block">
                                 صافي ربح بحسابك ({profitMarginPercent}% هامش)
@@ -232,7 +232,7 @@ export default function ProductDetail({ product, settings }: Props) {
                                 <span>لو رُفض الطلب</span>
                             </div>
                             <div className="text-xl font-extrabold text-rose-300 font-mono">
-                                0 ج.م
+                                0 {currencySymbol()}
                             </div>
                             <span className="text-[10px] text-rose-500 block">
                                 لا تُصرف عمولة + شحن المرتجع

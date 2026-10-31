@@ -64,7 +64,7 @@
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">السعر أو العرض الترويجي *</label>
-                            <input type="text" id="ad-price" placeholder="مثال: 399 ج.م + شحن مجاني عند طلب قطعتين" class="w-full text-xs font-medium border border-slate-200 rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none">
+                            <input type="text" id="ad-price" placeholder="مثال: 399 {{ \App\Support\Money::symbol() }} + شحن مجاني عند طلب قطعتين" class="w-full text-xs font-medium border border-slate-200 rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none">
                         </div>
                         <div class="grid grid-cols-2 gap-3">
                             <div>

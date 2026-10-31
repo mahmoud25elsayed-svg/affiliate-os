@@ -95,7 +95,7 @@
                                         <div>
                                             <span class="text-xs text-gray-400 block mb-0.5">الإجمالي</span>
                                             <span class="font-bold text-emerald-700 text-base">
-                                                {{ number_format(($order->total->value ?? 0) / 100, 2) }} ج.م
+                                                {{ \App\Support\Money::show(($order->total->value ?? 0)) }}
                                             </span>
                                         </div>
                                         <div>

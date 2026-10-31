@@ -139,7 +139,7 @@
                             <a href="{{ url('/products/'.$related->id) }}">{{ $related->translateAttribute('name') }}</a>
                         </h4>
                         <div class="mt-3 flex items-center justify-between">
-                            <span class="text-sm font-black text-brand-600">{{ $relPrice ? $relPrice->price->formatted() : '0.00 ج.م' }}</span>
+                            <span class="text-sm font-black text-brand-600">{{ \App\Support\Money::show($relPrice?->price) }}</span>
                             <a href="{{ url('/products/'.$related->id) }}" class="text-xs text-brand-600 font-bold hover:underline">عرض</a>
                         </div>
                     </div>

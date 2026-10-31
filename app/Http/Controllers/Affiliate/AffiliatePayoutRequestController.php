@@ -13,6 +13,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Affiliate;
 use App\Models\PayoutRequest;
 use App\Models\Tenant;
+use App\Support\Money;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -63,7 +64,7 @@ class AffiliatePayoutRequestController extends Controller
         ], [
             'amount.required' => 'يرجى إدخال مبلغ السحب المطلوب',
             'amount.numeric' => 'مبلغ السحب يجب أن يكون رقماً صحيحاً',
-            'amount.min' => 'الحد الأدنى لطلب السحب هو '.number_format($settings->min_payout_minor / 100, 2).' ج.م',
+            'amount.min' => 'الحد الأدنى لطلب السحب هو '.Money::show($settings->min_payout_minor),
         ]);
 
         $amountMinor = (int) round(((float) $request->input('amount')) * 100);

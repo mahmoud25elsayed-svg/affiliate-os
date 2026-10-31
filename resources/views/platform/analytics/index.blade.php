@@ -39,7 +39,7 @@
             <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700/60 shadow-lg">
                 <span class="text-xs font-bold text-slate-400 block">الإيراد الشهري المتكرر (MRR)</span>
                 <span class="text-2xl font-black text-emerald-400 mt-2 block">
-                    {{ number_format($mrrMinor / 100, 2) }} <span class="text-xs text-slate-300">ج.م</span>
+                    {{ number_format($mrrMinor / 100, 2) }} <span class="text-xs text-slate-300">{{ \App\Support\Money::symbol() }}</span>
                 </span>
                 <span class="text-[11px] text-slate-400 mt-1 block">محسوب لجميع الاشتراكات النشطة والتجريبية</span>
             </div>
@@ -89,7 +89,7 @@
                             </div>
                             <div class="flex justify-between text-[11px] text-slate-400 font-semibold">
                                 <span>عائد الخطة الشهري:</span>
-                                <span class="text-emerald-400 font-bold">{{ number_format($pData['mrr_minor'] / 100, 2) }} ج.م</span>
+                                <span class="text-emerald-400 font-bold">{{ \App\Support\Money::show($pData['mrr_minor']) }}</span>
                             </div>
                         </div>
                     @empty

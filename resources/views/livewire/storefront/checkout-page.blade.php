@@ -53,7 +53,7 @@
                         <!-- Customer Phone -->
                         <div class="sm:col-span-2">
                             <label for="customer_phone" class="block text-xs font-bold text-slate-700 mb-1.5">رقم الهاتف (موبايل مصري) *</label>
-                            <input wire:model="customer_phone" type="tel" id="customer_phone" dir="ltr" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition text-sm text-slate-900 text-right @error('customer_phone') border-red-500 @enderror" placeholder="01012345678">
+                            <input wire:model="customer_phone" type="tel" id="customer_phone" dir="ltr" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition text-sm text-slate-900 text-right @error('customer_phone') border-red-500 @enderror" placeholder="{{ \App\Support\Location\Market::country()->example }}">
                             <p class="text-xs text-slate-400 mt-1">سيتم التواصل معك عبر الهاتف أو الواتساب لتأكيد موعد التسليم.</p>
                             @error('customer_phone') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                         </div>
@@ -63,7 +63,7 @@
                             <label for="governorate_id" class="block text-xs font-bold text-slate-700 mb-1.5">المحافظة *</label>
                             <select wire:model.live="governorate_id" id="governorate_id" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition text-sm text-slate-900 bg-white">
                                 @foreach($governorates as $gov)
-                                    <option value="{{ $gov->id }}">{{ $gov->name_ar }}</option>
+                                    <option value="{{ $gov->id }}">{{ $gov->label() }}</option>
                                 @endforeach
                             </select>
                             @error('governorate_id') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
@@ -111,7 +111,7 @@
                                     <div class="flex items-center justify-between">
                                         <span class="text-sm font-bold text-slate-900">{{ $gatewayName }}</span>
                                         @if($gatewayKey === 'cod' && $settings->allow_cod && $settings->cod_fee_minor > 0)
-                                            <span class="text-xs font-semibold text-slate-500">+ {{ $codFeeDecimal }} ج.م رسم دفع</span>
+                                            <span class="text-xs font-semibold text-slate-500">+ {{ $codFeeDecimal }} {{ \App\Support\Money::symbol() }} رسم دفع</span>
                                         @elseif($gatewayKey === 'paymob')
                                             <span class="text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">كروت ومحافظ وإنستاباي</span>
                                         @endif
@@ -148,7 +148,7 @@
                                     <span class="text-slate-800 font-medium truncate">{{ $item['name'] }}</span>
                                 </div>
                                 <span class="text-slate-900 font-bold whitespace-nowrap">
-                                    {{ number_format($item['subtotal_minor'] / 100, 2) }} ج.م
+                                    {{ \App\Support\Money::show($item['subtotal_minor']) }}
                                 </span>
                             </div>
                         @endforeach
@@ -190,13 +190,13 @@
                     <div class="border-t border-slate-100 pt-4 space-y-3 text-sm">
                         <div class="flex justify-between text-slate-600">
                             <span>المجموع الفرعي:</span>
-                            <span class="font-bold text-slate-900">{{ $subtotalDecimal }} ج.م</span>
+                            <span class="font-bold text-slate-900">{{ $subtotalDecimal }} {{ \App\Support\Money::symbol() }}</span>
                         </div>
 
                         @if($discount_minor > 0)
                             <div class="flex justify-between text-emerald-600 font-semibold">
                                 <span>خصم الكوبون:</span>
-                                <span>- {{ $discountDecimal }} ج.م</span>
+                                <span>- {{ $discountDecimal }} {{ \App\Support\Money::symbol() }}</span>
                             </div>
                         @endif
 
@@ -209,7 +209,7 @@
                                 @if($shippingQuote->is_free)
                                     <span class="bg-emerald-100 text-emerald-800 text-xs px-2 py-0.5 rounded-full font-bold">مجاني</span>
                                 @else
-                                    <span class="font-bold text-slate-900">{{ $shippingDecimal }} ج.م</span>
+                                    <span class="font-bold text-slate-900">{{ $shippingDecimal }} {{ \App\Support\Money::symbol() }}</span>
                                 @endif
                             </div>
                         </div>
@@ -217,7 +217,7 @@
                         @if($payment_method === 'cod' && $codFeeDecimal > 0)
                             <div class="flex justify-between text-slate-600">
                                 <span>رسم الدفع عند الاستلام:</span>
-                                <span class="font-bold text-slate-900">{{ $codFeeDecimal }} ج.م</span>
+                                <span class="font-bold text-slate-900">{{ $codFeeDecimal }} {{ \App\Support\Money::symbol() }}</span>
                             </div>
                         @endif
                     </div>
@@ -225,7 +225,7 @@
                     <!-- Final Total -->
                     <div class="border-t-2 border-slate-900/10 pt-4 flex justify-between items-center text-xl font-black text-slate-900">
                         <span>الإجمالي الكلي:</span>
-                        <span class="text-emerald-600 text-2xl font-black">{{ $totalDecimal }} ج.م</span>
+                        <span class="text-emerald-600 text-2xl font-black">{{ $totalDecimal }} {{ \App\Support\Money::symbol() }}</span>
                     </div>
 
                     <!-- Error Alert -->

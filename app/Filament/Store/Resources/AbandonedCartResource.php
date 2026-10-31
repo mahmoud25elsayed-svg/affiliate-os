@@ -53,7 +53,7 @@ class AbandonedCartResource extends Resource
 
                 TextColumn::make('subtotal_minor')
                     ->label('قيمة السلة')
-                    ->formatStateUsing(fn (int $state): string => Money::fromMinor($state)->format('ar'))
+                    ->formatStateUsing(fn (int $state): string => Money::fromMinor($state)->format())
                     ->sortable()
                     ->weight('bold'),
 

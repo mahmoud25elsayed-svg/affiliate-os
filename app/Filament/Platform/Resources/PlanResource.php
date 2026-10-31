@@ -104,11 +104,11 @@ class PlanResource extends Resource
 
                 TextColumn::make('price_monthly')
                     ->label('السعر الشهري')
-                    ->formatStateUsing(fn (Plan $record) => $record->priceMonthlyMoney()->format('ar')),
+                    ->formatStateUsing(fn (Plan $record) => $record->priceMonthlyMoney()->format()),
 
                 TextColumn::make('price_yearly')
                     ->label('السعر السنوي')
-                    ->formatStateUsing(fn (Plan $record) => $record->priceYearlyMoney()->format('ar')),
+                    ->formatStateUsing(fn (Plan $record) => $record->priceYearlyMoney()->format()),
 
                 TextColumn::make('trial_days')
                     ->label('أيام التجربة')

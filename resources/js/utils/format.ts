@@ -1,11 +1,31 @@
+export interface CurrencyInfo {
+    code: string;
+    symbol: string;
+    decimals: number;
+}
+
+let currency: CurrencyInfo = { code: 'EGP', symbol: 'ج.م', decimals: 2 };
+
+/** Called by app.tsx with the store currency from the shared Inertia props. */
+export function setCurrency(next?: CurrencyInfo | null): void {
+    if (next && next.symbol) {
+        currency = next;
+    }
+}
+
+/** The current store's currency symbol, e.g. "ج.م", "ر.س", "$". */
+export function currencySymbol(): string {
+    return currency.symbol;
+}
+
 /**
- * Formats minor currency units (piastres / cents) to formatted EGP string.
+ * Formats minor units (hundredths of the store currency) with the store's symbol.
  */
 export function formatCurrency(minor: number = 0): string {
-    const pounds = (minor / 100).toFixed(2);
-    // Remove trailing .00 for clean look
-    const clean = pounds.endsWith('.00') ? pounds.slice(0, -3) : pounds;
-    return `${clean} ج.م`;
+    const fixed = (minor / 100).toFixed(Math.max(0, Math.min(currency.decimals, 3)));
+    // Remove trailing zero fraction for a clean look
+    const clean = /\.0+$/.test(fixed) ? fixed.replace(/\.0+$/, '') : fixed;
+    return `${clean} ${currency.symbol}`;
 }
 
 /**

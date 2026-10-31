@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Account;
 use App\Models\Affiliate;
 use App\Models\LedgerLine;
+use App\Support\Money;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -83,7 +84,7 @@ class AffiliateWalletController extends Controller
                 'الحساب',
                 'نوع القيد',
                 'البيان',
-                'المبلغ (ج.م)',
+                'المبلغ ('.Money::symbol().')',
             ]);
 
             foreach ($lines as $line) {

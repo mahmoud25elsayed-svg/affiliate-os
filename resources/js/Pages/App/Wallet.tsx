@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import AppLayout from '../../Layouts/AppLayout';
-import { formatCurrency, getPayoutStatusLabel } from '../../utils/format';
+import { formatCurrency, getPayoutStatusLabel, currencySymbol } from '../../utils/format';
 import {
     Wallet as WalletIcon,
     ArrowUpRight,
@@ -118,7 +118,7 @@ export default function Wallet({
                         ) : (
                             <div className="text-left">
                                 <span className="text-[10px] px-2 py-1 rounded-lg bg-slate-800 text-slate-400 block">
-                                    الحد الأدنى: {minPayoutPounds} ج.م
+                                    الحد الأدنى: {minPayoutPounds} {currencySymbol()}
                                 </span>
                             </div>
                         )}
@@ -319,7 +319,7 @@ export default function Wallet({
                             <form onSubmit={handlePayoutSubmit} className="space-y-4">
                                 <div>
                                     <label className="block text-[11px] text-slate-400 mb-1">
-                                        المبلغ المطلوب سحبه (ج.م)
+                                        المبلغ المطلوب سحبه ({currencySymbol()})
                                     </label>
                                     <input
                                         type="number"
@@ -330,8 +330,8 @@ export default function Wallet({
                                         className="w-full h-11 rounded-2xl bg-slate-800 border border-slate-700 px-3 text-sm font-bold text-white font-mono focus:outline-none focus:border-indigo-500"
                                     />
                                     <div className="flex justify-between text-[10px] text-slate-500 font-mono mt-1">
-                                        <span>الحد الأدنى: {minPayoutPounds} ج.م</span>
-                                        <span>المتاح: {availablePounds} ج.م</span>
+                                        <span>الحد الأدنى: {minPayoutPounds} {currencySymbol()}</span>
+                                        <span>المتاح: {availablePounds} {currencySymbol()}</span>
                                     </div>
                                     {errors.amount_minor && (
                                         <p className="text-[10px] text-rose-400 mt-1">{errors.amount_minor}</p>

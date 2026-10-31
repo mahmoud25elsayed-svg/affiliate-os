@@ -33,16 +33,16 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">رقم الهاتف المصري الأساسي *</label>
-                    <input type="text" name="customer_phone" required value="{{ old('customer_phone') }}" placeholder="01012345678"
+                    <label class="block text-xs font-bold text-slate-700 mb-1">{{ __('رقم موبايل العميل') }} *</label>
+                    <input type="text" name="customer_phone" required value="{{ old('customer_phone') }}" placeholder="{{ \App\Support\Location\Market::country()->example }}"
                            class="w-full text-sm rounded-xl border-slate-200 py-2.5 focus:ring-indigo-500 focus:border-indigo-500 font-mono">
-                    <p class="text-[11px] text-slate-400 mt-1">يجب أن يكون رقماً مصرياً يبدأ بـ 010 أو 011 أو 012 أو 015</p>
+                    <p class="text-[11px] text-slate-400 mt-1">{{ __('مثال') }}: {{ \App\Support\Location\Market::country()->example }} {{ __('أو بالصيغة الدولية') }} +{{ \App\Support\Location\Market::country()->dial }}</p>
                     @error('customer_phone') <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span> @enderror
                 </div>
 
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">رقم هاتف بديل (اختياري)</label>
-                    <input type="text" name="customer_alt_phone" value="{{ old('customer_alt_phone') }}" placeholder="01188776655"
+                    <input type="text" name="customer_alt_phone" value="{{ old('customer_alt_phone') }}" placeholder="{{ \App\Support\Location\Market::country()->example }}"
                            class="w-full text-sm rounded-xl border-slate-200 py-2.5 focus:ring-indigo-500 focus:border-indigo-500 font-mono">
                 </div>
 
@@ -53,7 +53,7 @@
                         <option value="">اختر المحافظة...</option>
                         @foreach($governorates as $gov)
                             <option value="{{ $gov->id }}" {{ (old('governorate_id') == $gov->id || (request('gov') == $gov->id)) ? 'selected' : '' }}>
-                                {{ $gov->name_ar }}
+                                {{ $gov->label() }}
                             </option>
                         @endforeach
                     </select>
@@ -124,7 +124,7 @@
                                     data-min="{{ $wh ? ($wh->min_price_minor / 100) : 0 }}"
                                     data-max="{{ $wh ? ($wh->max_price_minor / 100) : 0 }}"
                                     {{ (old('variant_id', $selectedVariant?->id) == $v->id) ? 'selected' : '' }}>
-                                {{ $v->product?->translateAttribute('name') ?? 'منتج' }} (جملة: {{ $whPrice }} ج.م)
+                                {{ $v->product?->translateAttribute('name') ?? 'منتج' }} (جملة: {{ $whPrice }} {{ \App\Support\Money::symbol() }})
                             </option>
                         @endforeach
                     </select>
@@ -137,7 +137,7 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">سعر البيع المقترح للقطعة (ج.م) *</label>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">سعر البيع المقترح للقطعة ({{ \App\Support\Money::symbol() }}) *</label>
                     <input type="number" step="1" name="selling_price" required x-model="sellingPrice" @input="calculateQuote()"
                            class="w-full text-sm rounded-xl border-slate-200 py-2.5 focus:ring-indigo-500 focus:border-indigo-500 font-mono font-bold text-indigo-700">
                     <p class="text-[11px] text-slate-400 mt-1" x-text="rangeHint">النطاق المسموح</p>
@@ -151,22 +151,22 @@
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
                     <div class="bg-white p-3 rounded-xl border border-slate-200">
                         <span class="block text-[11px] text-slate-500 mb-1">سعر الجملة (عليك)</span>
-                        <span class="text-base font-black text-slate-800 font-mono" x-text="quote.wholesale_price + ' ج.م'">0 ج.م</span>
+                        <span class="text-base font-black text-slate-800 font-mono" x-text="quote.wholesale_price + ' {{ \App\Support\Money::symbol() }}'">0 {{ \App\Support\Money::symbol() }}</span>
                     </div>
 
                     <div class="bg-white p-3 rounded-xl border border-slate-200">
                         <span class="block text-[11px] text-slate-500 mb-1">الشحن للمحافظة</span>
-                        <span class="text-base font-black text-slate-800 font-mono" x-text="quote.shipping_cost + ' ج.م'">0 ج.م</span>
+                        <span class="text-base font-black text-slate-800 font-mono" x-text="quote.shipping_cost + ' {{ \App\Support\Money::symbol() }}'">0 {{ \App\Support\Money::symbol() }}</span>
                     </div>
 
                     <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200">
                         <span class="block text-[11px] text-emerald-700 font-bold mb-1">صافي ربحك بالطلب</span>
-                        <span class="text-lg font-black text-emerald-600 font-mono" x-text="'+' + quote.affiliate_profit + ' ج.م'">0 ج.م</span>
+                        <span class="text-lg font-black text-emerald-600 font-mono" x-text="'+' + quote.affiliate_profit + ' {{ \App\Support\Money::symbol() }}'">0 {{ \App\Support\Money::symbol() }}</span>
                     </div>
 
                     <div class="bg-indigo-50 p-3 rounded-xl border border-indigo-200">
                         <span class="block text-[11px] text-indigo-700 font-bold mb-1">إجمالي تحصيل العميل</span>
-                        <span class="text-lg font-black text-indigo-700 font-mono" x-text="quote.customer_total + ' ج.م'">0 ج.م</span>
+                        <span class="text-lg font-black text-indigo-700 font-mono" x-text="quote.customer_total + ' {{ \App\Support\Money::symbol() }}'">0 {{ \App\Support\Money::symbol() }}</span>
                     </div>
                 </div>
 
@@ -224,7 +224,7 @@ function orderForm() {
                 const wh = parseFloat(option.getAttribute('data-wholesale') || 0);
                 const min = parseFloat(option.getAttribute('data-min') || wh);
                 const max = parseFloat(option.getAttribute('data-max') || wh);
-                this.rangeHint = `الحد الأدنى للبيع: ${min} ج.م — الحد الأقصى: ${max} ج.م`;
+                this.rangeHint = `الحد الأدنى للبيع: ${min} {{ \App\Support\Money::symbol() }} — الحد الأقصى: ${max} {{ \App\Support\Money::symbol() }}`;
                 if (!this.sellingPrice || this.sellingPrice < min) {
                     this.sellingPrice = min;
                 }
@@ -262,7 +262,7 @@ function orderForm() {
                     // The server range also applies the per-order commission cap for this quantity,
                     // which the product's own min/max (data-min/data-max) does not know about.
                     const q = data.quote;
-                    this.rangeHint = `الحد الأدنى للبيع: ${(q.min_allowed_unit_price_minor / 100).toFixed(2)} ج.م — الحد الأقصى: ${(q.max_allowed_unit_price_minor / 100).toFixed(2)} ج.م`;
+                    this.rangeHint = `الحد الأدنى للبيع: ${(q.min_allowed_unit_price_minor / 100).toFixed(2)} {{ \App\Support\Money::symbol() }} — الحد الأقصى: ${(q.max_allowed_unit_price_minor / 100).toFixed(2)} {{ \App\Support\Money::symbol() }}`;
                 } else {
                     this.quoteLoaded = false;
                     this.quoteError = data.message || 'تعذر حساب السعر، راجع البيانات.';

@@ -6,6 +6,7 @@ namespace App\Filament\Store\Resources;
 
 use App\Filament\Store\Resources\CouponResource\Pages\ListCoupons;
 use App\Models\Coupon;
+use App\Support\Money;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -139,7 +140,7 @@ class CouponResource extends Resource
                             return 'شحن مجاني';
                         }
 
-                        return number_format($record->value_minor / 100, 2).' ج.م';
+                        return Money::show($record->value_minor);
                     }),
 
                 TextColumn::make('uses_count')

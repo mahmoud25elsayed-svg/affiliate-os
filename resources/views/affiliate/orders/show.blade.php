@@ -116,25 +116,25 @@
                 @endphp
                 <div class="flex justify-between">
                     <span class="text-slate-400">سعر المنتجات (المحدد للعميل):</span>
-                    <span class="font-bold font-mono text-slate-800">{{ number_format($subTotal / 100, 2) }} ج.م</span>
+                    <span class="font-bold font-mono text-slate-800">{{ \App\Support\Money::show($subTotal) }}</span>
                 </div>
                 <div class="flex justify-between">
                     <span class="text-slate-400">تكلفة الشحن للمحافظة:</span>
-                    <span class="font-bold font-mono text-slate-800">{{ number_format($shippingTotal / 100, 2) }} ج.م</span>
+                    <span class="font-bold font-mono text-slate-800">{{ \App\Support\Money::show($shippingTotal) }}</span>
                 </div>
                 @if($order->cod_fee_minor > 0)
                     <div class="flex justify-between">
                         <span class="text-slate-400">رسوم الدفع عند الاستلام (COD):</span>
-                        <span class="font-bold font-mono text-slate-800">{{ number_format($order->cod_fee_minor / 100, 2) }} ج.م</span>
+                        <span class="font-bold font-mono text-slate-800">{{ \App\Support\Money::show($order->cod_fee_minor) }}</span>
                     </div>
                 @endif
                 <div class="flex justify-between pt-2 border-t border-slate-100 font-bold text-sm">
                     <span class="text-slate-900">إجمالي التحصيل من العميل:</span>
-                    <span class="font-mono text-indigo-700">{{ number_format($totalVal / 100, 2) }} ج.م</span>
+                    <span class="font-mono text-indigo-700">{{ \App\Support\Money::show($totalVal) }}</span>
                 </div>
                 <div class="flex justify-between p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 font-bold text-sm mt-3">
                     <span>صافي عمولتك وربحك:</span>
-                    <span class="font-mono text-emerald-700 text-base">+{{ number_format($order->affiliate_profit_minor / 100, 2) }} ج.م</span>
+                    <span class="font-mono text-emerald-700 text-base">+{{ \App\Support\Money::show($order->affiliate_profit_minor) }}</span>
                 </div>
             </div>
         </div>
@@ -166,8 +166,8 @@
                             <td class="py-3 px-4 font-semibold text-slate-900">{{ $line->description }}</td>
                             <td class="py-3 px-4 font-mono text-slate-500">{{ $line->identifier }}</td>
                             <td class="py-3 px-4 font-bold font-mono">{{ $line->quantity }}</td>
-                            <td class="py-3 px-4 font-mono font-bold text-slate-800">{{ number_format($unitPrice / 100, 2) }} ج.م</td>
-                            <td class="py-3 px-4 font-mono font-bold text-indigo-700">{{ number_format($sub / 100, 2) }} ج.م</td>
+                            <td class="py-3 px-4 font-mono font-bold text-slate-800">{{ \App\Support\Money::show($unitPrice) }}</td>
+                            <td class="py-3 px-4 font-mono font-bold text-indigo-700">{{ \App\Support\Money::show($sub) }}</td>
                         </tr>
                     @endforeach
                 </tbody>

@@ -10,7 +10,7 @@
                 <!-- Default Rate -->
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
-                        سعر الشحن الافتراضي (ج.م) *
+                        سعر الشحن الافتراضي ({{ \App\Support\Money::symbol() }}) *
                     </label>
                     <input type="number" step="0.5" wire:model="default_rate_egp" class="w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white shadow-sm text-sm">
                 </div>
@@ -18,7 +18,7 @@
                 <!-- Free Shipping Threshold -->
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
-                        شحن مجاني للطلبات فوق (ج.م)
+                        شحن مجاني للطلبات فوق ({{ \App\Support\Money::symbol() }})
                     </label>
                     <input type="number" step="10" wire:model="free_shipping_threshold_egp" class="w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white shadow-sm text-sm">
                     <p class="text-xs text-gray-400 mt-1">ضع 0 للتعطيل.</p>
@@ -27,7 +27,7 @@
                 <!-- COD Fee -->
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
-                        رسم الدفع عند الاستلام (ج.م)
+                        رسم الدفع عند الاستلام ({{ \App\Support\Money::symbol() }})
                     </label>
                     <input type="number" step="0.5" wire:model="cod_fee_egp" class="w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white shadow-sm text-sm">
                 </div>
@@ -64,19 +64,19 @@
                     <thead class="bg-gray-50 dark:bg-gray-800/50 text-gray-700 dark:text-gray-300 text-xs font-bold uppercase">
                         <tr>
                             <th class="px-4 py-3">المحافظة</th>
-                            <th class="px-4 py-3">سعر الشحن (ج.م)</th>
+                            <th class="px-4 py-3">سعر الشحن ({{ \App\Support\Money::symbol() }})</th>
                             <th class="px-4 py-3">مدة التوصيل المتوقعة</th>
                             <th class="px-4 py-3 text-center">التوصيل متاح</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
                         @php
-                            $governorates = \App\Support\Location\Governorate::where('is_active', true)->orderBy('name_ar')->get();
+                            $governorates = \App\Support\Location\Governorate::forCountries();
                         @endphp
                         @foreach($governorates as $gov)
                             <tr class="hover:bg-gray-50/50 dark:hover:bg-gray-800/30">
                                 <td class="px-4 py-3 font-semibold text-gray-900 dark:text-white">
-                                    {{ $gov->name_ar }} <span class="text-xs text-gray-400 font-normal">({{ $gov->name_en }})</span>
+                                    {{ $gov->label() }}
                                 </td>
                                 <td class="px-4 py-2 w-40">
                                     <input type="number" step="0.5" wire:model="governorate_rates.{{ $gov->id }}.rate_egp" class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-800 text-sm py-1.5">

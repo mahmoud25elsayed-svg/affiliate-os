@@ -7,6 +7,7 @@ namespace App\Domain\Finance\Services;
 use App\Models\PayoutBatch;
 use App\Models\PayoutRequest;
 use App\Models\User;
+use App\Support\Money;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
@@ -77,7 +78,7 @@ class PayoutBatchService
 
         if ($batch->payment_method === 'wallet_phone') {
             // Vodafone Cash / Mobile wallets format
-            fputcsv($output, ['رقم الطلب', 'اسم المسوق', 'رقم المحفظة (فودافون كاش/أورانج/اتصالات)', 'مزود المحفظة', 'المبلغ (ج.م)', 'ملاحظات']);
+            fputcsv($output, ['رقم الطلب', 'اسم المسوق', 'رقم المحفظة (فودافون كاش/أورانج/اتصالات)', 'مزود المحفظة', 'المبلغ ('.Money::symbol().')', 'ملاحظات']);
             foreach ($batch->requests as $req) {
                 $aff = $req->affiliate;
                 /** @var array<string, mixed> $details */
@@ -97,7 +98,7 @@ class PayoutBatchService
             }
         } elseif ($batch->payment_method === 'instapay') {
             // InstaPay format
-            fputcsv($output, ['رقم الطلب', 'اسم المسوق', 'عنوان إنستاباي (IPA / Mobile)', 'المبلغ (ج.م)', 'ملاحظات']);
+            fputcsv($output, ['رقم الطلب', 'اسم المسوق', 'عنوان إنستاباي (IPA / Mobile)', 'المبلغ ('.Money::symbol().')', 'ملاحظات']);
             foreach ($batch->requests as $req) {
                 $aff = $req->affiliate;
                 /** @var array<string, mixed> $details */
@@ -115,7 +116,7 @@ class PayoutBatchService
             }
         } else {
             // Bank Transfer format
-            fputcsv($output, ['رقم الطلب', 'اسم المستفيد', 'اسم البنك', 'رقم الحساب / IBAN', 'كود السويفت (SWIFT)', 'المبلغ (ج.م)']);
+            fputcsv($output, ['رقم الطلب', 'اسم المستفيد', 'اسم البنك', 'رقم الحساب / IBAN', 'كود السويفت (SWIFT)', 'المبلغ ('.Money::symbol().')']);
             foreach ($batch->requests as $req) {
                 $aff = $req->affiliate;
                 /** @var array<string, mixed> $details */

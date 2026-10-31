@@ -7,7 +7,7 @@ namespace App\Support\Auth;
 use App\Domain\Notifications\Drivers\SMS\SmsMisrDriver;
 use App\Domain\Notifications\DTOs\NotificationMessage;
 use App\Domain\Notifications\Enums\NotificationChannel;
-use App\Support\Phone\EgyptianPhone;
+use App\Support\Phone\PhoneNumber;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
@@ -24,17 +24,17 @@ class OtpService
     public const MAX_VERIFY_ATTEMPTS = 5;
 
     /**
-     * Send OTP to Egyptian phone number with IP & Daily throttling and SMS delivery.
+     * Send OTP to a mobile number with IP & Daily throttling and SMS delivery.
      *
      * @return array{success: bool, message?: string, code?: string|null}
      */
-    public function sendOtp(string $phone, ?string $clientIp = null): array
+    public function sendOtp(string $phone, ?string $clientIp = null, ?string $country = null): array
     {
-        $parsed = EgyptianPhone::tryParse($phone);
+        $parsed = PhoneNumber::tryParse($phone, $country);
         if (! $parsed) {
             return [
                 'success' => false,
-                'message' => 'رقم الهاتف المصري غير صحيح.',
+                'message' => PhoneNumber::invalidMessage($country),
             ];
         }
 
@@ -103,7 +103,7 @@ class OtpService
             Log::error('SMS delivery exception: '.$e->getMessage());
         }
 
-        Log::info('OTP generated for Egyptian phone', [
+        Log::info('OTP generated for phone', [
             'phone_hash' => $parsed->hash(config('app.key', 'secret')),
             'environment' => app()->environment(),
         ]);
@@ -115,11 +115,11 @@ class OtpService
     }
 
     /**
-     * Verify OTP for Egyptian phone number.
+     * Verify OTP for a mobile number.
      */
     public function verifyOtp(string $phone, string $code): bool
     {
-        $parsed = EgyptianPhone::tryParse($phone);
+        $parsed = PhoneNumber::tryParse($phone);
         if (! $parsed) {
             return false;
         }

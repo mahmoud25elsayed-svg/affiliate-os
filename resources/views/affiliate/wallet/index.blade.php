@@ -27,7 +27,7 @@
         <div class="p-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl flex items-start gap-3">
             <svg class="w-6 h-6 text-rose-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
             <div>
-                <h4 class="font-bold text-sm">تنبيه: مديونية مستحقة عليك بمبلغ {{ number_format($debtMinor / 100, 2) }} ج.م</h4>
+                <h4 class="font-bold text-sm">تنبيه: مديونية مستحقة عليك بمبلغ {{ \App\Support\Money::show($debtMinor) }}</h4>
                 <p class="text-xs text-rose-700 mt-1">يوجد رصيد سالب نتيجة مرتجع متأخر بعد تسوية وسحب أرباح سابقة. يتم حجب عمليات السحب مؤقتاً وسيتم خصم هذا المبلغ تلقائياً من أرباحك للطلبات القادمة.</p>
             </div>
         </div>
@@ -43,7 +43,7 @@
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 </span>
             </div>
-            <p class="text-2xl font-black text-amber-600 mt-2 font-mono">{{ number_format($pendingMinor / 100, 2) }} <span class="text-xs font-normal text-gray-500">ج.م</span></p>
+            <p class="text-2xl font-black text-amber-600 mt-2 font-mono">{{ number_format($pendingMinor / 100, 2) }} <span class="text-xs font-normal text-gray-500">{{ \App\Support\Money::symbol() }}</span></p>
             <p class="text-xs text-gray-400 mt-1">طلبات مسلّمة في فترة نافذة المرتجع ({{ $settings->return_window_days }} يوماً)</p>
         </div>
 
@@ -56,9 +56,9 @@
                 </span>
             </div>
             <p class="text-2xl font-black {{ $availableMinor < 0 ? 'text-rose-600' : 'text-emerald-600' }} mt-2 font-mono">
-                {{ number_format($availableMinor / 100, 2) }} <span class="text-xs font-normal text-gray-500">ج.م</span>
+                {{ number_format($availableMinor / 100, 2) }} <span class="text-xs font-normal text-gray-500">{{ \App\Support\Money::symbol() }}</span>
             </p>
-            <p class="text-xs text-gray-400 mt-1">الحد الأدنى للسحب: {{ number_format($settings->min_payout_minor / 100, 2) }} ج.م</p>
+            <p class="text-xs text-gray-400 mt-1">الحد الأدنى للسحب: {{ \App\Support\Money::show($settings->min_payout_minor) }}</p>
         </div>
 
         <!-- Locked Balance -->
@@ -69,7 +69,7 @@
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                 </span>
             </div>
-            <p class="text-2xl font-black text-blue-600 mt-2 font-mono">{{ number_format($lockedMinor / 100, 2) }} <span class="text-xs font-normal text-gray-500">ج.م</span></p>
+            <p class="text-2xl font-black text-blue-600 mt-2 font-mono">{{ number_format($lockedMinor / 100, 2) }} <span class="text-xs font-normal text-gray-500">{{ \App\Support\Money::symbol() }}</span></p>
             <p class="text-xs text-gray-400 mt-1">طلبات سحب جارية قيد المراجعة والتحويل</p>
         </div>
 
@@ -81,7 +81,7 @@
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
                 </span>
             </div>
-            <p class="text-2xl font-black text-purple-600 mt-2 font-mono">{{ number_format($withdrawnMinor / 100, 2) }} <span class="text-xs font-normal text-gray-500">ج.م</span></p>
+            <p class="text-2xl font-black text-purple-600 mt-2 font-mono">{{ number_format($withdrawnMinor / 100, 2) }} <span class="text-xs font-normal text-gray-500">{{ \App\Support\Money::symbol() }}</span></p>
             <p class="text-xs text-gray-400 mt-1">المبالغ المستلمة بنجاح منذ التسجيل</p>
         </div>
     </div>
@@ -135,7 +135,7 @@
                                 @endif
                             </td>
                             <td class="px-6 py-4 text-left font-mono font-bold {{ $isCredit ? 'text-emerald-600' : 'text-rose-600' }}">
-                                {{ $isCredit ? '+' : '' }}{{ number_format($line->amount_minor / 100, 2) }} ج.م
+                                {{ $isCredit ? '+' : '' }}{{ \App\Support\Money::show($line->amount_minor) }}
                             </td>
                         </tr>
                     @empty

@@ -61,7 +61,7 @@ class SubscriptionInvoiceResource extends Resource
 
                 TextColumn::make('amount')
                     ->label('المبلغ')
-                    ->formatStateUsing(fn (SubscriptionInvoice $record) => $record->amountMoney()->format('ar'))
+                    ->formatStateUsing(fn (SubscriptionInvoice $record) => $record->amountMoney()->format())
                     ->weight('bold'),
 
                 TextColumn::make('payment_method')

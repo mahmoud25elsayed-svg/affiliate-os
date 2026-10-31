@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import AppLayout from '../../Layouts/AppLayout';
-import { formatCurrency } from '../../utils/format';
+import { formatCurrency, currencySymbol } from '../../utils/format';
 import {
     PlusCircle,
     User,
@@ -198,7 +198,7 @@ export default function CreateOrder({ products, governorates, selectedVariantId,
                             </div>
 
                             <div>
-                                <label className="block text-[11px] text-slate-400 mb-1">سعر البيع للقطعة (ج.م)</label>
+                                <label className="block text-[11px] text-slate-400 mb-1">سعر البيع للقطعة ({currencySymbol()})</label>
                                 <input
                                     type="number"
                                     min={minSellingPounds}
@@ -213,7 +213,7 @@ export default function CreateOrder({ products, governorates, selectedVariantId,
                         {/* Bounds info */}
                         <div className="flex justify-between text-[10px] text-slate-500 font-mono">
                             <span>جملة: {currentVariant ? formatCurrency(currentVariant.wholesale_minor) : ''}</span>
-                            <span>نطاق البيع: {minSellingPounds} إلى {maxSellingPounds} ج.م</span>
+                            <span>نطاق البيع: {minSellingPounds} إلى {maxSellingPounds} {currencySymbol()}</span>
                         </div>
                         {errors.selling_price_minor && (
                             <p className="text-[10px] text-rose-400">{errors.selling_price_minor}</p>

@@ -26,7 +26,7 @@ class DispatchAbandonedCartNotification
         $tenant = function_exists('tenancy') && tenancy()->initialized ? tenancy()->tenant : null;
         $storeName = $tenant instanceof Tenant ? $tenant->name : 'متجرنا';
         $recoveryUrl = url("/cart/recover/{$cart->recovery_token}");
-        $totalFormatted = Money::fromMinor($cart->subtotal_minor)->format('ar');
+        $totalFormatted = Money::fromMinor($cart->subtotal_minor)->format();
 
         $data = [
             'customer_name' => $customerName,

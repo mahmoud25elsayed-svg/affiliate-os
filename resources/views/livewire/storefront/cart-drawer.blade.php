@@ -52,7 +52,7 @@
                                     <p class="text-xs text-slate-400 mt-0.5">{{ $item['sku'] }}</p>
                                     <div class="flex items-center justify-between mt-2">
                                         <span class="text-sm font-bold text-emerald-600">
-                                            {{ number_format($item['subtotal_minor'] / 100, 2) }} ج.م
+                                            {{ \App\Support\Money::show($item['subtotal_minor']) }}
                                         </span>
                                         <!-- Quantity controls -->
                                         <div class="flex items-center border border-slate-200 rounded-lg overflow-hidden">
@@ -86,7 +86,7 @@
                         <div class="p-6 border-t border-slate-100 bg-slate-50 space-y-4">
                             <div class="flex items-center justify-between text-base font-bold text-slate-900">
                                 <span>المجموع الفرعي:</span>
-                                <span class="text-lg text-emerald-600">{{ $subtotalDecimal }} ج.م</span>
+                                <span class="text-lg text-emerald-600">{{ $subtotalDecimal }} {{ \App\Support\Money::symbol() }}</span>
                             </div>
                             <p class="text-xs text-slate-500">الشحن والخصومات يتم حسابها بدقة عند إتمام الطلب.</p>
                             <div class="grid grid-cols-2 gap-3">

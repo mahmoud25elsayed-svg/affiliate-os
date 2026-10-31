@@ -17,7 +17,7 @@
                 <label for="login" class="block text-sm font-semibold text-slate-700 mb-1">رقم الهاتف أو البريد الإلكتروني</label>
                 <input type="text" name="login" id="login" value="{{ old('login') }}" required dir="ltr"
                        class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm text-right"
-                       placeholder="01012345678 أو name@example.com">
+                       placeholder="{{ \App\Support\Location\Market::country()->example }} {{ __('أو') }} name@example.com">
                 @error('login') <span class="text-xs text-rose-600 mt-1 block">{{ $message }}</span> @enderror
             </div>
 

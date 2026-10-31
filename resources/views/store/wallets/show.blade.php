@@ -61,7 +61,7 @@
                 <div class="relative z-10">
                     <span class="text-xs font-bold text-emerald-100 uppercase tracking-wider block mb-1">رصيد محفظة العميل (Store Credit)</span>
                     <div class="text-3xl font-black mb-1">
-                        {{ number_format($wallet->balance_minor / 100, 2) }} <span class="text-base font-normal">ج.م</span>
+                        {{ number_format($wallet->balance_minor / 100, 2) }} <span class="text-base font-normal">{{ \App\Support\Money::symbol() }}</span>
                     </div>
                     <p class="text-xs text-emerald-100">رصيد متاح للاستخدام في عمليات الشراء المباشرة أو الدفع الجزئي</p>
                 </div>
@@ -75,7 +75,7 @@
                         {{ number_format($loyaltyAccount?->points_balance ?? 0) }} <span class="text-base font-normal">نقطة</span>
                     </div>
                     <p class="text-xs text-violet-200">
-                        تعادل قيمة خصم نقدي: <span class="font-bold underline">{{ number_format((($loyaltyAccount?->points_balance ?? 0) * 10) / 100, 2) }} ج.م</span>
+                        تعادل قيمة خصم نقدي: <span class="font-bold underline">{{ \App\Support\Money::show((($loyaltyAccount?->points_balance ?? 0) * 10)) }}</span>
                     </p>
                 </div>
             </div>
@@ -100,7 +100,7 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-600 mb-1">المبلغ (ج.م)</label>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">المبلغ ({{ \App\Support\Money::symbol() }})</label>
                             <input type="number" step="0.01" min="0.01" name="amount" required placeholder="50.00" class="w-full text-xs font-bold px-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                         </div>
                     </div>
@@ -166,7 +166,7 @@
                         @forelse($wallet->transactions as $tx)
                             <tr class="hover:bg-slate-50/60 transition">
                                 <td class="px-4 py-3 font-black {{ $tx->amount_minor > 0 ? 'text-emerald-600' : 'text-rose-600' }}">
-                                    {{ ($tx->amount_minor > 0 ? '+' : '') . number_format($tx->amount_minor / 100, 2) }} ج.م
+                                    {{ ($tx->amount_minor > 0 ? '+' : '') . number_format($tx->amount_minor / 100, 2) }} {{ \App\Support\Money::symbol() }}
                                 </td>
                                 <td class="px-4 py-3">
                                     <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">

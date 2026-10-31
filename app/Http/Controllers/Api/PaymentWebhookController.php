@@ -12,6 +12,7 @@ use App\Domain\Orders\Services\OrderTransitionService;
 use App\Http\Controllers\Controller;
 use App\Models\PaymentTransaction;
 use App\Models\Tenant;
+use App\Support\Money;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -98,7 +99,7 @@ class PaymentWebhookController extends Controller
         $txn->transaction_ref = $result->transactionRef;
         $txn->status = $status;
         $txn->amount_minor = $result->amountMinor > 0 ? $result->amountMinor : ($existingTxn->amount_minor ?? 0);
-        $txn->currency = $result->currency ?: ($order->currency_code ?? 'EGP');
+        $txn->currency = $result->currency ?: ($order->currency_code ?? Money::defaultCurrency());
         $txn->payment_method = $result->paymentMethod;
         $txn->gateway_payload = array_merge($txn->gateway_payload ?? [], [
             'webhook_received_at' => now()->toIso8601String(),

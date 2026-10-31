@@ -12,6 +12,7 @@ use App\Models\Tenant;
 use App\Models\TrackingLink;
 use App\Models\WholesalePrice;
 use App\Support\Location\Governorate;
+use App\Support\Money;
 use Illuminate\Support\Facades\DB;
 use Lunar\Base\ValueObjects\Cart\TaxBreakdown;
 use Lunar\FieldTypes\Text;
@@ -61,7 +62,7 @@ class TenantDemoDataService
                         'name' => 'Egypt',
                         'iso2' => 'EG',
                         'phonecode' => '+20',
-                        'currency' => 'EGP',
+                        'currency' => Money::defaultCurrency(),
                         'emoji' => '🇪🇬',
                         'emoji_u' => 'U+1F1EA U+1F1EC',
                     ]
@@ -225,7 +226,7 @@ class TenantDemoDataService
                         'channel_id' => $channel->id,
                         'status' => $oData['status'],
                         'reference' => $oData['ref'],
-                        'currency_code' => 'EGP',
+                        'currency_code' => Money::defaultCurrency(),
                         'sub_total' => $unitPrice,
                         'discount_total' => 0,
                         'shipping_total' => $shipping,

@@ -45,7 +45,7 @@ class ManageShippingSettings extends Page
         $this->allow_cod = $settings->allow_cod;
         $this->default_delivery_time_ar = $settings->default_delivery_time_ar;
 
-        $governorates = Governorate::where('is_active', true)->orderBy('name_ar')->get();
+        $governorates = Governorate::forCountries();
         $rates = TenantShippingRate::all()->keyBy('governorate_id');
 
         foreach ($governorates as $gov) {

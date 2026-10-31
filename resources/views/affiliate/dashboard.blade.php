@@ -61,7 +61,7 @@
             <div>
                 <h3 class="font-bold text-rose-900 text-sm">تنبيه مالي: يوجد رصيد مدين مستحق عليك</h3>
                 <p class="text-xs text-rose-700 mt-1">
-                    المبلغ المستحق عليك: <strong class="font-mono text-sm">{{ number_format($debtMinor / 100, 2) }} ج.م</strong> بسبب مرتجعات متأخرة بعد تسوية الأرباح وسحبها.
+                    المبلغ المستحق عليك: <strong class="font-mono text-sm">{{ \App\Support\Money::show($debtMinor) }}</strong> بسبب مرتجعات متأخرة بعد تسوية الأرباح وسحبها.
                     عمليات السحب محجوبة تلقائياً حتى يتم تسوية هذا الدين من أرباح طلباتك القادمة.
                 </p>
             </div>
@@ -123,10 +123,10 @@
                     <span class="text-2xl font-extrabold {{ $availableBalance < 0 ? 'text-rose-600' : 'text-emerald-600' }} font-mono">
                         {{ number_format($availableBalance / 100, 2) }}
                     </span>
-                    <span class="text-xs font-bold text-slate-400">ج.م</span>
+                    <span class="text-xs font-bold text-slate-400">{{ \App\Support\Money::symbol() }}</span>
                 </div>
                 <div class="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between">
-                    <span class="text-[11px] text-slate-400">حد السحب: {{ number_format($settings->min_payout_minor / 100, 2) }} ج.م</span>
+                    <span class="text-[11px] text-slate-400">حد السحب: {{ \App\Support\Money::show($settings->min_payout_minor) }}</span>
                     @if($affiliate->canWithdraw() && $availableBalance >= $settings->min_payout_minor)
                         <a href="{{ route('affiliate.payouts.index') }}" class="text-[11px] font-bold text-emerald-700 hover:text-emerald-900 bg-emerald-50 px-2 py-0.5 rounded-lg">
                             سحب أرباح ←
@@ -145,7 +145,7 @@
                     <span class="text-2xl font-extrabold text-amber-600 font-mono">
                         {{ number_format($pendingBalance / 100, 2) }}
                     </span>
-                    <span class="text-xs font-bold text-slate-400">ج.م</span>
+                    <span class="text-xs font-bold text-slate-400">{{ \App\Support\Money::symbol() }}</span>
                 </div>
                 <span class="text-[11px] text-slate-400 mt-3 block pt-3 border-t border-slate-100">
                     تتحول للمتاح بعد {{ $settings->return_window_days }} يوماً من تسليم الطلب
@@ -162,7 +162,7 @@
                     <span class="text-2xl font-extrabold text-indigo-600 font-mono">
                         {{ number_format($lockedBalance / 100, 2) }}
                     </span>
-                    <span class="text-xs font-bold text-slate-400">ج.م</span>
+                    <span class="text-xs font-bold text-slate-400">{{ \App\Support\Money::symbol() }}</span>
                 </div>
                 <span class="text-[11px] text-slate-400 mt-3 block pt-3 border-t border-slate-100">
                     طلبات سحب قيد المراجعة أو التنفيذ
@@ -179,7 +179,7 @@
                     <span class="text-2xl font-extrabold text-slate-800 font-mono">
                         {{ number_format($withdrawnBalance / 100, 2) }}
                     </span>
-                    <span class="text-xs font-bold text-slate-400">ج.م</span>
+                    <span class="text-xs font-bold text-slate-400">{{ \App\Support\Money::symbol() }}</span>
                 </div>
                 <span class="text-[11px] text-slate-400 mt-3 block pt-3 border-t border-slate-100">
                     أرباح تم تحويلها لحسابك بنجاح
@@ -294,7 +294,7 @@
                                         </span>
                                     </td>
                                     <td class="py-2.5 font-mono font-bold text-emerald-600">
-                                        {{ number_format($commissionMinor / 100, 2) }} ج.م
+                                        {{ \App\Support\Money::show($commissionMinor) }}
                                     </td>
                                     <td class="py-2.5 text-slate-400 font-mono text-[11px]">
                                         {{ $order->created_at?->format('m/d H:i') }}
@@ -344,7 +344,7 @@
                                         {{ $line->account?->name }}
                                     </td>
                                     <td class="py-2.5 font-mono font-bold {{ $line->amount_minor >= 0 ? 'text-emerald-600' : 'text-rose-600' }}">
-                                        {{ $line->amount_minor >= 0 ? '+' : '' }}{{ number_format($line->amount_minor / 100, 2) }} ج.م
+                                        {{ $line->amount_minor >= 0 ? '+' : '' }}{{ \App\Support\Money::show($line->amount_minor) }}
                                     </td>
                                     <td class="py-2.5 text-slate-400 font-mono text-[11px]">
                                         {{ $line->created_at->format('m/d H:i') }}

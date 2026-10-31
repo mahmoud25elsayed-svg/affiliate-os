@@ -157,7 +157,7 @@
                     <div class="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between">
                         <div>
                             <span class="text-base font-black text-stone-900">{{ $priceFormatted }}</span>
-                            <span class="text-xs font-semibold text-stone-500">ج.م</span>
+                            <span class="text-xs font-semibold text-stone-500">{{ \App\Support\Money::symbol() }}</span>
                         </div>
                         <a href="{{ route('storefront.products.show', $product->id) }}"
                            class="p-2.5 rounded-xl bg-stone-900 hover:bg-amber-600 text-white transition text-xs font-bold">

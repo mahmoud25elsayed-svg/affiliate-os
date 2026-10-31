@@ -11,6 +11,7 @@ use App\Models\ApiKey;
 use App\Models\MobileDevice;
 use App\Models\Tenant;
 use App\Models\User;
+use App\Support\Money;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -111,7 +112,7 @@ class MobileDeviceApiController extends Controller
         return response()->json([
             'tenant_id' => (string) $tenant->id,
             'store_name' => $tenant->name ?? 'AffiliateOS Store',
-            'currency' => 'EGP',
+            'currency' => Money::defaultCurrency(),
             'locale' => 'ar',
             'branding' => [
                 'primary_color' => '#10B981',

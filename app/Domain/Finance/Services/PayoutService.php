@@ -15,6 +15,7 @@ use App\Models\Account;
 use App\Models\Affiliate;
 use App\Models\PayoutRequest;
 use App\Models\User;
+use App\Support\Money;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -48,7 +49,7 @@ class PayoutService
         if ($amountMinor < $settings->min_payout_minor) {
             $minMajor = number_format($settings->min_payout_minor / 100, 2);
 
-            throw new InsufficientAffiliateBalanceException("الحد الأدنى لطلب السحب هو {$minMajor} ج.م");
+            throw new InsufficientAffiliateBalanceException("الحد الأدنى لطلب السحب هو {$minMajor} ".Money::symbol());
         }
 
         $method = $paymentMethod ?? $affiliate->payout_method ?? Affiliate::PAYOUT_METHOD_WALLET;

@@ -23,7 +23,7 @@ class MoneyCast implements CastsAttributes
             return null;
         }
 
-        $currency = $attributes['currency_code'] ?? 'EGP';
+        $currency = $attributes['currency_code'] ?? Money::defaultCurrency();
 
         return new Money((int) $value, (string) $currency);
     }

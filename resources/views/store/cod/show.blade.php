@@ -63,15 +63,15 @@
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
                 <span class="text-xs font-bold text-slate-500 block mb-1">المحصل الفعلي (COD)</span>
-                <span class="text-2xl font-black text-slate-900">{{ number_format($remittance->total_collected_minor / 100, 2) }} <span class="text-xs font-normal">ج.م</span></span>
+                <span class="text-2xl font-black text-slate-900">{{ number_format($remittance->total_collected_minor / 100, 2) }} <span class="text-xs font-normal">{{ \App\Support\Money::symbol() }}</span></span>
             </div>
             <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
                 <span class="text-xs font-bold text-rose-600 block mb-1">خصومات مصاريف الشحن</span>
-                <span class="text-2xl font-black text-rose-600">-{{ number_format($remittance->total_shipping_fees_minor / 100, 2) }} <span class="text-xs font-normal">ج.م</span></span>
+                <span class="text-2xl font-black text-rose-600">-{{ number_format($remittance->total_shipping_fees_minor / 100, 2) }} <span class="text-xs font-normal">{{ \App\Support\Money::symbol() }}</span></span>
             </div>
             <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
                 <span class="text-xs font-bold text-emerald-600 block mb-1">صافي المبلغ المورد</span>
-                <span class="text-2xl font-black text-emerald-600">{{ number_format($remittance->net_payout_minor / 100, 2) }} <span class="text-xs font-normal">ج.م</span></span>
+                <span class="text-2xl font-black text-emerald-600">{{ number_format($remittance->net_payout_minor / 100, 2) }} <span class="text-xs font-normal">{{ \App\Support\Money::symbol() }}</span></span>
             </div>
             <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
                 <span class="text-xs font-bold text-slate-500 block mb-1">حالة المطابقة</span>
@@ -146,20 +146,20 @@
                                     @endif
                                 </td>
                                 <td class="px-4 py-4 font-black text-slate-900">
-                                    {{ number_format($item->reported_cod_minor / 100, 2) }} ج.م
+                                    {{ \App\Support\Money::show($item->reported_cod_minor) }}
                                 </td>
                                 <td class="px-4 py-4 text-slate-600">
-                                    {{ number_format($item->expected_cod_minor / 100, 2) }} ج.م
+                                    {{ \App\Support\Money::show($item->expected_cod_minor) }}
                                 </td>
                                 <td class="px-4 py-4 font-bold {{ $item->cod_discrepancy_minor < 0 ? 'text-rose-600' : ($item->cod_discrepancy_minor > 0 ? 'text-blue-600' : 'text-slate-400') }}">
                                     @if($item->cod_discrepancy_minor !== 0)
-                                        {{ ($item->cod_discrepancy_minor > 0 ? '+' : '') . number_format($item->cod_discrepancy_minor / 100, 2) }} ج.م
+                                        {{ ($item->cod_discrepancy_minor > 0 ? '+' : '') . number_format($item->cod_discrepancy_minor / 100, 2) }} {{ \App\Support\Money::symbol() }}
                                     @else
                                         -
                                     @endif
                                 </td>
                                 <td class="px-4 py-4 font-semibold text-slate-700">
-                                    {{ number_format($item->shipping_fee_minor / 100, 2) }} ج.م
+                                    {{ \App\Support\Money::show($item->shipping_fee_minor) }}
                                 </td>
                                 <td class="px-4 py-4">
                                     @if($item->match_status === \App\Domain\Finance\Enums\RemittanceItemMatchStatus::MATCHED)

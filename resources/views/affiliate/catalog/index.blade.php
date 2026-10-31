@@ -84,15 +84,15 @@
                             <div class="bg-slate-50 p-3 rounded-xl space-y-1.5 text-xs">
                                 <div class="flex justify-between items-center text-slate-600">
                                     <span>سعر الجملة (تكلفة عليك):</span>
-                                    <span class="font-bold font-mono text-slate-900 text-sm">{{ number_format($wholesalePriceMinor / 100, 2) }} ج.م</span>
+                                    <span class="font-bold font-mono text-slate-900 text-sm">{{ \App\Support\Money::show($wholesalePriceMinor) }}</span>
                                 </div>
                                 <div class="flex justify-between items-center text-slate-500">
                                     <span>النطاق المسموح للبيع:</span>
-                                    <span class="font-semibold text-emerald-600 font-mono">{{ number_format($minPriceMinor / 100) }} - {{ number_format($maxPriceMinor / 100) }} ج.م</span>
+                                    <span class="font-semibold text-emerald-600 font-mono">{{ number_format($minPriceMinor / 100) }} - {{ number_format($maxPriceMinor / 100) }} {{ \App\Support\Money::symbol() }}</span>
                                 </div>
                                 <div class="flex justify-between items-center text-indigo-600 pt-1 border-t border-slate-200">
                                     <span>ربحك المتوقع للقطعة:</span>
-                                    <span class="font-black font-mono">+{{ number_format(($minPriceMinor - $wholesalePriceMinor) / 100) }} إلى {{ number_format(($maxPriceMinor - $wholesalePriceMinor) / 100) }} ج.م</span>
+                                    <span class="font-black font-mono">+{{ number_format(($minPriceMinor - $wholesalePriceMinor) / 100) }} إلى {{ number_format(($maxPriceMinor - $wholesalePriceMinor) / 100) }} {{ \App\Support\Money::symbol() }}</span>
                                 </div>
                             </div>
                         </div>

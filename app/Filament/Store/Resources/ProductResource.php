@@ -177,7 +177,7 @@ class ProductResource extends Resource
                     ->getStateUsing(function (Product $record) {
                         $pricing = static::getWholesalePrice($record);
 
-                        return $pricing ? $pricing->wholesalePriceMoney()->format('ar') : '-';
+                        return $pricing ? $pricing->wholesalePriceMoney()->format() : '-';
                     }),
 
                 TextColumn::make('affiliate_range')
@@ -188,7 +188,7 @@ class ProductResource extends Resource
                             return '-';
                         }
 
-                        return $pricing->minPriceMoney()->format('ar').' - '.$pricing->maxPriceMoney()->format('ar');
+                        return $pricing->minPriceMoney()->format().' - '.$pricing->maxPriceMoney()->format();
                     }),
 
                 TextColumn::make('status')
@@ -293,7 +293,7 @@ class ProductResource extends Resource
     {
         return TextInput::make($name)
             ->label($label)
-            ->suffix('ج.م')
+            ->suffix(Money::symbol())
             ->inputMode('decimal')
             ->rule('regex:/^\d{1,7}(\.\d{1,2})?$/')
             ->formatStateUsing(fn (mixed $state): ?string => is_numeric($state)

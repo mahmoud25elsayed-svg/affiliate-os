@@ -11,6 +11,7 @@ use App\Models\CustomerLoyaltyAccount;
 use App\Models\CustomerWallet;
 use App\Models\CustomerWalletTransaction;
 use App\Models\User;
+use App\Support\Money;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -111,7 +112,7 @@ class StoreCustomerWalletController extends Controller
                 referenceId: 'manual_adj_'.uniqid(),
                 notes: "تعديل يدوي من إدارة المتجر: {$notes}"
             );
-            $msg = 'تمت إضافة '.number_format($amountMinor / 100, 2).' ج.م إلى محفظة العميل بنجاح.';
+            $msg = 'تمت إضافة '.number_format($amountMinor / 100, 2).' '.Money::symbol().' إلى محفظة العميل بنجاح.';
         } else {
             $walletService->debit(
                 customer: $wallet->customer_id,
@@ -120,7 +121,7 @@ class StoreCustomerWalletController extends Controller
                 referenceId: 'manual_adj_'.uniqid(),
                 notes: "خصم يدوي من إدارة المتجر: {$notes}"
             );
-            $msg = 'تم خصم '.number_format($amountMinor / 100, 2).' ج.م من محفظة العميل بنجاح.';
+            $msg = 'تم خصم '.number_format($amountMinor / 100, 2).' '.Money::symbol().' من محفظة العميل بنجاح.';
         }
 
         return redirect()->route('store.wallets.show', $wallet)

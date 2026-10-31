@@ -60,7 +60,7 @@
             </div>
             <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
                 <span class="text-xs font-semibold text-slate-400 block mb-1">إجمالي الحوالات المنفذة</span>
-                <span class="text-2xl font-extrabold text-emerald-600 font-mono">{{ number_format($totalPaidMinor / 100, 2) }} ج.م</span>
+                <span class="text-2xl font-extrabold text-emerald-600 font-mono">{{ \App\Support\Money::show($totalPaidMinor) }}</span>
                 <span class="text-[11px] text-slate-400 block mt-1">عدد: {{ $paidCount }} حوالة</span>
             </div>
             <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
@@ -147,7 +147,7 @@
                                         <span class="font-mono text-[10px] text-indigo-600">{{ $req->affiliate?->code }}</span>
                                     </td>
                                     <td class="p-4 font-mono font-extrabold text-sm text-slate-900">
-                                        {{ number_format($req->amount_minor / 100, 2) }} ج.م
+                                        {{ \App\Support\Money::show($req->amount_minor) }}
                                     </td>
                                     <td class="p-4">
                                         <span class="font-bold text-slate-700 block">
@@ -228,7 +228,7 @@
                                             <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-xl" @click.away="showExecuteModal = false">
                                                 <h3 class="font-bold text-slate-900 text-base">تنفيذ تحويل طلب السحب #{{ $req->id }}</h3>
                                                 <p class="text-xs text-slate-500">
-                                                    المبلغ: <strong class="text-slate-900 font-mono">{{ number_format($req->amount_minor / 100, 2) }} ج.م</strong> للمسوق <strong class="text-slate-900">{{ $req->affiliate?->name }}</strong>
+                                                    المبلغ: <strong class="text-slate-900 font-mono">{{ \App\Support\Money::show($req->amount_minor) }}</strong> للمسوق <strong class="text-slate-900">{{ $req->affiliate?->name }}</strong>
                                                 </p>
 
                                                 <form action="{{ route('store.payouts.execute', $req->id) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
@@ -254,7 +254,7 @@
                                             <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-xl" @click.away="showRejectModal = false">
                                                 <h3 class="font-bold text-slate-900 text-base">رفض طلب السحب #{{ $req->id }}</h3>
                                                 <p class="text-xs text-slate-500">
-                                                    سيتم إلغاء الحجز وإعادة المبلغ (<strong class="text-slate-900 font-mono">{{ number_format($req->amount_minor / 100, 2) }} ج.م</strong>) إلى الرصيد المتاح للمسوق فوراً.
+                                                    سيتم إلغاء الحجز وإعادة المبلغ (<strong class="text-slate-900 font-mono">{{ \App\Support\Money::show($req->amount_minor) }}</strong>) إلى الرصيد المتاح للمسوق فوراً.
                                                 </p>
 
                                                 <form action="{{ route('store.payouts.reject', $req->id) }}" method="POST" class="space-y-4">
@@ -309,7 +309,7 @@
                                     <td class="p-3 font-mono font-bold text-slate-900">{{ $b->batch_reference }}</td>
                                     <td class="p-3">{{ $b->payment_method }}</td>
                                     <td class="p-3 font-mono">{{ $b->total_requests }}</td>
-                                    <td class="p-3 font-mono font-bold text-emerald-600">{{ number_format($b->total_amount_minor / 100, 2) }} ج.م</td>
+                                    <td class="p-3 font-mono font-bold text-emerald-600">{{ \App\Support\Money::show($b->total_amount_minor) }}</td>
                                     <td class="p-3">
                                         <span class="px-2 py-0.5 rounded text-[10px] font-bold {{ $b->isCompleted() ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800' }}">
                                             {{ $b->status }}

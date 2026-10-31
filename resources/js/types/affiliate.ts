@@ -98,6 +98,7 @@ export interface TrackingLinkItem {
 export interface AppSharedProps {
     auth?: { affiliate?: Pick<AffiliateUser, 'id' | 'name' | 'code'> | null };
     tenant?: { name?: string | null } | null;
+    currency?: { code: string; symbol: string; decimals: number };
     flash?: { success?: string | null; error?: string | null };
     url?: string;
 }

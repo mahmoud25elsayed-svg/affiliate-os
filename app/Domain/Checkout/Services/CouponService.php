@@ -7,6 +7,7 @@ namespace App\Domain\Checkout\Services;
 use App\Domain\Checkout\DTOs\CouponResult;
 use App\Models\Coupon;
 use App\Models\CouponRedemption;
+use App\Support\Money;
 
 class CouponService
 {
@@ -60,7 +61,7 @@ class CouponService
         if ($coupon->min_order_value_minor !== null && $subtotalMinor < $coupon->min_order_value_minor) {
             $minEgp = number_format($coupon->min_order_value_minor / 100, 2);
 
-            return CouponResult::failure("الحد الأدنى للطلب لتفعيل هذا الكوبون هو {$minEgp} ج.م");
+            return CouponResult::failure("الحد الأدنى للطلب لتفعيل هذا الكوبون هو {$minEgp} ".Money::symbol());
         }
 
         // Check restricted categories

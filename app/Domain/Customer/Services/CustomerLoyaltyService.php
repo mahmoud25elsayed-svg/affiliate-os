@@ -13,6 +13,7 @@ use App\Models\Customer as AppCustomer;
 use App\Models\CustomerLoyaltyAccount;
 use App\Models\CustomerLoyaltyTransaction;
 use App\Models\CustomerWalletTransaction;
+use App\Support\Money;
 use DomainException;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
@@ -212,7 +213,7 @@ class CustomerLoyaltyService
                 $entryData = new EntryData(
                     type: 'loyalty_redeemed_to_wallet',
                     idempotencyKey: "loyalty_redeem_{$transaction->id}",
-                    description: "تحويل نقاط ولاء إلى رصيد محفظة ({$points} نقطة = ".number_format($amountMinor / 100, 2).' ج.م)',
+                    description: "تحويل نقاط ولاء إلى رصيد محفظة ({$points} نقطة = ".number_format($amountMinor / 100, 2).' '.Money::symbol().')',
                     lines: [
                         new LedgerLineData(account: $walletAccount, amountMinor: $amountMinor),
                         new LedgerLineData(account: $loyaltyAccount, amountMinor: -$amountMinor),

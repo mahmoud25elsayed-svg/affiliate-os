@@ -123,11 +123,11 @@ class NotificationChannelResource extends Resource
 
                 TextColumn::make('daily_cost_limit_minor')
                     ->label('الحد اليومي')
-                    ->formatStateUsing(fn (int $state): string => Money::fromMinor($state)->format('ar')),
+                    ->formatStateUsing(fn (int $state): string => Money::fromMinor($state)->format()),
 
                 TextColumn::make('current_day_cost_minor')
                     ->label('استهلاك اليوم')
-                    ->formatStateUsing(fn (int $state): string => Money::fromMinor($state)->format('ar')),
+                    ->formatStateUsing(fn (int $state): string => Money::fromMinor($state)->format()),
 
                 IconColumn::make('is_active')
                     ->label('مفعلة')

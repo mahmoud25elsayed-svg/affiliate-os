@@ -13,7 +13,8 @@ use App\Domain\Orders\QualityGate\DTOs\QualityGateResult;
 use App\Domain\Orders\QualityGate\QualityGateService;
 use App\Models\Affiliate;
 use App\Models\OrderEvent;
-use App\Support\Phone\EgyptianPhone;
+use App\Support\Money;
+use App\Support\Phone\PhoneNumber;
 use DomainException;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -88,7 +89,7 @@ class SubmitAffiliateOrderAction
         }
 
         // 4. Validate & Normalize Phone
-        $phone = EgyptianPhone::tryParse($payload['customer_phone']);
+        $phone = PhoneNumber::tryParse($payload['customer_phone']);
         if ($phone === null) {
             throw new DomainException('رقم الهاتف غير صالح. يرجى إدخال رقم هاتف محمول مصري صحيح.');
         }
@@ -181,7 +182,7 @@ class SubmitAffiliateOrderAction
                 'cod_fee_minor' => $codFeeMinor,
                 'total_minor' => $totalCustomerMinor,
                 'affiliate_profit_minor' => $totalAffiliateProfitMinor,
-                'currency' => 'EGP',
+                'currency' => Money::defaultCurrency(),
                 'quality_result' => $qualityResult->toArray(),
                 'items' => array_map(fn ($q) => $q['quote']->toArray(), $quotes),
             ];
@@ -201,7 +202,7 @@ class SubmitAffiliateOrderAction
                 'tax_breakdown' => new TaxBreakdown,
                 'tax_total' => 0,
                 'total' => $totalCustomerMinor,
-                'currency_code' => 'EGP',
+                'currency_code' => Money::defaultCurrency(),
                 'placed_at' => now(),
                 'customer_phone_e164' => $phone->e164,
                 'customer_phone_hash' => $phone->hash(),

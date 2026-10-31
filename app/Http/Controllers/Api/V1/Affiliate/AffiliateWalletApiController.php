@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Api\V1\Affiliate;
 use App\Http\Controllers\Controller;
 use App\Models\Affiliate;
 use App\Models\ApiKey;
+use App\Support\Money;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -53,7 +54,7 @@ class AffiliateWalletApiController extends Controller
                 'withdrawn_minor' => $affiliate->getWithdrawnBalance(),
                 'has_debt' => $affiliate->hasDebt(),
                 'debt_minor' => $affiliate->getDebtMinor(),
-                'currency' => 'EGP',
+                'currency' => Money::defaultCurrency(),
             ],
         ]);
     }

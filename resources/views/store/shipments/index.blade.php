@@ -138,7 +138,7 @@
                                     <div class="text-[11px] text-slate-500">📍 {{ $sh->delivery_city }} — 📞 {{ $sh->recipient_phone }}</div>
                                 </td>
                                 <td class="py-3.5 px-4 font-black text-emerald-700">
-                                    {{ number_format($sh->cod_amount_minor / 100, 2) }} ج.م
+                                    {{ \App\Support\Money::show($sh->cod_amount_minor) }}
                                 </td>
                                 <td class="py-3.5 px-4">
                                     @php

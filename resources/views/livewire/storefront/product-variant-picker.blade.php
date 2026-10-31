@@ -16,7 +16,7 @@
                     </div>
                 </div>
                 <span class="px-2.5 py-1 bg-red-600 text-white rounded-lg text-xs font-black">
-                    وفّر {{ \App\Support\Money::fromMinor($promotional['original_price_minor'] - $promotional['price_minor'])->format('ar') }}
+                    وفّر {{ \App\Support\Money::fromMinor($promotional['original_price_minor'] - $promotional['price_minor'])->format() }}
                 </span>
             </div>
         @elseif($promotional['promotion_type'] === 'daily_deal')
@@ -35,31 +35,31 @@
         @if(! empty($linkedPriceMinor))
             {{-- Price from the affiliate link the visitor came through; this is what checkout charges. --}}
             <span class="text-3xl font-black text-brand-600">
-                {{ \App\Support\Money::fromMinor($linkedPriceMinor)->format('ar') }}
+                {{ \App\Support\Money::fromMinor($linkedPriceMinor)->format() }}
             </span>
         @elseif(isset($promotional) && $promotional && $promotional['is_promotional'])
             <span class="text-3xl font-black text-red-600">
-                {{ \App\Support\Money::fromMinor($promotional['price_minor'])->format('ar') }}
+                {{ \App\Support\Money::fromMinor($promotional['price_minor'])->format() }}
             </span>
             <span class="text-sm text-gray-400 line-through">
-                {{ \App\Support\Money::fromMinor($promotional['original_price_minor'])->format('ar') }}
+                {{ \App\Support\Money::fromMinor($promotional['original_price_minor'])->format() }}
             </span>
             <span class="px-2 py-0.5 rounded-full bg-red-100 text-red-700 text-xs font-bold">
                 تخفيض حصري
             </span>
         @else
             <span class="text-3xl font-black text-brand-600">
-                {{ $price ? $price->price->formatted() : '0.00 ج.م' }}
+                {{ \App\Support\Money::show($price?->price) }}
             </span>
             @if($pricing && $pricing->compare_at_price_minor && $price && $pricing->compare_at_price_minor > $price->price->value)
                 @php
                     $compareMoney = \App\Support\Money::fromMinor($pricing->compare_at_price_minor);
                 @endphp
                 <span class="text-sm text-gray-400 line-through">
-                    {{ $compareMoney->format('ar') }}
+                    {{ $compareMoney->format() }}
                 </span>
                 <span class="px-2 py-0.5 rounded-full bg-red-100 text-red-700 text-xs font-bold">
-                    وفر {{ \App\Support\Money::fromMinor($pricing->compare_at_price_minor - $price->price->value)->format('ar') }}
+                    وفر {{ \App\Support\Money::fromMinor($pricing->compare_at_price_minor - $price->price->value)->format() }}
                 </span>
             @endif
         @endif

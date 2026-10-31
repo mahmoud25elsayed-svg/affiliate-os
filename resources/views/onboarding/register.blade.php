@@ -218,7 +218,28 @@
                     </div>
 
                     <div class="form-group full-width">
-                        <label for="phone" class="form-label">رقم الهاتف المصري (لإرسال رمز التحقق OTP)</label>
+                        <label for="country" class="form-label">{{ __('دولة المتجر (تحدد العملة وصيغة الهاتف)') }}</label>
+                        <select id="country" name="country" class="form-input" required>
+                            @php($selectedCountry = old('country', 'EG'))
+                            <optgroup label="{{ __('الدول العربية') }}">
+                                @foreach (\App\Support\Location\Country::all() as $c)
+                                    @if ($c->arab)
+                                        <option value="{{ $c->code }}" data-example="{{ $c->example }}" data-dial="{{ $c->dial }}" @selected($selectedCountry === $c->code)>{{ $c->name() }} (+{{ $c->dial }}) — {{ $c->currency }}</option>
+                                    @endif
+                                @endforeach
+                            </optgroup>
+                            <optgroup label="{{ __('دول أخرى') }}">
+                                @foreach (\App\Support\Location\Country::all() as $c)
+                                    @if (! $c->arab)
+                                        <option value="{{ $c->code }}" data-example="{{ $c->example }}" data-dial="{{ $c->dial }}" @selected($selectedCountry === $c->code)>{{ $c->name() }} (+{{ $c->dial }}) — {{ $c->currency }}</option>
+                                    @endif
+                                @endforeach
+                            </optgroup>
+                        </select>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="phone" class="form-label">{{ __('رقم الموبايل (لإرسال رمز التحقق OTP)') }}</label>
                         <div class="input-group">
                             <input type="tel" id="phone" name="phone" class="form-input" value="{{ old('phone') }}" placeholder="01012345678" required>
                             <button type="button" id="btnSendOtp" class="btn-otp">إرسال الرمز</button>
@@ -274,6 +295,15 @@
         const btnSendOtp = document.getElementById('btnSendOtp');
         const phoneInput = document.getElementById('phone');
         const otpStatus = document.getElementById('otpStatus');
+        const countrySelect = document.getElementById('country');
+
+        // Show a local example number for the chosen country.
+        const syncPhonePlaceholder = () => {
+            const opt = countrySelect.options[countrySelect.selectedIndex];
+            phoneInput.placeholder = opt ? opt.dataset.example : '';
+        };
+        countrySelect.addEventListener('change', syncPhonePlaceholder);
+        syncPhonePlaceholder();
 
         btnSendOtp.addEventListener('click', function() {
             const phone = phoneInput.value.trim();
@@ -292,7 +322,7 @@
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 },
-                body: JSON.stringify({ phone: phone })
+                body: JSON.stringify({ phone: phone, country: countrySelect.value })
             })
             .then(r => r.json())
             .then(data => {

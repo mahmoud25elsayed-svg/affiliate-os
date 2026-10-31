@@ -199,8 +199,8 @@
                     </td>
                     <td>{{ $line->identifier ?? '-' }}</td>
                     <td style="text-align: center;">{{ $line->quantity }}</td>
-                    <td style="text-align: left;">{{ number_format(($line->unit_price->value ?? 0) / 100, 2) }} ج.م</td>
-                    <td style="text-align: left;">{{ number_format(($line->sub_total->value ?? 0) / 100, 2) }} ج.م</td>
+                    <td style="text-align: left;">{{ \App\Support\Money::show(($line->unit_price->value ?? 0)) }}</td>
+                    <td style="text-align: left;">{{ \App\Support\Money::show(($line->sub_total->value ?? 0)) }}</td>
                 </tr>
             @endforeach
         </tbody>
@@ -209,27 +209,27 @@
     <table class="totals-table">
         <tr>
             <td>المجموع الفرعي:</td>
-            <td style="text-align: left; font-weight: bold;">{{ number_format(($order->sub_total->value ?? 0) / 100, 2) }} ج.م</td>
+            <td style="text-align: left; font-weight: bold;">{{ \App\Support\Money::show(($order->sub_total->value ?? 0)) }}</td>
         </tr>
         @if (($order->discount_total->value ?? 0) > 0)
             <tr style="color: #059669;">
                 <td>خصم الكوبون:</td>
-                <td style="text-align: left; font-weight: bold;">-{{ number_format(($order->discount_total->value ?? 0) / 100, 2) }} ج.م</td>
+                <td style="text-align: left; font-weight: bold;">-{{ \App\Support\Money::show(($order->discount_total->value ?? 0)) }}</td>
             </tr>
         @endif
         <tr>
             <td>تكلفة الشحن:</td>
-            <td style="text-align: left;">{{ number_format(($order->shipping_total->value ?? 0) / 100, 2) }} ج.م</td>
+            <td style="text-align: left;">{{ \App\Support\Money::show(($order->shipping_total->value ?? 0)) }}</td>
         </tr>
         @if ($order->cod_fee_minor > 0)
             <tr>
                 <td>رسوم الدفع عند الاستلام:</td>
-                <td style="text-align: left;">{{ number_format($order->cod_fee_minor / 100, 2) }} ج.م</td>
+                <td style="text-align: left;">{{ \App\Support\Money::show($order->cod_fee_minor) }}</td>
             </tr>
         @endif
         <tr class="grand-total">
             <td>الإجمالي المطلوب سداده:</td>
-            <td style="text-align: left;">{{ number_format(($order->total->value ?? 0) / 100, 2) }} ج.م</td>
+            <td style="text-align: left;">{{ \App\Support\Money::show(($order->total->value ?? 0)) }}</td>
         </tr>
     </table>
 

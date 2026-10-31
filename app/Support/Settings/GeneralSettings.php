@@ -8,7 +8,13 @@ class GeneralSettings extends Settings
 {
     public string $platform_name = 'AffiliateOS';
 
+    /** ISO 3166-1 alpha-2 home country of the store (config/countries.php). */
+    public string $country_code = 'EG';
+
     public string $default_currency = 'EGP';
+
+    /** @var list<string> extra countries the store ships to, besides its home country */
+    public array $shipping_countries = [];
 
     public string $default_locale = 'ar';
 

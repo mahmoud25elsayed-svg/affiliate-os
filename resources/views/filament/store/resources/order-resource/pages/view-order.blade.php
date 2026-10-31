@@ -34,9 +34,9 @@
             <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 shadow-sm">
                 <span class="text-xs text-gray-500 dark:text-gray-400 block mb-1">إجمالي الفاتورة</span>
                 <p class="text-xl font-bold text-emerald-600 dark:text-emerald-400">
-                    {{ number_format(($order->total->value ?? 0) / 100, 2) }} ج.م
+                    {{ \App\Support\Money::show(($order->total->value ?? 0)) }}
                 </p>
-                <span class="text-xs text-gray-400 mt-1 block">الشحن: {{ number_format(($order->shipping_total->value ?? 0) / 100, 2) }} ج.م</span>
+                <span class="text-xs text-gray-400 mt-1 block">الشحن: {{ \App\Support\Money::show(($order->shipping_total->value ?? 0)) }}</span>
             </div>
         </div>
 
@@ -54,10 +54,10 @@
                                 <div>
                                     <h4 class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $line->description }}</h4>
                                     <p class="text-xs text-gray-400 font-mono mt-0.5">SKU: {{ $line->identifier ?? '-' }}</p>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">الكمية: <strong>{{ $line->quantity }}</strong> × {{ number_format(($line->unit_price->value ?? 0) / 100, 2) }} ج.م</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">الكمية: <strong>{{ $line->quantity }}</strong> × {{ \App\Support\Money::show(($line->unit_price->value ?? 0)) }}</p>
                                 </div>
                                 <div class="text-left font-bold text-sm text-gray-900 dark:text-gray-100">
-                                    {{ number_format(($line->sub_total->value ?? 0) / 100, 2) }} ج.م
+                                    {{ \App\Support\Money::show(($line->sub_total->value ?? 0)) }}
                                 </div>
                             </div>
                         @endforeach
@@ -67,27 +67,27 @@
                     <div class="p-5 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-100 dark:border-gray-800 space-y-2 text-sm">
                         <div class="flex justify-between text-gray-600 dark:text-gray-300">
                             <span>المجموع الفرعي:</span>
-                            <span>{{ number_format(($order->sub_total->value ?? 0) / 100, 2) }} ج.م</span>
+                            <span>{{ \App\Support\Money::show(($order->sub_total->value ?? 0)) }}</span>
                         </div>
                         @if (($order->discount_total->value ?? 0) > 0)
                             <div class="flex justify-between text-emerald-600 dark:text-emerald-400 font-medium">
                                 <span>خصم الكوبون:</span>
-                                <span>-{{ number_format(($order->discount_total->value ?? 0) / 100, 2) }} ج.م</span>
+                                <span>-{{ \App\Support\Money::show(($order->discount_total->value ?? 0)) }}</span>
                             </div>
                         @endif
                         <div class="flex justify-between text-gray-600 dark:text-gray-300">
                             <span>تكلفة الشحن:</span>
-                            <span>{{ number_format(($order->shipping_total->value ?? 0) / 100, 2) }} ج.م</span>
+                            <span>{{ \App\Support\Money::show(($order->shipping_total->value ?? 0)) }}</span>
                         </div>
                         @if ($order->cod_fee_minor > 0)
                             <div class="flex justify-between text-gray-600 dark:text-gray-300">
                                 <span>رسوم الدفع عند الاستلام:</span>
-                                <span>{{ number_format($order->cod_fee_minor / 100, 2) }} ج.م</span>
+                                <span>{{ \App\Support\Money::show($order->cod_fee_minor) }}</span>
                             </div>
                         @endif
                         <div class="flex justify-between text-base font-bold text-gray-900 dark:text-gray-100 pt-2 border-t border-gray-200 dark:border-gray-700">
                             <span>صافي الإجمالي:</span>
-                            <span class="text-emerald-600 dark:text-emerald-400">{{ number_format(($order->total->value ?? 0) / 100, 2) }} ج.م</span>
+                            <span class="text-emerald-600 dark:text-emerald-400">{{ \App\Support\Money::show(($order->total->value ?? 0)) }}</span>
                         </div>
                     </div>
                 </div>

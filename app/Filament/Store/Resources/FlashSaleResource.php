@@ -8,6 +8,7 @@ use App\Filament\Store\Resources\FlashSaleResource\Pages\CreateFlashSale;
 use App\Filament\Store\Resources\FlashSaleResource\Pages\EditFlashSale;
 use App\Filament\Store\Resources\FlashSaleResource\Pages\ListFlashSales;
 use App\Models\FlashSale;
+use App\Support\Money;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
@@ -88,7 +89,7 @@ class FlashSaleResource extends Resource
                                         $prodName = $prod instanceof Product ? (string) ($prod->translateAttribute('name') ?? 'منتج') : 'منتج';
                                         $sku = $variant->sku ?? 'SKU-'.$variant->id;
                                         $firstPrice = $variant->prices->first();
-                                        $stdPrice = $firstPrice instanceof Price ? $firstPrice->price->formatted() : '0 ج.م';
+                                        $stdPrice = $firstPrice instanceof Price ? $firstPrice->price->formatted() : '0 '.Money::symbol();
 
                                         return [$variant->id => "{$prodName} ({$sku}) - سعر أصلي: {$stdPrice}"];
                                     });
@@ -98,7 +99,7 @@ class FlashSaleResource extends Resource
 
                         TextInput::make('flash_price_minor')
                             ->label('سعر التخفيض الفوري (بالقروش - Minor Units)')
-                            ->helperText('مثال: 15000 تعني 150.00 ج.م')
+                            ->helperText('مثال: 15000 تعني 150.00 '.Money::symbol())
                             ->numeric()
                             ->required(),
 

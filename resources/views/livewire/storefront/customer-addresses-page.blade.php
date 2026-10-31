@@ -78,7 +78,7 @@
                                 </div>
                                 <div>
                                     <label class="block text-xs font-semibold text-gray-700 mb-1">رقم الهاتف <span class="text-red-500">*</span></label>
-                                    <input type="tel" wire:model="phone" placeholder="01012345678" dir="ltr"
+                                    <input type="tel" wire:model="phone" placeholder="{{ \App\Support\Location\Market::country()->example }}" dir="ltr"
                                         class="w-full text-right px-3.5 py-2 rounded-xl border border-gray-300 text-sm font-mono focus:ring-2 focus:ring-emerald-500" />
                                     @error('phone') <p class="text-xs text-red-600 mt-1">{{ $message }}</p> @enderror
                                 </div>
@@ -91,7 +91,7 @@
                                         class="w-full px-3.5 py-2 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-emerald-500 bg-white">
                                         <option value="">اختر المحافظة</option>
                                         @foreach ($governorates as $gov)
-                                            <option value="{{ $gov->id }}">{{ $gov->name_ar }}</option>
+                                            <option value="{{ $gov->id }}">{{ $gov->label() }}</option>
                                         @endforeach
                                     </select>
                                     @error('governorate_id') <p class="text-xs text-red-600 mt-1">{{ $message }}</p> @enderror
@@ -157,7 +157,7 @@
                                     </div>
                                     <p class="text-xs text-gray-500 font-mono mb-2" dir="ltr" style="text-align: right;">{{ $address->phone }}</p>
                                     <p class="text-xs text-gray-700 leading-relaxed mb-1">{{ $address->address_line }}</p>
-                                    <p class="text-xs text-gray-400">{{ $address->city }}، {{ $address->governorate?->name_ar }}</p>
+                                    <p class="text-xs text-gray-400">{{ $address->city }}، {{ $address->governorate?->name() }}</p>
                                 </div>
 
                                 <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-xs">

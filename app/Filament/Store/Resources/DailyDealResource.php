@@ -117,7 +117,7 @@ class DailyDealResource extends Resource
                             return "{$record->discount_value}%";
                         }
 
-                        return Money::fromMinor($record->discount_value)->format('ar');
+                        return Money::fromMinor($record->discount_value)->format();
                     })
                     ->badge()
                     ->color('warning'),

@@ -56,7 +56,7 @@
                         <span class="font-semibold text-slate-900">{{ $line->description }}</span>
                     </div>
                     <span class="font-bold text-slate-800">
-                        {{ number_format($line->total->value / 100, 2) }} ج.م
+                        {{ \App\Support\Money::show($line->total->value) }}
                     </span>
                 </div>
             @endforeach
@@ -65,7 +65,7 @@
             <div class="p-4 bg-slate-50/80 flex items-center justify-between text-base font-extrabold text-slate-900">
                 <span>المبلغ المطلوب عند الاستلام:</span>
                 <span class="text-emerald-600 text-xl font-black">
-                    {{ number_format($order->total->value / 100, 2) }} ج.م
+                    {{ \App\Support\Money::show($order->total->value) }}
                 </span>
             </div>
         </div>

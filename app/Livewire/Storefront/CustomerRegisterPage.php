@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire\Storefront;
 
 use App\Models\Customer;
-use App\Support\Phone\EgyptianPhone;
+use App\Support\Phone\PhoneNumber;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -49,9 +49,9 @@ class CustomerRegisterPage extends Component
             'password.confirmed' => 'تأكيد كلمة المرور غير متطابق.',
         ]);
 
-        $parsedPhone = EgyptianPhone::tryParse($this->phone);
+        $parsedPhone = PhoneNumber::tryParse($this->phone);
         if ($parsedPhone === null) {
-            $this->addError('phone', 'رقم الهاتف المصري غير صالح (010، 011، 012، 015).');
+            $this->addError('phone', PhoneNumber::invalidMessage());
 
             return null;
         }

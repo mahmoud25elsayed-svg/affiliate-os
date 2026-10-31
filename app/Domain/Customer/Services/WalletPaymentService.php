@@ -11,6 +11,7 @@ use App\Domain\Finance\Services\AccountResolver;
 use App\Domain\Finance\Services\Ledger;
 use App\Models\Customer as AppCustomer;
 use App\Models\CustomerWalletTransaction;
+use App\Support\Money;
 use DomainException;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
@@ -43,7 +44,7 @@ class WalletPaymentService
 
         if ($requestedAmountMinor > $availableBalance) {
             throw new DomainException(sprintf(
-                'رصيد المحفظة غير كافٍ. المتاح: %s ج.م، المطلوب: %s ج.م',
+                'رصيد المحفظة غير كافٍ. المتاح: %s '.Money::symbol().'، المطلوب: %s '.Money::symbol(),
                 number_format($availableBalance / 100, 2),
                 number_format($requestedAmountMinor / 100, 2)
             ));
@@ -88,7 +89,7 @@ class WalletPaymentService
                 $entryData = new EntryData(
                     type: 'wallet_purchase_payment',
                     idempotencyKey: "wallet_payment_order_{$order->id}_{$tx->id}",
-                    description: "سداد من محفظة العميل للطلب #{$order->reference} بمبلغ ".number_format($payableMinor / 100, 2).' ج.م',
+                    description: "سداد من محفظة العميل للطلب #{$order->reference} بمبلغ ".Money::show($payableMinor),
                     lines: [
                         new LedgerLineData(account: $revenueAccount, amountMinor: $payableMinor),
                         new LedgerLineData(account: $walletAccount, amountMinor: -$payableMinor),

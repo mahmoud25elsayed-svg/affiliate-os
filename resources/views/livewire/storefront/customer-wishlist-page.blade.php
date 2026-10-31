@@ -99,7 +99,7 @@
                                             {{ $name }}
                                         </a>
                                         <p class="font-bold text-emerald-700 text-sm mt-1">
-                                            {{ number_format($priceMinor / 100, 2) }} ج.م
+                                            {{ \App\Support\Money::show($priceMinor) }}
                                         </p>
                                     </div>
                                 </div>

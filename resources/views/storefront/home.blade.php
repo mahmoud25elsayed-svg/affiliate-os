@@ -78,14 +78,14 @@
                     </p>
                     <div class="flex flex-wrap items-baseline gap-3 pt-2">
                         <span class="text-3xl sm:text-4xl font-black text-yellow-300">
-                            {{ \App\Support\Money::fromMinor($dealDiscounted)->format('ar') }}
+                            {{ \App\Support\Money::fromMinor($dealDiscounted)->format() }}
                         </span>
                         @if($dealStdPrice > $dealDiscounted)
                             <span class="text-lg text-white/70 line-through">
-                                {{ \App\Support\Money::fromMinor($dealStdPrice)->format('ar') }}
+                                {{ \App\Support\Money::fromMinor($dealStdPrice)->format() }}
                             </span>
                             <span class="px-2.5 py-1 bg-yellow-400 text-gray-900 rounded-lg text-xs font-black">
-                                خصم {{ $activeDailyDeal->discount_type === 'percentage' ? $activeDailyDeal->discount_value.'%' : \App\Support\Money::fromMinor($activeDailyDeal->discount_value)->format('ar') }}
+                                خصم {{ $activeDailyDeal->discount_type === 'percentage' ? $activeDailyDeal->discount_value.'%' : \App\Support\Money::fromMinor($activeDailyDeal->discount_value)->format() }}
                             </span>
                         @endif
                     </div>
@@ -190,11 +190,11 @@
 
                             <div class="flex items-baseline gap-2 mt-2">
                                 <span class="text-base font-black text-red-400">
-                                    {{ \App\Support\Money::fromMinor($flashPrice)->format('ar') }}
+                                    {{ \App\Support\Money::fromMinor($flashPrice)->format() }}
                                 </span>
                                 @if($stdPrice > $flashPrice)
                                     <span class="text-xs text-gray-500 line-through">
-                                        {{ \App\Support\Money::fromMinor($stdPrice)->format('ar') }}
+                                        {{ \App\Support\Money::fromMinor($stdPrice)->format() }}
                                     </span>
                                 @endif
                             </div>
@@ -372,11 +372,11 @@
                         <div class="mt-4 pt-3 border-t border-gray-50 flex items-center justify-between">
                             <div>
                                 <span class="text-base font-black text-brand-600">
-                                    {{ $retailPrice ? $retailPrice->price->formatted() : '0.00 ج.م' }}
+                                    {{ \App\Support\Money::show($retailPrice?->price) }}
                                 </span>
                                 @if($comparePrice && $retailPrice && $comparePrice->amount > $retailPrice->price->value)
                                     <span class="text-xs text-gray-400 line-through mr-1 block">
-                                        {{ $comparePrice->format('ar') }}
+                                        {{ $comparePrice->format() }}
                                     </span>
                                 @endif
                             </div>
@@ -452,7 +452,7 @@
 
                         <div class="mt-4 pt-3 border-t border-gray-50 flex items-center justify-between">
                             <span class="text-base font-black text-brand-600">
-                                {{ $retailPrice ? $retailPrice->price->formatted() : '0.00 ج.م' }}
+                                {{ \App\Support\Money::show($retailPrice?->price) }}
                             </span>
 
                             <a href="{{ url('/products/'.$product->id) }}" class="p-2 rounded-lg bg-brand-50 text-brand-600 hover:bg-brand-600 hover:text-white transition-colors" title="عرض التفاصيل">

@@ -38,7 +38,7 @@
             </div>
             <h3 class="font-bold text-slate-900 mb-2">سحب أرباح مرن</h3>
             <p class="text-xs text-slate-500 leading-relaxed">
-                سحب متاح بحد أدنى {{ number_format($settings->min_payout_minor / 100, 2) }} ج.م، وتحويل عبر المحافظ الإلكترونية وإنستاباي.
+                سحب متاح بحد أدنى {{ \App\Support\Money::show($settings->min_payout_minor) }}، وتحويل عبر المحافظ الإلكترونية وإنستاباي.
             </p>
         </div>
 
@@ -72,7 +72,7 @@
                 <label for="phone" class="block text-sm font-semibold text-slate-700 mb-1">رقم الهاتف المحمول (مصر) *</label>
                 <input type="text" name="phone" id="phone" value="{{ old('phone') }}" required dir="ltr"
                        class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm font-mono text-right"
-                       placeholder="01012345678">
+                       placeholder="{{ \App\Support\Location\Market::country()->example }}">
                 <span class="text-xs text-slate-400 mt-1 block">سنرسل رمز تحقق (OTP) في رسالة نصية قصيرة لتأكيد الرقم.</span>
                 @error('phone') <span class="text-xs text-rose-600 mt-1 block">{{ $message }}</span> @enderror
             </div>

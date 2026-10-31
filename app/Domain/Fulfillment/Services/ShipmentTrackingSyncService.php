@@ -12,6 +12,7 @@ use App\Models\CourierAccount;
 use App\Models\OrderEvent;
 use App\Models\Shipment;
 use App\Support\Enums\ReasonCode;
+use App\Support\Money;
 use Lunar\Models\Order;
 
 class ShipmentTrackingSyncService
@@ -73,7 +74,7 @@ class ShipmentTrackingSyncService
                             'tracking_number' => $shipment->tracking_number,
                             'delivered_at' => (string) $shipment->delivered_at,
                         ],
-                        note: 'تم تسليم الشحنة للعميل بنجاح وتحصيل المبلغ المطلوب ('.number_format($shipment->cod_amount_minor / 100, 2).' ج.م).'
+                        note: 'تم تسليم الشحنة للعميل بنجاح وتحصيل المبلغ المطلوب ('.number_format($shipment->cod_amount_minor / 100, 2).' '.Money::symbol().').'
                     );
                 }
                 break;

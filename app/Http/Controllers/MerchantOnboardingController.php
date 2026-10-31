@@ -9,7 +9,9 @@ use App\Models\Tenant;
 use App\Models\User;
 use App\Notifications\MerchantWelcomeNotification;
 use App\Support\Auth\OtpService;
-use App\Support\Phone\EgyptianPhone;
+use App\Support\Location\Country;
+use App\Support\Location\Market;
+use App\Support\Phone\PhoneNumber;
 use App\Support\Tenancy\ReservedSubdomains;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -19,6 +21,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
@@ -95,8 +98,9 @@ class MerchantOnboardingController extends Controller
     public function sendOtp(Request $request): JsonResponse
     {
         $phone = (string) $request->input('phone');
+        $country = Country::find((string) $request->input('country'))?->code;
 
-        $result = $this->otpService->sendOtp($phone, (string) $request->ip());
+        $result = $this->otpService->sendOtp($phone, (string) $request->ip(), $country);
 
         return response()->json($result, $result['success'] ? 200 : 422);
     }
@@ -129,6 +133,7 @@ class MerchantOnboardingController extends Controller
                 'regex:/^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/',
                 'not_regex:/[_]/',
             ],
+            'country' => ['nullable', 'string', Rule::in(array_keys((array) config('countries')))],
             'phone' => ['required', 'string'],
             'otp' => ['required', 'string'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
@@ -151,11 +156,13 @@ class MerchantOnboardingController extends Controller
             ]);
         }
 
-        // Validate Egyptian Phone
-        $parsedPhone = EgyptianPhone::tryParse($validated['phone']);
+        // The store's home country decides its currency, phone format and regions.
+        $country = Country::find($validated['country'] ?? null) ?? Country::get(Market::DEFAULT_COUNTRY);
+
+        $parsedPhone = PhoneNumber::tryParse($validated['phone'], $country->code);
         if (! $parsedPhone) {
             throw ValidationException::withMessages([
-                'phone' => ['رقم الهاتف المصري غير صحيح (يجب أن يبدأ بـ 010 أو 011 أو 012 أو 015).'],
+                'phone' => [PhoneNumber::invalidMessage($country->code)],
             ]);
         }
         $normalizedPhone = $parsedPhone->e164;
@@ -204,7 +211,8 @@ class MerchantOnboardingController extends Controller
                 'name' => (string) $owner->name,
                 'email' => (string) $owner->email,
                 'phone' => $normalizedPhone,
-            ]
+            ],
+            country: $country->code,
         );
 
         // 4. Send Welcome Notification

@@ -131,7 +131,7 @@
                                         <td class="p-4 text-gray-500">
                                             {{ $inv->billing_period_starts_at->format('Y-m-d') }} إلى {{ $inv->billing_period_ends_at->format('Y-m-d') }}
                                         </td>
-                                        <td class="p-4 font-bold">{{ $inv->amountMoney()->format('ar') }}</td>
+                                        <td class="p-4 font-bold">{{ $inv->amountMoney()->format() }}</td>
                                         <td class="p-4 text-gray-500">{{ $inv->payment_method ?? 'تحويل بنكي' }}</td>
                                         <td class="p-4">
                                             @if($inv->isPaid())
@@ -182,7 +182,7 @@
                                         <input type="radio" wire:model.live="selected_plan_id" value="{{ $p->id }}" class="sr-only">
                                         <div class="font-bold text-sm">{{ $p->name }}</div>
                                         <div class="text-xs text-indigo-600 dark:text-indigo-400 font-bold mt-1">
-                                            {{ $selected_cycle === 'yearly' ? $p->priceYearlyMoney()->format('ar') . ' / سنوياً' : $p->priceMonthlyMoney()->format('ar') . ' / شهرياً' }}
+                                            {{ $selected_cycle === 'yearly' ? $p->priceYearlyMoney()->format() . ' / سنوياً' : $p->priceMonthlyMoney()->format() . ' / شهرياً' }}
                                         </div>
                                     </label>
                                 @endforeach

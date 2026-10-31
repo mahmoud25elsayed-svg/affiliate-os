@@ -67,7 +67,7 @@ class DispatchOrderNotification
         /** @var mixed $rawTotal */
         $rawTotal = $order->total;
         $totalMinor = $rawTotal instanceof Price ? $rawTotal->value : (int) $rawTotal;
-        $totalFormatted = Money::fromMinor($totalMinor)->format('ar');
+        $totalFormatted = Money::fromMinor($totalMinor)->format();
 
         $tenant = function_exists('tenancy') && tenancy()->initialized ? tenancy()->tenant : null;
         $storeName = $tenant instanceof Tenant ? $tenant->name : 'متجرنا';

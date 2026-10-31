@@ -8,7 +8,7 @@ use App\Domain\Notifications\Enums\NotificationChannel;
 use App\Domain\Notifications\Services\NotificationManager;
 use App\Models\Customer;
 use App\Models\Tenant;
-use App\Support\Phone\EgyptianPhone;
+use App\Support\Phone\PhoneNumber;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
@@ -36,10 +36,10 @@ class CustomerOtpService
      */
     public function requestOtp(string $phone): string
     {
-        $parsed = EgyptianPhone::tryParse($phone);
+        $parsed = PhoneNumber::tryParse($phone);
         if ($parsed === null) {
             throw ValidationException::withMessages([
-                'phone' => ['رقم الهاتف المصري غير صالح. يجب أن يبدأ بـ 010 أو 011 أو 012 أو 015 ويتكون من 11 رقماً.'],
+                'phone' => [PhoneNumber::invalidMessage()],
             ]);
         }
 
@@ -95,10 +95,10 @@ class CustomerOtpService
      */
     public function verifyOtp(string $phone, string $code): Customer
     {
-        $parsed = EgyptianPhone::tryParse($phone);
+        $parsed = PhoneNumber::tryParse($phone);
         if ($parsed === null) {
             throw ValidationException::withMessages([
-                'phone' => ['رقم الهاتف المصري غير صالح.'],
+                'phone' => [PhoneNumber::invalidMessage()],
             ]);
         }
 

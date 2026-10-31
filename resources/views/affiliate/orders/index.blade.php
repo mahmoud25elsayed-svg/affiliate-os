@@ -100,10 +100,10 @@
                                     <span class="text-xs text-slate-400">{{ $order->shippingAddress?->city ?? '-' }}</span>
                                 </td>
                                 <td class="py-3 px-4 font-mono font-bold text-slate-900">
-                                    {{ number_format($totalVal / 100, 2) }} ج.م
+                                    {{ \App\Support\Money::show($totalVal) }}
                                 </td>
                                 <td class="py-3 px-4 font-mono font-bold text-emerald-600">
-                                    +{{ number_format($order->affiliate_profit_minor / 100, 2) }} ج.م
+                                    +{{ \App\Support\Money::show($order->affiliate_profit_minor) }}
                                 </td>
                                 <td class="py-3 px-4">
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold

@@ -74,7 +74,7 @@
 
                     <div>
                         <label class="block font-bold text-slate-700 mb-1">رقم الهاتف *</label>
-                        <input type="text" name="phone" value="{{ old('phone') }}" required class="w-full rounded-xl border border-slate-200 p-2.5 bg-slate-50 font-mono" placeholder="01012345678">
+                        <input type="text" name="phone" value="{{ old('phone') }}" required class="w-full rounded-xl border border-slate-200 p-2.5 bg-slate-50 font-mono" placeholder="{{ \App\Support\Location\Market::country()->example }}">
                     </div>
 
                     <div>

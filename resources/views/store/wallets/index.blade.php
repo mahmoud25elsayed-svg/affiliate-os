@@ -60,7 +60,7 @@
             </div>
             <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
                 <span class="text-xs font-bold text-emerald-600 block mb-1">إجمالي الأرصدة المتاحة للعملاء</span>
-                <span class="text-2xl font-black text-emerald-600">{{ number_format($stats['total_balance_minor'] / 100, 2) }} <span class="text-xs font-normal">ج.م</span></span>
+                <span class="text-2xl font-black text-emerald-600">{{ number_format($stats['total_balance_minor'] / 100, 2) }} <span class="text-xs font-normal">{{ \App\Support\Money::symbol() }}</span></span>
             </div>
             <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
                 <span class="text-xs font-bold text-violet-600 block mb-1">إجمالي نقاط الولاء المعلقة</span>
@@ -107,7 +107,7 @@
                                     {{ $wallet->customer?->email ?? '-' }}
                                 </td>
                                 <td class="px-4 py-4 font-black text-emerald-700 text-sm">
-                                    {{ number_format($wallet->balance_minor / 100, 2) }} ج.م
+                                    {{ \App\Support\Money::show($wallet->balance_minor) }}
                                 </td>
                                 <td class="px-4 py-4">
                                     @if($wallet->is_active)

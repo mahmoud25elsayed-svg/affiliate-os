@@ -43,10 +43,10 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">رقم الهاتف المحمول</label>
                             <div class="relative">
-                                <input type="tel" wire:model="phone" placeholder="01012345678" dir="ltr"
+                                <input type="tel" wire:model="phone" placeholder="{{ \App\Support\Location\Market::country()->example }}" dir="ltr"
                                     class="w-full text-right px-4 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm font-mono" />
                             </div>
-                            <p class="text-xs text-gray-400 mt-1">يجب أن يكون رقم محمول مصري (010، 011، 012، 015)</p>
+                            <p class="text-xs text-gray-400 mt-1">{{ __('مثال') }}: {{ \App\Support\Location\Market::country()->example }}</p>
                         </div>
 
                         <button type="submit" wire:loading.attr="disabled"

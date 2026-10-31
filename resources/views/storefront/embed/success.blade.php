@@ -40,7 +40,7 @@
             </div>
             <div class="flex justify-between border-t border-slate-200 pt-2 font-black text-slate-900">
                 <span>الإجمالي عند الاستلام:</span>
-                <span class="text-emerald-700 font-black text-sm">{{ number_format(((int) ($order->total->value ?? $order->total)) / 100, 2) }} ج.م</span>
+                <span class="text-emerald-700 font-black text-sm">{{ \App\Support\Money::show(((int) ($order->total->value ?? $order->total))) }}</span>
             </div>
         </div>
 

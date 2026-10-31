@@ -8,6 +8,7 @@ use App\Domain\Tracking\Jobs\DispatchServerConversionJob;
 use App\Domain\Tracking\Settings\AdTrackingSettings;
 use App\Models\AdConversionEvent;
 use App\Models\Affiliate;
+use App\Support\Money;
 use Lunar\Models\Order;
 use Lunar\Models\OrderAddress;
 use Lunar\Models\OrderLine;
@@ -215,7 +216,7 @@ class AdTrackingManager
         }
 
         return [
-            'currency' => (string) ($order->currency_code ?: 'EGP'),
+            'currency' => (string) ($order->currency_code ?: Money::defaultCurrency()),
             'value' => $decimalTotal,
             'order_id' => (string) ($order->customer_reference ?: ($order->reference ?: $order->id)),
             'content_type' => 'product',

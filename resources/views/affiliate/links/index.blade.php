@@ -92,7 +92,7 @@
                             </td>
                             <td class="px-6 py-4">
                                 @if($link->custom_selling_price_minor)
-                                    <span class="font-bold text-emerald-700">{{ number_format($link->custom_selling_price_minor / 100, 2) }} ج.م</span>
+                                    <span class="font-bold text-emerald-700">{{ \App\Support\Money::show($link->custom_selling_price_minor) }}</span>
                                 @else
                                     <span class="text-xs text-gray-400">سعر المتجر الافتراضي</span>
                                 @endif

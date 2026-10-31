@@ -74,7 +74,7 @@ class NotificationLogResource extends Resource
 
                 TextColumn::make('cost_minor')
                     ->label('التكلفة')
-                    ->formatStateUsing(fn (int $state): string => Money::fromMinor($state)->format('ar')),
+                    ->formatStateUsing(fn (int $state): string => Money::fromMinor($state)->format()),
 
                 TextColumn::make('error_message')
                     ->label('ملاحظات الخطأ')

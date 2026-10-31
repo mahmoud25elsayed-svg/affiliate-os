@@ -35,7 +35,7 @@
 
             <!-- Price Range Filter -->
             <div class="space-y-3">
-                <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider">نطاق السعر (ج.م)</label>
+                <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider">نطاق السعر ({{ \App\Support\Money::symbol() }})</label>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
                         <input type="number" wire:model.live.debounce.400ms="minPrice" placeholder="من" class="w-full rounded-xl border-gray-200 text-xs focus:border-brand-600 focus:ring-brand-600">
@@ -94,11 +94,11 @@
                             <div class="mt-4 pt-3 border-t border-gray-50 flex items-center justify-between">
                                 <div>
                                     <span class="text-base font-black text-brand-600">
-                                        {{ $retailPrice ? $retailPrice->price->formatted() : '0.00 ج.م' }}
+                                        {{ \App\Support\Money::show($retailPrice?->price) }}
                                     </span>
                                     @if($comparePrice && $retailPrice && $comparePrice->amount > $retailPrice->price->value)
                                         <span class="text-xs text-gray-400 line-through mr-1 block">
-                                            {{ $comparePrice->format('ar') }}
+                                            {{ $comparePrice->format() }}
                                         </span>
                                     @endif
                                 </div>

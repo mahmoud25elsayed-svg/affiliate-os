@@ -35,7 +35,7 @@
                         <span class="text-[10px] text-gray-400">{{ $product->brand?->name ?? 'متجرنا' }}</span>
                     </div>
                     <span class="text-xs font-bold text-brand-600">
-                        {{ $retailPrice ? $retailPrice->price->formatted() : '' }}
+                        {{ $retailPrice ? \App\Support\Money::show($retailPrice->price) : '' }}
                     </span>
                 </a>
             @endforeach

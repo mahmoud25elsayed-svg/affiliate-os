@@ -42,9 +42,54 @@
                 </select>
             </div>
 
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white dark:bg-gray-900 p-6 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm">
+            <div class="col-span-full">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-1">{{ __('الدولة والعملة والشحن') }}</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('تحدد دولة المتجر صيغة أرقام الهاتف والمحافظات/الولايات المتاحة، وتقترح العملة تلقائياً.') }}</p>
+            </div>
+
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">العملة الافتراضية</label>
-                <input type="text" wire:model="default_currency" class="w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-800 text-sm" readonly>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('دولة المتجر') }}</label>
+                <select wire:model.live="country_code" class="w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-800 text-sm">
+                    <optgroup label="{{ __('الدول العربية') }}">
+                        @foreach (\App\Support\Location\Country::all() as $c)
+                            @if ($c->arab)<option value="{{ $c->code }}">{{ $c->name() }} (+{{ $c->dial }})</option>@endif
+                        @endforeach
+                    </optgroup>
+                    <optgroup label="{{ __('دول أخرى') }}">
+                        @foreach (\App\Support\Location\Country::all() as $c)
+                            @if (! $c->arab)<option value="{{ $c->code }}">{{ $c->name() }} (+{{ $c->dial }})</option>@endif
+                        @endforeach
+                    </optgroup>
+                </select>
+                @error('country_code') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('عملة المتجر') }}</label>
+                <select wire:model="default_currency" class="w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-800 text-sm">
+                    @foreach (config('currencies') as $code => $cur)
+                        <option value="{{ $code }}">{{ app()->getLocale() === 'en' ? $cur['name_en'] : $cur['name_ar'] }} ({{ $code }})</option>
+                    @endforeach
+                </select>
+                <p class="text-xs text-amber-600 mt-1">{{ __('تغيير العملة لا يحوّل الأسعار الحالية؛ راجع أسعار منتجاتك بعد التغيير.') }}</p>
+                @error('default_currency') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+            </div>
+
+            <div class="col-span-full">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('دول إضافية تشحن إليها') }}</label>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-2 max-h-56 overflow-y-auto p-3 rounded-lg border border-gray-200 dark:border-gray-700">
+                    @foreach (\App\Support\Location\Country::all() as $c)
+                        @continue($c->code === $country_code)
+                        <label class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                            <input type="checkbox" wire:model="shipping_countries" value="{{ $c->code }}" class="rounded border-gray-300">
+                            {{ $c->name() }}
+                        </label>
+                    @endforeach
+                </div>
+                <p class="text-xs text-gray-500 mt-1">{{ __('ستظهر محافظات/ولايات هذه الدول في صفحة الدفع وإعدادات الشحن.') }}</p>
             </div>
         </div>
 

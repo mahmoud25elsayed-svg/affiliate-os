@@ -18,7 +18,8 @@ use App\Models\Tenant;
 use App\Support\Billing\Limits;
 use App\Support\Enums\ReasonCode;
 use App\Support\Idempotency\IdempotencyService;
-use App\Support\Phone\EgyptianPhone;
+use App\Support\Money;
+use App\Support\Phone\PhoneNumber;
 use App\Support\Settings\ShippingSettings;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -61,10 +62,10 @@ class OrderCreationService
     {
         return DB::transaction(function () use ($payload) {
             // 1. Phone validation & normalization
-            $phone = EgyptianPhone::tryParse($payload->customer_phone);
+            $phone = PhoneNumber::tryParse($payload->customer_phone);
             if ($phone === null) {
                 throw ValidationException::withMessages([
-                    'customer_phone' => ['رقم الهاتف المصري غير صالح. يجب أن يبدأ بـ 010 أو 011 أو 012 أو 015 ويتكون من 11 رقماً.'],
+                    'customer_phone' => [PhoneNumber::invalidMessage()],
                 ]);
             }
 
@@ -202,7 +203,7 @@ class OrderCreationService
                 'shipping_minor' => $shippingMinor,
                 'cod_fee_minor' => $codFeeMinor,
                 'total_minor' => $totalMinor,
-                'currency' => 'EGP',
+                'currency' => Money::defaultCurrency(),
                 'coupon' => $coupon ? [
                     'code' => $coupon->code,
                     'type' => $coupon->type,
@@ -263,8 +264,8 @@ class OrderCreationService
                 'tax_total' => 0,
                 'total' => $totalMinor,
                 'notes' => $payload->notes,
-                'currency_code' => 'EGP',
-                'compare_currency_code' => 'EGP',
+                'currency_code' => Money::defaultCurrency(),
+                'compare_currency_code' => Money::defaultCurrency(),
                 'exchange_rate' => 1.0,
                 'placed_at' => now(),
                 'affiliate_id' => $attributedAffiliateId,

@@ -89,15 +89,15 @@ class WholesalePrice extends Model
             // Invariant: max >= min >= wholesale
             if ($model->max_price_minor !== null && $model->min_price_minor !== null && $model->max_price_minor < $model->min_price_minor) {
                 throw new DomainException(__('الحد الأقصى لسعر البيع (:max) يجب أن يكون أكبر من أو يساوي الحد الأدنى (:min).', [
-                    'max' => Money::fromMinor((int) $model->max_price_minor)->format('ar'),
-                    'min' => Money::fromMinor((int) $model->min_price_minor)->format('ar'),
+                    'max' => Money::fromMinor((int) $model->max_price_minor)->format(),
+                    'min' => Money::fromMinor((int) $model->min_price_minor)->format(),
                 ]));
             }
 
             if ($model->min_price_minor !== null && $model->wholesale_price_minor !== null && $model->min_price_minor < $model->wholesale_price_minor) {
                 throw new DomainException(__('الحد الأدنى لسعر البيع (:min) يجب أن يكون أكبر من أو يساوي سعر الجملة (:wholesale).', [
-                    'min' => Money::fromMinor((int) $model->min_price_minor)->format('ar'),
-                    'wholesale' => Money::fromMinor((int) $model->wholesale_price_minor)->format('ar'),
+                    'min' => Money::fromMinor((int) $model->min_price_minor)->format(),
+                    'wholesale' => Money::fromMinor((int) $model->wholesale_price_minor)->format(),
                 ]));
             }
 

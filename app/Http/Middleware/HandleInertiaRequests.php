@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\Money;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Middleware;
@@ -46,6 +47,11 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
                 'affiliate' => Auth::guard('affiliate')->user(),
+            ],
+            'currency' => [
+                'code' => Money::defaultCurrency(),
+                'symbol' => Money::symbol(),
+                'decimals' => (int) config('currencies.'.Money::defaultCurrency().'.display_decimals', 2),
             ],
             'tenant' => $tenant ? [
                 'id' => (string) $tenant->getKey(),

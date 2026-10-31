@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Support\Phone\EgyptianPhone;
+use App\Support\Phone\PhoneNumber;
 use App\Support\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -80,7 +80,7 @@ class Customer extends Authenticatable
             return;
         }
 
-        $phone = EgyptianPhone::tryParse($value);
+        $phone = PhoneNumber::tryParse($value);
         if ($phone !== null) {
             $this->attributes['phone_e164'] = $phone->e164;
             $this->attributes['phone_hash'] = $phone->hash();

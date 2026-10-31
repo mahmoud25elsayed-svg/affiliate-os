@@ -97,13 +97,13 @@
                         <div class="flex items-center justify-between pb-2 border-b border-slate-100">
                             <span class="text-slate-500">مبلغ التحصيل (COD):</span>
                             <span class="font-black text-emerald-700 text-sm">
-                                {{ number_format($shipment->cod_amount_minor / 100, 2) }} ج.م
+                                {{ \App\Support\Money::show($shipment->cod_amount_minor) }}
                             </span>
                         </div>
                         <div class="flex items-center justify-between">
                             <span class="text-slate-500">رسوم التوصيل لشركة الشحن:</span>
                             <span class="font-bold text-slate-800">
-                                {{ number_format($shipment->shipping_fees_minor / 100, 2) }} ج.م
+                                {{ \App\Support\Money::show($shipment->shipping_fees_minor) }}
                             </span>
                         </div>
                     </div>

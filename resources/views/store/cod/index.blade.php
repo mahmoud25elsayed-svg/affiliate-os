@@ -69,7 +69,7 @@
             </div>
             <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
                 <span class="text-xs font-bold text-blue-600 block mb-1">صافي المبالغ الموردة</span>
-                <span class="text-2xl font-black text-blue-600">{{ number_format($stats['total_settled_minor'] / 100, 2) }} <span class="text-xs font-normal">ج.م</span></span>
+                <span class="text-2xl font-black text-blue-600">{{ number_format($stats['total_settled_minor'] / 100, 2) }} <span class="text-xs font-normal">{{ \App\Support\Money::symbol() }}</span></span>
             </div>
         </div>
 
@@ -124,13 +124,13 @@
                                     </span>
                                 </td>
                                 <td class="px-4 py-4 font-black text-slate-900">
-                                    {{ number_format($remittance->total_collected_minor / 100, 2) }} ج.م
+                                    {{ \App\Support\Money::show($remittance->total_collected_minor) }}
                                 </td>
                                 <td class="px-4 py-4 font-bold text-rose-600">
-                                    -{{ number_format($remittance->total_shipping_fees_minor / 100, 2) }} ج.م
+                                    -{{ \App\Support\Money::show($remittance->total_shipping_fees_minor) }}
                                 </td>
                                 <td class="px-4 py-4 font-black text-emerald-700">
-                                    {{ number_format($remittance->net_payout_minor / 100, 2) }} ج.م
+                                    {{ \App\Support\Money::show($remittance->net_payout_minor) }}
                                 </td>
                                 <td class="px-4 py-4">
                                     <span class="text-emerald-700 font-bold">{{ $remittance->matched_orders_count }} مطابق</span>

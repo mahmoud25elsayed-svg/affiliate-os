@@ -9,6 +9,7 @@ use App\Domain\Affiliate\Settings\AffiliateProgramSettings;
 use App\Domain\Checkout\Services\ShippingCalculatorService;
 use App\Domain\Orders\Enums\OrderStatus;
 use App\Models\WholesalePrice;
+use App\Support\Money;
 use App\Support\Settings\ShippingSettings;
 use DomainException;
 use Lunar\Models\Order;
@@ -79,7 +80,7 @@ class PriceQuoteAction
             $maxFormatted = number_format($effectiveMaxUnitMinor / 100, 2);
 
             throw new DomainException(
-                "سعر البيع المطلوب ({$sellingFormatted} ج.م) خارج النطاق المسموح به لهذا المنتج. الحد الأدنى: {$minFormatted} ج.م، والحد الأقصى: {$maxFormatted} ج.م."
+                "سعر البيع المطلوب ({$sellingFormatted} ".Money::symbol().") خارج النطاق المسموح به لهذا المنتج. الحد الأدنى: {$minFormatted} ".Money::symbol()."، والحد الأقصى: {$maxFormatted} ".Money::symbol().'.'
             );
         }
 

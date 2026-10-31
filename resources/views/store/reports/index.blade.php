@@ -92,7 +92,7 @@
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
                 <p class="text-xs font-bold text-slate-500">إجمالي المبيعات (المسلّمة)</p>
                 <p class="text-xl font-black text-emerald-600 mt-2">
-                    {{ number_format($overview['gross_revenue_minor'] / 100, 2) }} <span class="text-xs font-bold">ج.م</span>
+                    {{ number_format($overview['gross_revenue_minor'] / 100, 2) }} <span class="text-xs font-bold">{{ \App\Support\Money::symbol() }}</span>
                 </p>
                 <p class="text-[10px] text-slate-400 mt-1">{{ $overview['delivered_orders_count'] }} طلب مسلّم</p>
             </div>
@@ -101,7 +101,7 @@
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
                 <p class="text-xs font-bold text-slate-500">صافي أرباح التاجر</p>
                 <p class="text-xl font-black {{ $overview['net_profit_minor'] >= 0 ? 'text-indigo-600' : 'text-rose-600' }} mt-2">
-                    {{ number_format($overview['net_profit_minor'] / 100, 2) }} <span class="text-xs font-bold">ج.م</span>
+                    {{ number_format($overview['net_profit_minor'] / 100, 2) }} <span class="text-xs font-bold">{{ \App\Support\Money::symbol() }}</span>
                 </p>
                 <p class="text-[10px] text-slate-400 mt-1">بعد استقطاع العمولات والشحن والضرائب</p>
             </div>
@@ -131,7 +131,7 @@
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
                 <p class="text-xs font-bold text-slate-500">متوسط قيمة الطلب (AOV)</p>
                 <p class="text-xl font-black text-slate-800 mt-2">
-                    {{ number_format($overview['aov_minor'] / 100, 2) }} <span class="text-xs font-bold">ج.م</span>
+                    {{ number_format($overview['aov_minor'] / 100, 2) }} <span class="text-xs font-bold">{{ \App\Support\Money::symbol() }}</span>
                 </p>
                 <p class="text-[10px] text-slate-400 mt-1">لكل طلب مكتمل</p>
             </div>
@@ -141,19 +141,19 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div class="bg-slate-100 p-3.5 rounded-xl border border-slate-200 flex justify-between items-center">
                 <span class="text-xs font-bold text-slate-600">عمولات المسوقين المستحقة:</span>
-                <span class="text-sm font-black text-purple-700">{{ number_format($overview['affiliate_commission_minor'] / 100, 2) }} ج.م</span>
+                <span class="text-sm font-black text-purple-700">{{ \App\Support\Money::show($overview['affiliate_commission_minor']) }}</span>
             </div>
             <div class="bg-slate-100 p-3.5 rounded-xl border border-slate-200 flex justify-between items-center">
                 <span class="text-xs font-bold text-slate-600">مصاريف الشحن والتوصيل:</span>
-                <span class="text-sm font-black text-amber-700">{{ number_format($overview['shipping_expense_minor'] / 100, 2) }} ج.م</span>
+                <span class="text-sm font-black text-amber-700">{{ \App\Support\Money::show($overview['shipping_expense_minor']) }}</span>
             </div>
             <div class="bg-slate-100 p-3.5 rounded-xl border border-slate-200 flex justify-between items-center">
                 <span class="text-xs font-bold text-slate-600">تكلفة البضاعة المباعة (COGS):</span>
-                <span class="text-sm font-black text-slate-700">{{ number_format($overview['cogs_minor'] / 100, 2) }} ج.م</span>
+                <span class="text-sm font-black text-slate-700">{{ \App\Support\Money::show($overview['cogs_minor']) }}</span>
             </div>
             <div class="bg-slate-100 p-3.5 rounded-xl border border-slate-200 flex justify-between items-center">
                 <span class="text-xs font-bold text-slate-600">الضرائب المحصلة (VAT):</span>
-                <span class="text-sm font-black text-blue-700">{{ number_format($overview['tax_minor'] / 100, 2) }} ج.م</span>
+                <span class="text-sm font-black text-blue-700">{{ \App\Support\Money::show($overview['tax_minor']) }}</span>
             </div>
         </div>
 
@@ -191,7 +191,7 @@
                                     </td>
                                     <td class="py-2.5 text-center text-slate-600">{{ $prod['total_units_ordered'] }}</td>
                                     <td class="py-2.5 text-center font-bold text-emerald-600">{{ $prod['delivered_units'] }}</td>
-                                    <td class="py-2.5 text-left font-black text-slate-900">{{ number_format($prod['total_revenue_minor'] / 100, 2) }} ج.م</td>
+                                    <td class="py-2.5 text-left font-black text-slate-900">{{ \App\Support\Money::show($prod['total_revenue_minor']) }}</td>
                                     <td class="py-2.5 text-left font-bold {{ $prod['return_rate'] > 20 ? 'text-rose-600' : 'text-slate-500' }}">
                                         {{ $prod['return_rate'] }}%
                                     </td>
@@ -235,8 +235,8 @@
                                     </td>
                                     <td class="py-2.5 text-center text-slate-600">{{ $aff['orders_count'] }} ({{ $aff['delivered_count'] }} مسلّم)</td>
                                     <td class="py-2.5 text-center font-bold {{ $aff['delivery_rate'] >= 70 ? 'text-emerald-600' : 'text-amber-600' }}">{{ $aff['delivery_rate'] }}%</td>
-                                    <td class="py-2.5 text-left font-black text-slate-900">{{ number_format($aff['revenue_minor'] / 100, 2) }} ج.م</td>
-                                    <td class="py-2.5 text-left font-bold text-purple-700">{{ number_format($aff['commission_minor'] / 100, 2) }} ج.م</td>
+                                    <td class="py-2.5 text-left font-black text-slate-900">{{ \App\Support\Money::show($aff['revenue_minor']) }}</td>
+                                    <td class="py-2.5 text-left font-bold text-purple-700">{{ \App\Support\Money::show($aff['commission_minor']) }}</td>
                                 </tr>
                             @empty
                                 <tr>
@@ -274,7 +274,7 @@
                                     <td class="py-2.5 text-center text-slate-600">{{ $gov['orders_count'] }}</td>
                                     <td class="py-2.5 text-center font-bold text-emerald-600">{{ $gov['delivery_rate'] }}%</td>
                                     <td class="py-2.5 text-center font-bold {{ $gov['return_rate'] > 20 ? 'text-rose-600' : 'text-slate-500' }}">{{ $gov['return_rate'] }}%</td>
-                                    <td class="py-2.5 text-left font-black text-slate-900">{{ number_format($gov['revenue_minor'] / 100, 2) }} ج.م</td>
+                                    <td class="py-2.5 text-left font-black text-slate-900">{{ \App\Support\Money::show($gov['revenue_minor']) }}</td>
                                 </tr>
                             @empty
                                 <tr>
@@ -351,7 +351,7 @@
                 <div class="grid grid-cols-2 gap-3 mt-4 text-center">
                     <div class="p-4 bg-slate-50 rounded-xl">
                         <span class="text-xs font-bold text-slate-400 block">إجمالي الضرائب المحصلة</span>
-                        <span class="text-xl font-black text-blue-600">{{ number_format($taxReport['tax_collected_minor'] / 100, 2) }} ج.م</span>
+                        <span class="text-xl font-black text-blue-600">{{ \App\Support\Money::show($taxReport['tax_collected_minor']) }}</span>
                     </div>
                     <div class="p-4 bg-slate-50 rounded-xl">
                         <span class="text-xs font-bold text-slate-400 block">متوسط النسبة الضريبية الفعلية</span>

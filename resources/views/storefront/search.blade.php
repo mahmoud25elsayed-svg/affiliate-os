@@ -46,7 +46,7 @@
 
                         <div class="mt-4 pt-3 border-t border-gray-50 flex items-center justify-between">
                             <span class="text-base font-black text-brand-600">
-                                {{ $retailPrice ? $retailPrice->price->formatted() : '0.00 ج.م' }}
+                                {{ \App\Support\Money::show($retailPrice?->price) }}
                             </span>
                             <a href="{{ url('/products/'.$product->id) }}" class="p-2 rounded-lg bg-brand-50 text-brand-600 hover:bg-brand-600 hover:text-white transition-colors">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>

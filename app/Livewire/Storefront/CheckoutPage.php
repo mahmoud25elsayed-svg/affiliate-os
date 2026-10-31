@@ -86,7 +86,7 @@ class CheckoutPage extends Component
         $this->idempotency_token = (string) Str::uuid();
 
         /** @var Governorate|null $firstGov */
-        $firstGov = Governorate::where('is_active', true)->orderBy('name_ar')->first();
+        $firstGov = Governorate::forCountries()->first();
         if ($firstGov) {
             $this->governorate_id = $firstGov->id;
         }
@@ -215,7 +215,7 @@ class CheckoutPage extends Component
         $count = $cartService->getCount();
         $subtotalMinor = $cartService->getSubtotalMinor();
 
-        $governorates = Governorate::where('is_active', true)->orderBy('name_ar')->get();
+        $governorates = Governorate::forCountries();
 
         // Calculate shipping quote
         $shippingQuote = new ShippingQuote(0, 'غير متاح', false);

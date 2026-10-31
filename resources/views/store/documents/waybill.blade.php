@@ -194,7 +194,7 @@
                 <div style="font-size: 11px; color: #7f1d1d; margin-top: 3px;">* برجاء عدم تسليم الشحنة للعميل إلا بعد تحصيل كامل المبلغ أعلاه</div>
             @else
                 <h2 style="color: #065f46;">شحنة مدفوعة مسبقاً (دفع إلكتروني)</h2>
-                <div class="amount" style="color: #047857;">0.00 ج.م</div>
+                <div class="amount" style="color: #047857;">0.00 {{ \App\Support\Money::symbol() }}</div>
                 <div style="font-size: 11px; color: #065f46; margin-top: 3px;">* تم سداد القيمة إلكترونياً بالكامل - لا يُحصّل أي مبلغ من العميل</div>
             @endif
         </div>

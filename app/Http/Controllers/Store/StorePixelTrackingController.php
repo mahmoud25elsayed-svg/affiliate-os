@@ -10,6 +10,7 @@ use App\Domain\Tracking\Services\TikTokEventsApiService;
 use App\Domain\Tracking\Settings\AdTrackingSettings;
 use App\Http\Controllers\Controller;
 use App\Models\AdConversionEvent;
+use App\Support\Money;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -94,7 +95,7 @@ class StorePixelTrackingController extends Controller
         ];
 
         $sampleCustomData = [
-            'currency' => 'EGP',
+            'currency' => Money::defaultCurrency(),
             'value' => 299.00,
             'test' => true,
         ];

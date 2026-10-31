@@ -29,7 +29,7 @@
             <div>
                 <h3 class="font-bold text-rose-900 text-sm">عمليات السحب محجوبة: يوجد رصيد مدين مستحق</h3>
                 <p class="text-xs text-rose-700 mt-1">
-                    المبلغ المدين المستحق عليك: <strong class="font-mono text-sm">{{ number_format($debtMinor / 100, 2) }} ج.م</strong> بسبب مرتجعات متأخرة بعد سحب الأرباح.
+                    المبلغ المدين المستحق عليك: <strong class="font-mono text-sm">{{ \App\Support\Money::show($debtMinor) }}</strong> بسبب مرتجعات متأخرة بعد سحب الأرباح.
                     سيتم فتح السحب تلقائياً بمجرد تغطية الدين من أرباح طلباتك القادمة.
                 </p>
             </div>
@@ -70,10 +70,10 @@
                 <span class="text-2xl font-extrabold {{ $availableBalance < 0 ? 'text-rose-600' : 'text-emerald-600' }} font-mono">
                     {{ number_format($availableBalance / 100, 2) }}
                 </span>
-                <span class="text-xs font-bold text-slate-400">ج.م</span>
+                <span class="text-xs font-bold text-slate-400">{{ \App\Support\Money::symbol() }}</span>
             </div>
             <span class="text-[11px] text-slate-400 mt-2 block">
-                الحد الأدنى: {{ number_format($settings->min_payout_minor / 100, 2) }} ج.م
+                الحد الأدنى: {{ \App\Support\Money::show($settings->min_payout_minor) }}
             </span>
         </div>
 
@@ -84,7 +84,7 @@
                 <span class="text-2xl font-extrabold text-indigo-600 font-mono">
                     {{ number_format($lockedBalance / 100, 2) }}
                 </span>
-                <span class="text-xs font-bold text-slate-400">ج.م</span>
+                <span class="text-xs font-bold text-slate-400">{{ \App\Support\Money::symbol() }}</span>
             </div>
             <span class="text-[11px] text-slate-400 mt-2 block">
                 في انتظار اعتماد وتنفيذ التحويل
@@ -98,7 +98,7 @@
                 <span class="text-2xl font-extrabold text-slate-800 font-mono">
                     {{ number_format($withdrawnBalance / 100, 2) }}
                 </span>
-                <span class="text-xs font-bold text-slate-400">ج.م</span>
+                <span class="text-xs font-bold text-slate-400">{{ \App\Support\Money::symbol() }}</span>
             </div>
             <span class="text-[11px] text-slate-400 mt-2 block">
                 متوسط زمن الدفع: {{ $averageTurnaround }}
@@ -122,7 +122,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1.5">
-                            المبلغ المطلوب سحبه (ج.م) *
+                            المبلغ المطلوب سحبه ({{ \App\Support\Money::symbol() }}) *
                         </label>
                         <div class="relative">
                             <input type="number" step="0.01" name="amount"
@@ -131,10 +131,10 @@
                                    value="{{ old('amount', number_format($availableBalance / 100, 2, '.', '')) }}"
                                    class="w-full text-base font-bold font-mono rounded-xl border border-slate-200 p-3 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none"
                                    required>
-                            <span class="absolute left-3 top-3.5 text-xs text-slate-400 font-bold">ج.م</span>
+                            <span class="absolute left-3 top-3.5 text-xs text-slate-400 font-bold">{{ \App\Support\Money::symbol() }}</span>
                         </div>
                         <span class="text-[11px] text-slate-400 mt-1 block">
-                            المتاح لك سحبه حالياً: {{ number_format($availableBalance / 100, 2) }} ج.م
+                            المتاح لك سحبه حالياً: {{ \App\Support\Money::show($availableBalance) }}
                         </span>
                     </div>
 
@@ -214,7 +214,7 @@
                                     {{ $req->created_at->format('Y-m-d H:i') }}
                                 </td>
                                 <td class="p-4 font-mono font-extrabold text-sm text-slate-900">
-                                    {{ number_format($req->amount_minor / 100, 2) }} ج.م
+                                    {{ \App\Support\Money::show($req->amount_minor) }}
                                 </td>
                                 <td class="p-4">
                                     <span class="font-medium text-slate-700">

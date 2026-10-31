@@ -11,6 +11,7 @@ use App\Filament\Store\Resources\OrderResource\Pages\ListOrders;
 use App\Filament\Store\Resources\OrderResource\Pages\ViewOrder;
 use App\Models\User;
 use App\Support\Enums\ReasonCode;
+use App\Support\Money;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
@@ -127,7 +128,7 @@ class OrderResource extends Resource
                         $total = $record->total;
                         $value = is_object($total) && isset($total->value) ? (int) $total->value : (int) $total;
 
-                        return number_format($value / 100, 2).' ج.م';
+                        return Money::show($value);
                     })
                     ->sortable(),
 

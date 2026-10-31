@@ -36,7 +36,7 @@ class EmbedOrderController extends Controller
     {
         $product->loadMissing(['variants.prices', 'variants.wholesalePrice', 'media']);
 
-        $governorates = Governorate::query()->orderBy('name_ar')->get();
+        $governorates = Governorate::forCountries();
         $refCode = $request->query('ref');
         $affiliate = $refCode ? Affiliate::where('code', $refCode)->first() : null;
 

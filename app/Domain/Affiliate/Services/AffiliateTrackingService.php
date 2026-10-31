@@ -9,7 +9,7 @@ use App\Models\Affiliate;
 use App\Models\AffiliateClick;
 use App\Models\TrackingLink;
 use App\Models\WholesalePrice;
-use App\Support\Phone\EgyptianPhone;
+use App\Support\Phone\PhoneNumber;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Lunar\Models\ProductVariant;
@@ -176,10 +176,10 @@ class AffiliateTrackingService
             return false;
         }
 
-        $parsedCustomerPhone = EgyptianPhone::tryParse($customerPhone);
+        $parsedCustomerPhone = PhoneNumber::tryParse($customerPhone);
         $customerE164 = $parsedCustomerPhone ? $parsedCustomerPhone->e164 : $customerPhone;
 
-        $parsedAffiliatePhone = EgyptianPhone::tryParse((string) $affiliate->phone);
+        $parsedAffiliatePhone = PhoneNumber::tryParse((string) $affiliate->phone);
         $affiliateE164 = $parsedAffiliatePhone ? $parsedAffiliatePhone->e164 : (string) $affiliate->phone;
 
         if ($customerE164 !== '' && $customerE164 === $affiliateE164) {

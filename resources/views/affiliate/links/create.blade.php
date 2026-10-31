@@ -51,7 +51,7 @@
 
         <!-- Custom Selling Price -->
         <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-1">سعر البيع المخصص (ج.م) (اختياري)</label>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">سعر البيع المخصص ({{ \App\Support\Money::symbol() }}) (اختياري)</label>
             <input type="number" step="0.5" name="custom_selling_price" value="{{ old('custom_selling_price') }}" placeholder="اتركه فارغاً لاستخدام السعر الافتراضي" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm">
             <p class="text-xs text-gray-500 mt-1">إذا حددت سعراً، سيحسب ربحك كالفارق بين هذا السعر وسعر الجملة. يجب أن يكون السعر ضمن الحدود المسموح بها.</p>
         </div>

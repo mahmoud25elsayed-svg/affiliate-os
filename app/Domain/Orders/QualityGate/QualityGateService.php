@@ -8,7 +8,7 @@ use App\Domain\Orders\Enums\OrderStatus;
 use App\Domain\Orders\QualityGate\DTOs\QualityGateResult;
 use App\Models\MerchantBlacklist;
 use App\Support\Enums\ReasonCode;
-use App\Support\Phone\EgyptianPhone;
+use App\Support\Phone\PhoneNumber;
 use Illuminate\Support\Carbon;
 use Lunar\Models\Order;
 
@@ -34,10 +34,10 @@ class QualityGateService
         $tenantId = function_exists('tenancy') && tenancy()->initialized ? (string) tenant('id') : null;
 
         // 1. Phone validation & normalization
-        $phone = EgyptianPhone::tryParse($customerPhone);
+        $phone = PhoneNumber::tryParse($customerPhone);
         if ($phone === null) {
             $flags[] = ReasonCode::INVALID_PHONE->value;
-            $reasons[] = 'رقم الهاتف غير صالح. يجب أن يكون رقم هاتف محمول مصري صحيح (11 رقماً يبدأ بـ 010 أو 011 أو 012 أو 015).';
+            $reasons[] = PhoneNumber::invalidMessage();
             $riskScore += 100;
 
             return new QualityGateResult(

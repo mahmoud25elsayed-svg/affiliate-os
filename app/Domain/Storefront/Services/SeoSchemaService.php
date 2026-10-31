@@ -61,7 +61,7 @@ class SeoSchemaService
             'offers' => [
                 '@type' => 'Offer',
                 'url' => url('/products/'.$product->id),
-                'priceCurrency' => 'EGP',
+                'priceCurrency' => Money::defaultCurrency(),
                 'price' => Money::fromMinor($priceMinor)->toDecimalString(),
                 'availability' => 'https://schema.org/InStock',
                 'itemCondition' => 'https://schema.org/NewCondition',

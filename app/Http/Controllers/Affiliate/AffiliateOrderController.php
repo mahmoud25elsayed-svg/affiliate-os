@@ -56,7 +56,7 @@ class AffiliateOrderController extends Controller
 
     public function create(Request $request): View
     {
-        $governorates = Governorate::query()->orderBy('name_ar')->get();
+        $governorates = Governorate::forCountries();
         $selectedVariant = null;
 
         if ($request->filled('variant_id')) {

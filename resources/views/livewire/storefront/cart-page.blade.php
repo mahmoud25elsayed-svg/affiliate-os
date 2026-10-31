@@ -35,7 +35,7 @@
                                 <h3 class="text-base font-bold text-slate-900">{{ $item['name'] }}</h3>
                                 <p class="text-xs text-slate-400 mt-1">كود المنتج: {{ $item['sku'] }}</p>
                                 <span class="text-sm font-semibold text-slate-600 block mt-1">
-                                    {{ number_format($item['unit_price_minor'] / 100, 2) }} ج.م للقطعة
+                                    {{ \App\Support\Money::show($item['unit_price_minor']) }} للقطعة
                                 </span>
                             </div>
                         </div>
@@ -50,7 +50,7 @@
 
                             <div class="text-left">
                                 <span class="text-base font-extrabold text-emerald-600 block">
-                                    {{ number_format($item['subtotal_minor'] / 100, 2) }} ج.م
+                                    {{ \App\Support\Money::show($item['subtotal_minor']) }}
                                 </span>
                             </div>
 
@@ -71,7 +71,7 @@
                 <div class="space-y-3">
                     <div class="flex justify-between text-sm text-slate-600">
                         <span>إجمالي المنتجات:</span>
-                        <span class="font-bold text-slate-900">{{ $subtotalDecimal }} ج.م</span>
+                        <span class="font-bold text-slate-900">{{ $subtotalDecimal }} {{ \App\Support\Money::symbol() }}</span>
                     </div>
                     <div class="flex justify-between text-sm text-slate-600">
                         <span>تكلفة الشحن:</span>
@@ -81,7 +81,7 @@
 
                 <div class="border-t border-slate-100 pt-4 flex justify-between items-center text-lg font-black text-slate-900">
                     <span>المجموع المقدر:</span>
-                    <span class="text-emerald-600">{{ $subtotalDecimal }} ج.م</span>
+                    <span class="text-emerald-600">{{ $subtotalDecimal }} {{ \App\Support\Money::symbol() }}</span>
                 </div>
 
                 <div class="space-y-3 pt-2">

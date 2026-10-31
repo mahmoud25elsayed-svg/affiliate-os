@@ -32,7 +32,7 @@
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">رقم الهاتف المحمول <span class="text-red-500">*</span></label>
-                    <input type="tel" wire:model="phone" placeholder="01012345678" dir="ltr"
+                    <input type="tel" wire:model="phone" placeholder="{{ \App\Support\Location\Market::country()->example }}" dir="ltr"
                         class="w-full text-right px-4 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm font-mono" />
                     @error('phone') <p class="text-xs text-red-600 mt-1">{{ $message }}</p> @enderror
                 </div>

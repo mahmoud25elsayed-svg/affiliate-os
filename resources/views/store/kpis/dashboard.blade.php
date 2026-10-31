@@ -113,25 +113,25 @@
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
                 <span class="text-xs font-bold text-slate-400 block mb-1">إجمالي المبيعات المحصلة</span>
                 <span class="text-xl font-extrabold text-slate-900 font-mono">{{ number_format($metrics['gross_revenue_minor'] / 100, 2) }}</span>
-                <span class="text-xs text-slate-400 mr-1">ج.م</span>
+                <span class="text-xs text-slate-400 mr-1">{{ \App\Support\Money::symbol() }}</span>
             </div>
 
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
                 <span class="text-xs font-bold text-indigo-400 block mb-1">عمولات المسوقين المستحقة</span>
                 <span class="text-xl font-extrabold text-indigo-600 font-mono">{{ number_format($metrics['affiliate_commission_minor'] / 100, 2) }}</span>
-                <span class="text-xs text-slate-400 mr-1">ج.م</span>
+                <span class="text-xs text-slate-400 mr-1">{{ \App\Support\Money::symbol() }}</span>
             </div>
 
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
                 <span class="text-xs font-bold text-amber-500 block mb-1">مصروفات الشحن والتوصيل</span>
                 <span class="text-xl font-extrabold text-amber-600 font-mono">{{ number_format($metrics['shipping_expense_minor'] / 100, 2) }}</span>
-                <span class="text-xs text-slate-400 mr-1">ج.م</span>
+                <span class="text-xs text-slate-400 mr-1">{{ \App\Support\Money::symbol() }}</span>
             </div>
 
             <div class="bg-white p-4 rounded-2xl border border-emerald-300 bg-emerald-500 text-white shadow-md">
                 <span class="text-xs font-bold text-emerald-100 block mb-1">صافي هامش المتجر (Net Margin)</span>
                 <span class="text-xl font-black font-mono">{{ number_format($metrics['net_merchant_margin_minor'] / 100, 2) }}</span>
-                <span class="text-xs text-emerald-100 mr-1">ج.م</span>
+                <span class="text-xs text-emerald-100 mr-1">{{ \App\Support\Money::symbol() }}</span>
             </div>
         </div>
 

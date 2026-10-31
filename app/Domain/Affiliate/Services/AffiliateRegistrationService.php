@@ -11,7 +11,7 @@ use App\Domain\Notifications\Services\NotificationManager;
 use App\Models\Affiliate;
 use App\Models\Plan;
 use App\Models\Tenant;
-use App\Support\Phone\EgyptianPhone;
+use App\Support\Phone\PhoneNumber;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
@@ -62,10 +62,10 @@ class AffiliateRegistrationService
             }
         }
 
-        // 2. Validate and Normalize Egyptian Phone
-        $parsedPhone = EgyptianPhone::tryParse($data['phone']);
+        // 2. Validate and normalise the mobile number (store country or international format)
+        $parsedPhone = PhoneNumber::tryParse($data['phone']);
         if (! $parsedPhone) {
-            throw new InvalidArgumentException('رقم الهاتف المصري غير صالح. يرجى إدخال رقم محمول صحيح يبدأ بـ 010 أو 011 أو 012 أو 015.');
+            throw new InvalidArgumentException(PhoneNumber::invalidMessage());
         }
 
         $phoneE164 = $parsedPhone->e164;

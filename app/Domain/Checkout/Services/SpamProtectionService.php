@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Checkout\Services;
 
 use App\Domain\Checkout\DTOs\SpamCheckResult;
-use App\Support\Phone\EgyptianPhone;
+use App\Support\Phone\PhoneNumber;
 use Lunar\Models\Order;
 
 class SpamProtectionService
@@ -15,7 +15,7 @@ class SpamProtectionService
      */
     public function check(string $customerPhoneE164, array $purchasableIds, int $windowMinutes = 5): SpamCheckResult
     {
-        $phone = EgyptianPhone::tryParse($customerPhoneE164);
+        $phone = PhoneNumber::tryParse($customerPhoneE164);
         $phoneHash = $phone ? $phone->hash() : hash('sha256', $customerPhoneE164);
 
         /** @var Order|null $recentOrder */

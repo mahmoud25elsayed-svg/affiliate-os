@@ -14,6 +14,7 @@ use App\Http\Controllers\Controller;
 use App\Models\CallAttempt;
 use App\Models\User;
 use App\Support\Location\Governorate;
+use App\Support\Money;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -50,7 +51,7 @@ class StoreCallCenterController extends Controller
 
         $stats = $queueService->getQueueStats($user->tenant_id ? (string) $user->tenant_id : null);
         $settings = CallCenterSettings::load();
-        $governorates = Governorate::query()->where('is_active', true)->orderBy('name_ar')->get();
+        $governorates = Governorate::forCountries();
 
         return view('store.call-center.index', [
             'activeOrder' => $activeOrder,
@@ -133,7 +134,7 @@ class StoreCallCenterController extends Controller
         $newProfitPounds = number_format($result['new_profit_minor'] / 100, 2);
 
         return redirect()->back()
-            ->with('success', "تم تعديل بيانات الطلب وتحديث الحسابات. عمولة المسوق المحدثة: {$newProfitPounds} ج.م");
+            ->with('success', "تم تعديل بيانات الطلب وتحديث الحسابات. عمولة المسوق المحدثة: {$newProfitPounds} ".Money::symbol());
     }
 
     public function performance(Request $request): View

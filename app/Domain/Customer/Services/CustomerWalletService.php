@@ -8,6 +8,7 @@ use App\Domain\Customer\Contracts\CustomerWalletServiceInterface;
 use App\Models\Customer as AppCustomer;
 use App\Models\CustomerWallet;
 use App\Models\CustomerWalletTransaction;
+use App\Support\Money;
 use Lunar\Models\Customer as LunarCustomer;
 
 class CustomerWalletService implements CustomerWalletServiceInterface
@@ -19,7 +20,7 @@ class CustomerWalletService implements CustomerWalletServiceInterface
         /** @var CustomerWallet $wallet */
         $wallet = CustomerWallet::firstOrCreate(
             ['customer_id' => $customerId],
-            ['balance_minor' => 0, 'currency' => 'EGP', 'is_active' => true]
+            ['balance_minor' => 0, 'currency' => Money::defaultCurrency(), 'is_active' => true]
         );
 
         return $wallet;

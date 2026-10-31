@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Head, Link, useForm, router } from '@inertiajs/react';
 import AppLayout from '../../Layouts/AppLayout';
-import { formatCurrency } from '../../utils/format';
+import { formatCurrency, currencySymbol } from '../../utils/format';
 import {
     Link2,
     PlusCircle,
@@ -263,7 +263,7 @@ export default function Links({ links, products, defaultStorefrontUrl, defaultQr
                                 </div>
 
                                 <div>
-                                    <label className="block text-[11px] text-slate-400 mb-1">سعر بيع مخصص للرابط (ج.م) اختياري</label>
+                                    <label className="block text-[11px] text-slate-400 mb-1">سعر بيع مخصص للرابط ({currencySymbol()}) اختياري</label>
                                     <input
                                         type="number"
                                         value={data.custom_selling_price}

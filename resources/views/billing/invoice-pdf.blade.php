@@ -214,7 +214,7 @@
                 </td>
                 <td style="text-align: center;">1</td>
                 <td style="text-align: left; font-weight: bold;">
-                    {{ $invoice->amountMoney()->format('ar') }}
+                    {{ $invoice->amountMoney()->format() }}
                 </td>
             </tr>
         </tbody>
@@ -237,15 +237,15 @@
                 <table style="width: 100%; border-collapse: collapse; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
                     <tr>
                         <td style="padding: 8px 12px; color: #64748b;">{{ __('المجموع الفرعي:') }}</td>
-                        <td style="padding: 8px 12px; text-align: left; font-weight: 600;">{{ $invoice->amountMoney()->format('ar') }}</td>
+                        <td style="padding: 8px 12px; text-align: left; font-weight: 600;">{{ $invoice->amountMoney()->format() }}</td>
                     </tr>
                     <tr>
                         <td style="padding: 8px 12px; color: #64748b;">{{ __('ضريبة القيمة المضافة:') }}</td>
-                        <td style="padding: 8px 12px; text-align: left; font-weight: 600;">0.00 ج.م</td>
+                        <td style="padding: 8px 12px; text-align: left; font-weight: 600;">0.00 {{ \App\Support\Money::symbol() }}</td>
                     </tr>
                     <tr style="border-top: 2px solid #4f46e5;">
                         <td style="padding: 10px 12px; font-weight: bold; color: #4f46e5; font-size: 14px;">{{ __('الإجمالي الكلي:') }}</td>
-                        <td style="padding: 10px 12px; text-align: left; font-weight: bold; color: #4f46e5; font-size: 14px;">{{ $invoice->amountMoney()->format('ar') }}</td>
+                        <td style="padding: 10px 12px; text-align: left; font-weight: bold; color: #4f46e5; font-size: 14px;">{{ $invoice->amountMoney()->format() }}</td>
                     </tr>
                 </table>
             </td>

@@ -68,15 +68,15 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">أقل عمولة مسموح بها للمسوق (بالقروش - 1000 = 10 ج.م)</label>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">أقل عمولة مسموح بها للمسوق (بالقروش - 1000 = 10 {{ \App\Support\Money::symbol() }})</label>
                         <input type="number" name="min_commission_minor" value="{{ old('min_commission_minor', $settings->min_commission_minor) }}" class="w-full text-xs rounded-xl border border-slate-200 p-3 bg-slate-50 font-mono" required>
-                        <span class="text-[11px] text-slate-400">أي ما يعادل: {{ number_format($settings->min_commission_minor / 100, 2) }} ج.م</span>
+                        <span class="text-[11px] text-slate-400">أي ما يعادل: {{ \App\Support\Money::show($settings->min_commission_minor) }}</span>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">أقصى عمولة مسموح بها للمسوق (بالقروش - 100000 = 1000 ج.م)</label>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">أقصى عمولة مسموح بها للمسوق (بالقروش - 100000 = 1000 {{ \App\Support\Money::symbol() }})</label>
                         <input type="number" name="max_commission_minor" value="{{ old('max_commission_minor', $settings->max_commission_minor) }}" class="w-full text-xs rounded-xl border border-slate-200 p-3 bg-slate-50 font-mono" required>
-                        <span class="text-[11px] text-slate-400">أي ما يعادل: {{ number_format($settings->max_commission_minor / 100, 2) }} ج.م</span>
+                        <span class="text-[11px] text-slate-400">أي ما يعادل: {{ \App\Support\Money::show($settings->max_commission_minor) }}</span>
                     </div>
 
                     <div>
@@ -102,13 +102,13 @@
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1">الحد الأدنى لطلب السحب (Minor Units)</label>
                         <input type="number" name="min_payout_minor" value="{{ old('min_payout_minor', $settings->min_payout_minor) }}" class="w-full text-xs rounded-xl border border-slate-200 p-3 bg-slate-50 font-mono" required>
-                        <span class="text-[11px] text-slate-400">الحالي: {{ number_format($settings->min_payout_minor / 100, 2) }} ج.م</span>
+                        <span class="text-[11px] text-slate-400">الحالي: {{ \App\Support\Money::show($settings->min_payout_minor) }}</span>
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1">سقف Maker-Checker الإلزامي (Minor Units)</label>
                         <input type="number" name="maker_checker_threshold_minor" value="{{ old('maker_checker_threshold_minor', $settings->maker_checker_threshold_minor) }}" class="w-full text-xs rounded-xl border border-slate-200 p-3 bg-slate-50 font-mono" required>
-                        <span class="text-[11px] text-slate-400">فوق هذا المبلغ ({{ number_format($settings->maker_checker_threshold_minor / 100, 2) }} ج.م) لا يجوز لنفس الموظف الاعتماد والتنفيذ</span>
+                        <span class="text-[11px] text-slate-400">فوق هذا المبلغ ({{ \App\Support\Money::show($settings->maker_checker_threshold_minor) }}) لا يجوز لنفس الموظف الاعتماد والتنفيذ</span>
                     </div>
 
                     <div>

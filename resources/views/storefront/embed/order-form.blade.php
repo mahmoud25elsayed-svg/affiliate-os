@@ -89,7 +89,7 @@
                         <option value="">اختر المحافظة...</option>
                         @foreach($governorates as $gov)
                             <option value="{{ $gov->id }}" {{ old('governorate_id') == $gov->id ? 'selected' : '' }}>
-                                {{ $gov->name_ar }}
+                                {{ $gov->label() }}
                             </option>
                         @endforeach
                     </select>
@@ -173,8 +173,8 @@
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
-                    document.getElementById('shippingSummaryText').innerText = data.formatted_shipping + ' ج.م';
-                    document.getElementById('totalSummaryText').innerText = data.formatted_total + ' ج.م';
+                    document.getElementById('shippingSummaryText').innerText = data.formatted_shipping + ' {{ \App\Support\Money::symbol() }}';
+                    document.getElementById('totalSummaryText').innerText = data.formatted_total + ' {{ \App\Support\Money::symbol() }}';
                 }
             })
             .catch(() => {});

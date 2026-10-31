@@ -49,11 +49,11 @@ class CustomerAddressesPage extends Component
     }
 
     /**
-     * @return Collection<int, Governorate>
+     * @return \Illuminate\Support\Collection<int, Governorate>
      */
-    public function getGovernoratesProperty(): Collection
+    public function getGovernoratesProperty(): \Illuminate\Support\Collection
     {
-        return Governorate::query()->orderBy('name_ar')->get();
+        return Governorate::forCountries();
     }
 
     public function saveAddress(): void

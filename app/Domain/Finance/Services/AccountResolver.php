@@ -8,6 +8,7 @@ use App\Models\Account;
 use App\Models\Affiliate;
 use App\Models\Customer as AppCustomer;
 use App\Models\Supplier;
+use App\Support\Money;
 use InvalidArgumentException;
 use Lunar\Models\Customer;
 
@@ -79,7 +80,7 @@ class AccountResolver
                 'owner_id' => $affiliate->id,
                 'kind' => $kind,
                 'name' => $name,
-                'currency' => 'EGP',
+                'currency' => Money::defaultCurrency(),
                 'balance_minor' => 0,
             ]
         );
@@ -121,7 +122,7 @@ class AccountResolver
             [
                 'kind' => self::KIND_REVENUE,
                 'name' => 'إيرادات المبيعات العامة للمتجر',
-                'currency' => 'EGP',
+                'currency' => Money::defaultCurrency(),
                 'balance_minor' => 0,
             ]
         );
@@ -143,7 +144,7 @@ class AccountResolver
             [
                 'kind' => self::KIND_COMMISSION_EXPENSE,
                 'name' => 'مصروفات عمولات وأرباح المسوقين',
-                'currency' => 'EGP',
+                'currency' => Money::defaultCurrency(),
                 'balance_minor' => 0,
             ]
         );
@@ -165,7 +166,7 @@ class AccountResolver
             [
                 'kind' => self::KIND_BONUS_EXPENSE,
                 'name' => 'مصروفات مكافآت وبونص المسوقين والإحالات',
-                'currency' => 'EGP',
+                'currency' => Money::defaultCurrency(),
                 'balance_minor' => 0,
             ]
         );
@@ -187,7 +188,7 @@ class AccountResolver
             [
                 'kind' => self::KIND_COD_RECEIVABLE,
                 'name' => 'متحصلات COD معلقة لدى شركات الشحن',
-                'currency' => 'EGP',
+                'currency' => Money::defaultCurrency(),
                 'balance_minor' => 0,
             ]
         );
@@ -209,7 +210,7 @@ class AccountResolver
             [
                 'kind' => self::KIND_PAYOUT_CLEARING,
                 'name' => 'حساب وسيط لتسوية سحوبات المسوقين',
-                'currency' => 'EGP',
+                'currency' => Money::defaultCurrency(),
                 'balance_minor' => 0,
             ]
         );
@@ -231,7 +232,7 @@ class AccountResolver
             [
                 'kind' => self::KIND_BANK,
                 'name' => 'حساب البنك والتحصيلات للمتجر',
-                'currency' => 'EGP',
+                'currency' => Money::defaultCurrency(),
                 'balance_minor' => 0,
             ]
         );
@@ -253,7 +254,7 @@ class AccountResolver
             [
                 'kind' => self::KIND_SHIPPING_EXPENSE,
                 'name' => 'مصروفات شحن وتوصيل الطلبات',
-                'currency' => 'EGP',
+                'currency' => Money::defaultCurrency(),
                 'balance_minor' => 0,
             ]
         );
@@ -275,7 +276,7 @@ class AccountResolver
             [
                 'kind' => self::KIND_DISCREPANCY,
                 'name' => 'فروقات تحصيلات ومصاريف الشحن',
-                'currency' => 'EGP',
+                'currency' => Money::defaultCurrency(),
                 'balance_minor' => 0,
             ]
         );
@@ -301,7 +302,7 @@ class AccountResolver
                 'owner_id' => $customerId,
                 'kind' => self::KIND_WALLET,
                 'name' => "محفظة رصيد العميل #{$customerId}",
-                'currency' => 'EGP',
+                'currency' => Money::defaultCurrency(),
                 'balance_minor' => 0,
             ]
         );
@@ -327,7 +328,7 @@ class AccountResolver
                 'owner_id' => $customerId,
                 'kind' => self::KIND_LOYALTY,
                 'name' => "نقاط ولاء العميل #{$customerId}",
-                'currency' => 'EGP',
+                'currency' => Money::defaultCurrency(),
                 'balance_minor' => 0,
             ]
         );
@@ -349,7 +350,7 @@ class AccountResolver
             [
                 'kind' => self::KIND_LOYALTY,
                 'name' => 'مصروفات نقاط ومكافآت ولاء العملاء',
-                'currency' => 'EGP',
+                'currency' => Money::defaultCurrency(),
                 'balance_minor' => 0,
             ]
         );
@@ -371,7 +372,7 @@ class AccountResolver
             [
                 'kind' => self::KIND_WALLET,
                 'name' => 'التزامات أرصدة ومحافظ العملاء',
-                'currency' => 'EGP',
+                'currency' => Money::defaultCurrency(),
                 'balance_minor' => 0,
             ]
         );
@@ -395,7 +396,7 @@ class AccountResolver
                 'owner_id' => $supplier->id,
                 'kind' => self::KIND_SUPPLIER_PAYABLE,
                 'name' => "مستحقات المورد: {$supplier->name}",
-                'currency' => 'EGP',
+                'currency' => Money::defaultCurrency(),
                 'balance_minor' => 0,
             ]
         );
@@ -417,7 +418,7 @@ class AccountResolver
             [
                 'kind' => self::KIND_INVENTORY,
                 'name' => 'حساب مخزون البضاعة للمتجر',
-                'currency' => 'EGP',
+                'currency' => Money::defaultCurrency(),
                 'balance_minor' => 0,
             ]
         );
@@ -439,7 +440,7 @@ class AccountResolver
             [
                 'kind' => self::KIND_COGS,
                 'name' => 'تكلفة البضاعة المباعة (COGS)',
-                'currency' => 'EGP',
+                'currency' => Money::defaultCurrency(),
                 'balance_minor' => 0,
             ]
         );

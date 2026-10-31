@@ -33,24 +33,24 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">الحد الأدنى لربح المسوق فوق سعر الجملة (ج.م)</label>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">الحد الأدنى لربح المسوق فوق سعر الجملة ({{ \App\Support\Money::symbol() }})</label>
                     <input type="number" step="0.5" wire:model="min_selling_markup" class="w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-800 text-sm">
                     @error('min_selling_markup') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">الحد الأقصى لربح المسوق فوق سعر الجملة (ج.م)</label>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">الحد الأقصى لربح المسوق فوق سعر الجملة ({{ \App\Support\Money::symbol() }})</label>
                     <input type="number" step="0.5" wire:model="max_selling_markup" class="w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-800 text-sm">
                     @error('max_selling_markup') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">الحد الأدنى للعمولة في نظام النسبة (ج.م)</label>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">الحد الأدنى للعمولة في نظام النسبة ({{ \App\Support\Money::symbol() }})</label>
                     <input type="number" step="0.5" wire:model="min_commission" class="w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-800 text-sm">
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">الحد الأقصى للعمولة في نظام النسبة (ج.م)</label>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">الحد الأقصى للعمولة في نظام النسبة ({{ \App\Support\Money::symbol() }})</label>
                     <input type="number" step="0.5" wire:model="max_commission" class="w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-800 text-sm">
                 </div>
             </div>
@@ -71,7 +71,7 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">الحد الأدنى لطلب سحب الأرباح (ج.م)</label>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">الحد الأدنى لطلب سحب الأرباح ({{ \App\Support\Money::symbol() }})</label>
                     <input type="number" step="10" wire:model="min_payout" min="10" class="w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-800 text-sm">
                 </div>
 
