@@ -32,7 +32,12 @@
 
     <!-- Price Section -->
     <div class="flex items-baseline gap-3">
-        @if(isset($promotional) && $promotional && $promotional['is_promotional'])
+        @if(! empty($linkedPriceMinor))
+            {{-- Price from the affiliate link the visitor came through; this is what checkout charges. --}}
+            <span class="text-3xl font-black text-brand-600">
+                {{ \App\Support\Money::fromMinor($linkedPriceMinor)->format('ar') }}
+            </span>
+        @elseif(isset($promotional) && $promotional && $promotional['is_promotional'])
             <span class="text-3xl font-black text-red-600">
                 {{ \App\Support\Money::fromMinor($promotional['price_minor'])->format('ar') }}
             </span>

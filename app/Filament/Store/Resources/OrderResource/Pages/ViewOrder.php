@@ -100,6 +100,10 @@ class ViewOrder extends ViewRecord
                     ->title('تم تحديث حالة الطلب بنجاح إلى: '.$targetStatus->label())
                     ->success()
                     ->send();
+
+                // Header actions are built from the status at render time; reload so the next
+                // allowed transitions appear instead of the ones for the previous status.
+                $this->redirect(OrderResource::getUrl('view', ['record' => $record]));
             });
 
             $actions[] = $action;

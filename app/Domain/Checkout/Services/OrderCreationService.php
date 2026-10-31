@@ -119,21 +119,9 @@ class OrderCreationService
                     ]);
                 }
 
-                $isLinkedCustomPrice = false;
-                if ($attributedLink !== null && $attributedLink->custom_selling_price_minor !== null) {
-                    if ($attributedLink->product_variant_id !== null && (int) $attributedLink->product_variant_id === (int) $variant->id) {
-                        $isLinkedCustomPrice = true;
-                    } elseif ($attributedLink->product_id !== null && (int) $attributedLink->product_id === (int) $variant->product_id) {
-                        $isLinkedCustomPrice = true;
-                    }
-                }
-
-                if ($isLinkedCustomPrice) {
-                    $unitPriceMinor = (int) $attributedLink->custom_selling_price_minor;
-                } else {
-                    $pricing = app(PromotionPricingService::class)->getEffectiveVariantPrice($variant);
-                    $unitPriceMinor = $pricing['price_minor'];
-                }
+                $linkedPrice = $attributedLink !== null ? $affiliateTracking->linkedPriceMinor($variant, $attributedLink) : null;
+                $unitPriceMinor = $linkedPrice
+                    ?? app(PromotionPricingService::class)->getEffectiveVariantPrice($variant)['price_minor'];
                 $lineSubtotalMinor = $unitPriceMinor * $quantity;
                 $subtotalMinor += $lineSubtotalMinor;
 

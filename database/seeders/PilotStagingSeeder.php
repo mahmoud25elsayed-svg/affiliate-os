@@ -13,6 +13,7 @@ use App\Domain\Orders\Enums\OrderStatus;
 use App\Jobs\ProvisionTenant;
 use App\Models\Affiliate;
 use App\Models\AffiliateLevel;
+use App\Models\InventoryBalance;
 use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\Supplier;
@@ -213,7 +214,7 @@ class PilotStagingSeeder extends Seeder
         $affiliateSettings->save();
 
         // 2. Default Warehouse
-        Warehouse::firstOrCreate(
+        $warehouse = Warehouse::firstOrCreate(
             ['tenant_id' => $tenant->id, 'code' => 'MAIN-WH'],
             [
                 'name' => 'المخزن الرئيسي',
@@ -306,6 +307,15 @@ class PilotStagingSeeder extends Seeder
                 'sku' => $prodData['sku'],
                 'unit_quantity' => 1,
                 'stock' => $prodData['stock'],
+            ]);
+
+            // Reservation reads warehouse balances, not variants.stock: keep them in step.
+            InventoryBalance::create([
+                'tenant_id' => $tenant->id,
+                'warehouse_id' => $warehouse->id,
+                'product_variant_id' => $variant->id,
+                'on_hand' => $prodData['stock'],
+                'reserved' => 0,
             ]);
 
             // Add standard Lunar retail price

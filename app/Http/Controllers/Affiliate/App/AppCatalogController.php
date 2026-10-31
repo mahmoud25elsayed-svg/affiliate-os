@@ -59,7 +59,7 @@ class AppCatalogController extends Controller
             $successRate = $totalDelivered > 0 ? 88.5 : 92.0;
 
             $thumbnail = $product->thumbnail;
-            $imageUrl = ($thumbnail instanceof Media) ? $thumbnail->getUrl() : '/images/placeholder.png';
+            $imageUrl = ($thumbnail instanceof Media) ? $thumbnail->getUrl() : '/images/placeholder.svg';
 
             return [
                 'id' => $product->id,
@@ -130,7 +130,7 @@ class AppCatalogController extends Controller
             return $m->getUrl();
         })->all();
         if (empty($images)) {
-            $images = ['/images/placeholder.png'];
+            $images = ['/images/placeholder.svg'];
         }
 
         // Marketing materials

@@ -49,8 +49,10 @@ class SecurityHeadersMiddleware
 
         // 7. Content Security Policy (CSP - SEC-15)
         $frameAncestors = $isEmbedRoute ? '*' : "'self'";
-        $isFilamentPanel = $request->is('store/admin*') || $request->is('platform*');
-        $scriptSrc = $isFilamentPanel ? "'self' 'unsafe-inline' 'unsafe-eval' https:" : "'self' 'unsafe-inline' https:";
+        // Alpine.js (bundled with Livewire, used by both Filament panels, the partner portal and the
+        // storefront's Livewire pages) evaluates x-data/x-on expressions with new Function(), so every
+        // HTML page needs 'unsafe-eval' or all interactivity silently dies.
+        $scriptSrc = "'self' 'unsafe-inline' 'unsafe-eval' https:";
 
         $cspPolicy = implode('; ', [
             "default-src 'self'",

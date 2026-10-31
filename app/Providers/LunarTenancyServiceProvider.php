@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Models\Tenant;
 use App\Support\Tenancy\Exceptions\TenantCannotBeNullException;
 use App\Support\Tenancy\Scopes\TenantScope;
 use Illuminate\Database\Eloquent\Model;
@@ -73,6 +74,10 @@ class LunarTenancyServiceProvider extends ServiceProvider
 
         foreach ($this->lunarModels as $modelClass) {
             $modelClass::addGlobalScope($tenantScope);
+
+            // The Store panel uses Filament tenancy, which scopes and associates records through a
+            // `tenant` relationship; Lunar models don't ship one.
+            $modelClass::resolveRelationUsing('tenant', fn (Model $model) => $model->belongsTo(Tenant::class, 'tenant_id'));
 
             $modelClass::saving(function (Model $model): void {
                 if (! $model->getAttribute('tenant_id') && function_exists('tenancy') && tenancy()->initialized) {

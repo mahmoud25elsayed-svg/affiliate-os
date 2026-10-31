@@ -280,7 +280,7 @@
                                 @endphp
                                 <tr class="hover:bg-slate-50 transition">
                                     <td class="py-2.5 font-mono font-bold text-indigo-600">
-                                        <a href="{{ route('affiliate.orders.show', $order->id) }}">
+                                        <a href="{{ route('affiliate.orders.show', $order->reference) }}">
                                             #{{ $order->reference ?? $order->id }}
                                         </a>
                                     </td>

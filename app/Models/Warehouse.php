@@ -68,6 +68,29 @@ class Warehouse extends Model
     }
 
     /**
+     * The current tenant's default active warehouse, creating the main warehouse on first use so
+     * stock received from the panel always has somewhere to land.
+     */
+    public static function resolveDefault(): self
+    {
+        /** @var self|null $warehouse */
+        $warehouse = self::query()->active()->orderByDesc('is_default')->orderBy('id')->first();
+
+        if ($warehouse === null) {
+            /** @var self $warehouse */
+            $warehouse = self::query()->create([
+                'name' => 'المستودع الرئيسي',
+                'code' => 'MAIN',
+                'type' => 'own',
+                'is_default' => true,
+                'is_active' => true,
+            ]);
+        }
+
+        return $warehouse;
+    }
+
+    /**
      * @return HasMany<InventoryBalance, $this>
      */
     public function balances(): HasMany

@@ -9,6 +9,7 @@ use App\Domain\Finance\Services\PayoutTurnaroundCalculator;
 use App\Domain\Orders\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Affiliate;
+use App\Support\Money;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -54,7 +55,7 @@ class AppDashboardController extends Controller
                     'status' => $order->status,
                     'customer_city' => $snapshot['customer_city'] ?? 'غير محدد',
                     'profit_minor' => (int) ($snapshot['affiliate_profit_minor'] ?? 0),
-                    'total_minor' => (int) ($order->total ?? 0),
+                    'total_minor' => Money::minorOf($order->total),
                     'created_at' => $order->created_at?->format('Y-m-d H:i') ?? '',
                 ];
             });

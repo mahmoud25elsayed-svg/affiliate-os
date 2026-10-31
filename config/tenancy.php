@@ -150,7 +150,9 @@ return [
          * disable asset() helper tenancy and explicitly use tenant_asset() calls in places
          * where you want to use tenant-specific assets (product images, avatars, etc).
          */
-        'asset_helper_tenancy' => true,
+        // Off: Filament, Livewire and Vite publish shared assets under public/ and call asset() inside
+        // tenant requests; rewriting them to /tenancy/assets/* left the Store panel without CSS/JS.
+        'asset_helper_tenancy' => false,
     ],
 
     /**

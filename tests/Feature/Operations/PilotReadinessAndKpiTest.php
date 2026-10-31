@@ -8,6 +8,7 @@ use App\Domain\Affiliate\Actions\PriceQuoteAction;
 use App\Domain\Operations\Services\StoreKpiMetricsService;
 use App\Domain\Orders\Enums\OrderStatus;
 use App\Models\Affiliate;
+use App\Models\InventoryBalance;
 use App\Models\JournalEntry;
 use App\Models\Supplier;
 use App\Models\SupplierBatch;
@@ -357,7 +358,8 @@ class PilotReadinessAndKpiTest extends TestCase
             $this->assertSame('الحاج ممدوح الشريف', $newSupplier->name);
 
             // 2. Supply Batch: 40 units at 95.00 EGP each (Total = 3,800.00 EGP = 380,000 minor)
-            $initialStock = (int) ($this->variant->fresh()->stock ?? 0);
+            // Stock lives in warehouse balances (variants.stock is synced from them).
+            $initialStock = (int) InventoryBalance::where('product_variant_id', $this->variant->id)->sum('on_hand');
 
             $resBatch = $this->actingAs($this->owner)
                 ->post("https://{$this->tenant->id}.localhost/store/suppliers/{$newSupplier->id}/batches", [
@@ -369,7 +371,8 @@ class PilotReadinessAndKpiTest extends TestCase
 
             $resBatch->assertRedirect(route('store.suppliers.show', $newSupplier->id));
 
-            // Stock incremented by 40
+            // Received into the default warehouse (so orders can reserve it) and synced to the variant
+            $this->assertSame($initialStock + 40, (int) InventoryBalance::where('product_variant_id', $this->variant->id)->sum('on_hand'));
             $this->assertSame($initialStock + 40, (int) $this->variant->fresh()->stock);
 
             // Batch created

@@ -153,6 +153,9 @@ Route::middleware([
 
     // Static Informational Pages
     Route::get('/about', [PageController::class, 'about'])->name('storefront.pages.about');
+    // Legacy default navigation links already saved in stores' theme settings.
+    Route::redirect('/about-us', '/about', 301);
+    Route::redirect('/customer/orders', '/account/orders', 301);
     Route::get('/terms', [PageController::class, 'terms'])->name('storefront.pages.terms');
     Route::get('/privacy', [PageController::class, 'privacy'])->name('storefront.pages.privacy');
     Route::get('/shipping', [PageController::class, 'shipping'])->name('storefront.pages.shipping');

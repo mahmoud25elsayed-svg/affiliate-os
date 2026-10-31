@@ -108,9 +108,10 @@ export default function CreateOrder({ products, governorates, selectedVariantId,
                 governorate_id: data.governorate_id ? Number(data.governorate_id) : null,
             }),
         })
-            .then((res) => res.json())
+            .then((res) => (res.ok ? res.json() : null))
             .then((json) => {
-                setQuote(json);
+                // A failed quote (validation/session error) must not crash the page with a partial object.
+                setQuote(json && Array.isArray(json.warnings) ? json : null);
                 setIsQuoting(false);
             })
             .catch(() => setIsQuoting(false));

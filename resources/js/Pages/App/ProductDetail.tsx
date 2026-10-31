@@ -84,7 +84,7 @@ export default function ProductDetail({ product, settings }: Props) {
                 <div className="rounded-3xl bg-slate-900 border border-slate-800 overflow-hidden">
                     <div className="aspect-square bg-slate-800 overflow-hidden relative">
                         <img
-                            src={product.images[selectedImageIndex] || '/images/placeholder.png'}
+                            src={product.images[selectedImageIndex] || '/images/placeholder.svg'}
                             alt={product.name}
                             className="w-full h-full object-cover"
                             onError={(e) => {

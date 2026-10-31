@@ -13,6 +13,7 @@
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen">
+    @include('store.partials.panel-bar')
     <div class="max-w-7xl mx-auto px-4 py-8 space-y-6">
 
         <div class="flex items-center justify-between">
@@ -114,7 +115,7 @@
 
                     <div>
                         <label class="block font-bold text-slate-700 mb-1">تكلفة الوحدة من المورد (ج.م) *</label>
-                        <input type="number" step="0.5" name="unit_cost" min="0.5" required class="w-full rounded-xl border border-slate-200 p-2.5 bg-slate-50 font-mono" placeholder="120.00">
+                        <input type="number" step="0.01" name="unit_cost" min="0.01" required class="w-full rounded-xl border border-slate-200 p-2.5 bg-slate-50 font-mono" placeholder="120.00">
                     </div>
 
                     <div>

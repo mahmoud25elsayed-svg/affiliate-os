@@ -1,0 +1,4 @@
+@config "../../tailwind.filament.config.js";
+
+@tailwind components;
+@tailwind utilities;

@@ -8,10 +8,13 @@ use App\Domain\Finance\DTOs\EntryData;
 use App\Domain\Finance\DTOs\LedgerLineData;
 use App\Domain\Finance\Services\AccountResolver;
 use App\Domain\Finance\Services\Ledger;
+use App\Domain\Inventory\Actions\InboundStockAction;
 use App\Http\Controllers\Controller;
 use App\Models\Supplier;
 use App\Models\SupplierBatch;
+use App\Models\Warehouse;
 use App\Models\WholesalePrice;
+use App\Support\Money;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -77,11 +80,11 @@ class StoreSupplierController extends Controller
         $validated = $request->validate([
             'product_variant_id' => ['required', 'integer', 'exists:lunar_product_variants,id'],
             'quantity_supplied' => ['required', 'integer', 'min:1'],
-            'unit_cost' => ['required', 'numeric', 'min:0.01'],
+            'unit_cost' => ['required', 'regex:/^\d{1,7}(\.\d{1,2})?$/', 'not_in:0,0.0,0.00'],
             'notes' => ['nullable', 'string', 'max:500'],
         ]);
 
-        $unitCostMinor = (int) round(((float) $validated['unit_cost']) * 100);
+        $unitCostMinor = Money::fromDecimalString((string) $validated['unit_cost'])->amount;
         $quantity = (int) $validated['quantity_supplied'];
         $totalCostMinor = $unitCostMinor * $quantity;
         $batchNumber = 'SUP-BATCH-'.strtoupper(Str::random(8));
@@ -109,11 +112,20 @@ class StoreSupplierController extends Controller
                 'notes' => $validated['notes'] ?? null,
             ]);
 
-            // 2. Increment Variant Stock
+            // 2. Receive into the default warehouse; variants.stock is re-synced from balances so
+            //    the quantity is actually reservable by orders.
             /** @var ProductVariant $variant */
-            $variant = ProductVariant::lockForUpdate()->findOrFail($validated['product_variant_id']);
-            $variant->stock = ((int) ($variant->stock ?? 0)) + $quantity;
-            $variant->save();
+            $variant = ProductVariant::findOrFail($validated['product_variant_id']);
+            app(InboundStockAction::class)->execute(
+                variantId: (int) $variant->id,
+                quantity: $quantity,
+                warehouseId: Warehouse::resolveDefault()->id,
+                referenceType: 'supplier_receipt',
+                referenceId: (string) $batch->id,
+                referenceKey: "supplier_batch_{$batch->id}",
+                actorId: (string) auth()->id(),
+                notes: $batchNumber,
+            );
 
             // 3. Link variant wholesale price to supplier if not already set
             $wholesalePrice = WholesalePrice::where('product_variant_id', $variant->id)->first();

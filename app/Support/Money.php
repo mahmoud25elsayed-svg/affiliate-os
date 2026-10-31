@@ -58,6 +58,24 @@ final class Money implements JsonSerializable, Stringable
     }
 
     /**
+     * Minor units of an Eloquent money attribute, whether Lunar cast it to a Price/Money object
+     * (`->value` / `->amount`) or it is still a raw integer column. Null becomes 0.
+     */
+    public static function minorOf(mixed $value): int
+    {
+        if (is_object($value)) {
+            if (property_exists($value, 'value')) {
+                return (int) $value->value;
+            }
+            if ($value instanceof self) {
+                return $value->amount;
+            }
+        }
+
+        return is_numeric($value) ? (int) $value : 0;
+    }
+
+    /**
      * Strictly rejects floats.
      *
      * @throws InvalidArgumentException

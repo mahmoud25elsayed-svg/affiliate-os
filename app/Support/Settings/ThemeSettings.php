@@ -63,8 +63,8 @@ class ThemeSettings extends Settings
         ['label' => 'الرئيسية', 'url' => '/'],
         ['label' => 'كل المنتجات', 'url' => '/products'],
         ['label' => 'العروض والخصومات', 'url' => '/products?sale=1'],
-        ['label' => 'من نحن', 'url' => '/about-us'],
-        ['label' => 'تتبع طلبك', 'url' => '/customer/orders'],
+        ['label' => 'من نحن', 'url' => '/about'],
+        ['label' => 'تتبع طلبك', 'url' => '/account/orders'],
     ];
 
     /**

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire\Storefront;
 
+use App\Domain\Affiliate\Services\AffiliateTrackingService;
 use App\Domain\Checkout\Services\StorefrontCartService;
 use App\Domain\Promotions\Services\PromotionPricingService;
 use App\Models\WholesalePrice;
@@ -88,6 +89,7 @@ class ProductVariantPicker extends Component
             'price' => $price,
             'pricing' => $pricing,
             'promotional' => $promotional,
+            'linkedPriceMinor' => $selectedVariant ? app(AffiliateTrackingService::class)->linkedPriceMinor($selectedVariant) : null,
         ]);
     }
 }

@@ -92,6 +92,30 @@ class AffiliateTrackingService
         return base64_encode("{$data}:{$signature}");
     }
 
+    /**
+     * The tracking link's custom selling price for this variant, when the visitor arrived through
+     * a link that carries one for this product. Product page, cart and order creation all use this
+     * so the price shown to the customer is the price they are charged.
+     *
+     * @param  TrackingLink|null  $link  already-resolved link; defaults to the request's attribution cookie
+     */
+    public function linkedPriceMinor(ProductVariant $variant, ?TrackingLink $link = null): ?int
+    {
+        if ($link === null) {
+            $token = request()->cookie(self::COOKIE_NAME);
+            $link = $this->resolveAttributedLink(is_string($token) ? $token : null);
+        }
+
+        if ($link === null || $link->custom_selling_price_minor === null) {
+            return null;
+        }
+
+        $matches = ($link->product_variant_id !== null && (int) $link->product_variant_id === (int) $variant->id)
+            || ($link->product_id !== null && (int) $link->product_id === (int) $variant->product_id);
+
+        return $matches ? (int) $link->custom_selling_price_minor : null;
+    }
+
     public function resolveAttributedLink(?string $cookieToken): ?TrackingLink
     {
         if (empty($cookieToken)) {

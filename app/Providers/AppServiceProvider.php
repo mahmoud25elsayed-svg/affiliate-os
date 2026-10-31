@@ -17,6 +17,7 @@ use App\Domain\Tenancy\Services\HostingerDomainService;
 use App\Domain\Tenancy\Services\SystemDnsResolver;
 use App\Domain\Tracking\Listeners\TrackOrderDeliveredConversionListener;
 use App\Http\Middleware\AbortUnlessLunarHubEnabled;
+use App\Http\Middleware\InitializeTenancyForLivewire;
 use App\Models\Affiliate;
 use App\Models\TrackingLink;
 use App\Models\WholesalePrice;
@@ -25,7 +26,9 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Livewire\Livewire;
 use Lunar\Admin\Support\Facades\LunarPanel;
 use Lunar\Models\Collection;
 use Lunar\Models\Order;
@@ -77,6 +80,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Storefront Livewire components need the tenant of the domain they were rendered on.
+        Livewire::setUpdateRoute(fn ($handle) => Route::post('/livewire/update', $handle)
+            ->middleware(['web', InitializeTenancyForLivewire::class]));
+
         RateLimiter::for('merchant-registration', function (Request $request) {
             return Limit::perHour(5)->by($request->ip() ?? '127.0.0.1');
         });

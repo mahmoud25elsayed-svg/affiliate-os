@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Domain\Catalog\Services;
 
+use App\Domain\Inventory\Actions\InboundStockAction;
 use App\Models\Tenant;
+use App\Models\Warehouse;
 use App\Models\WholesalePrice;
 use App\Support\Billing\Limits;
 use DomainException;
@@ -38,6 +40,7 @@ class ProductService
      *     is_digital?: bool,
      *     digital_file_path?: string|null,
      *     collection_ids?: array<int>,
+     *     opening_stock?: int|string|null,
      * }  $data
      */
     public function createProduct(array $data, ?Tenant $tenant = null): Product
@@ -127,6 +130,19 @@ class ProductService
         // Attach collections if provided
         if (! empty($data['collection_ids'])) {
             $product->collections()->sync($data['collection_ids']);
+        }
+
+        // Opening stock goes through the warehouse ledger so orders can reserve it.
+        $openingStock = (int) ($data['opening_stock'] ?? 0);
+        if ($openingStock > 0) {
+            app(InboundStockAction::class)->execute(
+                variantId: (int) $variant->id,
+                quantity: $openingStock,
+                warehouseId: Warehouse::resolveDefault()->id,
+                referenceType: 'opening_stock',
+                referenceId: (string) $product->id,
+                actorId: auth()->id() !== null ? (string) auth()->id() : null,
+            );
         }
 
         return $product;

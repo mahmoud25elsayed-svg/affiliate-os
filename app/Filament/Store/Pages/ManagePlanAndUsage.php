@@ -30,7 +30,7 @@ class ManagePlanAndUsage extends Page
 
     protected static ?int $navigationSort = 10;
 
-    public ?Tenant $tenant = null;
+    public ?Tenant $storeTenant = null;
 
     public ?Subscription $subscription = null;
 
@@ -71,10 +71,10 @@ class ManagePlanAndUsage extends Page
 
     public function loadData(): void
     {
-        $this->tenant = Features::resolveTenant();
+        $this->storeTenant = Features::resolveTenant();
 
-        if ($this->tenant) {
-            $this->subscription = $this->tenant->subscription;
+        if ($this->storeTenant) {
+            $this->subscription = $this->storeTenant->subscription;
             $this->currentPlan = $this->subscription?->plan;
             $this->invoices = $this->subscription ? $this->subscription->invoices : collect();
 
@@ -93,7 +93,7 @@ class ManagePlanAndUsage extends Page
 
     protected function calculateStats(): void
     {
-        if (! $this->tenant || ! $this->currentPlan) {
+        if (! $this->storeTenant || ! $this->currentPlan) {
             return;
         }
 
@@ -107,8 +107,8 @@ class ManagePlanAndUsage extends Page
 
         $this->usageStats = [];
         foreach ($limitsConfig as $key => $label) {
-            $used = Limits::usage($key, $this->tenant);
-            $max = Limits::get($key, $this->tenant);
+            $used = Limits::usage($key, $this->storeTenant);
+            $max = Limits::get($key, $this->storeTenant);
             $percentage = $max > 0 ? min(100, (int) round(($used / $max) * 100)) : ($max === -1 ? 0 : 100);
 
             $this->usageStats[$key] = [

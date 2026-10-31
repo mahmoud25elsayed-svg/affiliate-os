@@ -14,6 +14,7 @@ use App\Models\Affiliate;
 use App\Models\OrderEvent;
 use App\Models\WholesalePrice;
 use App\Support\Location\Governorate;
+use App\Support\Money;
 use DomainException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -82,7 +83,7 @@ class AppOrderController extends Controller
                 'customer_city' => $snapshot['customer_city'] ?? 'غير محدد',
                 'customer_phone' => $snapshot['customer_phone'] ?? '***',
                 'items_count' => (int) ($snapshot['quantity'] ?? 1),
-                'total_minor' => (int) ($order->total ?? ($snapshot['customer_total_minor'] ?? 0)),
+                'total_minor' => Money::minorOf($order->total) ?: (int) ($snapshot['customer_total_minor'] ?? 0),
                 'affiliate_profit_minor' => (int) ($snapshot['affiliate_profit_minor'] ?? 0),
                 'created_at' => $order->created_at?->format('Y-m-d H:i') ?? '',
             ];

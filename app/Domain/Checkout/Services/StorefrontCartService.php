@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Checkout\Services;
 
+use App\Domain\Affiliate\Services\AffiliateTrackingService;
 use App\Domain\Promotions\Services\PromotionPricingService;
 use Illuminate\Support\Facades\Session;
 use Lunar\Models\Product;
@@ -127,7 +128,8 @@ class StorefrontCartService
             $sku = $variant->sku ?? 'SKU-'.$variant->id;
 
             $pricing = app(PromotionPricingService::class)->getEffectiveVariantPrice($variant);
-            $unitPriceMinor = $pricing['price_minor'];
+            // Same price the order will be created with (affiliate link custom price wins).
+            $unitPriceMinor = app(AffiliateTrackingService::class)->linkedPriceMinor($variant) ?? $pricing['price_minor'];
             $subtotalMinor = $unitPriceMinor * $quantity;
 
             /** @var Media|null $thumbnail */

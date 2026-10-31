@@ -9,6 +9,7 @@ use App\Filament\Store\Resources\ProductResource\Pages\CreateProduct;
 use App\Filament\Store\Resources\ProductResource\Pages\EditProduct;
 use App\Filament\Store\Resources\ProductResource\Pages\ListProducts;
 use App\Models\WholesalePrice;
+use App\Support\Money;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -95,36 +96,35 @@ class ProductResource extends Resource
                     ->nullable(),
             ])->columns(2),
 
-            Section::make('التسعير وسياسة البيع للأفلييت (بالقروش - EGP)')->schema([
-                TextInput::make('retail_price')
-                    ->label('سعر البيع المقترح للعميل (بالقروش)')
-                    ->numeric()
+            Section::make('التسعير وسياسة البيع للأفلييت (بالجنيه المصري)')->schema([
+                static::moneyInput('retail_price', 'سعر البيع المقترح للعميل')
                     ->required()
-                    ->helperText('مثال: 25000 = 250.00 ج.م'),
+                    ->helperText('مثال: 250 أو 249.99'),
 
-                TextInput::make('compare_at_price')
-                    ->label('السعر قبل الخصم (اختياري)')
-                    ->numeric()
+                static::moneyInput('compare_at_price', 'السعر قبل الخصم (اختياري)')
                     ->nullable(),
 
-                TextInput::make('wholesale_price')
-                    ->label('سعر الجملة للمسوق (Wholesale)')
-                    ->numeric()
+                static::moneyInput('wholesale_price', 'سعر الجملة للمسوق (Wholesale)')
                     ->required()
                     ->helperText('سعر تكلفة المنتج على التاجر للأفلييت'),
 
-                TextInput::make('min_price')
-                    ->label('الحد الأدنى لسعر بيع المسوق (Min)')
-                    ->numeric()
+                static::moneyInput('min_price', 'الحد الأدنى لسعر بيع المسوق (Min)')
                     ->required()
                     ->helperText('أقل سعر يُسمح للمسوق بالبيع به (يجب أن يكون ≥ الجملة)'),
 
-                TextInput::make('max_price')
-                    ->label('الحد الأقصى لسعر بيع المسوق (Max)')
-                    ->numeric()
+                static::moneyInput('max_price', 'الحد الأقصى لسعر بيع المسوق (Max)')
                     ->required()
                     ->helperText('أعلى سعر يُسمح للمسوق بالبيع به (يجب أن يكون ≥ الأدنى)'),
             ])->columns(3),
+
+            Section::make('المخزون الافتتاحي')->schema([
+                TextInput::make('opening_stock')
+                    ->label('الكمية المتوفرة الآن')
+                    ->integer()
+                    ->minValue(0)
+                    ->default(0)
+                    ->helperText('تُضاف إلى المستودع الافتراضي لتصبح قابلة للبيع والحجز. الإضافات اللاحقة من صفحة أرصدة المخزون.'),
+            ])->visibleOn('create'),
 
             Section::make('المنتجات الرقمية (Digital Products)')->schema([
                 Toggle::make('is_digital')
@@ -283,6 +283,25 @@ class ProductResource extends Resource
                 'brand',
                 'productType',
             ]);
+    }
+
+    /**
+     * Price field the merchant fills in pounds ("250.50") while the form state stays in integer
+     * piasters, so the create/edit pages and ProductService keep working in minor units.
+     */
+    protected static function moneyInput(string $name, string $label): TextInput
+    {
+        return TextInput::make($name)
+            ->label($label)
+            ->suffix('ج.م')
+            ->inputMode('decimal')
+            ->rule('regex:/^\d{1,7}(\.\d{1,2})?$/')
+            ->formatStateUsing(fn (mixed $state): ?string => is_numeric($state)
+                ? Money::fromMinor((int) $state)->toDecimalString()
+                : null)
+            ->dehydrateStateUsing(fn (mixed $state): ?int => (is_numeric($state) || (is_string($state) && trim($state) !== ''))
+                ? Money::fromDecimalString(trim((string) $state))->amount
+                : null);
     }
 
     public static function getPages(): array
