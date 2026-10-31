@@ -73,13 +73,19 @@ class TwoFactorController extends Controller
     public function verifyChallenge(Request $request): RedirectResponse
     {
         $request->validate([
-            'code' => ['required', 'string', 'digits:6'],
+            'code' => ['required', 'string', 'max:32'],
         ]);
 
         /** @var User $user */
         $user = $request->user();
+        $code = trim((string) $request->input('code'));
 
-        if (! $user->two_factor_secret || ! $this->totpService->verify($user->two_factor_secret, (string) $request->input('code'))) {
+        // A 6-digit code is a TOTP; anything else is treated as a single-use recovery code.
+        $valid = preg_match('/^\d{6}$/', $code) === 1
+            ? ($user->two_factor_secret && $this->totpService->verify($user->two_factor_secret, $code))
+            : $user->consumeRecoveryCode($code);
+
+        if (! $valid) {
             return back()->withErrors(['code' => 'رمز التحقق منتهي أو غير صحيح.']);
         }
 

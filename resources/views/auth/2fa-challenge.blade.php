@@ -78,14 +78,14 @@
     <div class="card">
         <div class="header">
             <h1 class="title">المصادقة الثنائية (2FA)</h1>
-            <p class="subtitle">أدخل الرمز المكون من 6 أرقام من تطبيق المصادقة لمتابعة تسجيل الدخول.</p>
+            <p class="subtitle">أدخل الرمز المكون من 6 أرقام من تطبيق المصادقة، أو أحد رموز الاسترداد الاحتياطية (مثل ABCDE-12345).</p>
         </div>
 
         <form action="{{ route('platform.2fa.verify') }}" method="POST">
             @csrf
             <div class="form-group">
                 <label for="code" class="form-label">رمز التحقق</label>
-                <input type="text" id="code" name="code" class="form-input" placeholder="000000" maxlength="6" autofocus required>
+                <input type="text" id="code" name="code" class="form-input" placeholder="000000" maxlength="32" autocomplete="one-time-code" autocapitalize="characters" dir="ltr" autofocus required>
                 @error('code')
                     <div class="error-message">{{ $message }}</div>
                 @enderror

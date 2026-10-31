@@ -111,14 +111,7 @@ class User extends Authenticatable implements FilamentUser, HasTenants
 
         $cleanCode = trim($code);
 
-        // Check recovery codes
-        $recoveryCodes = $this->getAttribute('two_factor_recovery_codes');
-        $recoveryCodes = is_array($recoveryCodes) ? array_map('strval', $recoveryCodes) : [];
-        if ($cleanCode !== '' && in_array($cleanCode, $recoveryCodes, true)) {
-            // Recovery codes are single-use
-            $this->setAttribute('two_factor_recovery_codes', array_values(array_diff($recoveryCodes, [$cleanCode])));
-            $this->saveQuietly();
-
+        if ($this->consumeRecoveryCode($cleanCode)) {
             return true;
         }
 
@@ -132,6 +125,32 @@ class User extends Authenticatable implements FilamentUser, HasTenants
         for ($i = -1; $i <= 1; $i++) {
             $computed = $this->calculateTotp($secret, $timestamp + $i);
             if (hash_equals($computed, $cleanCode)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Burn a single-use recovery code. Case-insensitive, constant-time per stored code.
+     */
+    public function consumeRecoveryCode(string $code): bool
+    {
+        $code = strtoupper(trim($code));
+        if ($code === '') {
+            return false;
+        }
+
+        $recoveryCodes = $this->getAttribute('two_factor_recovery_codes');
+        $recoveryCodes = is_array($recoveryCodes) ? array_map('strval', $recoveryCodes) : [];
+
+        foreach ($recoveryCodes as $index => $stored) {
+            if (hash_equals(strtoupper($stored), $code)) {
+                unset($recoveryCodes[$index]);
+                $this->setAttribute('two_factor_recovery_codes', array_values($recoveryCodes));
+                $this->saveQuietly();
+
                 return true;
             }
         }

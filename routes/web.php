@@ -85,9 +85,9 @@ Route::post('/impersonation/stop', function (ImpersonationService $impersonation
 // Platform Admin 2FA
 Route::middleware(['auth'])->group(function () {
     Route::get('/platform/2fa/setup', [TwoFactorController::class, 'showSetup'])->name('platform.2fa.setup');
-    Route::post('/platform/2fa/confirm', [TwoFactorController::class, 'confirmSetup'])->name('platform.2fa.confirm');
+    Route::post('/platform/2fa/confirm', [TwoFactorController::class, 'confirmSetup'])->middleware('throttle:5,1')->name('platform.2fa.confirm');
     Route::get('/platform/2fa/challenge', [TwoFactorController::class, 'showChallenge'])->name('platform.2fa.challenge');
-    Route::post('/platform/2fa/verify', [TwoFactorController::class, 'verifyChallenge'])->name('platform.2fa.verify');
+    Route::post('/platform/2fa/verify', [TwoFactorController::class, 'verifyChallenge'])->middleware('throttle:5,1')->name('platform.2fa.verify');
 
     // Invoice PDF Download
     Route::get('/billing/invoices/{invoice}/download', InvoiceDownloadController::class)->name('billing.invoices.download');

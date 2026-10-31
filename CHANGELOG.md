@@ -16,7 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - JSON-LD and merchant custom CSS can no longer break out of their `<script>`/`<style>` tags.
 - Stock Lunar hub (`/lunar`, not tenant-aware) returns 404 unless `LUNAR_ADMIN_PANEL=true`; `TenantSeeder` no longer creates a shared `admin@tenant.local / password` account.
 
+- Platform 2FA challenge and setup confirmation are throttled (5/min) against code brute-forcing.
+
 ### Fixed
+- Platform 2FA challenge rejected every recovery code (it only accepted 6 digits and never checked them); recovery codes are now accepted once, case-insensitively.
 - Test suite ran against (and wiped) the dev `database.sqlite`; it now uses in-memory SQLite with `RefreshDatabase` for every test.
 - `/search` without a query returned 500; store staff were redirected to the central login instead of `/store/login`.
 - Backup/restore of SQLite (invalid file name, non-replayable dump, wrong quote escaping); `perf:seed-tenants` created tenant-less channels.
