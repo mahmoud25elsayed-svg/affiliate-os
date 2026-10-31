@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Platform 2FA challenge and setup confirmation are throttled (5/min) against code brute-forcing.
 
 ### Fixed
+- Browser-driven end-to-end pass (Playwright on every panel + affiliate link → COD purchase → fulfilment → commission): merchant panel 500s on Lunar-backed resources, unstyled panel after login, CSP blocking Alpine, add-to-cart never reaching the cart (Livewire without tenancy), tracking-link price charged but not shown, stock never reservable (supplier receipts bypassed warehouse balances), stale order status actions, 14 merchant tools unreachable from the panel, partner app 500/419s, broken links. See commit 6e72cfa for details.
+- Merchant prices are entered in pounds; inventory has "receive stock" and "stock count" actions; products accept opening stock; checkout pre-fills logged-in customers; partner order form shows the server-side price range (commission cap); store and platform dashboards show real KPIs.
 - Platform 2FA challenge rejected every recovery code (it only accepted 6 digits and never checked them); recovery codes are now accepted once, case-insensitively.
 - Test suite ran against (and wiped) the dev `database.sqlite`; it now uses in-memory SQLite with `RefreshDatabase` for every test.
 - `/search` without a query returned 500; store staff were redirected to the central login instead of `/store/login`.

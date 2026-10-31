@@ -15,6 +15,7 @@ use App\Models\Coupon;
 use App\Support\Location\Governorate;
 use App\Support\Settings\ShippingSettings;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
@@ -88,6 +89,14 @@ class CheckoutPage extends Component
         $firstGov = Governorate::where('is_active', true)->orderBy('name_ar')->first();
         if ($firstGov) {
             $this->governorate_id = $firstGov->id;
+        }
+
+        // Logged-in customers should not retype what their account already holds.
+        $customer = Auth::guard('customer')->user();
+        if ($customer !== null) {
+            $this->customer_name = trim($customer->getAttribute('first_name').' '.$customer->getAttribute('last_name'));
+            $e164 = (string) $customer->getAttribute('phone_e164');
+            $this->customer_phone = str_starts_with($e164, '+20') ? '0'.substr($e164, 3) : $e164;
         }
     }
 

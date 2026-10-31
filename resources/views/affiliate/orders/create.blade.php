@@ -259,8 +259,13 @@ function orderForm() {
                     this.quote = data.formatted;
                     this.warnings = data.quote.warnings || [];
                     this.quoteLoaded = true;
+                    // The server range also applies the per-order commission cap for this quantity,
+                    // which the product's own min/max (data-min/data-max) does not know about.
+                    const q = data.quote;
+                    this.rangeHint = `الحد الأدنى للبيع: ${(q.min_allowed_unit_price_minor / 100).toFixed(2)} ج.م — الحد الأقصى: ${(q.max_allowed_unit_price_minor / 100).toFixed(2)} ج.م`;
                 } else {
-                    this.quoteError = data.message;
+                    this.quoteLoaded = false;
+                    this.quoteError = data.message || 'تعذر حساب السعر، راجع البيانات.';
                 }
             } catch (e) {
                 console.error(e);
