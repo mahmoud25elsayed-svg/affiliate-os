@@ -99,8 +99,21 @@ class OtpService
                     'error' => $result->errorMessage,
                 ]);
             }
+            $delivered = $result->success;
         } catch (\Throwable $e) {
             Log::error('SMS delivery exception: '.$e->getMessage());
+            $delivered = false;
+        }
+
+        // Never tell a real user "code sent" when nothing left the server. Local/testing keep the
+        // on-screen code so development works without an SMS account.
+        if (! $delivered && ! app()->environment(['local', 'testing'])) {
+            Cache::forget($cacheKey);
+
+            return [
+                'success' => false,
+                'message' => __('تعذر إرسال رمز التحقق إلى هاتفك حالياً. حاول مرة أخرى بعد قليل أو تواصل مع الدعم.'),
+            ];
         }
 
         Log::info('OTP generated for phone', [

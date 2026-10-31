@@ -47,6 +47,34 @@ class OtpDeliveryAndBruteForceTest extends TestCase
             && str_contains((string) $request['message'], '123456'));
     }
 
+    public function test_sms_request_matches_the_sms_misr_api_contract(): void
+    {
+        config(['services.smsmisr.endpoint' => 'https://smsmisr.com/api/SMS/', 'services.smsmisr.environment' => 1]);
+        Http::fake(['smsmisr.com/*' => Http::response(['code' => '1901', 'SMSID' => '777', 'Cost' => '1'])]);
+
+        app(OtpService::class)->sendOtp('01012345678', '10.0.0.2');
+
+        Http::assertSent(fn (Request $request) => $request->url() === 'https://smsmisr.com/api/SMS/'
+            && $request->method() === 'POST'
+            && (int) $request['environment'] === 1
+            && $request['username'] === 'sms-user'
+            && $request['mobile'] === '201012345678');
+    }
+
+    public function test_real_environments_report_failure_instead_of_pretending_the_code_was_sent(): void
+    {
+        config(['services.smsmisr.endpoint' => 'https://failing-gateway.example.test/api/']);
+        Http::fake(['failing-gateway.example.test/*' => Http::response(['code' => '1902'])]);
+        $this->app->detectEnvironment(fn () => 'production');
+
+        $result = app(OtpService::class)->sendOtp('01012345678', '10.0.0.3');
+
+        $this->assertFalse($result['success']);
+        $this->assertArrayNotHasKey('code', $result);
+        $this->assertNotEmpty($result['message']);
+        $this->assertNull(cache('otp_code:'.md5('+201012345678')), 'an unsent code must not stay valid');
+    }
+
     public function test_customer_otp_is_sent_by_sms_and_never_logged_or_stored_in_plaintext(): void
     {
         Log::spy();

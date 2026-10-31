@@ -51,7 +51,9 @@ return [
         'username' => env('SMSMISR_USERNAME', ''),
         'password' => env('SMSMISR_PASSWORD', ''),
         'sender_id' => env('SMSMISR_SENDER_ID', 'AffiliateOS'),
-        'endpoint' => env('SMSMISR_ENDPOINT', 'https://smsmisr.com/api/v2/'),
+        'endpoint' => env('SMSMISR_ENDPOINT', 'https://smsmisr.com/api/SMS/'),
+        // 1 = live delivery (after SMS Misr approves the account and sender token), 2 = sandbox (nothing is delivered).
+        'environment' => (int) env('SMSMISR_ENVIRONMENT', 1),
     ],
 
     'whatsapp' => [

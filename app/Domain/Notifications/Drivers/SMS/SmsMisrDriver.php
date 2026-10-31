@@ -20,7 +20,8 @@ class SmsMisrDriver implements NotificationDriverInterface
         $username = (string) ($config['username'] ?? config('services.smsmisr.username', ''));
         $password = (string) ($config['password'] ?? config('services.smsmisr.password', ''));
         $senderId = (string) ($config['sender_id'] ?? $message->senderId ?? config('services.smsmisr.sender_id', 'AffiliateOS'));
-        $endpoint = (string) ($config['endpoint'] ?? config('services.smsmisr.endpoint', 'https://smsmisr.com/api/v2/'));
+        $endpoint = (string) ($config['endpoint'] ?? config('services.smsmisr.endpoint', 'https://smsmisr.com/api/SMS/'));
+        $environment = (int) ($config['environment'] ?? config('services.smsmisr.environment', 1));
 
         if (empty($username) || empty($password)) {
             return NotificationResult::failure('SMS Misr credentials not configured.');
@@ -31,6 +32,7 @@ class SmsMisrDriver implements NotificationDriverInterface
 
         try {
             $response = Http::timeout(5)->asForm()->post($endpoint, [
+                'environment' => $environment,
                 'username' => $username,
                 'password' => $password,
                 'language' => 2, // Arabic
@@ -53,7 +55,7 @@ class SmsMisrDriver implements NotificationDriverInterface
             // In SMS Misr, 1901 indicates success, 1902 invalid credentials, etc.
             if ($code === '1901' || ($data['status'] ?? '') === 'success') {
                 return NotificationResult::success(
-                    externalId: (string) ($data['id'] ?? uniqid('sms_')),
+                    externalId: (string) ($data['SMSID'] ?? $data['id'] ?? uniqid('sms_')),
                     costMinor: 30, // 30 piastres (0.30 EGP)
                     rawResponse: $data ?? []
                 );

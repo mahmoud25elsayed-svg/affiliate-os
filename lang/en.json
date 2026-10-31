@@ -3359,5 +3359,6 @@
     "🚚 إدارة الشحنات": "🚚 Shipments",
     "🚚 شحن سريع لجميع المناطق": "🚚 Fast shipping everywhere",
     "🛡️ عزل تام لبيانات المستأجرين": "🛡️ Full tenant data isolation",
-    "🛡️ فحص السياسات وتجنب الحظر": "🛡️ Policy check & ban avoidance"
+    "🛡️ فحص السياسات وتجنب الحظر": "🛡️ Policy check & ban avoidance",
+    "تعذر إرسال رمز التحقق إلى هاتفك حالياً. حاول مرة أخرى بعد قليل أو تواصل مع الدعم.": "We could not send the verification code to your phone right now. Please try again shortly or contact support."
 }
